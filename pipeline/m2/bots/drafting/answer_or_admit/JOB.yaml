@@ -1,0 +1,14 @@
+name: answer_or_admit
+group: drafting
+unit: claim            # claim | term | cite | count | document | case | draft
+axis: "DRAFTING — the 8(b)(6)/1029(b) layer: averment-by-averment admit / deny / demand, staccato."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - amjur_pleading
+  - pa_rcp
+  - frcp
+queries:
+  - "{claim}"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

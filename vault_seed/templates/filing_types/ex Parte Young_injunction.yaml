@@ -1,0 +1,63 @@
+id: ex Parte Young_injunction
+title: Ex Parte Young Injunction Against State Officer
+
+description: >
+  Federal court injunction against a state officer enforcing unconstitutional 
+  state law — the Ex parte Young sovereign immunity waiver doctrine creates 
+  a procedural vehicle for federal injunctive relief against state officials 
+  who are "stripped of their official or representative character and are 
+  subjected in their person to the consequences of their individual conduct"
+  when enforcing an unconstitutional law. 209 U.S. at 135–136.
+  
+  KEY: the officer must be acting in their official capacity to enforce a 
+  specific law or regulation that is alleged unconstitutional. The exemption 
+  from sovereign immunity applies only to ongoing or imminent violations of 
+  federal law, NOT to past damages. A waiver of sovereign immunity 
+  "cannot be implied but must be unequivocally expressed." United States v. 
+  Testan, 424 U.S. 392, 399 (1976). The doctrine does NOT extend to 
+  disputes between two different state actors (VIPA v. Stewart dissent; 
+  Principality of Monaco v. Mississippi, 292 U.S. 313 (1934)).
+
+court: federal_district
+required_authorities:
+  - "Ex parte Young, 209 U.S. 125 (1908)"
+  - "Virginia Office for Protection and Advocacy v. Stewart, 563 U.S. 425 (2011)"
+  - "Santa Clara Pueblo v. Martinez, 436 U.S. 49 (1978)"
+  - "United States v. Testan, 424 U.S. 392 (1976)"
+  - "Principality of Monaco v. Mississippi, 292 U.S. 313 (1934)"
+
+trigger_defects:
+  - unconstitutional_state_law
+  - ongoing_violation
+  - state_officer_enforcement
+  - sovereign_immunity_bar
+
+structure:
+  - block: boilerplate/caption_federal
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/sovereign_immunity_analysis
+  - block: sections/official_capacity_analysis
+  - block: sections/unconstitutional_law
+  - block: sections/Ex Parte Young_application
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order
+
+when_clauses:
+  - description: >
+      Use when a state officer is actively enforcing a specific state law 
+      or regulation that the plaintiff challenges as unconstitutional under 
+      federal law, and the plaintiff seeks injunctive relief (not damages).
+  - description: >
+      Use when the defendant is a state officer acting in their official 
+      capacity — not the state itself. Ex parte Young creates a waiver of 
+      sovereign immunity only against the officer personally for enforcement 
+      of unconstitutional law.
+  - description: >
+      Use when the violation is ongoing or imminent — the doctrine does not 
+      apply to completed past conduct or damages claims.
+
+resolution_path: "obsidian_sync/templates/filing_types/ex Parte Young_injunction.yaml"

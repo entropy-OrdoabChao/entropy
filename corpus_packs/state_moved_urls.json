@@ -1,0 +1,74 @@
+{
+ "CT:court_chain": {
+  "old": "https://info.jud.ct.gov/directory.htm",
+  "new": "https://www.jud.ct.gov/courts.htm",
+  "confirmed": true,
+  "note": "HTTP 200, title 'Courts - CT Judicial Branch' (state court functions, addresses, structure); companion image-only page https://info.jud.ct.gov/external/media/court_structure.htm also 200; old directory.htm gone, staff directory now https://www.jud.ct.gov/directories.htm"
+ },
+ "IL:admin_code": {
+  "old": "https://www.ilsos.gov/departments/index/code/admincode.html",
+  "new": "https://www.ilsos.gov/departments/index/admincodindex.html",
+  "confirmed": true,
+  "note": "HTTP 200, title 'Administrative Code and Codification Indexes' (ilsos.gov Index Dept); site times out / 403s for curl, headless Chromium and WebFetch, confirmed only via headed Chrome"
+ },
+ "MA:register": {
+  "old": "https://www.sec.state.ma.us/divisions/regulations/",
+  "new": "https://www.sec.state.ma.us/divisions/pubs-regs/about-register.htm",
+  "confirmed": true,
+  "note": "HTTP 200, title 'Massachusetts Register' (linked as 'Massachusetts Register' from division page https://www.sec.state.ma.us/divisions/pubs-regs/pubs-regs.htm, also 200); old /divisions/regulations/ now 403; Incapsula blocks curl/WebFetch"
+ },
+ "MA:civil_rules": {
+  "old": "https://www.mass.gov/rules-of-civil-procedure",
+  "new": "https://www.mass.gov/law-library/massachusetts-rules-of-civil-procedure",
+  "confirmed": true,
+  "note": "HTTP 200, title 'Massachusetts Rules of Civil Procedure | Mass.gov'; old URL re-checked = 404 'Not found | Mass.gov'; per-rule pages still live under /rules-of-civil-procedure/<rule>; mass.gov 403s curl/WebFetch, confirmed via Chromium"
+ },
+ "MA:appellate_rules": {
+  "old": "https://www.mass.gov/massachusetts-rules-of-appellate-procedure",
+  "new": "https://www.mass.gov/law-library/massachusetts-rules-of-appellate-procedure",
+  "confirmed": true,
+  "note": "HTTP 200, title 'Massachusetts Rules of Appellate Procedure | Mass.gov'; old URL re-checked = 404; per-rule pages live under /rules-of-appellate-procedure/<rule>"
+ },
+ "MA:filing_fees_ifp": {
+  "old": "https://www.mass.gov/lists/affidavit-of-indigency-forms ; https://www.mass.gov/info-details/civil-filing-fees",
+  "new": "https://www.mass.gov/lists/court-forms-for-indigency-waiver-of-court-fees ; https://www.mass.gov/info-details/uniform-schedule-of-fees",
+  "confirmed": true,
+  "note": "Both HTTP 200: 'Court forms for indigency (waiver of court fees)' (Affidavit of Indigency + Supplement) and 'Uniform Schedule of Fees' (G.L. c.262 s.4B Trial Court fees); fee hub https://www.mass.gov/court-filing-fees-payment-information also 200; both old URLs re-checked = 404"
+ },
+ "NH:civil_rules": {
+  "old": "https://www.courts.nh.gov/rules-superior-court-state-new-hampshire-applicable-civil-actions",
+  "new": "https://www.courts.nh.gov/rules-superior-court-state-new-hampshire/civil-rules",
+  "confirmed": true,
+  "note": "HTTP 200, title 'CIVIL RULES | New Hampshire Judicial Branch' (Superior Court civil rules index, per-rule subpages); courts.nh.gov Akamai returns 403 'Access Denied' to curl/headless/WebFetch, confirmed via headed Chrome"
+ },
+ "NH:financial_regulator": {
+  "old": "https://www.nh.gov/banking/",
+  "new": "https://www.banking.nh.gov/",
+  "confirmed": true,
+  "note": "HTTP 200, title 'Welcome | New Hampshire Banking Department' (Consumer Assistance, licensees, enforcement orders); old nh.gov/banking/ no longer serves; official nh.gov subdomain"
+ },
+ "NH:judicial_conduct": {
+  "old": "https://www.courts.nh.gov/judicial-conduct-committee",
+  "new": "https://www.courts.nh.gov/resources/committees/judicial-conduct-committee",
+  "confirmed": true,
+  "note": "HTTP 200, title 'Judicial Conduct Committee | New Hampshire Judicial Branch'; legacy courts.state.nh.us/committees/judconductcomm/index.htm 301s to this URL; complaint rules at /rules-supreme-court-state-new-hampshire/rule-40-procedural-rules-committee-judicial-conduct"
+ },
+ "NH:reporters": {
+  "old": "https://www.courts.nh.gov/our-courts/supreme-court/opinions",
+  "new": "https://www.courts.nh.gov/our-courts/supreme-court/orders-and-opinions/opinions",
+  "confirmed": true,
+  "note": "HTTP 200, title 'Opinions - Supreme Court | New Hampshire Judicial Branch' (year subpages .../opinions/2026 etc.); legacy courts.state.nh.us/supreme/opinions/index.htm redirects here"
+ },
+ "TN:efiling": {
+  "old": "https://www.tncourts.gov/efiling",
+  "new": "https://www.tncourts.gov/Appellate_E-Filing",
+  "confirmed": true,
+  "note": "HTTP 200, title 'Appellate E-Filing | Tennessee Administrative Office of the Courts'; site's main-nav 'E-FILING' link points here; trial-court companion https://www.tncourts.gov/E-Filing%20Trial%20Courts also 200; /E-Filing and /efiling now render 'Page not found'; tncourts.gov has JS browser-validation wall + intermittent 503 maintenance"
+ },
+ "TN:judicial_conduct": {
+  "old": "https://www.tncourts.gov/boards-commissions/board-judicial-conduct",
+  "new": "https://www.tncourts.gov/board-of-judicial-conduct",
+  "confirmed": true,
+  "note": "HTTP 200, title 'Board of Judicial Conduct (BJC) | Tennessee Administrative Office of the Courts'; complaint page https://www.tncourts.gov/boards-commissions/court-judiciary/file-complaint also 200; old URL re-checked = 404 'Page not found'"
+ }
+}

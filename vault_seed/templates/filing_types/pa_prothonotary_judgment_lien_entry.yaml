@@ -1,0 +1,91 @@
+id: pa_prothonotary_judgment_lien_entry
+title: Prothonotary Judgment Lien Entry Under Pa.R.C.P. 3022-3023 & 42 Pa.C.S. §4303
+
+description: |
+  Procedural vehicle: The single ministerial act of entering a verdict, order, or judgment
+  into the judgment index under Pa.R.C.P. 3022 and 3023, together with 42 Pa.C.S. §§ 8101-8138
+  (Judicial Code provisions on judgment liens). This is NOT a motion. It is a duty of the
+  prothonotary — a ministerial act that CREATES a lien on real property when completed.
+
+  Under Pa.R.C.P. 3022(a), "A verdict or order for a specific sum of money when entered in
+  the judgment index shall be a lien on real property located within the county, title to
+  which at the time of entry is recorded in the name of the person against whom the verdict
+  or order was rendered." Rule 3023 extends this to judgments: "A judgment shall create a
+  lien when entered in the judgment index." The prothonotary's duty is mandatory — it is
+  not discretionary.
+
+  This was a structural reform introduced by the Pennsylvania Bulletin (Vol. 34, No. 1,
+  January 3, 2004) that CHANGED the inception of the lien from the rendition of the verdict
+  (under the repealed Act of 1877) to the entry in the judgment index. The lien now dates
+  from INDEX ENTRY, not from rendition.
+
+  RECIPROCITY ANGLE: If the prothonotary FAILS to enter the judgment in the index, the lien
+  does not attach — but this is the prothonotary's failure, not the judgment creditor's.
+  A judgment creditor may file a praecipe or motion to compel the prothonotary to perform
+  this ministerial duty. Conversely, if the prothonotary refuses or delays entry, the
+  judgment creditor can seek mandamus or file a praecipe directing entry.
+
+  Under 42 Pa.C.S. §2704, the prothonotary is "responsible for the accurate and timely
+  creation, maintenance and certification of the record of matters pending before or determined
+  by the courts." The duty to maintain the judgment index is statutory, not discretionary.
+
+  KEY RISKS WHEN NOT ARMED: Without this filing type, the system cannot arm a
+  "praecipe_for_prothonotary_entry" or similar vehicle to compel the entry. The judgment
+  creditor is left without a procedural mechanism to force the lien creation, and the record
+  shows the lien was never attached — which can be used to argue the creditor was negligent,
+  when in fact the duty was the prothonotary's.
+
+  Corpus support: Pa.R.C.P. 3022, 3023; 42 Pa.C.S. §§ 8101-8138; 42 Pa.C.S. §2704;
+  Pennsylvania Bulletin, Vol. 34, No. 1, Jan. 3, 2004 (Rule 3022 amendment).
+
+court: state_pa_common_pleas
+required_authorities:
+  - citation: "Pa.R.C.P. 3022"
+    proposition: "Verdict or order entry creates lien when entered in judgment index — the prothonotary's mandatory duty."
+  - citation: "Pa.R.C.P. 3023"
+    proposition: "Judgment creates lien when entered in judgment index — same ministerial duty extended to post-verdict judgments."
+  - citation: "42 Pa.C.S. § 8101"
+    proposition: "Definitions for judgment lien provisions — establishes what constitutes a judgment lien."
+  - citation: "42 Pa.C.S. § 8102"
+    proposition: "Duration and renewal of judgment liens — 5-year basic period with renewal by re-filing."
+  - citation: "42 Pa.C.S. § 8103"
+    proposition: "Effect of judgment lien on real property — lien attaches when entered in judgment index."
+  - citation: "42 Pa.C.S. § 2704"
+    proposition: "Prothonotary responsibility for maintenance of records, judgment index data, and certification."
+  - citation: "Pa. Bulletin, Vol. 34, No. 1, January 3, 2004"
+    proposition: "Rule 3022 amendments changing lien inception from rendition to judgment index entry."
+
+trigger_defects:
+  - prothonotary_failed_to_enter_in_index
+  - judgment_lien_not_attached_despite_verdict
+  - lien_ inception_delayed_by_prothonotary
+  - praecipe_for_entry_ignored
+  - prothonotary_refusal_to_record
+  - ministry_act_delayed
+  - lien_priority_lost_due_to_index_delay
+
+required_facts:
+  - case_id
+  - caption
+  - judgment_or_verdict_date
+  - county_of_venue
+  - judgment_amount
+  - defendant_name — judgment debtor
+  - judgment_entry_status — whether prothonotary has entered in index
+  - praecipe_filed — whether judgment creditor submitted praecipe for entry
+  - prothonotary_response — any response or refusal from the prothonotary's office
+
+structure:
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: boilerplate/caption_state_pa_superior
+    when: court_level == superior
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/statement_of_material_facts
+  - block: sections/argument
+    when: argument_type == prothonotary_duty
+  - block: sections/prayer_for_relief
+  - block: sections/certificate_of_service
+  - block: verification_affidavit
+    when: is_state == true

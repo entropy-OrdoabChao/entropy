@@ -1,0 +1,36 @@
+id: scotus_cert_petition
+title: Petition for a Writ of Certiorari
+description: |
+  Petition for a writ of certiorari to the Supreme Court of the United
+  States, filed by a pro se party on 8.5 x 11 inch paper pursuant to
+  Supreme Court Rule 33.2. Forty-page limit (Rule 33.2(b)). Required
+  contents specified by Rule 14.1. White cover (Rule 33.1(g)(i)).
+
+  This filing-type uses pro se Rule 33.2 letter format. For paid
+  filings, Rule 33.1 booklet format would apply but is impractical
+  for pro se litigants.
+court: SCOTUS
+brief_type: cert_petition
+
+required_authorities:
+  - Sup. Ct. R. 10 (considerations governing review on certiorari)
+  - Sup. Ct. R. 13 (time for filing petition)
+  - Sup. Ct. R. 14 (content of petition)
+  - Sup. Ct. R. 29 (proof of service)
+  - Sup. Ct. R. 33.2 (letter-paper format for pro se)
+  - Sup. Ct. R. 39 (in forma pauperis proceedings)
+  - 28 U.S.C. 1254 (certiorari from court of appeals)
+  - 28 U.S.C. 1257 (certiorari from state court)
+
+structure:
+  - block: boilerplate/caption_scotus
+  - block: appellate/questions_presented
+  - block: appellate/parties_to_proceeding
+  - block: appellate/opinions_below
+  - block: appellate/statement_of_jurisdiction
+  - block: appellate/statutes_involved
+  - block: appellate/statement_of_the_case
+  - block: arguments/reasons_for_granting_petition
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

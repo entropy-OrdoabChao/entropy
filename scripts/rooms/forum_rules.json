@@ -1,0 +1,466 @@
+{
+ "_doc": "Forum cell: court -> filing type -> the rules that govern THAT filing in THAT court. Deterministic; ground_pack.py resolves each to verbatim corpus text or marks NOT IN CORPUS. Add cells, never hardcode rules in prompts.",
+ "PA_CP_PHILA": {
+  "_default": [
+   {
+    "cite": "Pa.R.C.P. 1028",
+    "why": "preliminary objections — grounds, briefs, disposition (c)(2), amendment"
+   },
+   {
+    "cite": "Pa.R.C.P. 1029",
+    "why": "denials; averments not denied are admitted (b); general denial = admission"
+   },
+   {
+    "cite": "Pa.R.C.P. 1024",
+    "why": "verification of averments of fact not of record"
+   },
+   {
+    "cite": "Pa.R.C.P. 1019",
+    "why": "contents of pleadings; writings relied on must be attached (i)"
+   },
+   {
+    "cite": "Pa.R.C.P. 440",
+    "why": "service of legal papers other than original process"
+   },
+   {
+    "cite": "Pa.R.C.P. 126",
+    "why": "liberal construction; court may disregard procedural defects not affecting substantial rights"
+   },
+   {
+    "cite": "Pa.R.C.P. 1017",
+    "why": "the pleadings allowed; what is a pleading vs a brief"
+   },
+   {
+    "cite": "Phila. Civ. R. *1028(c)",
+    "why": "Philadelphia: filing and briefing of preliminary objections (response period, control numbers, reply)"
+   },
+   {
+    "cite": "Phila. Civ. R. *205.2(b)",
+    "why": "Philadelphia: filing legal papers — format, control number, cover sheet"
+   },
+   {
+    "cite": "Phila. Civ. R. *208.3(b)",
+    "why": "Philadelphia: motion practice — response period, reply, briefs"
+   },
+   {
+    "cite": "Phila. Civ. R. *210",
+    "why": "briefs — every brief shall cite authority; a bare citation without the proposition may be disregarded"
+   }
+  ],
+  "sur_reply": [
+   {
+    "cite": "Pa.R.C.P. 1028",
+    "why": "preliminary objections — briefs and disposition; (c)(2) court shall determine promptly; issues of fact"
+   },
+   {
+    "cite": "Pa.R.C.P. 1028(c)",
+    "why": "(c)(1) party may file amended pleading; (c)(2) court shall determine promptly all preliminary objections; if issue of fact is raised the court shall consider evidence by depositions or otherwise"
+   },
+   {
+    "cite": "Pa.R.C.P. 1029",
+    "why": "denials; averments not denied are admitted"
+   },
+   {
+    "cite": "Pa.R.C.P. 1019",
+    "why": "writings relied on must be attached (i) — exhibits named but not attached"
+   },
+   {
+    "cite": "Pa.R.C.P. 1019(i)",
+    "why": "when a claim or defense is based upon a writing, the pleader shall attach a copy"
+   },
+   {
+    "cite": "Pa.R.C.P. 1024",
+    "why": "verification — whether a brief asserting facts outside the record needs one"
+   },
+   {
+    "cite": "Pa.R.C.P. 440",
+    "why": "service"
+   },
+   {
+    "cite": "Pa.R.C.P. 126",
+    "why": "liberal construction / disregard of harmless defects — the other side will invoke it"
+   },
+   {
+    "cite": "Phila. Civ. R. *1028(c)",
+    "why": "Philadelphia PO briefing schedule; control number; reply/sur-reply practice"
+   },
+   {
+    "cite": "Phila. Civ. R. *205.2(b)",
+    "why": "Philadelphia filing format — control number on the face"
+   },
+   {
+    "cite": "Phila. Civ. R. *208.3(b)",
+    "why": "Philadelphia motion practice — reply timing"
+   },
+   {
+    "cite": "Phila. Civ. R. *210",
+    "why": "briefs — every brief shall cite authority; a bare citation without the proposition may be disregarded"
+   }
+  ],
+  "petition_341c": [
+   {
+    "cite": "Pa.R.A.P. 341(c)",
+    "why": "determination of finality: trial court may enter a final order as to fewer than all claims/parties only upon an EXPRESS determination that an immediate appeal would facilitate resolution of the entire case; application for the determination within 30 days of entry; 30-day decision window"
+   },
+   {
+    "cite": "Pa.R.A.P. 341 Official Note",
+    "why": "factors to be considered under subdivision (c): (1) whether there is a significant relationship between adjudicated and unadjudicated claims; (2) whether an appeal would be mooted by further developments; (3) whether the court will consider issues a second time; a partial dismissal is interlocutory absent the determination"
+   },
+   {
+    "cite": "Pa.R.A.P. 341(b)",
+    "why": "definition of final order: disposes of all claims and all parties, or is entered as a final order pursuant to (c)"
+   },
+   {
+    "cite": "Pa.R.A.P. 1311",
+    "why": "appeal by permission from an interlocutory order for which certification pursuant to Pa.R.A.P. 341(c) was denied — (a)(2); the denial / deemed denial is the predicate"
+   },
+   {
+    "cite": "Pa.R.A.P. 1925(a)",
+    "why": "opinion in support of order: if the reasons for the order do not already appear of record, the judge shall file of record at least a brief opinion of the reasons for the order"
+   },
+   {
+    "cite": "Pa.R.A.P. 1701(b)",
+    "why": "authority of trial court after appeal: may grant reconsideration only on an express order within the appeal period (b)(3); a reconsideration motion does not toll the appeal period"
+   },
+   {
+    "cite": "Pa.R.C.P. 1028(c)",
+    "why": "determination of preliminary objections: the court shall determine promptly all preliminary objections; if an issue of fact is raised the court shall consider evidence"
+   },
+   {
+    "cite": "Pa.R.C.P. 208.1",
+    "why": "motion defined: any application to the court for an order made in any civil action or proceeding"
+   },
+   {
+    "cite": "Pa.R.C.P. 208.2",
+    "why": "motion contents: caption, numbered paragraphs, relief specified, verification where facts not of record"
+   },
+   {
+    "cite": "Phila. Civ. R. *208.3(b)",
+    "why": "Philadelphia motions procedure: control number, response period, assignment to the motions judge / assigned judge"
+   },
+   {
+    "cite": "42 Pa.C.S. § 5505",
+    "why": "modification of orders within 30 days — the court's power to amend its own order before the appeal period runs"
+   },
+   {
+    "cite": "Pa.R.A.P. 1701(a)",
+    "why": "after an appeal is taken the trial court may no longer proceed further in the matter — a premature notice of appeal from the interlocutory order risks freezing the surviving counts"
+   }
+  ],
+  "motion_to_vacate": [
+   {
+    "cite": "42 Pa.C.S. § 5505",
+    "why": "modification of orders: a court upon notice to the parties may modify or rescind any order within 30 days after its entry if no appeal has been taken"
+   },
+   {
+    "cite": "Pa.R.C.P. 1028(c)",
+    "why": "determination of preliminary objections: the court shall determine promptly; if an issue of fact is raised the court shall consider evidence by depositions or otherwise"
+   },
+   {
+    "cite": "Pa.R.C.P. 1028(a)",
+    "why": "grounds for preliminary objections are limited to those enumerated"
+   },
+   {
+    "cite": "Pa.R.C.P. 1029",
+    "why": "denials; averments not denied are admitted; general denial = admission"
+   },
+   {
+    "cite": "Pa.R.C.P. 1019",
+    "why": "contents of pleadings; writings relied on must be attached"
+   },
+   {
+    "cite": "Pa.R.C.P. 1033",
+    "why": "amendment of pleadings by leave of court at any time; liberally allowed"
+   },
+   {
+    "cite": "Pa.R.C.P. 208.1",
+    "why": "motion defined"
+   },
+   {
+    "cite": "Pa.R.C.P. 208.2",
+    "why": "motion contents"
+   },
+   {
+    "cite": "Phila. Civ. R. *208.3(b)",
+    "why": "Philadelphia motions procedure: control number, response period"
+   },
+   {
+    "cite": "Pa.R.A.P. 1701(b)",
+    "why": "reconsideration must be expressly granted within the appeal period; the motion does not toll it"
+   },
+   {
+    "cite": "Pa.R.A.P. 341(c)",
+    "why": "the order sustaining POs on fewer than all counts is interlocutory absent an express determination"
+   }
+  ],
+  "posture_order": [
+   {
+    "cite": "Pa.R.A.P. 341(a)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.A.P. 341(c)(1)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.A.P. 311",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.A.P. 311(g)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.A.P. 311(a)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.A.P. 312",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "42 Pa.C.S. § 702(b)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.A.P. 1311(a)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.A.P. 1312(a)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.A.P. 1316(a)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.A.P. 701",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "42 Pa.C.S. § 702(a)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.A.P. 1925(a)(1)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.C.P. 1028(c)(2)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.C.P. 208.1(b)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.C.P. 227.1",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.C.P. 236",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.C.P. 1033(a)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "42 Pa.C.S. § 5105(a)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "42 Pa.C.S. § 5105(c)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "42 Pa.C.S. § 5571(b)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "42 Pa.C.S. § 1722(a)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa. Const. art. V § 10",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa. Const. art. V § 9",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "42 Pa.C.S. § 5105",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa. Const. art. I § 11",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "397 U.S. 254",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "408 U.S. 471",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "418 U.S. 539",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "424 U.S. 319",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Fed. R. Civ. P. 54(b)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.A.P. 341(c)(2)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.A.P. 1311(b)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.A.P. 1925(a) Official Note",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.C.P. 227.1(c)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "Pa.R.C.P. 236(a)",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   },
+   {
+    "cite": "42 Pa.C.S. § 1722",
+    "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
+    "source": "REASONS_DUTY_SWEEP_20261026.md"
+   }
+  ]
+ },
+ "FED_EDPA": {
+  "_default": [
+   {
+    "cite": "Fed. R. Civ. P. 7",
+    "why": "pleadings allowed; motions"
+   },
+   {
+    "cite": "Fed. R. Civ. P. 8",
+    "why": "pleading; (b)(6) failure to deny = admitted"
+   },
+   {
+    "cite": "Fed. R. Civ. P. 12",
+    "why": "defenses; 12(b)(6) standard"
+   },
+   {
+    "cite": "Fed. R. Civ. P. 5",
+    "why": "service and filing"
+   },
+   {
+    "cite": "Fed. R. Civ. P. 11",
+    "why": "signing; representations to the court"
+   },
+   {
+    "cite": "E.D. Pa. Local R. 7.1",
+    "why": "motion practice — response time, reply, page limits"
+   }
+  ]
+ },
+ "CA3": {
+  "_default": [
+   {
+    "cite": "Fed. R. App. P. 21",
+    "why": "mandamus — service on all parties and the trial judge; (a)(3) no answer unless ordered"
+   },
+   {
+    "cite": "Fed. R. App. P. 24",
+    "why": "proceeding in forma pauperis"
+   },
+   {
+    "cite": "Fed. R. App. P. 25",
+    "why": "filing and service; motion filed when received"
+   },
+   {
+    "cite": "Fed. R. App. P. 27",
+    "why": "motions — response 10 days, reply 7 days"
+   },
+   {
+    "cite": "3d Cir. L.A.R. 107.1",
+    "why": "fees / IFP in the court of appeals"
+   }
+  ],
+  "screen_response": [
+   {
+    "cite": "28 U.S.C. § 1915",
+    "why": "(e)(2) screening — dismissal only if frivolous / fails to state a claim; the panel's test"
+   },
+   {
+    "cite": "28 U.S.C. § 1291",
+    "why": "jurisdiction of appeals from final decisions"
+   },
+   {
+    "cite": "Fed. R. App. P. 3",
+    "why": "(c)(7) an appeal must not be dismissed for informality of form or title of the notice"
+   },
+   {
+    "cite": "Fed. R. App. P. 10",
+    "why": "(a) record on appeal = original papers + docket; (e) correction of omissions"
+   },
+   {
+    "cite": "3d Cir. L.A.R. 27.4",
+    "why": "summary action — the alternative the screening order names"
+   },
+   {
+    "cite": "Neitzke v. Williams, 490 U.S. 319 (1989)",
+    "why": "frivolous = lacks an arguable basis either in law or in fact; the § 1915 test the panel applies"
+   },
+   {
+    "cite": "Fed. R. App. P. 25",
+    "why": "(d) proof of service: date, manner, names and addresses of persons served"
+   }
+  ]
+ }
+}

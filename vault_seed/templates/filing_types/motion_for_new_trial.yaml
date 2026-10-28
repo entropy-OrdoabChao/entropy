@@ -1,0 +1,37 @@
+---
+id: motion_for_new_trial
+title: Motion for New Trial Under FRCP 59
+description:
+  Motion for new trial under FRCP 59 — standard for new trial on grounds of
+  weight of evidence, verdict against the weight of evidence, and unfair trial.
+court: any
+required_authorities:
+  - FRCP 59(a) — Grounds for new trial at common law
+  - FRCP 59(b) — Time limit — 28 days after entry of judgment
+  - FRCP 59(c) — Motion for new trial on grounds of damages
+  - FRCP 60(b) — Relief from judgment (alternative)
+  - 28 U.S.C. 2106 — Authority to vacate, modify, and remand
+trigger_defects:
+  - FATAL/CONSTRUCTION
+  - SERIOUS/CONSTRUCTION
+  - void_order_misuse
+  - mandamus_grounds
+  - verdict_against_weight
+required_facts:
+  - case_id
+  - caption
+  - defect_total
+  - new_trial_grounds
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/fr59_new_trial
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

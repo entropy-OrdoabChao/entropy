@@ -1,0 +1,66 @@
+id: praecipe
+title: Praecipe for Judgment
+description: >
+  Praecipe as a procedural vehicle under Pa.R.C.P. 237–237.6 — a praecipe to
+  enter judgment of non pros or by default, a praecipe for entry of judgment
+  on a verdict or final decree, a praecipe to enter a rule on plaintiff to
+  file a complaint (Rule 1037), or a praecipe for a writ of execution.
+  The corpus supports this as a distinct, self-contained procedural mechanism
+  governed by Rules 237 through 237.6, Rule 1037, and local court rules
+  promulgated under Rule 239.
+
+  KEY: the ten-day notice-of-intent requirement (Rule 237.1(a)(2)) is mandatory
+  and may not be waived; the praecipe for entry of a judgment of non pros
+  must include a certification of written notice. Failure to comply renders
+  the entry voidable.
+
+court: state_pa_ccp
+required_authorities:
+  - Pa.R.C.P. 237 (Praecipe for Final Judgment or Decree)
+  - Pa.R.C.P. 237.1 (Notice of Praecipe for Entry of Judgment of Non Pros)
+  - Pa.R.C.P. 237.2 (Agreement to Extend Time to Plead Following Notice)
+  - Pa.R.C.P. 237.3 (Relief from Judgment of Non Pros or by Default)
+  - Pa.R.C.P. 237.4 (Form of Notice of Praecipe to Enter Judgment of Non Pros)
+  - Pa.R.C.P. 237.5 (Form of Notice of Praecipe to Enter Judgment by Default)
+  - Pa.R.C.P. 237.6 (Form of Agreement to Extend Time)
+  - Pa.R.C.P. 1037 (Judgment Upon Default or Admission — praecipe-based)
+  - Pa.R.C.P. 239 (Local Rules)
+  - Williams v. Wade, 704 A.2d 132 (Pa. Super. 1997)
+  - Schultz v. Erie Insurance Exchange (relief from default)
+trigger_defects:
+  - SERIOUS/SERVICE
+  - FATAL/SERVICE
+  - cross_case
+  - dismissal
+structure:
+  - block: boilerplate/caption_state_pa_ccp
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_enforcement
+  - block: sections/standard_of_review
+  - block: arguments/praecipe_requirements
+    when: praecipe_type == "non_pros"
+  - block: arguments/notice_requirement
+    when: praecipe_type == "non_pros"
+  - block: arguments/void_entry_noncompliance
+  - block: arguments/ten_day_notice_mandatory
+    when: praecipe_type == "non_pros"
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/verification
+  - block: boilerplate/proposed_order
+when_clauses:
+  - description: Use when the opposing party has failed to plead, failed to
+      file a complaint, or failed to respond, and the filing party seeks to
+      enter a judgment of non pros or by default via praecipe under Pa.R.C.P.
+      237/237.1.
+  - description: Use when the plaintiff has failed to commence an action with
+      a complaint, and the defendant seeks to enter a rule on plaintiff to
+      file a complaint (Rule 1037(a)) and ultimately a judgment of non pros.
+  - description: Use when the praecipe for entry of a judgment of non pros
+      was filed without the mandatory ten-day notice-of-intent certification
+      (Rule 237.1(a)(2)), rendering the entry voidable — grounds for relief
+      from the judgment under Rule 237.3.
+resolution_path: "obsidian_sync/templates/filing_types/praecipe.yaml"

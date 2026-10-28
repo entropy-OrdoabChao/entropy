@@ -1,0 +1,60 @@
+id: opposition_to_motion_for_sanctions
+title: Plaintiff's Opposition to Motion for Sanctions
+description: |
+  Opposition brief responding to defendant's motion for sanctions under
+  FRCP 11, 28 U.S.C. § 1927, or other authority. The court may impose
+  sanctions for frivolous claims, improper purposes, or violations of
+  court rules.
+
+court: any
+
+required_authorities:
+  - Fed. R. Civ. P. 11(b) — Certification requirement for filings
+  - Fed. R. Civ. P. 11(c)(2) — Safe harbor provision (21-day cure period)
+  - Fed. R. Civ. P. 11(c)(4) — Nature of sanctions
+  - 28 U.S.C. § 1927 — Attorney fee sanctions for multiplying proceedings
+  - Hall v. Cole, 412 U.S. 1 (1973) — Frivolous standard
+  - Christa v. CMC Partners, 466 F.3d 237 (3d Cir. 2006) — FRCP 11 standard in 3rd Cir
+  - Haines v. Kerner, 404 U.S. 519 (1972) — Pro se liberal construction
+  - E.D. Pa. L.R. 83.1 — Local rules on sanctions
+
+trigger_defects:
+  - SERIOUS/SANCTIONS
+  - FATAL/SANCTIONS
+  - motion_for_sanctions
+  - FRCP_11_motion
+  - 28USC_1927_motion
+  - frivolous_claim
+  - improper_purpose
+
+required_facts:
+  - case_id
+  - caption
+  - defendant_name — name of the defendant seeking sanctions
+  - motion_date — date of the defendant's motion for sanctions
+  - sanctions_amount — amount sought
+  - basis_for_sanctions — description of the basis for sanctions
+  - safe_harbor_expired — boolean, whether the 21-day safe harbor has expired
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/factual_statement_federal
+    when: posture != 'post-judgment'
+  - block: sections/procedural_history
+  - block: sections/standard_of_review
+  - block: arguments/fr11_sanctions
+    when: defect_categories.SANCTIONS > 0
+  - block: arguments/fr15_amendment
+    when: case_type == 'fraud_fcra'
+  - block: arguments/non_binding_authority
+    when: defect_categories.AUTHORITY > 0
+  - block: arguments/haines_v_kerner_standard
+    when: defect_categories.DISMISSAL > 0
+  - block: sections/prayer_for_relief_opposition
+  - block: sections/conclusion_opposition
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

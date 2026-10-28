@@ -1,0 +1,45 @@
+id: notice_of_duty_and_preservation_federal
+title: Notice of Duty, Preservation, and Reciprocity (Federal District Court)
+description: >
+  The federal-district counterpart to the Pennsylvania reciprocity/preservation package. It carries the
+  same three devices — grounded reciprocity/mutuality preservation, the appearance-of-partiality section
+  (rendered ONLY when the record evidences it), and the oath-and-duty acknowledgment for the court and
+  opposing counsel — but every citation resolves to its FEDERAL authority via the jurisdiction cite map
+  (Fed. R. Civ. P. 8(b)(6) deemed admission, Fed. R. Evid. 602 personal knowledge, 28 U.S.C. 1746 /
+  18 U.S.C. 1621, 1001 false swearing, 28 U.S.C. 453 oath, Code of Conduct for U.S. Judges + 28 U.S.C.
+  455 disqualification, U.S. Const. amend. V, Fed. R. Civ. P. 52(a) / 69(a)).
+
+  This is a standalone notice/preservation filing for the E.D. Pa. cases; it can also be appended to
+  motions. It is NOT an appellate filing (appellate is not wired yet, by design).
+
+court: FEDERAL
+
+required_authorities:
+  - citation: "Fed. R. Civ. P. 8(b)(6)"
+    proposition: "An allegation is admitted if a responsive pleading is required and the allegation is not denied."
+  - citation: "Fed. R. Evid. 602"
+    proposition: "A witness may testify to a matter only if the witness has personal knowledge of it."
+  - citation: "28 U.S.C. § 1746"
+    proposition: "An unsworn declaration under penalty of perjury has the force of a sworn verification."
+  - citation: "28 U.S.C. § 455"
+    proposition: "Disqualification of a judge whose impartiality might reasonably be questioned or who has a financial interest."
+  - citation: "28 U.S.C. § 453"
+    proposition: "Judicial oath — to administer justice without respect to persons and faithfully and impartially discharge the duties of office."
+
+trigger_defects:
+  - reciprocity_preservation
+  - officer_of_court_acknowledgment
+
+structure:
+  - type: caption
+    block: boilerplate/caption_federal
+  - type: section
+    block: boilerplate/preservation_and_reciprocity_general
+  # Appearance-of-partiality renders ONLY when the record evidences a pattern (partiality_detected).
+  - type: section
+    block: appellate/appearance_of_partiality_1925b
+    when: partiality_detected == true
+  - type: boilerplate
+    block: boilerplate/notice_duty_and_acknowledgment
+  - type: boilerplate
+    block: boilerplate/certificate_of_service_mail

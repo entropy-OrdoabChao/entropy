@@ -1,0 +1,35 @@
+id: ifp_objection
+title: Objection to Denial of In Forma Pauperis Status
+description: 'Objection to magistrate judge''s denial of IFP application under
+
+  28 U.S.C. 1915. Filed within 14 days of denial order per
+
+  Fed. R. Civ. P. 72(a).
+
+  '
+court: federal_district
+required_authorities:
+- 28 U.S.C. 1915(a) (IFP authorization)
+- 28 U.S.C. 1915(e)(2) (frivolity screening)
+- Fed. R. Civ. P. 72(a) (objection to magistrate non-dispositive order)
+- Adkins v. E.I. DuPont de Nemours & Co., 335 U.S. 331 (1948)
+- Deutsch v. United States, 67 F.3d 1080 (3d Cir. 1995)
+trigger_defects:
+- FATAL/IFP_DENIAL
+- SERIOUS/IFP_DENIAL
+- FATAL/ACCESS_TO_COURTS
+- dismissal
+structure:
+- block: boilerplate/caption_federal
+  when: is_federal == true
+- block: sections/introduction
+- block: sections/procedural_history
+- block: sections/factual_statement_federal
+- block: sections/standard_of_review
+- block: arguments/haines_v_kerner_standard
+  when: defect_categories.DISMISSAL > 0
+- block: sections/prayer_for_relief
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service
+- block: boilerplate/verification

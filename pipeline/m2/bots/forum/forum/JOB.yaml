@@ -1,0 +1,33 @@
+name: forum
+group: forum
+unit: claim            # claim | term | cite | count | document | case | draft
+axis: "FORUM — court × filing type → rule → mandatory attachments/forms/certificates → format → service → judge's procedures. + SOVEREIGN DEFENDANT: a State/state agency is not a diversity citizen and is immune in federal court on state-law claims; official- vs individual-capacity; the waiver statute names the court."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - edpa_lr
+  - cp-trial-civil
+  - phila_civ_r
+  - ca3_lar
+  - ca3_iop
+  - pa_rcp
+  - pa_rap
+  - frcp
+  - frap
+  - pro_se_manual
+  - amjur_federal_courts
+  - amjur_courts
+  - nj_rules
+  - nj_stat
+  - usreports
+queries:
+  - "{claim} local rule motion"
+  - "shall be accompanied by"
+  - "certificate of compliance public access policy"
+  - "control number cover sheet"
+  - "Eleventh Amendment bars suit against a State or state agency in federal court"
+  - "a State is not a citizen for purposes of the diversity jurisdiction"
+  - "tort claims act claimant may file suit in an appropriate court of law against a public entity"
+  - "Case Information Statement shall be annexed to the first pleading"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

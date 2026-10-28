@@ -1,0 +1,15 @@
+name: counts
+group: drafting
+unit: count            # claim | term | cite | count | document | case | draft
+axis: "DRAFTING — one count: elements → dated facts → record cites → the enacted text, in the locked anatomy."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - amjur_
+  - pa_cs_
+  - usc_
+  - pa_jury
+queries:
+  - "{claim}"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

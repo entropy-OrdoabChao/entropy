@@ -1,0 +1,61 @@
+id: motion_for_statement_of_reasons
+title: Motion for Statement of Reasons and Findings
+description: |
+  The ACTIVE counterpart to the accountability ledger. Used when the court enters a conclusory
+  adverse order that denies an airtight motion without articulating reasons or addressing the
+  controlling authority. Rather than re-argue (reconsideration is the weakest motion), this filing
+  invokes the court's duty of reasoned decision-making and poses pointed, corpus-grounded QUESTIONS
+  tied to each controlling authority and record fact the order failed to address. Any answer either
+  grants relief or exposes a failure to apply binding law / construe the pro se filing liberally;
+  a refusal to answer is itself preserved as oath/duty-failure evidence for the 28 U.S.C. 351 / JCB record.
+court: any
+
+required_authorities:
+  - FRCP 52(a)(1) (findings of fact and conclusions of law)
+  - FRCP 52(c) (judgment on partial findings; reasons stated)
+  - 28 U.S.C. 1746 (unsworn declaration under penalty of perjury)
+  - Fed. R. Evid. 201(b)(2) (judicial notice of court records)
+  - "Haines v. Kerner, 404 U.S. 519 (1972)"
+  - "Erickson v. Pardus, 551 U.S. 89 (2007)"
+  - "Mitchell v. Forsyth, 472 U.S. 511 (1985)"
+  - "Vance v. Terrazas, 444 U.S. 252 (1980)"
+
+trigger_defects:
+  - conclusory_denial
+  - failure_to_address_argument
+  - non_binding_authority_misapplied
+  - FATAL/JURISDICTION
+  - FATAL/AUTHORITY
+  - SERIOUS/JURISDICTION
+  - SERIOUS/AUTHORITY
+  - SERIOUS/CONSTRUCTION
+
+structure:
+  - block: boilerplate/caption_appellate_3rd_cir
+    when: is_appellate == true
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/oath_anchor
+    when: defect_categories.JUDICIAL > 0 or defect_categories.AUTHORITY > 0
+  - block: sections/jurisdiction_smj_questionnaire
+    when: defect_categories.JURISDICTION > 0
+  - block: sections/interrogatory_questions
+  - block: sections/rule_54b_certification_questionnaire
+    when: defect_categories.JURISDICTION > 0 or defect_categories.AUTHORITY > 0
+  - block: sections/footnotes_interrogatory
+    when: defect_categories.JUDICIAL > 0
+  - block: sections/definitions_schedule_canons
+    when: defect_categories.CONSTRUCTION > 0
+  - block: arguments/haines_v_kerner_standard
+    when: defect_categories.DISMISSAL > 0
+  - block: arguments/non_binding_authority
+    when: defect_categories.AUTHORITY > 0
+  - block: sections/interrogatory_questions
+  - block: sections/prayer_for_statement_of_reasons
+  - block: sections/conclusion_opposition
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

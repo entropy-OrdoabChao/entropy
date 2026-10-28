@@ -1,0 +1,82 @@
+id: opposition_to_motion_for_judgment_on_pleadings_12c
+title: Plaintiff's Opposition to Motion for Judgment on the Pleadings (FRCP 12(c))
+description: |
+  Opposition brief responding to a defendant's motion for judgment on the
+  pleadings under FRCP 12(c). A 12(c) motion is judged under the SAME standard
+  as summary judgment: the movant must demonstrate that "there is no genuine
+  dispute as to any material fact and the movant is entitled to judgment as a
+  matter of law." The movant bears the initial burden to either affirmatively
+  disprove an essential element of the nonmovant's case or to show the
+  nonmovant lacks evidence to support the claim. Celotex Corp. v. Catrett,
+  477 U.S. 317, 323-25 (1986) [corpus]. A dispute is genuine "if the evidence
+  is such that a reasonable jury could return a verdict for the nonmoving
+  party." Anderson v. Liberty Lobby, 477 U.S. 242, 248 (1986) [corpus].
+  Critical reciprocal lever — FRCP 12(d): "If, on a motion for judgment on the
+  pleadings, matters outside the pleadings are presented to and not excluded by
+  the court, the motion shall be treated as one for summary judgment and
+  disposed of as provided in Rule 56, and all parties shall be given reasonable
+  opportunity to present all pertinent material." Black's (8th) / FRCP 12(d)
+  verbatim [corpus, frb_chicago_fractional]. A 12(c) movant who leans on
+  extrinsic materials (declarations, records, invoices, tradeline data)
+  converts the motion to Rule 56 — and then must satisfy 56's evidentiary
+  requirements, not merely point at the pleadings.
+  WHEN: defendant moves for judgment on the pleadings seeking dismissal of
+  one or more counts, especially with prejudice, especially against a pro se
+  plaintiff whose record contains admissions by conduct or pending default
+  judgments the order overlooks.
+
+court: federal
+
+required_authorities:
+  - Fed. R. Civ. P. 12(c) — Judgment on the pleadings
+  - Fed. R. Civ. P. 12(d) — Extrinsic materials convert 12(c) to Rule 56
+  - Fed. R. Civ. P. 56(a) — Same no-genuine-dispute standard governs
+  - Celotex Corp. v. Catrett, 477 U.S. 317 (1986) — Initial burden on movant (corpus: scotus_celotex)
+  - Anderson v. Liberty Lobby, Inc., 477 U.S. 242, 248 (1986) — Genuine dispute = reasonable jury standard
+  - Matsushita Elec. Indus. Co. v. Zenith Radio Corp., 475 U.S. 574 (1986) — Inferences favor nonmovant
+  - Haines v. Kerner, 404 U.S. 519 (1972) — Pro se pleadings held to less strict standards
+  - Ashcroft v. Iqbal, 556 U.S. 662 (2009) — Pleading standard
+  - Bell Atlantic Corp. v. Twombly, 550 U.S. 544 (2007) — Plausibility floor
+  - Safeco Ins. Co. v. Burr, 551 U.S. 47 (2007) — FCRA willfulness = reckless disregard
+  - McLaughlin v. Richland Shoe Co., 486 U.S. 128 (1988) — Willfulness standard
+  - TransUnion LLC v. Ramirez, 141 S. Ct. 2190 (2021) — CRA role/standing context
+  - Fed. R. Evid. 201(b)(2) — Judicial notice of court record
+
+trigger_defects:
+  - FATAL/AUTHORITY
+  - SERIOUS/AUTHORITY
+  - FATAL/CLAIM_DEFECT
+  - SERIOUS/CLAIM_DEFECT
+  - FATAL/JURISDICTION
+  - claim_defect
+  - judgment_on_pleadings
+  - motion_for_judgment_on_pleadings
+  - dismissal_with_prejudice
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/12c_standard_identical_to_summary_judgment
+    when: defect_categories.CLAIM_DEFECT > 0
+  - block: arguments/celotex_movant_initial_burden
+    when: posture == 'opposition'
+  - block: arguments/rule12d_extrinsic_conversion_lever
+    when: movant_relies_on_extrinsic_materials == true
+  - block: arguments/genuine_dispute_exists
+    when: defect_categories.CLAIM_DEFECT > 0
+  - block: arguments/fcra_willful_survives_pleadings
+    when: case_type == 'fraud_fcra'
+  - block: arguments/fcra_negligent_survives_pleadings
+    when: case_type == 'fraud_fcra'
+  - block: arguments/non_binding_authority
+    when: defect_categories.AUTHORITY > 0
+  - block: arguments/haines_v_kerner_standard
+    when: pro_se == true
+  - block: arguments/pending_default_judgments_overlooked
+    when: has_pending_default_judgments == true
+  - block: sections/prayer_for_relief_opposition
+  - block: sections/conclusion_opposition
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

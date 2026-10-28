@@ -1,0 +1,108 @@
+---
+id: frcp_54b_reopen_complete_defaults
+title: Motion to Compel 54(b) Certification / Reopen Case to Complete Default Judgment
+description: 'Vehicle for the reciprocal duty triggered when a court marks the case
+  CLOSED on a partial disposition (judgment as to fewer than all parties) while one
+  or more defendants sit in default with NO judgment entered. Corpus-locked
+  mechanics: (1) Fed. R. Civ. P. 54(b) — "Without such certification, any order
+  that adjudicates fewer than all claims or parties does not end the action as to
+  any of the claims or parties" (pa_legal_defs, FRCP 54(b) — Certification of
+  Partial Final Judgment; binding on EDPA, Third Circuit); (2) Fed. R. Civ. P.
+  55(a)/55(b) — clerk MUST enter default, clerk MUST enter judgment for a sum
+  certain, court MUST enter judgment otherwise (pa_legal_defs, FRCP 55 Default
+  Judgment); a default is a predicate, not a judgment. The court therefore owed
+  EITHER an express 54(b) determination (certification) OR completion of the
+  default judgment before closure. This motion compels one or the other, and —
+  because 55(a) default entry and 55(b)(1) clerk judgment on a sum-certain claim
+  (FCRA statutory damages) are MINISTERIAL — asks that they be processed without
+  tolling or disturbing the appeal clock under FRAP 4(a).'
+court: federal_district
+required_authorities:
+- citation: "Fed. R. Civ. P. 54(b)"
+  proposition: "A final judgment as to fewer than all claims or parties is
+    permissible only with an express determination of no just reason for delay;
+    without certification, the order does not end the action as to any claim or
+    party. [corpus: pa_legal_defs, FRCP 54(b) — Certification of Partial Final
+    Judgment — binding on EDPA (Third Circuit)]"
+- citation: "Fed. R. Civ. P. 55(a)"
+  proposition: "When a party against whom a judgment for affirmative relief is
+    sought has failed to plead or otherwise defend, and the failure is shown by
+    affidavit or otherwise, the clerk MUST enter the party's default.
+    [corpus: pa_legal_defs, FRCP 55(a)]"
+- citation: "Fed. R. Civ. P. 55(b)(1)"
+  proposition: "If the claim is for a sum certain or a sum that can be made
+    certain by computation, the clerk — on the plaintiff's request, with an
+    affidavit showing the amount due — MUST enter judgment for the amount.
+    [corpus: pa_legal_defs, FRCP 55(b)(1)]"
+- citation: "28 U.S.C. § 1291"
+  proposition: "The final-judgment rule: only a final judgment is appealable —
+    so a partial disposition must either be certified under 54(b) or the action
+    must be completed. [corpus: FRCP 54(b) cross-reference, Related Authorities]"
+- citation: "Curtiss-Wright Corp. v. General Electric Co., 446 U.S. 1 (1980)"
+  proposition: "54(b) is a procedural device the district court controls; an
+    express determination of no just reason for delay is required to direct
+    entry of final judgment on fewer than all claims. [corpus:
+    scotus_curtiss_wright_corp_v_general_electric_co_446us1]"
+trigger_defects:
+- case_closed_partial_disposition_no_54b
+- default_defendant_no_judgment_entered
+- partial_final_lacks_express_certification
+- closure_before_default_processed
+- APPEAL_DISMISSED_LACK_OF_JURISDICTION_NO_54B
+structure:
+- block: boilerplate/caption_federal
+  when: is_federal == true
+- block: sections/introduction
+- block: sections/procedural_history
+- block: sections/factual_statement_federal
+- block: arguments/no_just_reason_for_delay_express
+  content: >
+    The Court's order of entry GRANTED judgment on the pleadings as to fewer than
+    all parties and directed the Clerk to mark the case CLOSED, without an
+    express determination that there is no just reason for delay. Under Rule
+    54(b) [corpus: pa_legal_defs — binding on EDPA], without that express
+    certification the order "does not end the action as to any of the claims or
+    parties." The Court is asked to make the express determination NOW, which
+    makes the partial judgment immediately appealable under 28 U.S.C. § 1291
+    without reopening the merits.
+- block: arguments/default_judgment_is_mandatory
+  when: default_defendant_no_judgment_entered == true
+  content: >
+    In the alternative, the case was not complete: [defaulting defendant] was
+    served and in default (proof of service at Dkt ___), and under Rule 55(a)
+    the clerk MUST enter the default, and under Rule 55(b)(1) — the FCRA
+    statutory-damages claims being for sums certain — the clerk MUST enter
+    judgment on plaintiff's request with an affidavit of the amount due
+    [corpus: pa_legal_defs, FRCP 55(a), 55(b)(1)]. Both acts are MINISTERIAL:
+    no hearing, no discretion. The Court should reopen the case for the
+    ministerial completion of the default judgment, which also preserves the
+    plaintiff's default-judgment remedy against [defendant] that closure would
+    otherwise extinguish.
+- block: arguments/closure_extinguishes_unprocessed_rights
+  content: >
+    Closure on a partial disposition misapplies Rule 54: a disposition of fewer
+    than all claims/parties, uncertified, ends the action as to nothing; a
+    default not followed by judgment is a predicate only (see
+    default_judgment_frcp_55: "A default is not a judgment — it is a predicate").
+    Marking the case CLOSED before either the 54(b) certification or the 55(b)
+    judgment was entered deprived the plaintiff of the appeal of the partial
+    judgment and of the default judgment against [defendant].
+- block: arguments/appealability_immediate
+  content: >
+    A 54(b) certification entered on this motion confers immediate appealability
+    of the partial judgment under 28 U.S.C. § 1291 without disturbing the
+    appeal clock: FRAP 4(a) runs from entry of the CERTIFIED judgment, and the
+    54(b) determination itself can be entered now, on the record as it stands.
+- block: sections/prayer_for_relief
+  content: >
+    (1) In the alternative: (a) an express 54(b) determination of no just reason
+    for delay with the partial judgment certified as final; (b) alternatively,
+    reopening of the case for the ministerial entry of default and default
+    judgment against [defaulting defendant] under FRCP 55(a)/55(b)(1); (2) an
+    order that the case be held open as to [remaining claims/parties] in the
+    meantime; (3) costs.
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service
+- block: boilerplate/proposed_order
+resolution_path: obsidian_sync/templates/filing_types/frcp_54b_reopen_complete_defaults.yaml

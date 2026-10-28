@@ -1,0 +1,61 @@
+id: motion_for_resa_violation
+title: Motion for RESA Violation — Notice of Servicing Transfer Under 12 U.S.C. § 2605(b)
+description: |
+  Motion under RESA (12 U.S.C. §§ 2601-2625) for violation of the notice requirement for servicing transfer.
+
+Under 12 U.S.C. § 2605(b)(1), a transferor of servicing of a federally related mortgage loan shall provide written notice to the borrower not later than 30 days before the effective date of the transfer. The notice must include:
+- Name, address, and telephone number of the transferee
+- Name, address, and telephone number of the person to contact regarding servicing
+- Effective date of the transfer
+- Information about escrow accounts
+
+Under 12 U.S.C. § 2605(b)(2), the transferee must provide written notice to the borrower not later than 60 days after the effective date of the transfer, including:
+- Name and address of the transferee
+- Effective date of the transfer
+- Information about escrow accounts
+
+When the notice is not provided, the borrower may assert the violation as a defense to foreclosure and as evidence of fraud on the court — the servicer concealed the true identity and capacity of the party holding the note.
+
+This motion targets cases where:
+- GNMA REMIC trust files exist indicating the loan was pooled as collateral (evidencing a prior servicing transfer without notice)
+- 1099-C returns exist indicating cancellation of debt without proper notice
+- The servicer changed without proper § 2605(b) notice
+- The loan was securitized without proper disclosure of the servicing transfer
+
+court: any
+required_authorities:
+  - 12 U.S.C. § 2605(b)(1) — Notice by transferor of loan servicing at time of transfer
+  - 12 U.S.C. § 2605(b)(2) — Notice by transferee of loan servicing after transfer
+  - 12 U.S.C. § 2605(a) — Prohibition on transfer of servicing of federally related mortgage loan
+  - FRCP 60(d)(3) — Fraud on the court (when notice is concealed)
+  - FRCP 60(b)(3) — Fraud/misrepresentation (when notice is materially deficient)
+  - 26 U.S.C. § 6050P(a) — Cancellation of debt reporting (corroborating evidence of RESA violation)
+
+court_rules:
+  - FRCP 60(d)(3) — Fraud on the court; no time limitation
+court_rules:
+  - FRCP 60(b)(3) — Fraud/misrepresentation; one-year limit
+court_rules:
+  - FRCP 54(d)(2) — Attorney's fees
+court_rules:
+  - FRCP 65 — Injunction and restraining order
+court_rules:
+  - FRCP 65.1 — Special masters
+
+court_rules:
+  - FRCP 65.1 — Special masters
+
+court_rules:
+  - FRCP 65.1 — Special masters
+
+trigger_defects:
+  - REMIC_TRUST_EXISTS
+  - SERVICING_TRANSFER
+  - 1099C_CANCELLED_DEBT
+
+evidence_classes:
+  - gnma_remic
+  - servicing_transfer
+  - 1099C
+
+damages: Statutory damages under RESA, actual damages, attorney fees under 12 U.S.C. § 2605(d)

@@ -1,0 +1,45 @@
+id: motion_to_vacate
+title: Motion to Vacate Void Order
+description: |
+  Motion under FRCP 60(b)(4) (federal) or Pa.R.C.P. 237.3 (state) to
+  vacate an order that exceeded jurisdictional authority.
+court: any
+
+required_authorities:
+  - FRCP 60(b)(4)
+  - 28 U.S.C. § 1651
+  - Pa.R.C.P. 237.3
+  - 42 Pa.C.S. § 5505
+
+trigger_defects:
+  - FATAL/JURISDICTION
+  - FATAL/CROSS_CASE_AUTHORITY
+  - void_order
+  - cross_case
+  - dismissal
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/factual_statement_federal
+    when: posture != 'post-judgment'
+  - block: sections/factual_statement_enforcement
+    when: posture == 'post-judgment'
+  - block: sections/procedural_history
+  - block: sections/standard_of_review
+  - block: arguments/jurisdiction_attack
+    when: defect_categories.AUTHORITY > 0
+  - block: arguments/non_binding_authority
+    when: defect_categories.AUTHORITY > 0
+  - block: arguments/haines_v_kerner_standard
+    when: defect_categories.DISMISSAL > 0
+  - block: arguments/void_order_misuse
+    when: cross_case_count > 0
+  - block: arguments/equity_maxims_argument
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

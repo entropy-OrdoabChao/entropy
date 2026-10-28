@@ -1,0 +1,64 @@
+id: ucc_3311_tender_accord_satisfaction
+title: UCC 3-311 Tender of Payment / Accord and Satisfaction
+description: >
+  UCC 3-311 (Accord and Satisfaction by Use of Tendered Sum) — a debtor may tender payment
+  of a disputed amount as accord and satisfaction, compelling the payee to choose between
+  retaining the funds (waiving the defense) or returning them (preserving the full claim).
+  The corpus documents PA government tender forms that incorporate UCC 3-311(a)/(b)
+  compliance — "Bond-Tender Dissolution Bond" / "Release of Collateral Bond Revenue"
+  instruments requiring fields for Date, For, Account number, To the order of, Amount
+  tendered, Exactly.
+
+  KEY: the debtor's tender of payment constitutes conditional acceptance; the payee's
+  retention of funds exceeding the disputed amount operates as accord and satisfaction
+  per UCC 3-311(b). If the payee demands payment of the full undisputed balance as a
+  condition of retaining the tender, the debtor must comply (UCC 3-311(c)).
+
+court: state_pa_ccp
+required_authorities:
+  - UCC 3-311 (Accord and Satisfaction by Use of Tendered Sum)
+  - UCC 3-311(a) (Definition of accord and satisfaction via tendered instrument)
+  - UCC 3-311(b) (Effect of retention of funds exceeding disputed amount)
+  - UCC 3-311(c) (Requirement to tender full amount if payee demands it)
+  - 13 Pa.C.S. § 3104 (Pennsylvania UCC enacting legislation)
+  - Delaware v. Pennsylvania, 544 U.S. 302 (2005) (reference to UCC 3-311 in state
+    government tender documentation)
+trigger_defects:
+  - DISPUTE_RESOLUTION
+  - ACCORD_AND_SATISFACTION
+  - TENDER_DEFECT
+structure:
+  - block: boilerplate/caption_state_pa_ccp
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_tender
+  - block: sections/standard_of_review
+  - block: arguments/ucc_3311_accord_satisfaction_defense
+    when: tendered_amount_equals_disputed_amount
+  - block: arguments/retention_waives_defense
+    when: payee_retained_funds_exceeding_disputed
+  - block: arguments/payee_demanded_full_payment
+    when: payee_demanded_full_undisputed_balance
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order
+  - block: sections/tender_evidence
+when_clauses:
+  - Use when debtor tenders payment of disputed amount via check, money order, or
+    other negotiable instrument marked "for full satisfaction" or "under UCC 3-311"
+    and payee retains funds exceeding the disputed amount, constituting accord and
+    satisfaction under UCC 3-311(b).
+  - Use when the payee demands payment of the full undisputed balance as a condition
+    of retaining the tendered instrument, triggering the debtor's obligation under
+    UCC 3-311(c) to tender full amount or reclaim the conditional payment.
+  - Use when PA government entities reference UCC 3-311 in official tender forms
+    (Bond-Tender Dissolution Bond, Release of Collateral Bond Revenue) incorporating
+    fields for Date, For, Account number, To the order of, Amount tendered, Exactly,
+    Signature without recourse — demonstrating the government's own recognition of
+    UCC 3-311 compliance mechanisms.
+  - Use when the debtor has filed a UCC partial assignment or tender document
+    referencing Pennsylvania Consolidated Statute Title 13, 3-302 (version of
+    UCC 9-405) taken for value, UCC 3-303, UCC 1-201(25),(27),(35), Notice,
+    Lawful U.S. Funds in accordance with public policy, HJR-192 of 6/15/1933.
+resolution_path: "obsidian_sync/templates/filing_types/ucc_3311_tender_accord_satisfaction.yaml"

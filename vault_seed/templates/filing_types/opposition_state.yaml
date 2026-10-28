@@ -1,0 +1,49 @@
+id: opposition_state
+title: Plaintiff's Response in Opposition to Defendant's Preliminary Objections / Dispositive Motion (PA CCP)
+description: 'Philadelphia Court of Common Pleas brief in opposition to a defendant
+
+  demurrer / preliminary objections (Pa.R.C.P. 1028(a)) or motion for judgment on the
+
+  pleadings (Pa.R.C.P. 1034). Opposes on the merits: accepts the well-pleaded facts as
+
+  true, construes the pro se filing liberally, rebuts each ground, and grounds every
+
+  point in the binding-precedent hierarchy from the scorecard. A cross-praecipe / motion
+
+  to strike is filed SEPARATELY (also_file) when the filing itself carries defects.
+
+  '
+court: pa_ccp_philadelphia
+required_authorities:
+- Pa.R.C.P. 1028(a)
+- Pa.R.C.P. 1034
+trigger_defects:
+- SERIOUS/AUTHORITY
+- FATAL/AUTHORITY
+- SERIOUS/PROCEDURAL
+- FATAL/PROCEDURAL
+- dismissal
+- cross_case
+structure:
+- block: boilerplate/caption_federal
+  when: is_federal == true
+- block: boilerplate/caption_state_pa_ccp
+  when: is_federal == false
+- block: sections/introduction
+- block: sections/standard_of_review
+- block: sections/procedural_history
+- block: sections/statement_of_facts
+- block: arguments/failure_to_state_claim
+  when: defect_categories.DISMISSAL > 0
+- block: arguments/haines_v_kerner_standard
+- block: arguments/non_binding_authority
+  when: defect_categories.AUTHORITY > 0
+- block: arguments/procedural_defect
+  when: defect_categories.PROCEDURAL > 0
+- block: arguments/void_order_misuse
+  when: cross_case_count > 0
+- block: arguments/equity_maxims_argument
+- block: sections/prayer_for_relief_opposition
+- block: sections/conclusion_opposition
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

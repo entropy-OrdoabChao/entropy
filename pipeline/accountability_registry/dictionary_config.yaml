@@ -1,0 +1,208 @@
+# dictionary_config.yaml — sources for dictionary_resolver.py
+#
+# Each source declares:
+#   short_name:           slug identifier
+#   name:                 full display name
+#   obsidian_path_globs:  glob patterns the resolver scans under obsidian_sync/
+#                         for files containing this source's definitions
+#   chromadb_metadata:    dict of metadata filters to apply when querying ChromaDB
+#                         (multiple possible values per key — resolver tries each)
+#   citation_template:    Python format string used to render citations
+#   confidence:           default confidence when this source produces a hit
+#
+# After install, run:
+#   statutory_terms_reader.py discover-dictionaries
+# to detect which of these sources actually have content in your vault and DB.
+
+version: "0.1"
+
+sources:
+  - short_name: blacks_law
+    name: "Black's Law Dictionary"
+    obsidian_path_globs:
+      - "primary_sources/blacks_law*/**"
+      - "primary_sources/*blacks*/**"
+      - "dictionaries/blacks_law*/**"
+      - "dictionaries/*blacks*/**"
+      - "treatises/blacks*/**"
+      - "**/blacks_law_dictionary/**"
+      - "**/black_law/**"
+    chromadb_metadata:
+      source:
+        - "blacks_law_dictionary"
+        - "blacks_law"
+        - "blacks"
+      doc_type:
+        - "dictionary"
+      collection:
+        - "blacks_law_dictionary"
+    citation_template: "Black's Law Dictionary ({edition}) (entry: {term})"
+    default_edition: "11th ed. 2019"
+    confidence: high
+
+  - short_name: blackstone
+    name: "Blackstone's Commentaries on the Laws of England"
+    obsidian_path_globs:
+      - "primary_sources/blackstone*/**"
+      - "primary_sources/*blackstone*/**"
+      - "treatises/blackstone*/**"
+      - "**/blackstones_commentaries/**"
+      - "**/commentaries_on_the_laws_of_england/**"
+    chromadb_metadata:
+      source:
+        - "blackstone"
+        - "blackstones_commentaries"
+        - "commentaries_on_the_laws_of_england"
+      doc_type:
+        - "treatise"
+    citation_template: "{volume} W. Blackstone, Commentaries on the Laws of England *{page} (1765-1769)"
+    default_edition: "1765-1769"
+    confidence: high
+
+  - short_name: bouvier
+    name: "Bouvier's Law Dictionary"
+    obsidian_path_globs:
+      - "primary_sources/bouvier*/**"
+      - "dictionaries/bouvier*/**"
+      - "**/bouvier_law_dictionary/**"
+    chromadb_metadata:
+      source:
+        - "bouvier_law_dictionary"
+        - "bouvier"
+    citation_template: "Bouvier's Law Dictionary (entry: {term})"
+    default_edition: "1856 / 1914"
+    confidence: med
+
+  - short_name: ballantines
+    name: "Ballentine's Law Dictionary"
+    obsidian_path_globs:
+      - "primary_sources/ballentine*/**"
+      - "dictionaries/ballentine*/**"
+      - "**/ballentines_law_dictionary/**"
+    chromadb_metadata:
+      source:
+        - "ballentines_law_dictionary"
+        - "ballentine"
+    citation_template: "Ballentine's Law Dictionary (entry: {term})"
+    default_edition: "3rd ed. 1969"
+    confidence: med
+
+  - short_name: corpus_juris
+    name: "Corpus Juris Secundum (CJS)"
+    obsidian_path_globs:
+      - "primary_sources/corpus_juris*/**"
+      - "treatises/cjs*/**"
+      - "**/corpus_juris_secundum/**"
+    chromadb_metadata:
+      source:
+        - "corpus_juris_secundum"
+        - "cjs"
+    citation_template: "{volume} C.J.S. {topic} § {section}"
+    confidence: med
+
+  - short_name: amjur
+    name: "American Jurisprudence 2d (Am. Jur. 2d)"
+    obsidian_path_globs:
+      - "primary_sources/am_jur*/**"
+      - "treatises/amjur*/**"
+      - "**/american_jurisprudence/**"
+    chromadb_metadata:
+      source:
+        - "american_jurisprudence_2d"
+        - "amjur"
+    citation_template: "{volume} Am. Jur. 2d {topic} § {section}"
+    confidence: med
+
+  - short_name: restatement
+    name: "Restatement of the Law"
+    obsidian_path_globs:
+      - "primary_sources/restatement*/**"
+      - "treatises/restatement*/**"
+      - "**/restatement_*/**"
+    chromadb_metadata:
+      source:
+        - "restatement_of_the_law"
+        - "restatement"
+    citation_template: "Restatement ({series}) of {topic} § {section} ({year})"
+    confidence: high
+
+
+# Resolver search settings
+search:
+  # When the LLM grounding pack is built, how many dictionary entries to include
+  default_grounding_pack_limit: 3
+
+  # ChromaDB query parameters
+  chromadb_top_k: 5
+  chromadb_endpoint: "http://127.0.0.1:8100"
+  chromadb_collection: "legal_docs"
+
+  # Obsidian filesystem search
+  obsidian_root: "obsidian_sync"   # relative to the Entropy home
+  max_file_bytes_to_read: 100000   # cap on per-file read to avoid huge inclusions
+
+  # Minimum confidence to include in grounding pack
+  min_confidence: low
+
+
+# Fallback definitions — used only if BOTH obsidian + chromadb lookup return nothing
+# for a high-value common term. Intended to keep reasoner functional during initial
+# setup before full dictionary corpus is verified in DB.
+fallback_definitions:
+  natural_person: |
+    Black's Law Dictionary (11th ed. 2019): "Natural person. A human being, as
+    distinguished from an artificial person created by law. Contrast: artificial
+    person; juristic person; legal person."
+
+  artificial_person: |
+    Black's Law Dictionary (11th ed. 2019): "Artificial person. An entity, such as
+    a corporation, created by law and given certain legal rights and duties of a
+    human being. Sometimes called legal person or juristic person. Contrast:
+    natural person."
+
+  citizen: |
+    Black's Law Dictionary (11th ed. 2019): "Citizen. A person who, by either
+    birth or naturalization, is a member of a political community, owing
+    allegiance to the community and being entitled to enjoy all its civil rights
+    and protections."
+
+  jurisdiction: |
+    Black's Law Dictionary (11th ed. 2019): "Jurisdiction. 1. A government's
+    general power to exercise authority over all persons and things within its
+    territory. 2. A court's power to decide a case or issue a decree. 3. A
+    geographic area within which political or judicial authority may be
+    exercised."
+
+  due_process: |
+    Black's Law Dictionary (11th ed. 2019): "Due process. The conduct of legal
+    proceedings according to established rules and principles for the protection
+    and enforcement of private rights, including notice and the right to a fair
+    hearing before a tribunal with the power to decide the case."
+
+  standing: |
+    Black's Law Dictionary (11th ed. 2019): "Standing. A party's right to make a
+    legal claim or seek judicial enforcement of a duty or right. To have standing
+    in federal court, a plaintiff must show (1) injury in fact, (2) a causal
+    connection between the injury and the conduct complained of, and (3) that the
+    injury would likely be redressed by a favorable decision."
+
+  consideration: |
+    Black's Law Dictionary (11th ed. 2019): "Consideration. Something (such as an
+    act, a forbearance, or a return promise) bargained for and received by a
+    promisor from a promisee; that which motivates a person to do something."
+
+  void: |
+    Black's Law Dictionary (11th ed. 2019): "Void. Of no legal effect; null. The
+    distinction between void and voidable is often of great practical importance:
+    void acts cannot be ratified; voidable acts can be."
+
+  voidable: |
+    Black's Law Dictionary (11th ed. 2019): "Voidable. Valid until annulled;
+    capable of being made void at the option of one of the parties."
+
+  fraud_on_the_court: |
+    Black's Law Dictionary (11th ed. 2019): "Fraud on the court. In a judicial
+    proceeding, a lawyer's or party's misconduct so serious that it undermines
+    the judicial machinery's ability to perform impartially its task of
+    adjudging cases. Examples include bribery of a judge or juror, or improper
+    influence on the court by counsel."

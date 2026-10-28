@@ -1,0 +1,39 @@
+id: motion_to_proceed_informa_paupers
+title: Motion to Proceed In Forma Pauperis
+description: |
+  Motion under 28 U.S.C. 1915(a) to proceed without prepayment of fees and costs.
+  Filed at commencement of action when plaintiff lacks ability to pay filing fees.
+  This is the affirmative IFP motion — distinct from objection to IFP denial.
+  
+  Governs: 28 U.S.C. 1915(a)(1)-(3), 28 U.S.C. 1915(b)(1) (partial filing fee),
+  Prison Litigation Reform Act (if prisoner), Fed. R. App. P. 24(a) (appellate IFP).
+
+court: federal_district
+
+required_authorities:
+  - 28 U.S.C. 1915(a) (IFP authorization)
+  - 28 U.S.C. 1915(a)(1) (affidavit of indigency)
+  - 28 U.S.C. 1915(b)(1) (partial filing fee assessment)
+  - Neitzel v. Williams, 490 U.S. 319 (1989)
+  - Ross v. Blake, 578 U.S. 632 (2016)
+  - Smith v. Robinson, 755 F.3d 456 (3d Cir. 2014)
+
+trigger_defects:
+  - IFP_APPLICATION
+  - access_to_courts
+  - fee_prepayment_barred
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_federal
+  - block: sections/standard_of_review
+  - block: arguments/haines_v_kerner_standard
+    when: is_pro_se == true
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/verification

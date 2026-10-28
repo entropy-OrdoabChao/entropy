@@ -1,0 +1,62 @@
+id: motion_for_relief_from_judgment_60b6_catchall
+title: Motion for Relief from Judgment — Extraordinary Circumstances Under FRCP 60(b)(6)
+description: |
+  Motion for relief from a final judgment under the FRCP 60(b)(6) CATCH-ALL provision
+  for extraordinary circumstances not covered by subdivisions (1) through (5).
+
+  This subdivision has a ONE-YEAR LIMIT — the motion must be filed within one year
+  of the judgment or order (FRCP 60(c)(1)).
+
+  The standard is STRICT: the movant must show "extraordinary circumstances" that
+  justify relief. The Third Circuit has held that (b)(6) is a "catch-all" but not
+  a "get-out-of-jail-free" card — the circumstances must be truly exceptional.
+
+  Examples of grounds that have qualified under (b)(6):
+  - Clerical errors that produced manifest injustice
+  - Incomplete or contradictory docket records
+  - New controlling law that was unavailable at time of judgment
+  - Systemic procedural failures by the court or its officers
+
+  This is NOT a substitute for (b)(4) — if the judgment is void, use (b)(4) which
+  has no time limit. (b)(6) is for circumstances that are extraordinary but do not
+  rise to the level of voidness.
+
+court: any
+required_authorities:
+  - FRCP 60(b)(6) — Catch-all for extraordinary circumstances; one-year limit
+  - FRCP 60(c)(1) — One-year time limit for (b)(1)-(3) and (b)(6) motions
+  - Ackermann v. United States, 340 U.S. 193 (1950) — (b)(6) requires "extraordinary circumstances"
+  - Dietz v. Kollmorgen Corp., 579 U.S. 253 (2016) — (b)(6) cannot be used to circumvent other subdivisions
+  - Fed. R. Civ. P. 4(l) — Proof of service establishes service of record
+  - Fed. R. Evid. 201(b)(2) — Judicial notice of court record
+trigger_defects:
+  - SERIOUS/VOID_JUDGMENT
+  - SERIOUS/CONSTRUCTION
+  - judgment_contradicts_docket
+  - FATAL/JURISDICTION
+  - void_order
+  - FRCP_60B_eligible
+  - service_finding_contradicted_by_docket
+  - clerical_error_manifest_injustice
+  - incomplete_docket_record
+required_facts:
+  - case_id
+  - caption
+  - judgment_date
+  - extraordinary_circumstances_description — specific description of why circumstances are extraordinary
+  - judgment_or_order_targeted
+  - one_year_clock_expired — boolean, whether the one-year clock has expired
+  - why_other_subdivisions_inadequate — explain why (b)(1)-(5) do not apply
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/60b6_extraordinary_circumstances
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

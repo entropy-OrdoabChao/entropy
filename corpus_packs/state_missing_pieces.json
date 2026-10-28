@@ -1,0 +1,411 @@
+{
+ "AK": {
+  "name": "Alaska",
+  "missing": [
+   {
+    "slot": "financial_regulator",
+    "label": "Financial / insurance regulators",
+    "why": "blocked",
+    "source": "",
+    "note": "AG Consumer Protection Unit fetched 2026-09-20, official, resolves; commerce.alaska.gov DBS/INS pages returned HTTP 403 to verifier host (official DCCED domain, not content-confirmed)"
+   }
+  ]
+ },
+ "AL": {
+  "name": "Alabama",
+  "missing": [
+   {
+    "slot": "efiling",
+    "label": "E-filing system",
+    "why": "blocked",
+    "source": "https://efile.alacourt.gov/",
+    "note": "failed (Error: Page.goto: net::ERR_CONNECTION_TIMED_OUT at https://efile.alacourt.gov/\nCall log)"
+   }
+  ]
+ },
+ "AZ": {
+  "name": "Arizona",
+  "missing": [
+   {
+    "slot": "admin_code",
+    "label": "Regulations (administrative code)",
+    "why": "captcha",
+    "source": "https://azsos.gov/rules/arizona-administrative-code",
+    "note": "human-needed (challenge/captcha persists)"
+   },
+   {
+    "slot": "financial_regulator",
+    "label": "Financial / insurance regulators",
+    "why": "blocked",
+    "source": "",
+    "note": "AG consumer page fetched 2026-09-20, official, resolves; difi.az.gov returned HTTP 403 to verifier host (official state domain, not content-confirmed)"
+   }
+  ]
+ },
+ "CA": {
+  "name": "California",
+  "missing": [
+   {
+    "slot": "financial_regulator",
+    "label": "Financial / insurance regulators",
+    "why": "blocked",
+    "source": "",
+    "note": "DFPI and AG pages fetched 2026-09-20, official, resolve; insurance.ca.gov returned HTTP 503 to verifier (official CDI domain, not content-confirmed)"
+   }
+  ]
+ },
+ "CO": {
+  "name": "Colorado",
+  "missing": [
+   {
+    "slot": "financial_regulator",
+    "label": "Financial / insurance regulators",
+    "why": "blocked",
+    "source": "",
+    "note": "all three HTTP 200 via curl 2026-09-20 (official coag.gov / colorado.gov domains); WebFetch got blank/403 \u2014 content not confirmed"
+   }
+  ]
+ },
+ "CT": {
+  "name": "Connecticut",
+  "missing": [
+   {
+    "slot": "efiling",
+    "label": "E-filing system",
+    "why": "captcha",
+    "source": "https://info.jud.ct.gov/external/super/E-Services/",
+    "note": "human-needed (challenge/captcha persists)"
+   }
+  ]
+ },
+ "DC": {
+  "name": "District of Columbia",
+  "missing": [
+   {
+    "slot": "reporters",
+    "label": "Court opinions",
+    "why": "blocked",
+    "source": "",
+    "note": "HTTP 200 via curl 2026-09-20 (official domain); WebFetch 403"
+   }
+  ]
+ },
+ "FL": {
+  "name": "Florida",
+  "missing": [
+   {
+    "slot": "financial_regulator",
+    "label": "Financial / insurance regulators",
+    "why": "blocked",
+    "source": "",
+    "note": "OFR, OIR (redirect from floir.com) and DFS fetched 2026-09-20, official, resolve; AG page HTTP 200 via curl, 403 to WebFetch"
+   }
+  ]
+ },
+ "GA": {
+  "name": "Georgia",
+  "missing": [
+   {
+    "slot": "constitution",
+    "label": "State constitution",
+    "why": "js",
+    "source": "https://sos.ga.gov/sites/default/files/forms/Georgia%20Constitution.pdf",
+    "note": "uncertain (page nearly empty)"
+   },
+   {
+    "slot": "statutes",
+    "label": "Statutes (the state code)",
+    "why": "js",
+    "source": "https://www.legis.ga.gov/",
+    "note": "uncertain (no keywords)"
+   }
+  ]
+ },
+ "HI": {
+  "name": "Hawaii",
+  "missing": [
+   {
+    "slot": "statutes",
+    "label": "Statutes (the state code)",
+    "why": "blocked",
+    "source": "https://www.capitol.hawaii.gov/hrscurrent/",
+    "note": "uncertain (no keywords)"
+   },
+   {
+    "slot": "consumer_statutes",
+    "label": "Consumer protection statutes",
+    "why": "blocked",
+    "source": "https://www.capitol.hawaii.gov/hrscurrent/",
+    "note": "uncertain (no keywords)"
+   }
+  ]
+ },
+ "IN": {
+  "name": "Indiana",
+  "missing": [
+   {
+    "slot": "admin_code",
+    "label": "Regulations (administrative code)",
+    "why": "blocked",
+    "source": "https://iac.iga.in.gov/iac/",
+    "note": "failed (Error: Page.goto: net::ERR_CONNECTION_RESET at https://iac.iga.in.gov/iac/\nCall log:\n  )"
+   },
+   {
+    "slot": "register",
+    "label": "State register / bulletin",
+    "why": "blocked",
+    "source": "https://iac.iga.in.gov/iac/irtoc.htm",
+    "note": "failed (Error: Page.goto: net::ERR_CONNECTION_RESET at https://iac.iga.in.gov/iac/irtoc.htm\nCal)"
+   }
+  ]
+ },
+ "KS": {
+  "name": "Kansas",
+  "missing": [
+   {
+    "slot": "business_registry",
+    "label": "Business registry (registered agent)",
+    "why": "captcha",
+    "source": "https://www.sos.ks.gov/eforms/BusinessEntity/Search.aspx",
+    "note": "human-needed (challenge/captcha persists)"
+   }
+  ]
+ },
+ "LA": {
+  "name": "Louisiana",
+  "missing": [
+   {
+    "slot": "appellate_rules",
+    "label": "Rules of appellate procedure",
+    "why": "js",
+    "source": "https://www.lasc.org/Supreme_Court_Rules",
+    "note": "failed (HTTP 500)"
+   },
+   {
+    "slot": "judicial_conduct",
+    "label": "Complaints about judges",
+    "why": "blocked",
+    "source": "https://www.lasc.org/JudiciaryCommission ; https://judiciarycommissionla.org/Complaints",
+    "note": "failed (HTTP 500)"
+   },
+   {
+    "slot": "reporters",
+    "label": "Court opinions",
+    "why": "blocked",
+    "source": "https://www.lasc.org/Opinions",
+    "note": "failed (HTTP 500)"
+   }
+  ]
+ },
+ "MA": {
+  "name": "Massachusetts",
+  "missing": [
+   {
+    "slot": "admin_code",
+    "label": "Regulations (administrative code)",
+    "why": "js",
+    "source": "https://www.sec.state.ma.us/divisions/regulations/regulations.htm",
+    "note": "uncertain (page nearly empty)"
+   },
+   {
+    "slot": "civil_rules",
+    "label": "Rules of civil procedure",
+    "why": "moved",
+    "source": "https://www.mass.gov/rules-of-civil-procedure",
+    "note": "failed (404 page: title says not found)"
+   },
+   {
+    "slot": "appellate_rules",
+    "label": "Rules of appellate procedure",
+    "why": "moved",
+    "source": "https://www.mass.gov/massachusetts-rules-of-appellate-procedure",
+    "note": "failed (404 page: title says not found)"
+   }
+  ]
+ },
+ "MI": {
+  "name": "Michigan",
+  "missing": [
+   {
+    "slot": "statutes",
+    "label": "Statutes (the state code)",
+    "why": "blocked",
+    "source": "https://www.legislature.mi.gov/Laws/MCL",
+    "note": "failed (HTTP 400)"
+   },
+   {
+    "slot": "register",
+    "label": "State register / bulletin",
+    "why": "js",
+    "source": "https://ars.apps.lara.state.mi.us/Register/Index",
+    "note": "uncertain (page nearly empty)"
+   },
+   {
+    "slot": "consumer_statutes",
+    "label": "Consumer protection statutes",
+    "why": "blocked",
+    "source": "https://www.legislature.mi.gov/Laws/MCL",
+    "note": "failed (HTTP 400)"
+   },
+   {
+    "slot": "attorney_discipline",
+    "label": "Complaints about lawyers",
+    "why": "blocked",
+    "source": "https://www.agcmi.com/ ; https://www.adbmich.org/",
+    "note": "failed (Error: Page.goto: net::ERR_CONNECTION_RESET at https://www.agcmi.com/\nCall log:\n  - nav)"
+   },
+   {
+    "slot": "filing_fees_ifp",
+    "label": "Filing fees and fee waiver",
+    "why": "js",
+    "source": "https://www.courts.michigan.gov/administration/scao/scao-forms/",
+    "note": "failed (Error: Page.goto: Navigation to \"https://www.courts.michigan.gov/administration/scao/sc)"
+   },
+   {
+    "slot": "business_registry",
+    "label": "Business registry (registered agent)",
+    "why": "blocked",
+    "source": "https://cofs.lara.state.mi.us/CorpWeb/CorpSearch/CorpSearch.aspx",
+    "note": "failed (Error: Page.goto: net::ERR_SSL_VERSION_OR_CIPHER_MISMATCH at https://cofs.lara.state.mi)"
+   }
+  ]
+ },
+ "MO": {
+  "name": "Missouri",
+  "missing": [
+   {
+    "slot": "business_registry",
+    "label": "Business registry (registered agent)",
+    "why": "captcha",
+    "source": "https://bsd.sos.mo.gov/BusinessEntity/BESearch.aspx",
+    "note": "human-needed (challenge/captcha persists)"
+   }
+  ]
+ },
+ "MS": {
+  "name": "Mississippi",
+  "missing": [
+   {
+    "slot": "filing_fees_ifp",
+    "label": "Filing fees and fee waiver",
+    "why": "container",
+    "source": "https://courts.ms.gov/Legal/Pauper's%20Affidavit.pdf",
+    "note": "uncertain (page nearly empty)"
+   }
+  ]
+ },
+ "MT": {
+  "name": "Montana",
+  "missing": [
+   {
+    "slot": "business_registry",
+    "label": "Business registry (registered agent)",
+    "why": "captcha",
+    "source": "https://biz.sosmt.gov/search/business",
+    "note": "human-needed (challenge/captcha persists)"
+   }
+  ]
+ },
+ "NM": {
+  "name": "New Mexico",
+  "missing": [
+   {
+    "slot": "statutes",
+    "label": "Statutes (the state code)",
+    "why": "js",
+    "source": "https://nmonesource.com/nmos/en/nav.do",
+    "note": "uncertain (page nearly empty)"
+   },
+   {
+    "slot": "appellate_rules",
+    "label": "Rules of appellate procedure",
+    "why": "js",
+    "source": "https://nmonesource.com/nmos/en/nav.do",
+    "note": "uncertain (page nearly empty)"
+   },
+   {
+    "slot": "consumer_statutes",
+    "label": "Consumer protection statutes",
+    "why": "js",
+    "source": "https://nmonesource.com/nmos/en/nav.do",
+    "note": "uncertain (page nearly empty)"
+   }
+  ]
+ },
+ "NY": {
+  "name": "New York",
+  "missing": [
+   {
+    "slot": "admin_code",
+    "label": "Regulations (administrative code)",
+    "why": "container",
+    "source": "https://dos.ny.gov/",
+    "note": "human-needed (challenge/captcha persists)"
+   },
+   {
+    "slot": "business_registry",
+    "label": "Business registry (registered agent)",
+    "why": "js",
+    "source": "https://apps.dos.ny.gov/publicInquiry/",
+    "note": "uncertain (page nearly empty)"
+   }
+  ]
+ },
+ "OK": {
+  "name": "Oklahoma",
+  "missing": [
+   {
+    "slot": "admin_code",
+    "label": "Regulations (administrative code)",
+    "why": "blocked",
+    "source": "https://www.sos.ok.gov/oar/Online/viewCode.aspx",
+    "note": "failed (HTTP 401)"
+   },
+   {
+    "slot": "register",
+    "label": "State register / bulletin",
+    "why": "blocked",
+    "source": "https://www.sos.ok.gov/oar/online/viewRegister.aspx",
+    "note": "failed (HTTP 401)"
+   }
+  ]
+ },
+ "TN": {
+  "name": "Tennessee",
+  "missing": [
+   {
+    "slot": "statutes",
+    "label": "Statutes (the state code)",
+    "why": "container",
+    "source": "https://www.capitol.tn.gov/legislation/",
+    "note": "uncertain (no keywords)"
+   },
+   {
+    "slot": "civil_rules",
+    "label": "Rules of civil procedure",
+    "why": "blocked",
+    "source": "https://www.tncourts.gov/rules/rules-civil-procedure",
+    "note": "failed (Error: Page.title: Execution context was destroyed, most likely because of a navigation)"
+   },
+   {
+    "slot": "filing_fees_ifp",
+    "label": "Filing fees and fee waiver",
+    "why": "container",
+    "source": "",
+    "note": "NOT FETCHED / uncertain: both form and fee pages are on tncourts.gov (validation wall); statutes cited from the Code (LexisNexis public access)"
+   }
+  ]
+ },
+ "TX": {
+  "name": "Texas",
+  "missing": [
+   {
+    "slot": "financial_regulator",
+    "label": "Financial / insurance regulators",
+    "why": "js",
+    "source": "",
+    "note": "OCCC fetched 2026-09-20, official, resolves (ALECS licensee search linked); Dept. of Banking fetched, official, resolves; TDI fetched, official, resolves (company/agent lookup); AG: NOT FETCHED / unce"
+   }
+  ]
+ }
+}

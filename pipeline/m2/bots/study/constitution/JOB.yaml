@@ -1,0 +1,19 @@
+name: constitution
+group: study
+unit: claim            # claim | term | cite | count | document | case | draft
+axis: "Axis 0 — CONSTITUTION: supremacy, due process, PA Art. I §§1/9/11, Art. V; the SCOTUS line binding a state court."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - us_const
+  - pa_const
+  - usreports
+  - cap_us_
+  - amjur_16
+  - doctrine
+queries:
+  - "due process {claim}"
+  - "open courts remedy by due course of law"
+  - "supremacy clause state court bound"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

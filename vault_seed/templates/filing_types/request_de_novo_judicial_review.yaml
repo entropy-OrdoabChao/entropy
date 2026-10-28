@@ -1,0 +1,49 @@
+id: request_de_novo_judicial_review
+title: Request for De Novo Judicial Review
+description: |
+  Request for de novo judicial review of an administrative or magistrate determination
+  that deprived the plaintiff of access to the courts. Grounded in 28 U.S.C. 1915
+  and Fed. R. Civ. P. 72(a). Used when a court administrator or magistrate judge
+  denies IFP status without judicial oversight, or when a court enters a summary
+  order denying relief without addressing controlling authority.
+  
+  This is NOT a motion for reconsideration. It is a request for the court to exercise
+  its de novo review authority over an administrative determination that should have
+  been reviewed by a judicial officer from the outset.
+
+court: federal_district
+
+required_authorities:
+  - 28 U.S.C. 1915(a) (IFP authorization)
+  - 28 U.S.C. 1915(e)(2) (frivolity screening standard)
+  - Fed. R. Civ. P. 72(a) (objection to magistrate non-dispositive order)
+  - Fed. R. Civ. P. 72(b) (objection to magistrate dispositive order)
+  - 28 U.S.C. 1915 (access to courts guarantee)
+  - Haines v. Kerner, 404 U.S. 519 (1972) (pro se liberal construction)
+  - Erickson v. Pardus, 551 U.S. 89 (2007) (pro se pleading standard)
+  - Neitzel v. Williams, 490 U.S. 319 (1989) (striking down IFP standards)
+  - Ross v. Blake, 578 U.S. 632 (2016) (PLRA exhaustion / IFP)
+
+trigger_defects:
+  - IFP_ADMINISTRATIVE_DENIAL
+  - access_to_courts
+  - administrative_overreach
+  - failure_to_observe_procedure
+  - FATAL/ACCESS_TO_COURTS
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_federal
+  - block: sections/standard_of_review
+  - block: arguments/haines_v_kerner_standard
+    when: is_pro_se == true
+  - block: arguments/jurisdiction_attack
+    when: defect_categories.ACCESS > 0
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/verification

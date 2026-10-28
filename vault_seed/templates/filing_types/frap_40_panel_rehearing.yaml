@@ -1,0 +1,20 @@
+id: frap_40_panel_rehearing
+title: Petition for Panel Rehearing
+description: Petition under Fed. R. App. P. 40 for rehearing by the panel,
+  identifying points of law or fact the Court overlooked or misapprehended.
+court: federal_appellate
+required_authorities:
+- Fed. R. App. P. 40
+- 3d Cir. L.A.R. 40.1
+trigger_defects:
+- dismissal
+- FATAL/PROCEDURAL
+- FATAL/JURISDICTION
+structure:
+- block: boilerplate/caption_appellate_3rd_cir
+- block: sections/introduction
+- block: sections/factual_statement_federal
+- block: arguments/panel_rehearing_grounds
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

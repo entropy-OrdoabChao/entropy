@@ -1,0 +1,18 @@
+name: construction
+group: analysis
+unit: term            # claim | term | cite | count | document | case | draft
+axis: "Axis 1d — CONSTRUCTION: which reading controls when definitions differ (Sutherland, 1 Pa.C.S. §1921–1928, canons)."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - sutherland
+  - pa_cs_1_
+  - canons
+  - amjur_73
+  - usreports
+queries:
+  - "plain meaning rule {claim}"
+  - "statutory construction canon {claim}"
+  - "1921 legislative intent"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

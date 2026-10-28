@@ -1,0 +1,54 @@
+id: motion_for_attorneys_fees
+title: Motion for Attorney's Fees Under FRCP 54(d)(2)
+description: |
+  Motion for attorney's fees and costs under Fed. R. Civ. P. 54(d)(2),
+  filed separately from the dispositive motion or the final judgment order,
+  within the deadline set by the court or 14 days after the final judgment.
+
+  In the FCRA context, attorney's fees are available under 15 U.S.C. § 1681n(a)
+  for willful violations. The plaintiff must establish: (1) the defendant's
+  willful noncompliance, (2) the reasonableness of the fees sought, and
+  (3) that the fees are appropriate under the statutory framework.
+
+  Note: In the absence of a prevailing party, FRCP 54(d)(2) does not
+  provide for fee-shifting absent a fee-shifting statute or contract provision.
+
+court: any
+required_authorities:
+  - "Fed. R. Civ. P. 54(d)(2) — Attorney's fees; costs; sanctions"
+  - "15 U.S.C. § 1681n(a) — Attorney's fees for willful FCRA violations"
+  - "15 U.S.C. § 1681e(b) — Reasonable procedures requirement"
+  - "15 U.S.C. § 1681s-2 — Liability for furnishing inaccurate information"
+  - "15 U.S.C. § 1681e — Requirements for consumers"
+  - "28 U.S.C. 1746 — Unsworn declarations under penalty of perjury"
+  - "15 U.S.C. § 1681a — Purpose and policy of FCRA"
+  - "15 U.S.C. § 1681 — FCRA overview"
+
+trigger_defects:
+  - final_judgment_entered
+  - dismissal_with_prejudice
+  - FRCP_60B_eligible
+  - willful_violation
+
+required_facts:
+  - case_id
+  - caption
+  - final_judgment_date
+  - fees_sought_amount
+  - hours_worked
+  - hourly_rate
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/statutory_basis_for_fees
+  - block: sections/fees_breakdown
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

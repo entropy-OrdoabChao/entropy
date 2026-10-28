@@ -1,0 +1,54 @@
+id: motion_for_unjust_enrichment
+title: Motion for Unjust Enrichment — Servicer Retains Proceeds of Collateralized Loan Without Proper Notice
+description: |
+  Motion for unjust enrichment against a servicer that retains proceeds from a loan that was pooled and sold as collateral without proper notice.
+
+When a loan is pooled into a GNMA REMIC trust without proper notice to the borrower under RESA, the servicer has been unjustly enriched by retaining proceeds that belong to the beneficial owners of the trust. The elements are:
+1. Defendant received a benefit
+2. Defendant's retention of the benefit is unjust
+
+The benefit is the proceeds of the loan that was pooled without notice. The injustice is that the servicer retained the proceeds while the beneficial owners of the trust were not compensated.
+
+This motion targets cases where:
+- GNMA REMIC trust files exist indicating the loan was pooled as collateral
+- 1099-C returns exist indicating cancellation of debt
+- The servicer retained proceeds from the loan after it was pooled
+- The borrower was never provided with notice of the pooling
+
+court: any
+required_authorities:
+  - Unjust enrichment — common law claim for restitution
+  - 12 U.S.C. § 2605(b)(1) — Notice by transferor of loan servicing
+  - 12 U.S.C. § 2605(a) — Prohibition on transfer of servicing
+  - UCC § 1-304 — Obligation of good faith
+  - UCC § 3-418 — Payment or dishonor
+  - FRCP 65 — Injunction and restraining order (for equitable relief)
+
+court_rules:
+  - FRCP 60(d)(3) — Fraud on the court; no time limitation
+court_rules:
+  - FRCP 60(b)(3) — Fraud/misrepresentation; one-year limit
+court_rules:
+  - FRCP 54(d)(2) — Attorney's fees
+court_rules:
+  - FRCP 65 — Injunction and restraining order
+court_rules:
+  - FRCP 65.1 — Special masters
+
+court_rules:
+  - FRCP 65.1 — Special masters
+
+court_rules:
+  - FRCP 65.1 — Special masters
+
+trigger_defects:
+  - REMIC_TRUST_EXISTS
+  - 1099C_CANCELLED_DEBT
+  - SERVICING_TRANSFER
+
+evidence_classes:
+  - gnma_remic
+  - 1099C
+  - servicing_transfer
+
+damages: Restitution of proceeds, disgorgement of gains, declaratory judgment

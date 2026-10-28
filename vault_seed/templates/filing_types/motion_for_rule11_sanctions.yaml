@@ -1,0 +1,36 @@
+id: motion_for_rule11_sanctions
+title: Motion for Rule 11 Sanctions
+description:
+  Motion for sanctions under FRCP 11(b) and FRCP 11(c) for defective legal
+  contentions — non-binding authority, false representation, improper purpose.
+court: any
+required_authorities:
+  - FRCP 11(b) — Representations to the court
+  - FRCP 11(c) — Sanctions (including safe harbor)
+  - FRCP 11(d) — Certifying a motion under FRCP 11
+  - FRCP 11(e) — Inherent power
+  - Pa.R.C.P. 1023.4 — Sanctions for violation of Rule 1023.1
+  - 28 U.S.C. § 1927 — Counsel liability for excessive costs
+trigger_defects:
+  - FATAL/CROSS_CASE_AUTHORITY
+  - FATAL/CANDOR
+  - SERIOUS/AUTHORITY
+  - FATAL/CONSTRUCTION
+  - SERIOUS/CONSTRUCTION
+required_facts:
+  - case_id
+  - caption
+  - defect_total
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/fr11_sanctions
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

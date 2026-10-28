@@ -1,0 +1,39 @@
+id: frcp_54b_certification
+title: Certification of Partial Final Judgment — Fed. R. Civ. P. 54(b)
+
+description: >
+  Filing type for Federal Rule of Civil Procedure 54(b) certification. When an action
+  presents more than one claim for relief or multiple parties are involved, the court
+  may direct entry of a final judgment as to one or more, but fewer than all, claims
+  or parties only if the court expressly determines that there is no just reason for
+  delay. Without such certification, the order is NOT immediately appealable — it must
+  await final judgment on all claims. This vehicle BRIDGES a partial disposition to
+  appealability and is essential in multi-defendant or multi-claim cases where one
+  defendant or claim resolves but others remain.
+
+required_authorities:
+  - Fed. R. Civ. P. 54(b)
+  - Am. International Group, Inc. v. Congressional Oversight Board, 569 F.3d 127 (2d Cir. 2009)
+  - Carpenter v. DeBuono, 255 F.3d 207 (3d Cir. 2001)
+  - Trusant Corp. v. Continental Cas. Co., 780 F.2d 997 (11th Cir. 1985)
+
+trigger_defects:
+  - PARTIAL_DISPOSITION_NO_CERTIFICATION
+  - MULTI_DEFENDANT_ONE_DISMISSED_NO_54B
+  - COURT_ADJUDICATES_ONE_CLAIM_OTHERS_PENDING_NO_APPEAL
+  - DISMISSED_WITH_PREJUDICE_NO_EXPRESS_DETERMINATION
+  - APPEAL_DISMISSED_LACK_OF_JURISDICTION_NO_54B
+
+structure:
+  - block: boilerplate/caption_federal
+  - block: sections/introduction
+  - block: arguments/multiple_claims_or_parties_in_action
+  - block: arguments/separate_and_distinct_from_remaining_claims
+  - block: arguments/no_just_reason_for_delay_express
+  - block: arguments/appealability_immediate
+  - block: arguments/motion_pro_se_explained
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+
+resolution_path: obsidian_sync/templates/filing_types/frcp_54b_certification.yaml

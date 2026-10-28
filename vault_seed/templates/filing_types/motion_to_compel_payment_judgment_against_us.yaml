@@ -1,0 +1,127 @@
+---
+id: motion_to_compel_payment_judgment_against_us
+title: Motion to Compel Payment / Settlement of a Final Judgment Against the United States
+description: 'Vehicle for the reciprocal duty triggered when a FINAL judgment is
+  rendered AGAINST the United States (or an agency/officer upon an obligation of
+  the United States) but the judgment is not paid. Corpus-locked mechanics:
+  (1) 28 U.S.C. 2414 — "payment of final judgments rendered by a district court
+  or the Court of International Trade against the United States S{{JUDGE}} be made on
+  settlements by the Secretary of the Treasury"; for a State or foreign court
+  judgment the payment is made by the Secretary of the Treasury "after
+  certification by the Attorney General that it is in the interest of the United
+  States to pay the same" (corpus: verbatim 28 U.S.C. 2414 text, chunk_text);
+  (2) 28 U.S.C. 2461 — interest on a judgment against the United States is paid
+  at the coupon-issue-yield-equivalent rate (corpus: 28 U.S.C. 2461 referenced
+  in 28 CFR 724.18; "interest on a judgment against the United States is paid at
+  a rate equal to the coupon issue yield equivalent of the average accepted
+  auction price for the last auction of fifty-two week United States Treasury
+  bills"); (3) 31 U.S.C. 1304 — the Judgment Fund provides the appropriation
+  authority for judgments, awards, and compromise settlements (corpus: "31 U.S.C.
+  1304, provides authority for judgments, awards and compromise settlements").
+  The court therefore OWES an order directing the Clerk to transmit the certified
+  final judgment for settlement and payment, with interest running from the date
+  of entry. This motion compels that transmission and fixes the interest clock.
+  It is the ENFORCEMENT-side companion to the redemption thread: the judgment is
+  a debt of record payable from the Treasury, and silence/non-payment is the
+  defect this filing exposes.'
+court: federal_district
+required_authorities:
+- citation: "28 U.S.C. 2414"
+  proposition: "Payment of final judgments against the United States S{{JUDGE}} be made
+    on settlements by the Secretary of the Treasury; for a State or foreign court
+    judgment, after certification by the Attorney General that it is in the
+    interest of the United States to pay the same. [corpus: verbatim 28 U.S.C.
+    2414 text, chunk_text]"
+- citation: "28 U.S.C. 2461"
+  proposition: "Interest on a judgment against the United States is paid at the
+    coupon-issue-yield-equivalent rate (average accepted auction price of the
+    last auction of fifty-two-week U.S. Treasury bills). [corpus: 28 U.S.C. 2461
+    referenced in 28 CFR 724.18; interest-rate text in chunk_text]"
+- citation: "31 U.S.C. 1304"
+  proposition: "The Judgment Fund provides the appropriation authority for
+    judgments, awards, and compromise settlements against the United States.
+    [corpus: '31 U.S.C. 1304, provides authority for judgments, awards and
+    compromise settlements', chunk_text]"
+- citation: "28 U.S.C. 1291"
+  proposition: "Final-judgment rule: the judgment must be final and appealable
+    before it is settled and paid; a non-final or uncertified partial judgment is
+    not yet payable. [corpus: FRCP 54(b) cross-reference, Related Authorities]"
+trigger_defects:
+- final_judgment_against_united_states_unpaid
+- judgment_rendered_but_not_transmitted_for_settlement
+- interest_not_running_from_entry
+- ag_certification_required_not_obtained
+- FATAL/OPERATIVE_TEXT
+- SERIOUS/OPERATIVE_TEXT
+- FATAL/NO_WORD_ADDED_OR_SUBTRACTED
+- SERIOUS/NO_WORD_ADDED_OR_SUBTRACTED
+structure:
+- block: boilerplate/caption_federal
+  when: is_federal == true
+- block: sections/introduction
+- block: sections/procedural_history
+- block: sections/factual_statement_federal
+- block: arguments/payment_is_mandatory_under_2414
+  content: >
+    The Court entered a FINAL judgment against the United States [agency/officer]
+    on [date] (Dkt ___, $___). Under 28 U.S.C. 2414 [corpus: verbatim text],
+    "payment of final judgments rendered by a district court ... against the
+    United States S{{JUDGE}} be made on settlements by the Secretary of the
+    Treasury." The operative word is "S{{JUDGE}}" — payment is mandatory, not
+    discretionary. The Court is asked to enter an order directing the Clerk to
+    transmit the certified final judgment to the Secretary of the Treasury for
+    settlement and payment, so the statutory payment machinery is set in motion
+    rather than left to the defendant's initiative.
+- block: arguments/ag_certification_trigger
+  when: ag_certification_required_not_obtained == true
+  content: >
+    Where the judgment arises from a State or foreign court (or from this Court
+    on a claim that ran against an agency or officer upon an obligation of the
+    United States), 28 U.S.C. 2414 requires payment "after certification by the
+    Attorney General that it is in the interest of the United States to pay the
+    same." The Court should order the Clerk to certify the final judgment for
+    transmittal so the Attorney General's certification duty attaches on the
+    record — and note that once the Attorney General determines no appeal will be
+    taken, "the judgment shall be deemed final." Silence on certification is the
+    defect this motion exposes.
+- block: arguments/interest_runs_from_entry
+  content: >
+    Interest on the judgment is not optional and does not await a separate
+    request. Under 28 U.S.C. 2461 [corpus: 28 CFR 724.18; interest-rate text],
+    interest on a judgment against the United States is paid at the
+    coupon-issue-yield-equivalent rate from the date of entry of judgment. The
+    Court should fix the interest clock at entry ([date]) and order that interest
+    be computed and paid through the date of settlement, so the judgment creditor
+    receives the full amount the statute commands.
+- block: arguments/judgment_fund_appropriation
+  content: >
+    The payment is funded by the Judgment Fund. 31 U.S.C. 1304 [corpus: "31
+    U.S.C. 1304, provides authority for judgments, awards and compromise
+    settlements"] supplies the appropriation authority for this judgment. The
+    objection that "there is no money" is answered by the statute: the Judgment
+    Fund is the designated source, and the Court's order for settlement puts the
+    payment on the statutory track.
+- block: arguments/operative_text_discipline
+  content: >
+    QUOTE THE OPERATIVE WORD. 28 U.S.C. 2414 says payment "S{{JUDGE}} be made on
+    settlements by the Secretary of the Treasury." Any rendering by the Court or
+    the defendant that softens "shall" into "may," omits "on settlements," or
+    substitutes a common-word synonym for "settlements" is a silent alteration of
+    the operative text and is a citable defect. The NO-WORD-ADDED-OR-SUBTRACTED
+    canon applies: the defined terms "final judgment," "United States," and
+    "settlements" carry the meanings given in the statute, and any mid-sentence
+    substitution for a homonym is a divergence to expose, not a concession.
+- block: sections/prayer_for_relief
+  content: >
+    (1) An order directing the Clerk to transmit the certified final judgment to
+    the Secretary of the Treasury for settlement and payment under 28 U.S.C.
+    2414; (2) where applicable, an order certifying the judgment for the
+    Attorney General's certification under 28 U.S.C. 2414; (3) an order that
+    interest under 28 U.S.C. 2461 run from the date of entry of judgment through
+    the date of settlement; (4) confirmation that the judgment is payable from
+    the Judgment Fund under 31 U.S.C. 1304; (5) costs.
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service
+- block: boilerplate/proposed_order
+resolution_path: obsidian_sync/templates/filing_types/motion_to_compel_payment_judgment_against_us.yaml

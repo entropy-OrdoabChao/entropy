@@ -1,0 +1,673 @@
+# legal_definitions_v2.yaml — Bundle 8 expansion (additive to v1)
+#
+# Adds: TFM, additional IRS code sections, civil rights conspiracy statutes,
+# Monell, APA, jurisdiction/removal, additional preemption variants, more PA.
+# Schema identical to legal_definitions.yaml (Bundle 7).
+
+version: "0.2"
+
+definitions:
+  # ════════════════════════════════════════════════════════════════════════════
+  # TREASURY FINANCIAL MANUAL (TFM)
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: treasury_financial_manual
+    term: "Treasury Financial Manual (TFM)"
+    definition: |
+      The TFM is the official manual issued by the Bureau of the Fiscal Service
+      (Department of the Treasury) governing financial operations and reporting
+      by federal agencies. It is published under authority of 31 U.S.C. § 3513
+      and serves as the operative procedural authority for federal disbursing,
+      central accounting and reporting, intragovernmental transactions, and
+      Treasury check claims. The TFM binds federal agencies but does NOT create
+      private rights of action enforceable by individuals against private
+      parties.
+    source_authority: "31 U.S.C. § 3513; 31 C.F.R. § 1; TFM published at tfm.fiscal.treasury.gov"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Federal agency conduct allegedly violates a specific TFM provision"
+      - "Plaintiff has separate statutory basis for suit (e.g., APA § 706, FTCA, mandamus) — TFM itself is not a cause of action"
+    inapplicable_when:
+      - "Suit is against private party (TFM binds only federal agencies)"
+      - "Plaintiff treats TFM as a self-executing private remedy"
+    common_misconceptions:
+      - "TFM does NOT create private rights of action — it is internal Treasury procedure"
+      - "TFM violations may be evidence of arbitrary/capricious agency action under APA § 706, but APA is the cause, not TFM itself"
+      - "TFM is administrative guidance with force as agency policy, not statutory law"
+    citation_tokens:
+      - "Treasury Financial Manual"
+      - "31 U.S.C. § 3513"
+      - "Bureau of the Fiscal Service"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # ADDITIONAL TAX CODE SECTIONS
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: section_6700
+    term: "26 U.S.C. § 6700 — Penalty for Promoting Abusive Tax Shelters"
+    definition: |
+      Imposes civil penalty on any person who organizes, sells, or assists in
+      organizing/selling an abusive tax shelter, including any plan or
+      arrangement involving gross valuation overstatements or false statements
+      of material tax fact. Penalty is 50% of gross income from the activity (or
+      $1,000 per activity, whichever is less for non-valuation cases). Assessed
+      by IRS; not a private right of action.
+    source_authority: "26 U.S.C. § 6700"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Person organized, assisted in organizing, or participated in sale of plan/arrangement"
+      - "Made or furnished gross valuation overstatement OR false/fraudulent statement of material tax fact"
+      - "(For private plaintiffs:) NOT a private cause of action — refer to IRS"
+    inapplicable_when:
+      - "Plaintiff is private party seeking damages — § 6700 is IRS-administered"
+    common_misconceptions:
+      - "Private parties CANNOT sue under § 6700 — refer abusive tax schemes via IRS Form 14242"
+    citation_tokens:
+      - "26 U.S.C. § 6700"
+      - "abusive tax shelter"
+    verified: "2026-05-31"
+
+  - id: section_6701
+    term: "26 U.S.C. § 6701 — Penalties for Aiding Understatement of Tax Liability"
+    definition: |
+      Civil penalty on any person who aids, assists, procures, or advises in
+      preparation of a return/document knowing it will be used in connection
+      with material tax matter and that it would result in understatement of
+      tax. $1,000 per document ($10,000 for corporate tax). IRS-administered;
+      no private right of action.
+    source_authority: "26 U.S.C. § 6701"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Person aided/assisted/procured/advised preparation of return or document"
+      - "Knew it would be used in material tax matter"
+      - "Knew it would result in understatement of tax"
+    inapplicable_when:
+      - "Plaintiff is private party seeking damages — IRS-administered only"
+    common_misconceptions:
+      - "Not a private cause of action — refer via Form 3949-A"
+    citation_tokens:
+      - "26 U.S.C. § 6701"
+    verified: "2026-05-31"
+
+  - id: section_7206
+    term: "26 U.S.C. § 7206 — Fraud and False Statements (Criminal)"
+    definition: |
+      Federal CRIMINAL statute. Any person who willfully makes/subscribes any
+      return/statement under penalty of perjury knowing it to be materially
+      false is guilty of a felony, punishable by up to 3 years imprisonment
+      and/or $100,000 fine ($500,000 for corporations). Prosecution rests with
+      DOJ Tax Division upon IRS referral. NO private right of action.
+    source_authority: "26 U.S.C. § 7206"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Willful making/subscribing of return or statement under penalty of perjury"
+      - "Material falsity"
+      - "Knowledge of falsity"
+      - "Referral path: IRS Criminal Investigation → DOJ Tax Division"
+    inapplicable_when:
+      - "Plaintiff seeks private damages — criminal statute, no private right"
+    common_misconceptions:
+      - "§ 7206 is CRIMINAL only — civil analog for false information returns is § 7434"
+    citation_tokens:
+      - "26 U.S.C. § 7206"
+      - "willfully"
+      - "DOJ Tax Division"
+    verified: "2026-05-31"
+
+  - id: section_7212
+    term: "26 U.S.C. § 7212 — Attempts to Interfere with Administration of Internal Revenue Laws"
+    definition: |
+      Federal criminal statute prohibiting corrupt or forcible interference
+      with IRS officers/employees. Two clauses: (a) corrupt-or-forcible
+      endeavor against IRS personnel (felony, up to 3 years and $5,000 fine);
+      (b) omnibus clause covering corrupt obstruction of IRS administration
+      (Marinello v. United States narrowed this — requires nexus to specific
+      pending IRS proceeding). NO private right of action.
+    source_authority: "26 U.S.C. § 7212"
+    controlling_case: "Marinello v. United States, 584 U.S. 1 (2018) — omnibus clause requires nexus to pending IRS action"
+    jurisdiction: federal
+    elements_to_prove:
+      - "(Clause (a)) Corrupt or forcible endeavor against IRS officer or employee"
+      - "(Clause (b)) Corrupt endeavor to obstruct/impede administration AND nexus to a specific pending/foreseeable IRS proceeding"
+    inapplicable_when:
+      - "Conduct lacks nexus to specific IRS proceeding (omnibus narrowed by Marinello)"
+      - "Plaintiff seeks private damages"
+    common_misconceptions:
+      - "Marinello significantly narrowed omnibus clause — not every IRS-adjacent obstruction qualifies"
+    citation_tokens:
+      - "26 U.S.C. § 7212"
+      - "Marinello v. United States"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # CIVIL RIGHTS CONSPIRACY — § 1985, § 1986
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: section_1985_3
+    term: "42 U.S.C. § 1985(3) — Conspiracy to Deny Equal Protection"
+    definition: |
+      Creates private cause of action against two or more persons who conspire
+      to deprive any person of equal protection of the laws or equal privileges
+      and immunities. Griffin v. Breckenridge requires plaintiff to prove:
+      (1) conspiracy, (2) for purpose of depriving equal protection OR equal
+      privileges, (3) overt act in furtherance, (4) injury. Bray v. Alexandria
+      Women's Health Clinic narrowed by requiring class-based, invidiously
+      discriminatory animus.
+    source_authority: "42 U.S.C. § 1985(3)"
+    controlling_case: "Griffin v. Breckenridge, 403 U.S. 88 (1971); Bray v. Alexandria Women's Health Clinic, 506 U.S. 263 (1993)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Conspiracy between two or more persons"
+      - "Purpose to deprive any person of EQUAL PROTECTION or equal privileges/immunities"
+      - "Class-based, invidiously discriminatory animus (Bray)"
+      - "Overt act in furtherance of conspiracy"
+      - "Injury to person or property OR deprivation of right or privilege"
+    inapplicable_when:
+      - "Single defendant (no conspiracy)"
+      - "Intracorporate conspiracy doctrine bars where conspirators are within same legal entity (most circuits)"
+      - "No class-based animus alleged (Bray)"
+      - "Purely economic dispute without protected-class motivation"
+    common_misconceptions:
+      - "§ 1985(3) requires CLASS-BASED animus — not just any conspiracy against rights"
+      - "Intracorporate conspiracy doctrine often bars § 1985 claims among co-employees of same entity"
+    citation_tokens:
+      - "42 U.S.C. § 1985(3)"
+      - "Griffin v. Breckenridge"
+      - "class-based animus"
+    verified: "2026-05-31"
+
+  - id: section_1986
+    term: "42 U.S.C. § 1986 — Action for Neglect to Prevent § 1985 Conspiracy"
+    definition: |
+      Creates cause of action against any person who, having knowledge that
+      § 1985 wrong is about to occur and having power to prevent or aid in
+      prevention, neglects to do so. Damages available; one-year SOL from
+      accrual. A viable § 1985 claim is a prerequisite — without § 1985
+      conspiracy, no § 1986.
+    source_authority: "42 U.S.C. § 1986"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Defendant had ACTUAL knowledge a § 1985 wrong was about to occur"
+      - "Defendant had POWER to prevent or aid prevention"
+      - "Defendant neglected/refused to do so"
+      - "VIABLE underlying § 1985 conspiracy claim"
+    inapplicable_when:
+      - "No viable § 1985 conspiracy alleged"
+      - "SOL expired (1 year — short)"
+      - "Defendant had no actual knowledge"
+    common_misconceptions:
+      - "§ 1986 cannot stand without § 1985 — they rise and fall together"
+      - "1-year SOL is much shorter than other § 1983-family claims"
+    citation_tokens:
+      - "42 U.S.C. § 1986"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # MUNICIPAL LIABILITY — Monell
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: monell_municipal_liability
+    term: "Monell Liability — Municipal § 1983 Claims"
+    definition: |
+      Municipalities and local governing bodies are 'persons' suable under
+      § 1983 (Monell v. Department of Social Services, 436 U.S. 658 (1978)),
+      but ONLY when constitutional injury results from execution of an
+      official policy, custom, or practice — NOT under respondeat superior
+      for individual employee acts. Theories of municipal liability: (1)
+      explicit policy, (2) widespread custom or practice with constructive
+      knowledge, (3) decision by final policymaker, (4) failure to train with
+      deliberate indifference (City of Canton v. Harris, 489 U.S. 378 (1989)).
+    source_authority: "42 U.S.C. § 1983"
+    controlling_case: "Monell v. Department of Social Services, 436 U.S. 658 (1978); City of Canton v. Harris, 489 U.S. 378 (1989)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Defendant is municipality or local governing body"
+      - "Constitutional violation occurred"
+      - "Violation caused by official POLICY, CUSTOM, FINAL POLICYMAKER DECISION, or FAILURE TO TRAIN"
+      - "(Failure to train:) deliberate indifference to known risk"
+    inapplicable_when:
+      - "Suit against state (states are not 'persons' under § 1983 — Will v. Michigan Dep't of State Police)"
+      - "Theory rests purely on respondeat superior"
+      - "No identifiable policy/custom/policymaker/training failure"
+    common_misconceptions:
+      - "States are NOT suable under § 1983 — Eleventh Amendment + Will v. Michigan"
+      - "Respondeat superior is NOT a basis for municipal liability"
+      - "Single incident generally insufficient for 'custom' (Pembaur exception for final policymaker)"
+    citation_tokens:
+      - "Monell"
+      - "42 U.S.C. § 1983"
+      - "City of Canton v. Harris"
+      - "deliberate indifference"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # ADMINISTRATIVE PROCEDURE ACT (APA)
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: apa_706_review
+    term: "5 U.S.C. § 706 — APA Judicial Review of Agency Action"
+    definition: |
+      Authorizes federal court review of final agency action. Court shall
+      'hold unlawful and set aside agency action, findings, and conclusions
+      found to be... arbitrary, capricious, an abuse of discretion, or
+      otherwise not in accordance with law; contrary to constitutional right;
+      in excess of statutory jurisdiction; without observance of procedure
+      required by law; unsupported by substantial evidence; or unwarranted by
+      the facts.' Pre-suit administrative exhaustion typically required; final
+      agency action prerequisite (Bennett v. Spear two-part test).
+    source_authority: "5 U.S.C. §§ 701-706"
+    controlling_case: "Bennett v. Spear, 520 U.S. 154 (1997) — final agency action test; Motor Vehicle Manufacturers v. State Farm, 463 U.S. 29 (1983) — arbitrary/capricious standard"
+    jurisdiction: federal
+    elements_to_prove:
+      - "FINAL agency action (consummation of agency's decisionmaking + rights/obligations determined or legal consequences flow)"
+      - "Plaintiff has standing AND falls within zone of interests"
+      - "Action satisfies at least one § 706(2) basis (arbitrary/capricious, contrary to constitutional right, in excess of statutory authority, procedural defect, unsupported by substantial evidence)"
+      - "Administrative exhaustion completed (where required)"
+    inapplicable_when:
+      - "Agency action is not 'final' (interlocutory)"
+      - "Statute precludes judicial review (5 U.S.C. § 701(a)(1))"
+      - "Action is committed to agency discretion by law (5 U.S.C. § 701(a)(2))"
+      - "Plaintiff outside zone of interests"
+    common_misconceptions:
+      - "APA review is the proper vehicle to challenge agency procedures violating Treasury Financial Manual, agency manuals, or internal policy — not a direct TFM/manual cause of action"
+      - "APA does NOT waive sovereign immunity for damages — only for review/set-aside of action (5 U.S.C. § 702)"
+    citation_tokens:
+      - "5 U.S.C. § 706"
+      - "Bennett v. Spear"
+      - "arbitrary and capricious"
+      - "final agency action"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # JURISDICTION & REMOVAL
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: federal_question_jurisdiction
+    term: "28 U.S.C. § 1331 — Federal Question Jurisdiction"
+    definition: |
+      District courts have original jurisdiction over civil actions ARISING
+      UNDER the Constitution, laws, or treaties of the United States.
+      Well-pleaded complaint rule (Louisville & Nashville v. Mottley): federal
+      question must appear on face of plaintiff's complaint, NOT in
+      anticipated defense.
+    source_authority: "28 U.S.C. § 1331"
+    controlling_case: "Louisville & Nashville R. Co. v. Mottley, 211 U.S. 149 (1908)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Cause of action arises under federal law"
+      - "Federal question appears on face of well-pleaded complaint"
+    inapplicable_when:
+      - "Federal issue arises only in anticipated defense"
+      - "State-law claim with embedded federal issue (Grable narrow exception)"
+    common_misconceptions:
+      - "Federal defense or counterclaim cannot create federal question jurisdiction (Mottley rule)"
+      - "Federal preemption defense is NOT a basis for original federal jurisdiction (but may support removal under 'complete preemption' doctrine in narrow cases)"
+    citation_tokens:
+      - "28 U.S.C. § 1331"
+      - "well-pleaded complaint"
+    verified: "2026-05-31"
+
+  - id: diversity_jurisdiction
+    term: "28 U.S.C. § 1332 — Diversity Jurisdiction"
+    definition: |
+      District courts have jurisdiction over civil actions where amount in
+      controversy exceeds $75,000 AND complete diversity exists between
+      plaintiff(s) and defendant(s). Complete diversity (Strawbridge v.
+      Curtiss): no plaintiff may share citizenship with any defendant.
+      Corporate citizenship: state of incorporation + principal place of
+      business (Hertz v. Friend nerve center test).
+    source_authority: "28 U.S.C. § 1332"
+    controlling_case: "Strawbridge v. Curtiss, 7 U.S. 267 (1806); Hertz Corp. v. Friend, 559 U.S. 77 (2010)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Amount in controversy exceeds $75,000 (exclusive of interest and costs)"
+      - "Complete diversity of citizenship"
+    inapplicable_when:
+      - "Any plaintiff shares citizenship with any defendant"
+      - "Amount in controversy $75,000 or less"
+    common_misconceptions:
+      - "Domicile, not residence, determines individual citizenship for diversity purposes"
+      - "Corporation has dual citizenship: state of incorporation + principal place of business (Hertz nerve center test)"
+      - "Plaintiff's good-faith allegation of amount in controversy controls unless 'to a legal certainty' less (St. Paul Mercury)"
+    citation_tokens:
+      - "28 U.S.C. § 1332"
+      - "complete diversity"
+    verified: "2026-05-31"
+
+  - id: removal_28_1441
+    term: "28 U.S.C. §§ 1441-1447 — Removal Jurisdiction"
+    definition: |
+      Defendant may remove a state-court civil action to federal district court
+      if the action could have been brought there originally. § 1441 sets
+      removability; § 1446 sets procedure (notice of removal within 30 days
+      after receipt of complaint or paper from which removability ascertainable;
+      all defendants must consent); § 1447 governs remand. Removal is strictly
+      construed in favor of remand (Shamrock Oil v. Sheets).
+    source_authority: "28 U.S.C. §§ 1441-1447"
+    controlling_case: "Shamrock Oil & Gas Corp. v. Sheets, 313 U.S. 100 (1941) — strict construction"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Original federal jurisdiction would have existed"
+      - "Notice of removal filed within 30 days of receipt of complaint or paper revealing removability"
+      - "All defendants joined in or consented to removal (rule of unanimity)"
+      - "Not subject to § 1441(b)(2) home-state defendant bar (for diversity removals)"
+    inapplicable_when:
+      - "No federal jurisdiction would have existed originally"
+      - "30-day window expired"
+      - "Removing defendant is in-state defendant in diversity case (forum defendant rule)"
+      - "Plaintiff timely moved to remand for procedural defect within 30 days of removal notice"
+    common_misconceptions:
+      - "Removal does NOT cure jurisdictional defects — if no original federal jurisdiction, must be remanded"
+      - "Defects in removal procedure are waived if remand motion not filed within 30 days (§ 1447(c)); jurisdictional defects may be raised any time"
+      - "Order remanding for lack of subject matter jurisdiction is NOT reviewable by appeal/mandamus (§ 1447(d), narrow exception for civil rights cases removed under § 1443)"
+    citation_tokens:
+      - "28 U.S.C. § 1441"
+      - "28 U.S.C. § 1446"
+      - "28 U.S.C. § 1447"
+      - "rule of unanimity"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # PREEMPTION TYPES
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: preemption_doctrines
+    term: "Federal Preemption Doctrines (Supremacy Clause)"
+    definition: |
+      Federal law preempts state law in three forms: (1) EXPRESS preemption —
+      federal statute explicitly says so; (2) FIELD preemption — federal
+      regulation so pervasive it occupies entire field; (3) CONFLICT preemption
+      — state law makes compliance with both impossible (impossibility) or
+      stands as obstacle to congressional purpose (obstacle). Presumption
+      against preemption applies particularly in fields of traditional state
+      regulation.
+    source_authority: "U.S. Const. art. VI cl. 2; Hines v. Davidowitz, 312 U.S. 52 (1941)"
+    controlling_case: "Wyeth v. Levine, 555 U.S. 555 (2009); Arizona v. United States, 567 U.S. 387 (2012)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Federal law exists (statute, regulation, or treaty)"
+      - "ONE OF: (a) express preemption clause, (b) field preemption (pervasive federal regulation + dominant federal interest), (c) impossibility preemption, (d) obstacle preemption"
+    inapplicable_when:
+      - "Federal law contains savings clause preserving state law"
+      - "Field is traditional state concern (presumption against preemption)"
+      - "Both federal and state law can be enforced consistently"
+    common_misconceptions:
+      - "Preemption is NOT automatic — depends on type and analysis"
+      - "Express preemption clauses are narrowly construed (Cipollone v. Liggett)"
+      - "McCarran-Ferguson Act (15 U.S.C. § 1011-1015) creates REVERSE preemption for insurance — state law preempts federal law in insurance regulation field"
+    citation_tokens:
+      - "Supremacy Clause"
+      - "U.S. Const. art. VI"
+      - "preemption"
+      - "Wyeth v. Levine"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # SOVEREIGN IMMUNITY
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: federal_sovereign_immunity
+    term: "Federal Sovereign Immunity"
+    definition: |
+      The United States may not be sued without its consent. Waivers must be
+      unequivocally expressed and strictly construed. Major waivers: FTCA
+      (28 U.S.C. § 1346(b) for torts), Tucker Act (28 U.S.C. § 1491 for
+      contract/Constitution claims at Court of Federal Claims), APA § 702
+      (review of agency action for relief other than money damages). Outside
+      a waiver, suit is barred.
+    source_authority: "FDIC v. Meyer, 510 U.S. 471 (1994); Lane v. Pena, 518 U.S. 187 (1996)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Identify specific waiver of sovereign immunity authorizing the suit"
+      - "Plaintiff satisfies all prerequisites of that waiver"
+    inapplicable_when:
+      - "No statutory waiver applies"
+      - "Plaintiff failed to exhaust admin remedies (where required by waiver)"
+    common_misconceptions:
+      - "APA waiver (§ 702) covers ONLY non-monetary relief — money damages require separate waiver"
+      - "FTCA carves out many intentional torts (§ 2680(h)) and discretionary functions (§ 2680(a))"
+    citation_tokens:
+      - "FDIC v. Meyer"
+      - "sovereign immunity"
+      - "28 U.S.C. § 1346(b)"
+    verified: "2026-05-31"
+
+  - id: pa_sovereign_immunity
+    term: "Pennsylvania Sovereign Immunity (42 Pa.C.S. § 8521 et seq.)"
+    definition: |
+      Pennsylvania retains sovereign immunity except as waived. Waiver under
+      42 Pa.C.S. § 8522 is limited to nine enumerated categories: (1) vehicle
+      liability, (2) medical-professional liability, (3) care/custody/control
+      of personal property, (4) Commonwealth real estate, (5) potholes/dangerous
+      conditions on highways, (6) care of animals, (7) liquor store sales,
+      (8) National Guard activities, (9) toxoids and vaccines. Damages capped
+      at $250,000 per plaintiff, $1,000,000 per occurrence.
+    source_authority: "42 Pa.C.S. §§ 8521-8528"
+    jurisdiction: pa_state
+    elements_to_prove:
+      - "Claim falls within one of nine § 8522 categories"
+      - "Damages within statutory caps"
+      - "Commonwealth party (state agency, officer, or employee acting in scope)"
+    inapplicable_when:
+      - "Conduct outside the nine waiver categories"
+      - "Local government (use Political Subdivision Tort Claims Act, 42 Pa.C.S. § 8541)"
+    common_misconceptions:
+      - "Local governments are governed by SEPARATE Political Subdivision Tort Claims Act, not § 8521"
+      - "Intentional torts by Commonwealth employees generally NOT covered (similar to FTCA § 2680(h))"
+    citation_tokens:
+      - "42 Pa.C.S. § 8521"
+      - "42 Pa.C.S. § 8522"
+      - "sovereign immunity"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # ADDITIONAL PA CONST PROVISIONS
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: pa_const_due_process
+    term: "Pa. Const. Art. I § 9 / § 11 — PA Due Process"
+    definition: |
+      PA Constitution provides due process protections, frequently interpreted
+      INDEPENDENTLY of federal 14A — PA Supreme Court has held PA Const may
+      provide BROADER protection than federal counterpart (Commonwealth v.
+      Edmunds, 526 Pa. 374 (1991)). Pa. Const. Art. I § 9 (criminal due
+      process) and § 11 (open courts/remedy) are the primary sources.
+    source_authority: "Pa. Const. art. I §§ 9, 11; Commonwealth v. Edmunds, 526 Pa. 374 (1991)"
+    jurisdiction: pa_state
+    elements_to_prove:
+      - "PA state action"
+      - "Deprivation of protected interest"
+      - "Process inadequate"
+      - "(For Edmunds analysis:) brief PA Const text, history, federal precedent, policy"
+    inapplicable_when:
+      - "Federal-only action (use 5A/14A instead)"
+    common_misconceptions:
+      - "PA Constitution may provide GREATER protection than federal Constitution — never less"
+      - "Edmunds requires specific PA-grounded analysis to invoke broader PA Const protection"
+    citation_tokens:
+      - "Pa. Const. art. I"
+      - "Commonwealth v. Edmunds"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # RES JUDICATA / COLLATERAL ESTOPPEL
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: res_judicata
+    term: "Res Judicata (Claim Preclusion)"
+    definition: |
+      Final judgment on the merits by court of competent jurisdiction precludes
+      same parties (or privies) from relitigating claims that were or could have
+      been raised. Four elements: (1) identity of issues OR claims, (2) identity
+      of parties or privies, (3) prior judgment on the merits, (4) full and fair
+      opportunity to litigate. Distinct from collateral estoppel (issue
+      preclusion) which bars relitigation of specific issues actually litigated.
+    source_authority: "Federated Department Stores v. Moitie, 452 U.S. 394 (1981); Migra v. Warren City School District, 465 U.S. 75 (1984)"
+    jurisdiction: both
+    elements_to_prove:
+      - "Final judgment on the merits"
+      - "Same parties or privies"
+      - "Same cause of action (or could have been raised)"
+      - "Full and fair opportunity to litigate prior action"
+    inapplicable_when:
+      - "Prior dismissal not on the merits (e.g., lack of jurisdiction, improper venue)"
+      - "Different parties without privity"
+      - "Claim could not have been raised in prior action (jurisdictional, ripening later, etc.)"
+    common_misconceptions:
+      - "Voluntary dismissal under FRCP 41(a)(1)(B) operates as adjudication on the merits ON SECOND such dismissal — first is generally without prejudice"
+      - "Federal judgment receives state-law preclusive effect under 28 U.S.C. § 1738 — Migra applies state preclusion rules"
+    citation_tokens:
+      - "res judicata"
+      - "28 U.S.C. § 1738"
+      - "Federated Dept. Stores v. Moitie"
+    verified: "2026-05-31"
+
+  - id: rooker_feldman
+    term: "Rooker-Feldman Doctrine"
+    definition: |
+      Federal district courts lack subject matter jurisdiction over claims
+      brought by state-court losers complaining of injuries caused by
+      state-court judgments rendered before the federal action commenced and
+      inviting district court review and rejection of those judgments. Exxon
+      Mobil v. Saudi Basic Industries narrowed the doctrine: it does NOT
+      preclude federal action seeking damages for prior state-court conduct;
+      only bars direct appellate review of state judgments.
+    source_authority: "Rooker v. Fidelity Trust Co., 263 U.S. 413 (1923); District of Columbia Court of Appeals v. Feldman, 460 U.S. 462 (1983); Exxon Mobil Corp. v. Saudi Basic Industries Corp., 544 U.S. 280 (2005)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Federal plaintiff lost in state court"
+      - "Federal plaintiff complains of injuries CAUSED BY state-court judgment"
+      - "State-court judgment rendered before federal suit commenced"
+      - "Federal suit invites review/rejection of state judgment"
+    inapplicable_when:
+      - "Federal claim is independent of state-court judgment (parallel litigation OK)"
+      - "Federal plaintiff seeks damages for pre-judgment conduct, not review of judgment"
+      - "Federal plaintiff did not have full opportunity to raise federal claim in state court (limited exception)"
+    common_misconceptions:
+      - "Post-Exxon Mobil, Rooker-Feldman is NARROW — frequently confused with res judicata, which is what should be invoked for most preclusion issues"
+      - "Rooker-Feldman is JURISDICTIONAL — must be raised by court sua sponte"
+    citation_tokens:
+      - "Rooker-Feldman"
+      - "Exxon Mobil Corp. v. Saudi Basic Industries Corp."
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # MCCARRAN-FERGUSON (insurance reverse preemption)
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: mccarran_ferguson_reverse_preemption
+    term: "McCarran-Ferguson Act — Insurance Reverse Preemption"
+    definition: |
+      The McCarran-Ferguson Act, 15 U.S.C. §§ 1011-1015, reserves the
+      'business of insurance' to state regulation. § 1012(b) provides that no
+      federal statute shall be construed to invalidate, impair, or supersede
+      state insurance regulation UNLESS the federal statute specifically
+      relates to the business of insurance. This creates 'reverse preemption'
+      — state insurance law overrides generally-applicable federal law in the
+      insurance field.
+    source_authority: "15 U.S.C. §§ 1011-1015"
+    controlling_case: "Humana Inc. v. Forsyth, 525 U.S. 299 (1999) — three-part test"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Conduct constitutes 'business of insurance' (Royal Drug three-factor test)"
+      - "State has enacted law regulating that business"
+      - "Federal law does not specifically relate to insurance business"
+      - "Application of federal law would invalidate, impair, or supersede state law"
+    inapplicable_when:
+      - "Federal statute specifically relates to insurance business (e.g., FCRA insurance provisions, ERISA)"
+      - "Conduct is not 'business of insurance' (general corporate fraud, sales practices unrelated to risk-spreading)"
+    common_misconceptions:
+      - "McCarran-Ferguson does NOT bar all federal regulation touching insurance — only general federal law impairing state insurance law"
+      - "ERISA Savings Clause preserves state insurance regulation, but Deemer Clause limits this for self-insured ERISA plans"
+    citation_tokens:
+      - "15 U.S.C. § 1011"
+      - "McCarran-Ferguson"
+      - "Humana v. Forsyth"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # FAIR DEBT COLLECTION PRACTICES ACT
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: fdcpa_1692_overview
+    term: "Fair Debt Collection Practices Act (15 U.S.C. § 1692 et seq.)"
+    definition: |
+      Federal statute regulating third-party debt collectors. Prohibits
+      harassing, false, or unfair practices. Private right of action for
+      actual damages, up to $1,000 statutory damages per action, attorney
+      fees and costs (15 U.S.C. § 1692k). Applies ONLY to 'debt collectors'
+      as defined in § 1692a(6) — generally excludes creditors collecting
+      their OWN debts; recent Supreme Court decision Henson v. Santander
+      narrowed coverage of debt purchasers acting as principals.
+    source_authority: "15 U.S.C. §§ 1692-1692p"
+    controlling_case: "Henson v. Santander Consumer USA, 582 U.S. 79 (2017)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Defendant is 'debt collector' as defined in § 1692a(6)"
+      - "Communication or conduct in connection with collection of a 'debt' (consumer purpose)"
+      - "Conduct violates one of §§ 1692c-1692j prohibitions"
+    inapplicable_when:
+      - "Defendant is original creditor collecting own debt"
+      - "Defendant is debt purchaser collecting as principal post-Henson"
+      - "Obligation is commercial rather than consumer (no 'debt')"
+      - "1-year SOL expired"
+    common_misconceptions:
+      - "FDCPA does NOT cover original creditors — many consumer attorneys make this mistake"
+      - "Henson narrowed coverage but Marx v. General Revenue Corp. preserved many debt-buyer applications where defendant acquired debt AFTER default"
+    citation_tokens:
+      - "15 U.S.C. § 1692"
+      - "FDCPA"
+      - "Henson v. Santander"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # RESPA (additional to Reg X already in v1)
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: respa_qwr_2605e
+    term: "RESPA Qualified Written Request (12 U.S.C. § 2605(e))"
+    definition: |
+      A 'qualified written request' (QWR) is a written correspondence (not on
+      a payment coupon) from borrower or agent to servicer that includes name
+      and account information AND either states reasons borrower believes
+      account is in error OR provides sufficient detail re information sought.
+      Servicer must acknowledge within 5 business days and respond within 30
+      business days. Violations support § 2605(f) private action: actual
+      damages plus $2,000 statutory for pattern of noncompliance.
+    source_authority: "12 U.S.C. § 2605(e); 12 C.F.R. § 1024.36 (notice of error); 12 C.F.R. § 1024.35 (request for information)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Plaintiff sent compliant QWR (NOT on payment coupon; includes name/account/error or info request)"
+      - "Servicer failed to acknowledge within 5 business days OR respond within 30 business days"
+      - "Actual damages OR pattern of noncompliance"
+    inapplicable_when:
+      - "Correspondence not separable from payment coupon"
+      - "Servicer timely complied"
+      - "No actual damages and no pattern alleged"
+    common_misconceptions:
+      - "QWR must be sent to servicer's DESIGNATED ADDRESS for QWRs (in monthly statement or on website) — sending to general address may not count"
+      - "Notice-of-error (1024.36) and request-for-information (1024.35) are SEPARATE Reg X procedures — broader than original QWR concept"
+    citation_tokens:
+      - "12 U.S.C. § 2605(e)"
+      - "qualified written request"
+      - "12 C.F.R. § 1024.36"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # IFP / FILING FEES
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: ifp_28_1915
+    term: "28 U.S.C. § 1915 — In Forma Pauperis"
+    definition: |
+      Authorizes federal courts to permit commencement, prosecution, or defense
+      of an action without prepayment of fees by a person unable to pay. IFP
+      applicant must submit affidavit including statement of all assets and
+      inability to pay. Court must dismiss IFP case at any time if frivolous,
+      malicious, fails to state a claim, or seeks money damages from defendant
+      immune from such relief (§ 1915(e)(2)). Prison Litigation Reform Act
+      adds specific limits for prisoners.
+    source_authority: "28 U.S.C. § 1915"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Plaintiff financially unable to pay fees"
+      - "Submitted compliant § 1915(a) affidavit"
+      - "Claim not frivolous, malicious, or against immune defendant"
+    inapplicable_when:
+      - "Plaintiff has resources to pay"
+      - "Action is frivolous (Neitzke v. Williams) or fails to state claim"
+    common_misconceptions:
+      - "Denial of IFP is generally appealable as collateral order (Roberts v. United States District Court)"
+      - "§ 1915(e)(2) dismissal can be without leave to amend; courts split on this"
+    citation_tokens:
+      - "28 U.S.C. § 1915"
+      - "in forma pauperis"
+      - "Neitzke v. Williams"
+    verified: "2026-05-31"

@@ -1,0 +1,39 @@
+id: frcp_55_default_judgment
+title: Default Judgment — Fed. R. Civ. P. 55(a) / 55(b)
+
+description: >
+  Filing type for Federal default judgment under FRCP 55(a)-(c) against
+  defendants who failed to plead. Creates mandatory clerk default entry
+  (55a), mandatory clerk judgment for sum certain (55b1), or court
+  application for damages (55b2). Fed. R. Civ. P. 4(h)(1) governs service.
+
+required_authorities:
+  - Fed. R. Civ. P. 55(a)
+  - Fed. R. Civ. P. 55(b)(1)
+  - Fed. R. Civ. P. 55(b)(2)
+  - Fed. R. Civ. P. 55(c)
+  - Fed. R. Civ. P. 12(a)(1)(A)(i)
+  - Fed. R. Civ. P. 4(h)(1)(B)
+
+trigger_defects:
+  - DEFENDANT_FAIL_TO_PLEAD (21+ days beyond service)
+  - CLERK_REFUSAL_TO_ENTER_DEFAULT
+  - DEFAULT_JUDGMENT_SUM_CERTAIN
+  - DEFAULT_JUDGMENT_NON_SUM_CERTAIN
+  - SERVICE_CONTRADICTION
+
+structure:
+  - block: boilerplate/caption_federal
+  - block: sections/introduction
+  - block: sections/jurisdictional_basis
+  - block: arguments/default_entry_55a
+  - block: arguments/default_judgment_55b
+  - block: arguments/service_of_process_established
+  - block: arguments/defendant_failed_to_plead
+  - block: arguments/sum_certain
+  - block: sections/case_specific_default
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+
+resolution_path: obsidian_sync/templates/filing_types/frcp_55_default_judgment.yaml

@@ -1,0 +1,23 @@
+name: equity_maxims
+group: study
+unit: claim            # claim | term | cite | count | document | case | draft
+axis: "Axis 6 — EQUITY / MAXIMS: which maxim or equitable rule forecloses discretion here."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - broom
+  - pomeroy
+  - story_equity
+  - blackstone
+  - coke
+  - kent
+  - cooley
+  - restatement
+  - amjur_27
+  - amjur_30
+queries:
+  - "{claim} maxim equity"
+  - "he who seeks equity must do equity"
+  - "no one may profit from his own wrong {claim}"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

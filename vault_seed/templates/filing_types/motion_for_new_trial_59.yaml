@@ -1,0 +1,81 @@
+id: motion_for_new_trial_59
+title: Motion for New Trial / to Alter or Amend Judgment
+description: |
+  Motion under FRCP 59 for a new trial or to alter/amend judgment. Two distinct
+  vehicles:
+  
+  FRCP 59(a) — New Trial: A party may move for a new trial on grounds including
+  (1) insufficient weight of the evidence, (2) excessiveness or inadequacy of
+  damages, (3) errors at trial prejudicing the moving party's substantial rights,
+  (4) newly discovered evidence that could not have been found earlier with
+  reasonable diligence, or (5) other grounds for granting a new trial.
+  
+  FRCP 59(e) — Alter or Amend Judgment: A motion to alter or amend the judgment
+  must be filed no later than 28 days after the judgment is entered (per 2009
+  amendment). It may not be used to re-litigate issues already decided or to
+  present evidence that could have been presented at trial. It is directed to
+  substantive issues such as an intervening change in the law or newly discovered
+  evidence not available at trial.
+  
+  KEY TIMING: Under FRAP 4(a)(4), a timely FRCP 59 motion tolls the appeal
+  clock. If FRCP 59 is filed, the notice of appeal must be filed within 60 days
+  of entry of the order disposing of the motion, not within 30 days of the
+  original judgment.
+  
+  NOTE: This filing type is separate from FRCP 60 (relief from judgment) and
+  FRCP 54(b) (partial final judgment certification). FRCP 59 addresses errors
+  within the trial/judgment itself; FRCP 60 addresses post-judgment circumstances.
+court: any
+
+required_authorities:
+  - FRCP 59(a) (new trial grounds — insufficient evidence, excessiveness/inadequacy of damages, trial errors, newly discovered evidence)
+  - FRCP 59(e) (alter or amend judgment — 28-day deadline, intervening change in law, newly discovered evidence)
+  - FRCP 6(b) (enlargement of time — exceptions only, cannot use to extend 59(e) deadline)
+  - 28 U.S.C. 2111 (harmless error — appellate court must disregard errors that do not affect substantial rights)
+  - 28 U.S.C. 1746 (unsworn declarations under penalty of perjury)
+  - Fed. R. Evid. 201(b)(2) (judicial notice of court records)
+  - E.D. Pa. L.R. 7.1(g) (motion for reconsideration)
+  - 3d Cir. I.O.P. 5.7 (non-precedential dispositions)
+  - FRAP 4(a)(4) (appeal clock tolling — 60 days from order disposing of FRCP 59 motion)
+
+trigger_defects:
+  - insufficient_evidence
+  - excessive_damage
+  - inadequate_damage
+  - trial_error
+  - newly_discovered_evidence
+  - change_of_controlling_law
+  - judgment_not_based_on_evidence
+  - manifest_error
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/statement_of_facts
+  - block: sections/standard_of_review
+    when: defect_categories.PROCEDURAL > 0
+  - block: arguments/insufficient_evidence
+    when: defect_categories.PROCEDURAL > 0
+  - block: arguments/excessive_or_inadequate_damages
+    when: defect_categories.DAMAGES > 0
+  - block: arguments/trial_error
+    when: defect_categories.PROCEDURAL > 0
+  - block: arguments/newly_discovered_evidence
+    when: defect_categories.EVIDENCE > 0
+  - block: arguments/change_of_controlling_law
+    when: defect_categories.AUTHORITY > 0
+  - block: arguments/harmless_error_2111
+    when: defect_categories.PROCEDURAL > 0
+  - block: arguments/jurisdiction_attack
+    when: defect_categories.JURISDICTION > 0
+  - block: arguments/candor_violation
+    when: defect_categories.CANDOR > 0
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

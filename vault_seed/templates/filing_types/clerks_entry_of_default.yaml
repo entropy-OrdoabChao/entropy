@@ -1,0 +1,66 @@
+id: clerks_entry_of_default
+title: Clerk's Entry of Default Under FRCP 55(a)
+description: |
+  Procedural vehicle: Clerk's Entry of Default under FRCP 55(a). This is a distinct,
+  mandatory ministerial step that MUST precede a motion for default judgment under
+  FRCP 55(b). It is NOT the same as a default judgment.
+
+  FRCP 55(a) requires the clerk to enter a default when a party against whom a
+  judgment for affirmative relief is sought has failed to plead or defend — but
+  only if the default is "made to appear by affidavit or by the terms of the
+  complaint or motion." The entry of default is the clerk's ministerial duty.
+
+  KEY DISTINCTION: 55(a) clerk's entry of default ≠ 55(b) motion for default
+  judgment. The entry is the RECORD of default; the judgment is the ENFORCEMENT.
+  The clerk CANNOT be compelled to issue a judgment without a motion, but the
+  clerk MUST enter a default upon proper showing.
+
+  This vehicle is the procedural prerequisite to any default judgment proceeding.
+  Courts routinely dismiss default judgment motions that skip the 55(a) entry
+  step. The entry of default creates the operative record; the judgment is a
+  separate adjudicative act.
+
+  Reciprocity angle: If a defendant failed to respond within the time set by
+  FRCP 12(a) (21 days from service or 60 days from waiver), the plaintiff MUST
+  first seek entry of default under 55(a) before seeking a judgment. Skipping
+  this step is a procedural defect that courts recognize as grounds for denial.
+  Corpus supports: FRCP 55(a), FRCP 12(a), Marbury v. Madison (ministerial
+  duties), Lou v. Lake County Auditor, FRCP 55(b)(1) requirements.
+
+court: federal_district
+required_authorities:
+  - FRCP 55(a) — Entry of default by the clerk (ministerial)
+  - FRCP 55(b)(1) — Default judgment when entry is made (where entry is by clerk)
+  - FRCP 12(a) — Time to plead (21 days from service, or 60 days from waiver)
+  - Marbury v. Madison, 5 U.S. 137, 162 (1803) — Ministerial duties of clerks
+  - Lou v. Lake County Auditor, 100 F.3d 327 (6th Cir. 1996) — 55(a) as prerequisite
+  - Fed. R. Civ. P. 4(l) — Proof of service as basis for entry
+  - Fed. R. Evid. 201(b)(2) — Judicial notice of court record triggers
+trigger_defects:
+  - defendant_unresponsive
+  - time_to_pled_expired
+  - clerk_failed_to_enter_default
+  - entry_of_default_skipped
+  - default_judgment_motion_without_55a_entry
+  - service_proven_but_clerk_inactive
+required_facts:
+  - case_id
+  - caption
+  - defendant_name
+  - last_date_to_pled
+  - proof_of_service_record — docket entry showing service was accomplished
+  - clerk_record_status — whether clerk has entered a default on the docket
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/statement_of_material_facts
+  - block: sections/argument
+    when: argument_type == entry_of_default
+  - block: sections/prayer_for_relief
+  - block: sections/certificate_of_service
+  - block: verification_affidavit
+    when: is_state == true

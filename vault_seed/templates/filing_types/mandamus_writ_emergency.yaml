@@ -1,0 +1,60 @@
+id: mandamus_writ_emergency
+title: Writ of Mandamus — Extraordinary/Writ Relief
+description: |
+  Filing type for seeking a writ of mandamus — an extraordinary, extraordinary-equitable
+  remedy available in federal courts (Judicial Code § 262, 28 U.S.C. § 1651) and state
+  courts (e.g., Pa. Supreme Court original jurisdiction under 17 Pa.C.S. § 211.201).
+
+  Mandamus lies to "confine an inferior court to a lawful exercise of its prescribed
+  jurisdiction" and to "compel it to exercise its authority when it is its duty to do so."
+  Roche v. Evaporated Milk Assn., 319 U.S. 21, 26 (1943).
+
+  It is NOT a substitute for appeal. It requires: (a) clear right to the remedy sought;
+  (b) clear duty incumbent on the respondent; (c) no other adequate remedy available.
+  The Pennsylvania Supreme Court has held such petitions are "to be used only with great
+  caution and forbearance and as an extraordinary remedy in cases of extreme necessity."
+  Carpentertown Coal & Coke Co. v. Laird, 360 Pa. 94, 102, 61 A.2d 426, 430 (1948).
+
+  In the federal system, mandamus is available via 28 U.S.C. § 1651(a) ("The Supreme Court
+  and courts of appeals may issue... all writs not specifically provided for by statute,
+  which may be necessary for the exercise of their respective jurisdictions"). In state
+  courts, mandamus is provided by statute (e.g., 17 Pa.C.S. § 211.201 for PA Supreme Court;
+  various state codes for lower courts).
+
+  For pro se litigants, mandamus is often the ONLY available remedy when no ordinary
+  appeal or other process will cure a jurisdictional defect or compel a court to act
+  on a pending matter.
+
+required_authorities:
+  - 28 U.S.C. 1651(a) - "all writs not specifically provided for by statute, which may be necessary for the exercise of their respective jurisdictions"
+  - 17 Pa.C.S. 211.201 - "Supreme Court shall have original but not exclusive jurisdiction to issue writs of mandamus"
+  - Thermtron Products v. Hermansdorf, 423 U.S. 336 (1976) - mandamus appropriate to compel district court to entertain removed action
+  - Roche v. Evaporated Milk Assn., 319 U.S. 21 (1943) - "confine an inferior court to a lawful exercise of its prescribed jurisdiction"
+  - Carpentertown Coal & Coke Co. v. Laird, 360 Pa. 94 (1948) - PA supreme court standard for extraordinary relief
+  - Judicial Code § 262 - "all writs not specifically provided for by statute"
+
+trigger_defects:
+  - FATAL/JURISDICTIONAL_ERROR
+  - FATAL/COURT_REFUSAL_TO_ACT
+  - FATAL/UNLAWFUL_REMAND
+  - PRO_SE/NO_OTHER_REMEDY
+  - FATAL/EXTRAORDINARY_RELIEF_NEEDED
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/jurisdictional_basis
+  - block: sections/mandamus_essential_elements
+  - block: arguments/clear_right
+  - block: arguments/clear_duty
+  - block: arguments/no_adequate_remedy
+  - block: sections/court_refusal_or_inaction
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: sections/proposed_order
+
+resolution_path: obsidian_sync/templates/filing_types/mandamus_writ_emergency.yaml

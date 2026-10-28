@@ -1,0 +1,71 @@
+id: rule_60b_motion_1to3
+title: Motion for Relief from Judgment Under FRCP 60(b)(1)-(3)
+description: |
+  Motion for relief from a final judgment or order under FRCP 60(b)(1)-(3) collectively.
+  This filing covers three grounds for relief that share the same one-year time limit
+  under FRCP 60(c)(1):
+  
+  - (b)(1) — Mistake, inadvertence, surprise, or excusable neglect
+  - (b)(2) — Newly discovered evidence that could not have been discovered earlier with due diligence
+  - (b)(3) — Fraud, misrepresentation, or misconduct by an opposing party
+  
+  This is NOT a motion for relief from judgment for fraud on the court (which is
+  FRCP 60(d)(3) — different standard, no time limit, targets the judicial process itself).
+  This targets fraud directed at an opposing party or the court's fact-finding process.
+  
+  The one-year clock under FRCP 60(c)(1) runs from the date of the judgment or order.
+  If the one-year clock has expired, the court may still grant relief under (b)(6)
+  for extraordinary circumstances, but the standard is much stricter.
+  
+  Key authorities:
+  - FRCP 60(b)(1) — Mistake, inadvertence, surprise, or excusable neglect
+  - FRCP 60(b)(2) — Newly discovered evidence
+  - FRCP 60(b)(3) — Fraud, misrepresentation, or misconduct by opposing party
+  - FRCP 60(c)(1) — One-year time limit for (b)(1)-(3) motions
+  - Hazel-Atlas Glass Co. v. Hartford-Empire Co., 322 U.S. 238 (1944) — Fraud standard
+  - United States v. A & P Trucking Co., 338 U.S. 121 (1949) — (b)(3) vs. 60(d)(3) distinction
+  - United Student Aid Funds v. Espinosa, 559 U.S. 260 (2010) — Void judgment standard
+court: any
+required_authorities:
+  - FRCP 60(b)(1) — Mistake, inadvertence, surprise, or excusable neglect
+  - FRCP 60(b)(2) — Newly discovered evidence
+  - FRCP 60(b)(3) — Fraud, misrepresentation, or misconduct by opposing party
+  - FRCP 60(c)(1) — One-year time limit for (b)(1)-(3) motions
+  - Hazel-Atlas Glass Co. v. Hartford-Empire Co., 322 U.S. 238 (1944) — Fraud standard
+  - United States v. A & P Trucking Co., 338 U.S. 121 (1949) — (b)(3) vs. 60(d)(3) distinction
+  - Fed. R. Civ. P. 4(l) — Proof of service establishes service of record
+  - Fed. R. Evid. 201(b)(2) — Judicial notice of court record
+trigger_defects:
+  - FATAL/JURISDICTION
+  - void_order
+  - FRCP_60B_eligible
+  - SERIOUS/FRAUD_ON_COURT
+  - judgment_contradicts_docket
+  - court_relied_on_fraud
+  - service_finding_contradicted_by_docket
+  - mistake_excusable_neglect
+  - newly_discovered_evidence
+required_facts:
+  - case_id
+  - caption
+  - judgment_date
+  - judgment_or_order_targeted
+  - one_year_clock_expired — boolean, whether the one-year clock has expired
+  - rule_60b_grounds — which subdivision(s) apply: b1, b2, b3, or combination
+  - b1_description — description of mistake/inadvertence/surprise/excusable neglect
+  - b2_description — description of newly discovered evidence
+  - b3_description — description of fraud/misrepresentation/misconduct by opposing party
+  - due_diligence_description — why evidence was not discovered earlier (for b(2))
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/rule60b_relief
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

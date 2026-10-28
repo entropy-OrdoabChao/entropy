@@ -1,0 +1,164 @@
+# m2 FAMILY REGISTRY (2026-10-20, S-m2-family-scope). A bot's JOB.yaml `families:` names a family; this file maps
+# it to the REAL corpus source keys (lower-cased prefix match; "=key" = exact source). A family not listed here keeps
+# plain-prefix semantics. `absent: true` = NOT IN CORPUS (ingest via legal-corpus-ingest) — the probe reports it,
+# the runner falls back to unscoped retrieval. Probe: python3 -m pipeline.m2.analysis_runner --probe-families
+# Source enumeration: chunk_text.db distinct source (340,573 keys, 2026-10-20).
+amjur_:          [amjur, treatise_american_jurisprudence, american_jurisprudence, amjur_and_dictionaries]
+# Am Jur 2d FEDERAL PRACTICE AND PROCEDURE (32A §§ 51-2162, 32B: removal, appeals, judgments) — the federal-practice
+# treatise; its footnotes surface the controlling cases behind each federal rule (user-locked: leverage it).
+amjur_federal:   [amjur2d_32a, amjur2d_32b]
+amjur_pleading:  [amjur2d_1stpleading, treatise_american_jurisprudence_pleading, phila_cr_2041_pleadings, edpa_lr_5_1_1_pleading]
+amjur_estoppel:  [amjur2d_28_estoppel_and_waiver, "=amjur2d_estoppel_generally"]
+amjur_mandamus:  [amjur2d_52_mandamus]
+amjur_estates:   [amjur2d_28_estates]
+amjur_22:        {absent: true}
+amjur_25:        {absent: true}
+amjur_27:        {absent: true}
+amjur_30:        {absent: true}
+pa_rcp:          [pa_rcp, pa_code_t231_, courtlistener_pa_code_t231_, cp-trial-civil, phila_civ_r, phila_cr_]
+pa_rap:          [pa_code_t210_, courtlistener_pa_code_t210_]
+pa_rja:          [pa_code_t201_]
+pa_re:           [pa_rules-of-evidence, pa_code_t225_]
+pa_const:        [the_constitution_of_pennsylvania]
+pa_cs_1_:        ["=pa_cs_t1", pa_1_construction_definitions]
+pa_cs_15_:       ["=pa_cs_t15"]
+pa_cs_40_:       ["=pa_cs_t40"]
+pa_cs_42_:       ["=pa_cs_t42"]
+pa_jury:         {absent: true}
+pa_bulletin:     {absent: true}
+frcp:            [frcp_, courtlistener_frcp_, federal-rules-of-civil-procedure]
+frap:            [frap_, courtlistener_frap_, federal-rules-of-appellate-procedure]
+fre:             [fre_, federal-rules-of-evidence]
+us_const:        [law_constitution, amjur2d_16_constitution]
+usc_15_:         ["=usc_15", usc_t15_, uscode-2014-title15, uscode-2023-title15]
+dictionary_act:  [usc_t1_s]
+stat_:           [plaw_]          # enacted public laws = the Stat. at Large slip text held (1995-2012)
+ca3_lar:         [ca3_local]
+usreports:       [usreports, scotus_, cap_us_]
+doctrine:        [amjur, treatise_, american_jurisprudence, cjs_, blackstone, bouvier, def_, 59a_jpomeroy]
+canons:          [amjur2d_73_statutes, def_]
+broom:           [def_1854_broom]
+pomeroy:         [59a_jpomeroy]
+glossary:        [law_dictionary_glossary]
+comps_:          [comps]
+pro_se_manual:   [232946-prosemanual]
+restatement:     {absent: true}
+story_equity:    {absent: true}
+kent:            {absent: true}
+sutherland:      {absent: true}
+cooley:          {absent: true}
+coke:            {absent: true}
+duty_map:        {absent: true}   # an m0 table, not a corpus family
+judicial_findings: {absent: true} # emma_intel.db table, not a corpus family
+# 2026-10-20 S-amjur-gaps: the new Am Jur 2d volumes, by the job they serve (keys verified in chunk_text.db)
+amjur_appeal:     ["=amjur2d_4_annuities"]     # Appeal & Error supplement pages are MIS-KEYED under annuities (fee not jurisdictional, § 314)
+amjur_costs:      [amjur2d_20_costs]           # IFP "need not be a pauper" § 48; state-litigant costs § 32
+amjur_clerks:     [amjur2d_15a_clerks_of_court]  # filing "purely ministerial"; fee waiver = clerk's personal liability
+amjur_courts:     [amjur2d_20_courts]
+amjur_federal_courts: [amjur2d_32b_volume_32b] # Federal Courts (Eleventh Amendment, diversity, removal)
+amjur_malicious:  [amjur2d_52_malicious_prosecution, amjur2d_52_malicious_abuse_of_process, amjur2d_52_malice]
+amjur_officers:   [amjur2d_63c_public_officers, amjur2d_46_judges_s61_immunity, amjur2d_52_magistrates, amjur2d_52_mandamus]
+amjur_dismissal:  [amjur2d_24_dismissal_discontinuance_and_nonsuit, amjur2d_73_summary_judgment, amjur2d_52_federal_rules_of_civil_procedure]
+amjur_discovery:  [amjur2d_23_depositions_and_discovery, amjur2d_73_stipulations, amjur2d_3_affidavits, "=amjur2d_affidavits"]
+amjur_instruments: [amjur2d_52_lost_and_destroyed_instruments, amjur2d_23_deeds, amjur2d_28_escrow, amjur2d_bills_and_notes, amjur2d_bills_notes_]
+amjur_fraud:      [amjur2d_37_fraud]
+nj_rules:         [nj_court_rule_]
+nj_stat:          [nj_stat_]
+njac:             [njac_]
+# 2026-10-24 S-m2-cure C1: the Am Jur 2d volumes that govern the PROCEDURE bot's lanes, by lane (keys verified in chunk_text.db;
+# vol 61 in corpus is only `amjur2d_61_pipelines` — Pleading is held as the 1stPleading volume, see amjur_pleading)
+amjur_summary_judgment: [amjur2d_73_summary_judgment]           # vol 73 — summary judgment (incl. _s9_equitable)
+amjur_stare_decisis:    [amjur2d_20_courts]                     # vol 20 — Courts (stare decisis, law of the case, jurisdiction of courts)
+amjur_61:               [amjur2d_61_]                           # vol 61 as keyed (pipelines only); Pleading = amjur_pleading
+# 2026-10-24 S-m2-forum-families (CLASS RULE: a bot's SEMANTIC families are forum-bound; exact-cite pins never are).
+# DEFECT: a Philadelphia CCP run pulled frcp_rule_77 / nj_court_rule_* semantic excerpts because every bot's family
+# list is static. Tag = fed | pa | nj | treatise | any. analysis_runner drops a family whose tag is neither the run
+# forum (--forum / M2_FORUM / inferred from the facts caption) nor any/treatise. Rules of procedure/evidence/local
+# rules are strict to their forum; federal substantive law + U.S. Const + U.S. Reports travel (any); state statutes
+# and constitutions stay with their state (a diversity/removed matter passes M2_FORUM=fed,pa). Families not listed
+# here fall to the name heuristic in analysis_runner._fam_forum (pa_* → pa, nj*/njac → nj, fr*/ca3*/edpa* → fed).
+_forum:
+  frcp: fed
+  frap: fed
+  fre: fed
+  ca3_lar: fed
+  ca3_: fed
+  ca3_iop: fed
+  edpa_lr: fed
+  pa_rcp: pa
+  pa_rap: pa
+  pa_rja: pa
+  pa_re: pa
+  pa_jury: pa
+  pa_bulletin: pa
+  pa_const: pa
+  pa_cs_1_: pa
+  pa_cs_15_: pa
+  pa_cs_40_: pa
+  pa_cs_42_: pa
+  pa_cs_: pa
+  pa_73ps_: pa
+  pa_: pa
+  phila_civ_r: pa
+  cp-trial-civil: pa
+  nj_rules: nj
+  nj_stat: nj
+  njac: nj
+  us_const: any
+  usc_15_: any
+  usc_: any
+  cfr_: any
+  dictionary_act: any
+  stat_: any
+  plaw_: any
+  usreports: any
+  cap_us_: any
+  courtlistener_: any
+  comps_: any
+  pro_se_manual: any
+  duty_map: any
+  judicial_findings: any
+  amjur_: treatise
+  amjur_federal: treatise
+  amjur_federal_courts: treatise
+  amjur_pleading: treatise
+  amjur_estoppel: treatise
+  amjur_mandamus: treatise
+  amjur_estates: treatise
+  amjur_appeal: treatise
+  amjur_costs: treatise
+  amjur_clerks: treatise
+  amjur_courts: treatise
+  amjur_malicious: treatise
+  amjur_officers: treatise
+  amjur_dismissal: treatise
+  amjur_discovery: treatise
+  amjur_instruments: treatise
+  amjur_fraud: treatise
+  amjur_summary_judgment: treatise
+  amjur_stare_decisis: treatise
+  amjur_61: treatise
+  amjur_16: treatise
+  amjur_73: treatise
+  amjur_22: treatise
+  amjur_25: treatise
+  amjur_27: treatise
+  amjur_30: treatise
+  doctrine: treatise
+  canons: treatise
+  broom: treatise
+  pomeroy: treatise
+  glossary: treatise
+  restatement: treatise
+  story_equity: treatise
+  kent: treatise
+  sutherland: treatise
+  cooley: treatise
+  coke: treatise
+  cjs_: treatise
+  blackstone: treatise
+  bouvier: treatise
+  blacks_law_2nd: treatise
+  blacks_law_4th: treatise
+  blacks_law_8th: treatise
+  blacks_law_9th: treatise

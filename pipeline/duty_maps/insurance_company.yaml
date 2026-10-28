@@ -1,0 +1,335 @@
+version: 1
+entity_type: insurance_company
+description: >
+  Duties owed by insurance companies under federal/state law, NAIC model acts,
+  industry standards, fiduciary doctrine, and common law. Specifically tuned
+  for PA/EDPA cases involving auto, property, and bad-faith claims.
+
+duties:
+  # ═══════════════ STATUTORY ═══════════════
+
+  - id: ins_stat_001
+    name: Unearned Premium Refund (PA Auto)
+    class: statutory
+    source: 75-Pa-CS-1799.3
+    source_title: PA Motor Vehicle Financial Responsibility Law - Premium Refunds
+    jurisdiction: pa
+    description: >
+      Insurer must refund unearned premium upon cancellation within statutory
+      timeframe. Retention of unearned premium after risk has ceased (e.g., vehicle
+      sold, insurable interest terminated) violates PA MVFRL.
+    triggering_actions:
+      - holding_premium
+      - denying_refund
+      - cancellation_refund_withheld
+      - retaining_premium_after_risk_ceased
+      - vehicle_sold_premium_kept
+    burden_flip_questions:
+      - "Produce the complete calculation of earned vs unearned premium for each billing cycle after the date insurable interest terminated."
+      - "Produce all policies and procedures governing premium refund upon loss of insurable interest."
+      - "Identify by name and title every employee who reviewed the refund request and the date of review."
+    evidence_demanded:
+      - premium refund calculations
+      - loss of insurable interest notifications received from insured
+      - cancellation procedures manual
+      - refund processing logs
+      - communications between claims and accounting regarding the refund
+    violation_remedy:
+      - Return of unearned premium
+      - Statutory interest
+      - Attorney fees under 42 Pa.C.S. 8371
+      - Punitive damages for bad faith retention
+    regulator: PA_insurance_department
+
+  - id: ins_stat_002
+    name: Bad Faith Prohibition (PA)
+    class: statutory
+    source: 42-Pa-CS-8371
+    source_title: Pennsylvania Bad Faith Insurance Statute
+    jurisdiction: pa
+    description: >
+      In any action arising under an insurance policy, if the court finds the
+      insurer has acted in bad faith toward the insured, the court may award
+      interest at prime rate + 3%, punitive damages, and attorney fees.
+    triggering_actions:
+      - denying_claim_without_investigation
+      - lowballing_settlement
+      - delay_in_payment
+      - misrepresenting_policy_terms
+      - failing_to_communicate
+      - denying_refund
+      - holding_premium
+      - unreasonable_investigation
+    burden_flip_questions:
+      - "Produce the complete claim file including all adjuster notes and internal communications."
+      - "Produce all training materials on claim investigation and fair dealing."
+      - "Identify all similar claims where the insurer refused refund under comparable facts."
+    evidence_demanded:
+      - complete claim file
+      - internal communications regarding the claim
+      - claim handling manuals
+      - training materials on good faith claim handling
+      - reserves set on the claim
+      - reinsurance notifications
+    violation_remedy:
+      - Interest at prime + 3%
+      - Punitive damages
+      - Attorney fees
+    regulator: PA_insurance_department
+
+  - id: ins_stat_003
+    name: Unfair Insurance Practices Act Compliance
+    class: statutory
+    source: 40-P-S-1171.1
+    source_title: Pennsylvania Unfair Insurance Practices Act
+    jurisdiction: pa
+    description: >
+      Prohibits unfair methods of competition and unfair or deceptive acts in
+      the business of insurance, including misrepresentation of policy terms,
+      failing to acknowledge communications promptly, failing to adopt reasonable
+      standards for prompt investigation, and compelling insureds to institute
+      litigation to recover amounts due.
+    triggering_actions:
+      - misrepresenting_policy_terms
+      - failing_to_acknowledge_communications
+      - failing_to_investigate_promptly
+      - compelling_litigation
+      - denying_refund
+      - holding_premium
+      - unreasonable_investigation
+    burden_flip_questions:
+      - "Produce standards adopted for prompt investigation of claims."
+      - "Produce all communications sent and received regarding plaintiff within 30 days of the denial."
+    evidence_demanded:
+      - investigation standards manual
+      - communications log
+      - claims handling SOPs
+      - denial letters sent to plaintiff
+    violation_remedy:
+      - Administrative penalties
+      - Cease and desist
+      - License suspension
+      - Private remedies where UIPA references UTPCPL
+    regulator: PA_insurance_department
+
+  # ═══════════════ REGULATORY ═══════════════
+
+  - id: ins_reg_001
+    name: NAIC Unfair Claims Settlement Practices Model Act
+    class: regulatory
+    source: NAIC-Model-Act-900
+    source_title: NAIC Unfair Claims Settlement Practices Model Act (#900)
+    jurisdiction: federal_model
+    description: >
+      NAIC Model Act 900 prohibits specific unfair claim practices including
+      failing to adopt reasonable standards, failing to affirm or deny coverage
+      within reasonable time, and not attempting in good faith to effectuate
+      prompt, fair, and equitable settlement.
+    triggering_actions:
+      - failing_to_adopt_claim_standards
+      - delayed_coverage_determination
+      - refusing_fair_settlement
+      - denying_refund
+      - holding_premium
+      - unreasonable_investigation
+    burden_flip_questions:
+      - "Produce evidence of adoption and implementation of NAIC Model Act 900 compliant claim handling standards."
+      - "Produce timeline of coverage determination from first notice of loss to denial."
+    evidence_demanded:
+      - written claim handling standards
+      - coverage determination timeline
+      - adjuster training records
+      - NAIC compliance audit reports
+    violation_remedy:
+      - State regulatory action
+      - Market conduct examination findings
+    regulator: NAIC
+
+  - id: ins_reg_002
+    name: PA Insurance Code - Claim Handling Regulations
+    class: regulatory
+    source: 31-Pa-Code-146
+    source_title: PA Insurance Department Regulations on Unfair Claims Settlement
+    jurisdiction: pa
+    description: >
+      PA Insurance Department regulations require insurers to acknowledge claim
+      communications within 10 working days, complete investigation within 30 days
+      of notification, and accept or deny claims within 15 working days of
+      receiving all required information.
+    triggering_actions:
+      - failing_to_acknowledge_within_10_days
+      - investigation_exceeding_30_days
+      - delayed_acceptance_denial
+      - denying_refund
+      - failing_to_investigate_promptly
+    burden_flip_questions:
+      - "Produce the date-stamped log of every communication from plaintiff and insurer's response within 10 working days."
+      - "Produce internal deadline tracking for this claim."
+    evidence_demanded:
+      - communication logs with timestamps
+      - deadline tracking records
+      - investigation completion reports
+    violation_remedy:
+      - Administrative fine
+      - Market conduct findings
+      - Evidence of bad faith
+    regulator: PA_insurance_department
+
+  - id: ins_reg_003
+    name: Record Retention Requirements
+    class: regulatory
+    source: 31-Pa-Code-146.3
+    source_title: PA Insurance Dept - Record Retention for Claim Files
+    jurisdiction: pa
+    description: >
+      Insurers must maintain complete claim files for the duration required by
+      regulation, including all correspondence, claim forms, proof of loss,
+      notes, work papers, and documents.
+    triggering_actions: []  # universal duty
+    burden_flip_questions:
+      - "Produce the complete claim file maintained pursuant to 31 Pa. Code 146.3."
+      - "Identify any documents destroyed or modified after notice of this dispute."
+    evidence_demanded:
+      - complete claim file
+      - litigation hold notices
+      - document retention policies
+    violation_remedy:
+      - Spoliation inference
+      - Adverse jury instruction
+      - Administrative penalty
+    regulator: PA_insurance_department
+
+  # ═══════════════ INDUSTRY STANDARD ═══════════════
+
+  - id: ins_ind_001
+    name: ISO Standard Policy Form Compliance
+    class: industry_standard
+    source: ISO-Form-Standards
+    source_title: Insurance Services Office Standard Policy Forms
+    jurisdiction: industry
+    description: >
+      Industry custom is to use ISO-approved policy forms and endorsements. Any
+      deviation must be filed with the state DOI. Insurer must demonstrate that
+      coverage interpretation is consistent with ISO form drafting history.
+    triggering_actions:
+      - interpreting_policy_terms
+      - denying_coverage
+      - coverage_dispute
+    burden_flip_questions:
+      - "Identify by ISO form number the policy form and all endorsements in effect on the date of loss."
+      - "Produce ISO drafting history for any disputed policy language."
+    evidence_demanded:
+      - ISO form numbers in effect
+      - ISO drafting history
+      - state DOI filings for any non-ISO language
+    regulator: state_insurance_department
+
+  - id: ins_ind_002
+    name: NCOIL Unearned Premium Model
+    class: industry_standard
+    source: NCOIL-Unearned-Premium-Model
+    source_title: NCOIL Model Act on Unearned Premium Refunds
+    jurisdiction: federal_model
+    description: >
+      NCOIL model legislation requires pro-rata refund of unearned premium upon
+      cancellation or loss of insurable interest, with a reasonable processing
+      window (typically 30 days from notice).
+    triggering_actions:
+      - holding_premium
+      - denying_refund
+      - retaining_premium_after_risk_ceased
+    burden_flip_questions:
+      - "Produce the company's written policy on unearned premium calculation."
+      - "Identify the date plaintiff notified of the change in insurable interest and the date the refund was processed or denied."
+    evidence_demanded:
+      - unearned premium calculation methodology
+      - refund processing timeline
+    regulator: NCOIL
+
+  # ═══════════════ FIDUCIARY ═══════════════
+
+  - id: ins_fid_001
+    name: Fiduciary Duty re Policy Reserves and Premium Trust
+    class: fiduciary
+    source: Fiduciary-Insurance-Doctrine
+    source_title: Common law fiduciary duty of insurer to insured re premium and reserves
+    jurisdiction: common_law
+    description: >
+      Where insurer holds insured's premium in trust pending policy performance,
+      a fiduciary relationship exists requiring the insurer to act solely in the
+      insured's interest regarding the premium, including prompt refund when
+      coverage is not provided.
+    triggering_actions:
+      - holding_premium
+      - retaining_premium_after_risk_ceased
+      - denying_refund
+    burden_flip_questions:
+      - "Admit or deny that premium was held in trust pending performance of policy obligations."
+      - "Produce accounting of premium received versus coverage actually provided for the policy period at issue."
+    evidence_demanded:
+      - premium trust accounting
+      - coverage period records
+    violation_remedy:
+      - Disgorgement
+      - Constructive trust
+      - Accounting
+
+  - id: ins_fid_002
+    name: Duty of Utmost Good Faith (Uberrimae Fidei)
+    class: fiduciary
+    source: Uberrimae-Fidei-Doctrine
+    source_title: Common law duty of utmost good faith in insurance contracts
+    jurisdiction: common_law
+    description: >
+      Insurance contracts are contracts of utmost good faith. Both parties owe
+      heightened disclosure and fair dealing duties. Insurer's duty is especially
+      heightened due to superior knowledge of policy terms and claim procedures.
+    triggering_actions: []  # universal
+    burden_flip_questions:
+      - "Admit the insurer owes a duty of utmost good faith."
+      - "Identify all disclosures made to plaintiff regarding refund rights."
+    evidence_demanded:
+      - disclosure records
+      - policy summary provided to insured
+
+  # ═══════════════ COMMON LAW ═══════════════
+
+  - id: ins_cl_001
+    name: Implied Covenant of Good Faith and Fair Dealing
+    class: common_law
+    source: Implied-Covenant-Doctrine
+    source_title: Common law implied covenant in every contract
+    jurisdiction: common_law
+    description: >
+      Every contract, including insurance contracts, contains an implied covenant
+      of good faith and fair dealing. Breach occurs when one party acts in a way
+      that destroys or injures the right of the other party to receive the
+      benefits of the contract.
+    triggering_actions: []  # universal
+    burden_flip_questions:
+      - "Produce all internal guidance regarding good faith and fair dealing owed to insureds."
+    evidence_demanded:
+      - good faith compliance training
+      - internal guidance documents
+
+  - id: ins_cl_002
+    name: Reasonable Care in Claim Investigation
+    class: common_law
+    source: Reasonable-Care-Doctrine
+    source_title: Common law duty of reasonable care in claim handling
+    jurisdiction: common_law
+    description: >
+      Insurer owes a duty to investigate claims reasonably, which includes
+      gathering available evidence, interviewing relevant witnesses, and not
+      prejudging outcomes.
+    triggering_actions:
+      - unreasonable_investigation
+      - failing_to_investigate_promptly
+      - prejudging_claim
+      - denying_refund
+    burden_flip_questions:
+      - "Produce the complete investigation file including witness statements, inspections, and reviewed documents."
+    evidence_demanded:
+      - investigation file
+      - witness statements
+      - inspection reports

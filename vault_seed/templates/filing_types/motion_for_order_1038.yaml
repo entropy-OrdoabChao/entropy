@@ -1,0 +1,49 @@
+id: motion_for_order_1038
+title: Motion for Order Under Pa.R.C.P. 1038 — Compel Judge to Rule on Pending Motion
+description: |
+  Pennsylvania state court motion to compel a judge to rule on a pending motion
+  under Pa.R.C.P. 1038. Filed when a judge has failed to rule on a pending motion
+  for an unreasonable period, paralyzing further proceedings. The motion invokes
+  the court's duty to act and creates a record for appellate review if the judge
+  continues to delay.
+
+  Trigger: Judge has not ruled on a pending motion for 60+ days after assignment
+  or filing, or the judge has been assigned the motion but no ruling issued.
+
+  Pa.R.C.P. 1038 provides the procedural mechanism: upon motion, the court shall
+  hear oral argument on the motion within 60 days after the motion is filed, with
+  extensions available for discovery or good cause. This filing forces the judge
+  to either rule or set a hearing date, creating a deadline that can be tracked
+  for appeal under Pa.R.A.P. 2701(b)(1) (failure to act).
+
+  This is NOT a motion for statement of reasons (which targets conclusory adverse
+  orders). This targets JUDGE INACTION — the court has not ruled at all.
+
+court: state_pa_ccp
+
+required_authorities:
+  - Pa.R.C.P. 1038 (motion for order to compel judge to rule on pending motion)
+  - Pa.R.A.P. 2701(b)(1) (appeal from failure to act — creates appealability)
+  - 42 Pa.C.S. § 8303 (action for performance of duty required by law — mandamus)
+  - Pa.R.C.P. 227.1(b) (final order definition — inaction can be treated as final for appeal)
+  - Commonwealth ex rel. Patterson v. Prothonotary, 439 Pa. 383, 269 A.2d 574 (1970) (mandamus to compel judicial action)
+  - In re Estate of Cresson, 543 Pa. 285, 673 A.2d 1246 (1996) (mandamus standards in PA state court)
+
+trigger_defects:
+  - judge_inaction
+  - pending_motion_unruled
+  - procedural_paralysis
+  - FATAL/PROCEDURAL
+  - SERIOUS/PROCEDURAL
+  - dismissal
+
+structure:
+  - block: boilerplate/caption_state_pa_ccp
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/judge_inaction_1038
+  - block: arguments/mandamus_duty_42_pa_c_s_8303
+  - block: arguments/appeal_from_inaction_2701
+  - block: sections/prayer_for_order
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

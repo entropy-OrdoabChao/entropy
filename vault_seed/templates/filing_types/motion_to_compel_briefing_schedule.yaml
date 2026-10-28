@@ -1,0 +1,40 @@
+id: motion_to_compel_briefing_schedule
+title: Motion to Compel Briefing Schedule Under FRAP 31(a)/(c)
+description: 'Motion under Fed. R. App. P. 31(a) and 31(c) compelling the Clerk of the
+  Third Circuit to issue a scheduling order setting the briefing schedule.
+  Grounded in the court''s inherent authority to maintain an accurate record
+  and FRAP 31''s mandate that the clerk promptly schedule the case for briefing.
+  Without a scheduling order, there is no deadline for the appellant to violate.
+  This is the predicate motion to the reinstatement sequence: correct the record
+  to show no schedule was ever issued, then file the reinstatement motion with
+  the corrected record as the factual predicate.
+
+  Key provisions:
+  - FRAP 31(a): The clerk shall promptly schedule the case for briefing and oral argument
+  - FRAP 31(c): The clerk shall notify all parties of the dates for filing briefs
+  - Pro se litigants get liberal construction (Haines v. Kerner, 404 U.S. 519)
+  - Poulis v. State Farm Fire & Cas. Co., 747 F.2d 863 (3d Cir. 1984)
+    — dismissal for failure to prosecute disfavored absent fault and prejudice
+  '
+court: federal_appellate
+required_authorities:
+- Fed. R. App. P. 31(a) — Clerk shall promptly schedule case for briefing
+- Fed. R. App. P. 31(c) — Clerk shall notify parties of dates for filing briefs
+- Fed. R. App. P. 3(a) — Clerk shall promptly schedule the case for briefing
+- 3d Cir. L.A.R. 107.2(a) — Briefing requirements
+- Haines v. Kerner, 404 U.S. 519 (1972) — Pro se liberal construction
+- Poulis v. State Farm Fire & Cas. Co., 747 F.2d 863 (3d Cir. 1984)
+trigger_defects:
+- dismissal
+- FATAL/PROCEDURAL
+- clerk_record_omission
+- no_briefing_schedule_issued
+- FATAL/JURISDICTION
+structure:
+- block: boilerplate/caption_appellate_3rd_cir
+- block: sections/introduction
+- block: sections/factual_statement_federal
+- block: arguments/compel_briefing_schedule
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

@@ -1,0 +1,940 @@
+# ═══════════════════════════════════════════════════════════════════════════
+#  TEMPORAL RULES CATALOG v2 — Beezle pro se litigation engine
+#  v2 changes from v1:
+#    + party_role field added (plaintiff | defendant | either) — filters which
+#      rules apply to a user's posture
+#    + maps_to field added — declares which case-anchor fields satisfy this
+#      rule's trigger, decoupling rule definitions from engine TRIGGER_MAP
+#
+#  Schema per rule:
+#    id:           snake_case unique identifier
+#    citation:     authoritative rule citation
+#    name:         short human-readable label
+#    description:  one-sentence summary
+#    days:         integer day count (null = "reasonable time")
+#    unit:         'calendar' | 'business'
+#    counting:     'FRCP_6a' | 'FRAP_26a' | 'PA_106' | 'literal'
+#    trigger:      semantic event name (preserved for documentation)
+#    maps_to:      list of case-anchor field names that activate this rule
+#                  (e.g. ['entry_of_judgment'], ['filed', 'latest_order'])
+#                  If empty/missing, engine uses TRIGGER_MAP fallback.
+#    party_role:   'plaintiff' | 'defendant' | 'either'
+#                  Plaintiff Filer: only show rules applicable to plaintiff
+#                  or either. Skip defendant-only rules entirely.
+#    forum:        'federal_trial' | 'federal_appellate' | 'scotus' | 'tax_court'
+#                  | 'pa_trial' | 'pa_superior' | 'pa_commonwealth' | 'pa_supreme'
+#    waivable:     true | false
+#    jurisdictional: true | false
+#    notes:        free-text caveats
+# ═══════════════════════════════════════════════════════════════════════════
+
+version: "2.0"
+last_updated: "2026-05-29"
+
+rules:
+
+# ──────────────────────────────────────────────────────────────────────────
+# FEDERAL TRIAL COURT — FRCP
+# ──────────────────────────────────────────────────────────────────────────
+
+  - id: frcp_12_response
+    citation: "FRCP 12(a)(1)(A)(i)"
+    name: "Answer / Rule 12 motion"
+    description: "Defendant's answer or pre-answer motion after service."
+    days: 21
+    unit: calendar
+    counting: FRCP_6a
+    trigger: service_of_complaint
+    maps_to: []  # defendant-only — won't fire for plaintiff
+    party_role: defendant
+    forum: federal_trial
+    waivable: true
+    jurisdictional: false
+    requires_state: [pre_judgment, pre_judgment_removal_pending, trial_in_progress]
+
+  - id: frcp_12_response_waived_service
+    citation: "FRCP 12(a)(1)(A)(ii)"
+    name: "Answer after waived service"
+    description: "60 days if service formally waived under Rule 4(d)."
+    days: 60
+    unit: calendar
+    counting: FRCP_6a
+    trigger: waiver_of_service_sent
+    maps_to: []
+    party_role: defendant
+    forum: federal_trial
+    waivable: true
+    jurisdictional: false
+    requires_state: [pre_judgment, pre_judgment_removal_pending, trial_in_progress]
+
+  - id: frcp_15_amend_once
+    citation: "FRCP 15(a)(1)"
+    name: "Amend pleading as of right"
+    description: "Amend once within 21 days of service or service of responsive pleading."
+    days: 21
+    unit: calendar
+    counting: FRCP_6a
+    trigger: service_of_complaint
+    maps_to: []  # Plaintiff is past this; suppress noise
+    party_role: either
+    forum: federal_trial
+    waivable: false
+    jurisdictional: false
+    notes: "21 days post-filing; engine suppresses unless within first 30 days of filing."
+    requires_state: [pre_judgment, pre_judgment_removal_pending, trial_in_progress]
+
+  - id: frcp_15_amend_court_leave
+    citation: "FRCP 15(a)(2)"
+    name: "Amend with court leave"
+    description: "After Rule 15(a)(1) expires; court should freely grant when justice requires."
+    days: null
+    unit: calendar
+    counting: FRCP_6a
+    trigger: any
+    maps_to: [latest_order]
+    party_role: either
+    forum: federal_trial
+    waivable: false
+    jurisdictional: false
+    requires_state: [pre_judgment, pre_judgment_removal_pending, trial_in_progress]
+
+  - id: frcp_50_renewed_jmol
+    citation: "FRCP 50(b)"
+    name: "Renewed JMOL after jury verdict"
+    description: "Motion for judgment as matter of law after verdict."
+    days: 28
+    unit: calendar
+    counting: FRCP_6a
+    trigger: entry_of_judgment
+    maps_to: [entry_of_judgment]
+    party_role: either
+    forum: federal_trial
+    waivable: false
+    jurisdictional: false
+    notes: "Hard 28-day limit; not extendable by Rule 6(b)."
+    requires_state: [trial_in_progress, post_judgment_total, post_dismissal_partial]
+
+  - id: frcp_52b_amend_findings
+    citation: "FRCP 52(b)"
+    name: "Amend findings of fact"
+    description: "Motion to amend court's findings after bench trial."
+    days: 28
+    unit: calendar
+    counting: FRCP_6a
+    trigger: entry_of_judgment
+    maps_to: [entry_of_judgment]
+    party_role: either
+    forum: federal_trial
+    waivable: false
+    jurisdictional: false
+    requires_state: [post_judgment_total, post_dismissal_partial]
+
+  - id: frcp_54b_certification
+    citation: "FRCP 54(b)"
+    name: "Rule 54(b) certification"
+    description: "Direct entry of final judgment as to fewer than all claims/parties."
+    days: null
+    unit: calendar
+    counting: FRCP_6a
+    trigger: any
+    maps_to: [entry_of_judgment, latest_order]
+    party_role: either
+    forum: federal_trial
+    waivable: false
+    jurisdictional: false
+    notes: "No fixed deadline. Filed at discretion to unlock interlocutory appeal."
+    requires_state: [post_dismissal_partial]
+
+  - id: frcp_59a_new_trial
+    citation: "FRCP 59(b)"
+    name: "New trial motion"
+    description: "Motion for new trial after judgment."
+    days: 28
+    unit: calendar
+    counting: FRCP_6a
+    trigger: entry_of_judgment
+    maps_to: [entry_of_judgment]
+    party_role: either
+    forum: federal_trial
+    waivable: false
+    jurisdictional: true
+    notes: "Hard 28-day limit; CANNOT be extended (Rule 6(b)(2))."
+    requires_state: [post_judgment_total, post_dismissal_partial]
+
+  - id: frcp_59e_alter_amend
+    citation: "FRCP 59(e)"
+    name: "Motion to alter or amend judgment"
+    description: "Reconsideration of final judgment under manifest error / new evidence / clear injustice."
+    days: 28
+    unit: calendar
+    counting: FRCP_6a
+    trigger: entry_of_judgment
+    maps_to: [entry_of_judgment]
+    party_role: either
+    forum: federal_trial
+    waivable: false
+    jurisdictional: true
+    notes: "Hard 28-day limit; not extendable. Tolls FRAP 4(a) appeal clock."
+    requires_state: [post_judgment_total, post_dismissal_partial]
+
+  - id: frcp_60b_1to3
+    citation: "FRCP 60(b)(1)-(3)"
+    name: "Relief from judgment: mistake/evidence/fraud"
+    description: "Relief for mistake (1), newly discovered evidence (2), fraud or misrepresentation (3)."
+    days: 365
+    unit: calendar
+    counting: FRCP_6a
+    trigger: entry_of_judgment
+    maps_to: [entry_of_judgment]
+    party_role: either
+    forum: federal_trial
+    waivable: false
+    jurisdictional: false
+    notes: "1-year outer limit; must also be filed within 'reasonable time'."
+    requires_state: [post_judgment_total, post_dismissal_partial, post_judgment_appealed, appeal_decided]
+
+  - id: frcp_60b_4to6
+    citation: "FRCP 60(b)(4)-(6)"
+    name: "Relief from judgment: void/satisfied/other"
+    description: "Void judgment (4), satisfied/released (5), other reason justifying relief (6)."
+    days: null
+    unit: calendar
+    counting: FRCP_6a
+    trigger: entry_of_judgment
+    maps_to: [entry_of_judgment]
+    party_role: either
+    forum: federal_trial
+    waivable: false
+    jurisdictional: false
+    notes: "'Reasonable time' — no fixed limit. (4) effectively no limit since void judgments are nullities."
+    requires_state: [post_judgment_total, post_dismissal_partial, post_judgment_appealed, appeal_decided]
+
+  - id: frcp_60d3_fraud_on_court
+    citation: "FRCP 60(d)(3)"
+    name: "Independent action — fraud on the court"
+    description: "Set aside judgment for fraud on the court."
+    days: null
+    unit: calendar
+    counting: FRCP_6a
+    trigger: any
+    maps_to: [entry_of_judgment, latest_order]
+    party_role: either
+    forum: federal_trial
+    waivable: false
+    jurisdictional: false
+    notes: "No time limit. Reserved for egregious misconduct by officers of the court."
+    requires_state: [post_judgment_total, post_dismissal_partial, post_judgment_appealed, appeal_decided]
+
+  - id: frcp_56_summary_judgment
+    citation: "FRCP 56(b)"
+    name: "Summary judgment motion"
+    description: "Motion for summary judgment — default cutoff if no scheduling order."
+    days: 30
+    unit: calendar
+    counting: FRCP_6a
+    trigger: close_of_discovery
+    maps_to: []  # rarely computable from yaml
+    party_role: either
+    forum: federal_trial
+    waivable: true
+    jurisdictional: false
+    notes: "Default; scheduling order typically supersedes."
+    requires_state: [pre_judgment, pre_judgment_removal_pending, trial_in_progress]
+
+  - id: edpa_local_71c_response
+    citation: "EDPA L.R. 7.1(c)"
+    name: "Response to motion (EDPA)"
+    description: "Response to non-dispositive motion in Eastern District of Pennsylvania."
+    days: 14
+    unit: calendar
+    counting: FRCP_6a
+    trigger: motion_filed
+    maps_to: []  # context-dependent; only fires when a motion is pending against us
+    party_role: either
+    forum: federal_trial
+    waivable: true
+    jurisdictional: false
+
+# ──────────────────────────────────────────────────────────────────────────
+# FEDERAL APPELLATE — FRAP / Third Circuit Local Rules
+# ──────────────────────────────────────────────────────────────────────────
+    requires_state: [pre_judgment, pre_judgment_removal_pending, trial_in_progress]
+
+  - id: frap_4a1_civil_appeal
+    citation: "FRAP 4(a)(1)(A)"
+    name: "Notice of appeal — civil (private party)"
+    description: "Notice of appeal in civil case where US is not a party."
+    days: 30
+    unit: calendar
+    counting: FRAP_26a
+    trigger: entry_of_judgment
+    maps_to: [entry_of_judgment]
+    party_role: either
+    forum: federal_appellate
+    waivable: false
+    jurisdictional: true
+    notes: "Bowles v. Russell (2007): hard jurisdictional limit. Untimely = appellate court loses jurisdiction."
+    requires_state: [post_judgment_total, post_dismissal_partial]
+
+  - id: frap_4a1_civil_appeal_us
+    citation: "FRAP 4(a)(1)(B)"
+    name: "Notice of appeal — civil (US a party)"
+    description: "When the United States or federal officer is a party."
+    days: 60
+    unit: calendar
+    counting: FRAP_26a
+    trigger: entry_of_judgment
+    maps_to: []  # only if US is a party — verify per case
+    party_role: either
+    forum: federal_appellate
+    waivable: false
+    jurisdictional: true
+    requires_state: [post_judgment_total, post_dismissal_partial]
+
+  - id: frap_4a4_tolling
+    citation: "FRAP 4(a)(4)"
+    name: "Tolling motions extend appeal clock"
+    description: "Timely Rule 50(b), 52(b), 59, or 60 (if filed within 28 days) motion tolls FRAP 4."
+    days: 30
+    unit: calendar
+    counting: FRAP_26a
+    trigger: order_disposing_tolling_motion
+    maps_to: []
+    party_role: either
+    forum: federal_appellate
+    waivable: false
+    jurisdictional: true
+    notes: "Appeal clock restarts when tolling motion is disposed of."
+    requires_state: [post_judgment_total, post_dismissal_partial]
+
+  - id: frap_4a5_extension
+    citation: "FRAP 4(a)(5)"
+    name: "Extension of time to appeal"
+    description: "Motion for extension; excusable neglect or good cause."
+    days: 30
+    unit: calendar
+    counting: FRAP_26a
+    trigger: expiration_of_appeal_period
+    maps_to: []
+    party_role: either
+    forum: federal_appellate
+    waivable: false
+    jurisdictional: false
+    notes: "Max 30-day extension beyond original deadline or 14 days from grant, whichever is later."
+    requires_state: [post_judgment_total, post_dismissal_partial]
+
+  - id: frap_4a6_reopen
+    citation: "FRAP 4(a)(6)"
+    name: "Reopen appeal period for failure of notice"
+    description: "Reopen when party did not receive Rule 77(d) notice of judgment."
+    days: 14
+    unit: calendar
+    counting: FRAP_26a
+    trigger: receipt_or_knowledge_of_judgment
+    maps_to: []
+    party_role: either
+    forum: federal_appellate
+    waivable: false
+    jurisdictional: false
+    notes: "Earlier of: 180 days from judgment entry OR 14 days from notice receipt."
+    requires_state: [post_judgment_total, post_dismissal_partial]
+
+  - id: frap_10e2_correction_of_record
+    citation: "FRAP 10(e)(2)(B)"
+    name: "Correction of record on appeal"
+    description: "Correct/supplement record when material is omitted or misstated."
+    days: null
+    unit: calendar
+    counting: FRAP_26a
+    trigger: any
+    maps_to: [appeal_filed]
+    party_role: either
+    forum: federal_appellate
+    waivable: false
+    jurisdictional: false
+    notes: "May be done at any time before appeal is decided."
+    requires_state: [post_judgment_appealed, appeal_decided]
+
+  - id: frap_31_appellant_brief
+    citation: "FRAP 31(a)(1)"
+    name: "Appellant's opening brief"
+    description: "Brief due 40 days after record filed."
+    days: 40
+    unit: calendar
+    counting: FRAP_26a
+    trigger: record_filed_on_appeal
+    maps_to: []
+    party_role: either
+    forum: federal_appellate
+    waivable: true
+    jurisdictional: false
+    requires_state: [post_judgment_appealed]
+
+  - id: frap_31_appellee_brief
+    citation: "FRAP 31(a)(1)"
+    name: "Appellee's response brief"
+    description: "Brief due 30 days after appellant's brief served."
+    days: 30
+    unit: calendar
+    counting: FRAP_26a
+    trigger: appellant_brief_served
+    maps_to: []
+    party_role: either
+    forum: federal_appellate
+    waivable: true
+    jurisdictional: false
+    requires_state: [post_judgment_appealed]
+
+  - id: frap_31_reply_brief
+    citation: "FRAP 31(a)(1)"
+    name: "Reply brief"
+    description: "Reply brief due 21 days after appellee's brief served."
+    days: 21
+    unit: calendar
+    counting: FRAP_26a
+    trigger: appellee_brief_served
+    maps_to: []
+    party_role: either
+    forum: federal_appellate
+    waivable: true
+    jurisdictional: false
+    requires_state: [post_judgment_appealed]
+
+  - id: frap_40_panel_rehearing
+    citation: "FRAP 40(a)(1)"
+    name: "Petition for panel rehearing"
+    description: "Petition for rehearing by the panel of judges that decided the appeal."
+    days: 14
+    unit: calendar
+    counting: FRAP_26a
+    trigger: entry_of_judgment_on_appeal
+    maps_to: [appeal_decided]
+    party_role: either
+    forum: federal_appellate
+    waivable: false
+    jurisdictional: false
+    notes: "45 days if US/federal officer/agency is a party. 2024 amendment combined panel rehearing and rehearing en banc procedures."
+    requires_state: [appeal_decided]
+
+  - id: frap_40_en_banc_rehearing
+    citation: "FRAP 40(b) / 3d Cir L.A.R. 35"
+    name: "Petition for rehearing en banc"
+    description: "Petition for full-court rehearing."
+    days: 14
+    unit: calendar
+    counting: FRAP_26a
+    trigger: entry_of_judgment_on_appeal
+    maps_to: [appeal_decided]
+    party_role: either
+    forum: federal_appellate
+    waivable: false
+    jurisdictional: false
+    notes: "45 days if US/federal officer/agency is a party."
+    requires_state: [appeal_decided]
+
+  - id: lar_3rd_cir_107_2_mandate
+    citation: "3d Cir L.A.R. 107.2"
+    name: "Issuance of mandate"
+    description: "Mandate issues 7 days after disposition of petition for rehearing or expiration of time to file."
+    days: 7
+    unit: calendar
+    counting: FRAP_26a
+    trigger: rehearing_disposed_or_period_expired
+    maps_to: [appeal_decided]
+    party_role: either
+    forum: federal_appellate
+    waivable: false
+    jurisdictional: false
+
+# ──────────────────────────────────────────────────────────────────────────
+# UNITED STATES SUPREME COURT — Supreme Court Rules
+# ──────────────────────────────────────────────────────────────────────────
+    requires_state: [appeal_decided]
+
+  - id: scotus_petition_cert
+    citation: "Sup. Ct. R. 13.1"
+    name: "Petition for writ of certiorari"
+    description: "Petition for certiorari to SCOTUS from federal court of appeals."
+    days: 90
+    unit: calendar
+    counting: literal
+    trigger: entry_of_judgment_on_appeal_or_denial_of_rehearing
+    maps_to: [appeal_decided]
+    party_role: either
+    forum: scotus
+    waivable: false
+    jurisdictional: true
+    notes: "Hard 90-day jurisdictional limit; may be extended by Justice for up to 60 days for good cause (Rule 13.5)."
+    requires_state: [appeal_decided]
+
+  - id: scotus_extension
+    citation: "Sup. Ct. R. 13.5"
+    name: "Extension to file cert petition"
+    description: "Application to a Justice for extension of time to file."
+    days: 60
+    unit: calendar
+    counting: literal
+    trigger: expiration_of_cert_period
+    maps_to: []
+    party_role: either
+    forum: scotus
+    waivable: false
+    jurisdictional: false
+    notes: "Max 60-day extension. Must be filed BEFORE original deadline expires."
+    requires_state: [appeal_decided]
+
+  - id: scotus_response_to_petition
+    citation: "Sup. Ct. R. 15.3"
+    name: "Brief in opposition to cert petition"
+    description: "Respondent's brief in opposition."
+    days: 30
+    unit: calendar
+    counting: literal
+    trigger: cert_petition_distributed
+    maps_to: []
+    party_role: defendant
+    forum: scotus
+    waivable: true
+    jurisdictional: false
+    requires_state: [appeal_decided]
+
+  - id: scotus_rehearing
+    citation: "Sup. Ct. R. 44.2"
+    name: "Petition for rehearing (after cert decision)"
+    description: "Petition for rehearing of order denying or granting cert."
+    days: 25
+    unit: calendar
+    counting: literal
+    trigger: cert_order_entered
+    maps_to: []
+    party_role: either
+    forum: scotus
+    waivable: false
+    jurisdictional: false
+
+# ──────────────────────────────────────────────────────────────────────────
+# UNITED STATES TAX COURT — IRC + Tax Court Rules
+# ──────────────────────────────────────────────────────────────────────────
+    requires_state: [appeal_decided]
+
+  - id: tax_court_petition
+    citation: "26 U.S.C. § 6213(a)"
+    name: "Petition for redetermination of deficiency"
+    description: "Tax Court petition after IRS Notice of Deficiency."
+    days: 90
+    unit: calendar
+    counting: literal
+    trigger: notice_of_deficiency_mailed
+    maps_to: []
+    party_role: plaintiff
+    forum: tax_court
+    waivable: false
+    jurisdictional: true
+    notes: "150 days if taxpayer outside US. Hard jurisdictional deadline."
+    requires_state: [pre_judgment]
+
+  - id: tax_court_cdp_petition
+    citation: "26 U.S.C. § 6330(d)(1)"
+    name: "Petition for review of Collection Due Process determination"
+    description: "Tax Court petition for review of CDP determination."
+    days: 30
+    unit: calendar
+    counting: literal
+    trigger: notice_of_determination_issued
+    maps_to: []
+    party_role: plaintiff
+    forum: tax_court
+    waivable: false
+    jurisdictional: false
+    notes: "Boechler, P.C. v. Commissioner (2022): NOT jurisdictional; equitable tolling available."
+    requires_state: [pre_judgment]
+
+  - id: tax_court_appeal
+    citation: "26 U.S.C. § 7483; FRAP 13"
+    name: "Appeal from Tax Court decision"
+    description: "Notice of appeal from final Tax Court decision."
+    days: 90
+    unit: calendar
+    counting: FRAP_26a
+    trigger: tax_court_decision_entered
+    maps_to: [entry_of_judgment]
+    party_role: either
+    forum: tax_court
+    waivable: false
+    jurisdictional: true
+
+# ──────────────────────────────────────────────────────────────────────────
+# PENNSYLVANIA TRIAL COURT (Court of Common Pleas) — Pa.R.C.P.
+# ──────────────────────────────────────────────────────────────────────────
+    requires_state: [post_judgment_total]
+
+  - id: pa_rcp_1026_response
+    citation: "Pa.R.C.P. 1026(a)"
+    name: "Response to pleading (PA)"
+    description: "Response to complaint, answer, or new matter."
+    days: 20
+    unit: calendar
+    counting: PA_106
+    trigger: service_of_pleading
+    maps_to: []
+    party_role: defendant
+    forum: pa_trial
+    waivable: true
+    jurisdictional: false
+    requires_state: [pa_state_pre_judgment]
+
+  - id: pa_rcp_1037_default
+    citation: "Pa.R.C.P. 1037(b)"
+    name: "Default judgment (PA)"
+    description: "Default judgment available 10 days after notice of intent to default."
+    days: 10
+    unit: calendar
+    counting: PA_106
+    trigger: notice_of_intent_to_default
+    maps_to: []
+    party_role: plaintiff
+    forum: pa_trial
+    waivable: false
+    jurisdictional: false
+    requires_state: [pa_state_pre_judgment]
+
+  - id: pa_rcp_227_1_post_trial
+    citation: "Pa.R.C.P. 227.1(c)"
+    name: "Post-trial motions (PA)"
+    description: "Post-trial motions after non-jury or jury trial verdict."
+    days: 10
+    unit: calendar
+    counting: PA_106
+    trigger: notice_of_verdict_or_decision
+    maps_to: [entry_of_judgment]
+    party_role: either
+    forum: pa_trial
+    waivable: false
+    jurisdictional: true
+    notes: "Filing post-trial motions is prerequisite to appeal of issues not preserved on the record."
+    requires_state: [pa_state_post_default_judgment]
+
+  - id: pa_rcp_3146_writ_execution
+    citation: "Pa.R.C.P. 3146"
+    name: "Writ of execution"
+    description: "Praecipe for writ of execution on money judgment."
+    days: null
+    unit: calendar
+    counting: PA_106
+    trigger: entry_of_judgment
+    maps_to: [entry_of_judgment]
+    party_role: plaintiff
+    forum: pa_trial
+    waivable: false
+    jurisdictional: false
+
+# ──────────────────────────────────────────────────────────────────────────
+# PENNSYLVANIA SUPERIOR COURT — Pa.R.A.P.
+# ──────────────────────────────────────────────────────────────────────────
+    requires_state: [pa_state_post_default_judgment]
+
+  - id: pa_rap_903_notice_appeal
+    citation: "Pa.R.A.P. 903(a)"
+    name: "Notice of appeal (PA)"
+    description: "Notice of appeal to Superior or Commonwealth Court."
+    days: 30
+    unit: calendar
+    counting: PA_106
+    trigger: entry_of_order
+    maps_to: [entry_of_judgment, latest_order]
+    party_role: either
+    forum: pa_superior
+    waivable: false
+    jurisdictional: true
+    notes: "Hard jurisdictional deadline. Pa.R.A.P. 1701 generally divests trial court of jurisdiction once perfected."
+    requires_state: [pa_state_post_default_judgment]
+
+  - id: pa_rap_1925b_statement
+    citation: "Pa.R.A.P. 1925(b)"
+    name: "Statement of matters complained of on appeal"
+    description: "Concise statement filed in response to trial court's 1925(b) order."
+    days: 21
+    unit: calendar
+    counting: PA_106
+    trigger: order_directing_1925b_statement
+    maps_to: []
+    party_role: either
+    forum: pa_superior
+    waivable: false
+    jurisdictional: false
+    notes: "Failure to file = WAIVER of all appellate issues. Commonwealth v. Lord (1998)."
+    requires_state: [pa_state_post_default_judgment]
+
+  - id: pa_rap_2185_appellant_brief
+    citation: "Pa.R.A.P. 2185"
+    name: "Appellant's brief (PA)"
+    description: "Appellant's brief due 40 days after record sent to appellate court."
+    days: 40
+    unit: calendar
+    counting: PA_106
+    trigger: record_received_by_appellate_court
+    maps_to: []
+    party_role: either
+    forum: pa_superior
+    waivable: true
+    jurisdictional: false
+    requires_state: [pa_state_post_default_judgment]
+
+  - id: pa_rap_2542_reargument
+    citation: "Pa.R.A.P. 2542"
+    name: "Application for reargument (PA)"
+    description: "Application for panel reargument in Superior/Commonwealth Court."
+    days: 14
+    unit: calendar
+    counting: PA_106
+    trigger: entry_of_appellate_order
+    maps_to: [appeal_decided]
+    party_role: either
+    forum: pa_superior
+    waivable: false
+    jurisdictional: false
+
+# ──────────────────────────────────────────────────────────────────────────
+# PENNSYLVANIA COMMONWEALTH COURT
+# ──────────────────────────────────────────────────────────────────────────
+    requires_state: [pa_state_post_default_judgment]
+
+  - id: pa_rap_903_commonwealth
+    citation: "Pa.R.A.P. 903(a)"
+    name: "Notice of appeal (Commonwealth Court)"
+    description: "Notice of appeal to Commonwealth Court (gov agency review)."
+    days: 30
+    unit: calendar
+    counting: PA_106
+    trigger: entry_of_order
+    maps_to: [entry_of_judgment]
+    party_role: either
+    forum: pa_commonwealth
+    waivable: false
+    jurisdictional: true
+
+# ──────────────────────────────────────────────────────────────────────────
+# PENNSYLVANIA SUPREME COURT — Pa.R.A.P.
+# ──────────────────────────────────────────────────────────────────────────
+    requires_state: [pa_state_post_default_judgment]
+
+  - id: pa_rap_1113_allocatur
+    citation: "Pa.R.A.P. 1113(a)"
+    name: "Petition for allowance of appeal (allocatur)"
+    description: "Petition for discretionary appeal to PA Supreme Court."
+    days: 30
+    unit: calendar
+    counting: PA_106
+    trigger: entry_of_superior_or_commonwealth_order
+    maps_to: [appeal_decided]
+    party_role: either
+    forum: pa_supreme
+    waivable: false
+    jurisdictional: true
+    requires_state: [pa_state_post_default_judgment]
+
+  - id: pa_rap_2541_reargument_supreme
+    citation: "Pa.R.A.P. 2541"
+    name: "Application for reargument (PA Supreme)"
+    description: "Application for reargument in PA Supreme Court."
+    days: 14
+    unit: calendar
+    counting: PA_106
+    trigger: entry_of_supreme_court_order
+    maps_to: [appeal_decided]
+    party_role: either
+    forum: pa_supreme
+    waivable: false
+    jurisdictional: false
+
+# ──────────────────────────────────────────────────────────────────────────
+# STATUTES OF LIMITATIONS — PA STATE-LAW CLAIMS
+# ──────────────────────────────────────────────────────────────────────────
+    requires_state: [pa_state_post_default_judgment]
+
+  - id: pa_sol_tort_1983
+    citation: "42 Pa.C.S. § 5524(7); Wallace v. Kato"
+    name: "SOL: tort / § 1983 / personal injury"
+    description: "Statute of limitations for tort, § 1983, personal injury actions."
+    days: 730
+    unit: calendar
+    counting: literal
+    trigger: cause_of_action_accrues
+    maps_to: []  # SOL anchor is cause-of-action accrual, rarely == filed date
+    party_role: plaintiff
+    forum: pa_trial
+    waivable: true
+    jurisdictional: false
+    notes: "2 years. § 1983 borrows state SOL per Wallace v. Kato (2007). Discovery rule may extend."
+    requires_state: [pre_judgment, pre_judgment_removal_pending, trial_in_progress, pa_state_pre_judgment]
+
+  - id: pa_sol_contract
+    citation: "42 Pa.C.S. § 5525(a)"
+    name: "SOL: contract"
+    description: "Statute of limitations for breach of written or oral contract."
+    days: 1460
+    unit: calendar
+    counting: literal
+    trigger: cause_of_action_accrues
+    maps_to: []
+    party_role: plaintiff
+    forum: pa_trial
+    waivable: true
+    jurisdictional: false
+    notes: "4 years."
+    requires_state: [pre_judgment, pre_judgment_removal_pending, trial_in_progress, pa_state_pre_judgment]
+
+  - id: pa_sol_fraud
+    citation: "42 Pa.C.S. § 5524(7)"
+    name: "SOL: fraud / misrepresentation"
+    description: "Statute of limitations for common-law fraud."
+    days: 730
+    unit: calendar
+    counting: literal
+    trigger: discovery_of_fraud
+    maps_to: []
+    party_role: plaintiff
+    forum: pa_trial
+    waivable: true
+    jurisdictional: false
+    notes: "2 years from discovery (discovery rule). Equitable tolling for fraudulent concealment."
+    requires_state: [pre_judgment, pre_judgment_removal_pending, trial_in_progress, pa_state_pre_judgment]
+
+  - id: pa_sol_real_property
+    citation: "42 Pa.C.S. § 5530"
+    name: "SOL: real property"
+    description: "Adverse possession / real property actions."
+    days: 7665
+    unit: calendar
+    counting: literal
+    trigger: adverse_entry_or_possession
+    maps_to: []
+    party_role: plaintiff
+    forum: pa_trial
+    waivable: true
+    jurisdictional: false
+    notes: "21 years for adverse possession; varies by claim."
+    requires_state: [pre_judgment, pre_judgment_removal_pending, trial_in_progress, pa_state_pre_judgment]
+
+  - id: fcra_sol
+    citation: "15 U.S.C. § 1681p"
+    name: "SOL: FCRA"
+    description: "Fair Credit Reporting Act limitations period."
+    days: 730
+    unit: calendar
+    counting: literal
+    trigger: discovery_of_violation
+    maps_to: []
+    party_role: plaintiff
+    forum: federal_trial
+    waivable: false
+    jurisdictional: false
+    notes: "2 years from discovery OR 5 years from violation, whichever is earlier."
+    requires_state: [pre_judgment, pre_judgment_removal_pending, trial_in_progress]
+
+  - id: fcra_sol_violation_cap
+    citation: "15 U.S.C. § 1681p"
+    name: "SOL: FCRA — outer 5-year cap"
+    description: "FCRA absolute outer limit regardless of discovery."
+    days: 1826
+    unit: calendar
+    counting: literal
+    trigger: violation_occurred
+    maps_to: []
+    party_role: plaintiff
+    forum: federal_trial
+    waivable: false
+    jurisdictional: false
+    notes: "5-year statute of repose; runs even if violation not discovered."
+    requires_state: [pre_judgment, pre_judgment_removal_pending, trial_in_progress]
+
+  - id: pa_bad_faith_insurance_sol
+    citation: "42 Pa.C.S. § 8371; Ash v. Cont'l Ins. (3d Cir 2008)"
+    name: "SOL: PA bad faith insurance"
+    description: "PA bad-faith claim under § 8371."
+    days: 730
+    unit: calendar
+    counting: literal
+    trigger: cause_of_action_accrues
+    maps_to: []
+    party_role: plaintiff
+    forum: pa_trial
+    waivable: true
+    jurisdictional: false
+    notes: "2 years."
+
+# ──────────────────────────────────────────────────────────────────────────
+# REMOVAL — 28 U.S.C.
+# ──────────────────────────────────────────────────────────────────────────
+    requires_state: [pre_judgment, pre_judgment_removal_pending, trial_in_progress, pa_state_pre_judgment]
+
+  - id: removal_notice
+    citation: "28 U.S.C. § 1446(b)(1)"
+    name: "Notice of removal"
+    description: "Defendant's notice of removal to federal court."
+    days: 30
+    unit: calendar
+    counting: FRCP_6a
+    trigger: receipt_of_initial_pleading
+    maps_to: []
+    party_role: defendant
+    forum: federal_trial
+    waivable: false
+    jurisdictional: true
+    requires_state: [pre_judgment, pre_judgment_removal_pending]
+
+  - id: remand_motion
+    citation: "28 U.S.C. § 1447(c)"
+    name: "Motion to remand for procedural defect"
+    description: "Motion to remand for any defect other than subject-matter jurisdiction."
+    days: 30
+    unit: calendar
+    counting: FRCP_6a
+    trigger: filing_of_notice_of_removal
+    maps_to: []  # only fires if there's a removal_date anchor
+    party_role: plaintiff
+    forum: federal_trial
+    waivable: true
+    jurisdictional: false
+    notes: "Subject-matter jurisdiction objections can be raised at ANY time per § 1447(c)."
+
+# ──────────────────────────────────────────────────────────────────────────
+# Federal legal holidays observed under FRCP 6(a)(6) / FRAP 26(a)(6) (2026)
+# ──────────────────────────────────────────────────────────────────────────
+    requires_state: [pre_judgment_removal_pending, pre_judgment]
+
+federal_holidays_2026:
+  - 2026-01-01
+  - 2026-01-19
+  - 2026-02-16
+  - 2026-05-25
+  - 2026-06-19
+  - 2026-07-03
+  - 2026-09-07
+  - 2026-10-12
+  - 2026-11-11
+  - 2026-11-26
+  - 2026-12-25
+
+federal_holidays_2025:
+  - 2025-01-01
+  - 2025-01-09
+  - 2025-01-20
+  - 2025-02-17
+  - 2025-05-26
+  - 2025-06-19
+  - 2025-07-04
+  - 2025-09-01
+  - 2025-10-13
+  - 2025-11-11
+  - 2025-11-27
+  - 2025-12-25
+
+pa_holidays_2026:
+  - 2026-02-12
+  - 2026-04-03  # Good Friday
+  - 2026-11-27
+
+pa_holidays_2025:
+  - 2025-04-18  # Good Friday
+  - 2025-11-28

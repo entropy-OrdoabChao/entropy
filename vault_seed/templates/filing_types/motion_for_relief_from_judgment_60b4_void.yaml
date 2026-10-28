@@ -1,0 +1,57 @@
+id: motion_for_relief_from_judgment_60b4_void
+title: Motion for Relief from Void Judgment Under FRCP 60(b)(4)
+description: |
+  Motion for relief from a VOID judgment under FRCP 60(b)(4). This is the most powerful
+  subdivision of Rule 60(b) because it carries NO TIME LIMIT — a void judgment can be
+  challenged at any time.
+
+  A judgment is VOID (not merely voidable) when the court lacked:
+  (1) subject-matter jurisdiction,
+  (2) personal jurisdiction over the party, or
+  (3) due process (fundamental fairness).
+
+  FRCP 60(b)(4) applies when the judgment rests on a finding contradicted by the
+  court's own docket record — the court's factual error goes to the foundation of
+  the judgment, rendering it void ab initio.
+
+  This is NOT a motion for reconsideration. Reconsideration targets errors of law or
+  fact within the court's jurisdiction. (b)(4) targets the ABSENCE of jurisdiction —
+  the court had no power to enter the judgment it entered.
+
+court: any
+required_authorities:
+  - FRCP 60(b)(4) — Void judgment; no time limitation
+  - FRCP 60(c)(1) — Standard for motion under FRCP 60
+  - United Student Aid Funds v. Espinosa, 559 U.S. 260 (2010) — Void judgment standard: "a judgment is void if the court lacked jurisdiction over the subject matter or the parties"
+  - Hazel-Atlas Glass Co. v. Hartford-Empire Co., 322 U.S. 238 (1944) — Fraud on the court as voidness ground
+  - 28 U.S.C. § 1655(a) — Judgment void for lack of jurisdiction
+  - Fed. R. Civ. P. 4(l) — Proof of service establishes service of record
+  - Fed. R. Evid. 201(b)(2) — Judicial notice of court record
+trigger_defects:
+  - FATAL/VOID_JUDGMENT
+  - FATAL/JURISDICTION
+  - SERIOUS/VOID_JUDGMENT
+  - judgment_contradicts_docket
+  - court_relied_on_fraud
+  - FATAL/SERVICE
+  - void_order
+  - FRCP_60B_eligible
+required_facts:
+  - case_id
+  - caption
+  - judgment_date
+  - voidness_ground — "lack_of_smj" or "lack_of_pj" or "due_process_violation" or "docket_contradiction"
+  - docket_contradiction_evidence — if voidness_ground is "docket_contradiction"
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/60b4_void_judgment
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

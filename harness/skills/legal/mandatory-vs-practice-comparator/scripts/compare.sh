@@ -1,0 +1,4 @@
+#!/bin/bash
+HERMES_VENV="$HOME/.hermes/hermes-agent/venv/bin/python"
+SCRIPT="$HOME/.hermes/skills/legal/mandatory-vs-practice-comparator/scripts/compare.py"
+exec "$HERMES_VENV" "$SCRIPT" "$@"

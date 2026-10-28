@@ -1,0 +1,133 @@
+id: fcras_enforcement_1681n1681o
+title: FCRA Enforcement – Willful/Negligent Noncompliance
+description: >
+  Civil enforcement action under 15 U.S.C. §§1681n (willful noncompliance) and 1681o
+  (negligent noncompliance) against any person — CRAs, furnishers, end users — that
+  fails to comply with FCRA requirements. Yields actual damages, statutory damages
+  ($100–$1,000), punitive damages (willful only), costs, and attorneys' fees.
+  
+  §1681n provides an explicit right of action against any person — a statutory
+  damages floor of $100 to $1,000 per violation, plus punitive damages and fees
+  where the violation is WILLFUL. Willfulness includes reckless disregard per
+  Safeco Ins. Co. v. Burr, 551 U.S. 47 (2007).
+  
+  §1681o provides a negligence standard with actual-damages-only and no punitive
+  damages; both §§1681n and §1681o(b) provide for costs and attorneys' fees on
+  an unsuccessful paper filed in bad faith or harassment.
+
+  This vehicle is used when a CRMA, furnisher, or end user has violated FCRA
+  compliance duties (15 U.S.C. §1681 et seq.) — failure to maintain reasonable
+  procedures, failure to conduct reasonable investigation, furnishing inaccurate
+  information, failure to provide required notices.
+
+  Key provisions:
+  - 15 U.S.C. §1681n(a): civil liability for WILLFUL noncompliance (actual damages
+    OR statutory $100–$1,000; punitive damages; costs + attorney's fees)
+  - 15 U.S.C. §1681n(b): liability for natural persons obtaining reports under
+    false pretenses or without permissible purpose
+  - 15 U.S.C. §1681o(a): civil liability for NEGLIGENT noncompliance (actual
+    damages; costs + attorney's fees; no punitive damages)
+  - 15 U.S.C. §1681o(b): attorneys' fees on unsuccessful papers filed in bad faith
+    or harassment
+  - Safeco Ins. Co. v. Burr, 551 U.S. 47 (2007): "willfulness" includes reckless
+    disregard of FCRA requirements
+
+court: fed_district_or_state
+required_authorities:
+  - citation: "15 U.S.C. §1681n(a)"
+    proposition: >
+      "Any person who willfully fails to comply with any requirement under this
+      subchapter with respect to a consumer is liable to that consumer in an
+      amount equal to the sum of: (1) any actual damages sustained by such
+      consumer as a result of the failure or liability of $100 to $500, whichever
+      is LARGER; (2) such amount of punitive damages as the court may allow; AND
+      (3) in the case of any successful action to enforce the foregoing liability,
+      the costs of such action together with the costs and attorney's fees."
+  - citation: "15 U.S.C. §1681n(b)"
+    proposition: >
+      "Any person who obtains a consumer report under false pretenses or false
+      statements is liable to the consumer reporting agency for actual damages,
+      punitive damages, costs, and reasonable attorney's fees."
+  - citation: "15 U.S.C. §1681o(a)"
+    proposition: >
+      "Any person who is negligent in failing to comply with any requirement under
+      this subchapter with respect to a consumer is liable to that consumer for
+      actual damages sustained by such consumer as a result of the failure."
+  - citation: "15 U.S.C. §1681o(b)"
+    proposition: >
+      "A consumer may recover costs and reasonable attorney's fees for any
+      unsuccessful paper filed in bad faith or to harass on an action under this
+      subchapter."
+  - citation: "Safeco Ins. Co. v. Burr, 551 U.S. 47 (2007)"
+    proposition: >
+      "Willfulness under §1681n includes reckless disregard of FCRA requirements;
+      a plaintiff need not prove intent to violate the FCRA, only reckless
+      indifference to statutory obligations."
+
+trigger_defects:
+  - FCRA_NONCOMPLIANCE
+  - CRA inaccurate_consumer_report
+  - furnisher_fails_investigate
+  - improper_consumer_report_access
+  - failure_provide_disclosure
+  - failure_produce_consumer_file
+  - consumer_report_violation
+
+structure:
+  - type: caption
+    block: boilerplate/caption_federal
+  - type: section
+    block: sections/introduction
+    content: "Identify the FCRA violation — willful (§1681n) or negligent (§1681o) —
+      the named defendant committed, the consumer affected, and the specific FCRA
+      requirement breached. State jurisdiction and statutory basis."
+  - type: section
+    block: sections/procedural_history
+    content: "Trace the consumer credit file/report history: (1) how and when the
+      consumer report was obtained/used; (2) the FCRA duty owed by the defendant
+      under §1681 et seq.; (3) the specific compliance failure; (4) any notice
+      provided or omitted; (5) downstream harm to the consumer."
+  - type: section
+    block: sections/factual_statement_enforcement
+    content: "Establish the factual predicate for willful or negligent noncompliance.
+      For §1681n, demonstrate willfulness (including reckless disregard per Safeco
+      v. Burr). For §1681o, demonstrate negligence (failure to maintain reasonable
+      procedures). Cite the specific CRA/furnisher/furnisher procedure failure."
+  - type: section
+    block: sections/definitions_schedule_canons
+    content: "Define: 'consumer reporting agency' (§1681a(f)), 'furnisher' (§1681a(m)),
+      'consumer report' (§1681a(c)), 'willful' (Safeco v. Burr — reckless disregard),
+      'reasonable procedure' (§1681s(m)(2)). Ground definitions in the statute."
+  - type: argument
+    block: arguments/statutory_violation
+    content: "Argue that the defendant's conduct violates a specific FCRA requirement.
+      For willful violations (§1681n), argue reckless disregard. For negligent
+      violations (§1681o), argue failure to maintain reasonable procedures. Cite
+      controlling Third Circuit and Supreme Court authority on FCRA enforcement."
+  - type: argument
+    block: arguments/damages_calculation
+    content: "Calculate damages: (1) actual damages proven; (2) statutory damages
+      ($100–$500 per violation under §1681n(a)(1)); (3) punitive damages where
+      applicable (willful only under §1681n(a)(2)); (4) costs and attorneys'
+      fees on successful enforcement actions."
+  - type: argument
+    block: arguments/fee_shifting
+    content: "Argue for costs and attorneys' fees under §1681n(a)(3) for successful
+      actions, or §1681o(b) for bad-faith filings. Note that the fee-shifting
+      provision is mandatory for successful enforcement."
+  - type: section
+    block: sections/conclusion
+    content: "Request entry of judgment for actual damages, statutory damages
+      where applicable, punitive damages where warranted, costs, and attorneys'
+      fees under the FCRA."
+  - type: section
+    block: sections/prayer_for_relief
+    content: "Prayer for: (1) entry of judgment under 15 U.S.C. §1681n(a) or
+      §1681o(a); (2) actual damages; (3) statutory damages ($100–$500 per
+      violation) where willful noncompliance shown; (4) punitive damages where
+      applicable; (5) costs and attorneys' fees; (6) such other relief as
+      the court deems just."
+  - type: boilerplate
+    block: boilerplate/certificate_of_service
+  - type: boilerplate
+    block: boilerplate/proposed_order

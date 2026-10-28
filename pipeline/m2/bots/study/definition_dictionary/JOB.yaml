@@ -1,0 +1,19 @@
+name: definition_dictionary
+group: study
+unit: term            # claim | term | cite | count | document | case | draft
+axis: "Axis 1b — DEFINITION (dictionary): Black's edition in force at enactment, Bouvier, Dictionary Act 1 U.S.C. §1."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - blacks_law_2nd
+  - blacks_law_4th
+  - blacks_law_8th
+  - blacks_law_9th
+  - bouvier
+  - dictionary_act
+  - glossary
+queries:
+  - "{claim} definition Black's"
+  - "{claim} Bouvier"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

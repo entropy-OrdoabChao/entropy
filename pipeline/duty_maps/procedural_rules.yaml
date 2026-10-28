@@ -1,0 +1,270 @@
+version: 1
+entity_type: procedural_rules
+description: >
+  Procedural rule violations under PA Rules of Civil Procedure (Pa.R.C.P.)
+  and Federal Rules of Civil Procedure (FRCP). These are RULE violations
+  (e.g., failure to verify, defective service, improper garnishment answer)
+  as distinct from PROCEDURAL DOCTRINES (Rule 60(b)(4) attack vector).
+
+  Each duty declares applies_to_domains so auto_attach_duties can fall back
+  to procedural duties when entity_type is null on the claim.
+
+  CITED VERBATIM as appears in the rules. No interpretation.
+  ASCII-only (no Section symbol) for cross-encoding compatibility.
+
+duties:
+
+  # ============== PA RULES OF CIVIL PROCEDURE ==============
+
+  - id: proc_pa_001
+    name: Verification Requirement (Pa.R.C.P. 1024)
+    class: procedural
+    source: Pa.R.C.P. 1024
+    source_title: Pa.R.C.P. 1024 (Verification of Pleadings)
+    jurisdiction: pa
+    applies_to_domains:
+      - procedural
+      - contract
+      - tort
+      - real_property
+      - property
+    description: >
+      Every pleading containing an averment of fact not appearing of record
+      shall state that the averment is true upon the signer's personal
+      knowledge or information and belief, and shall be verified.
+      Unverified pleadings and discovery responses are subject to being
+      stricken.
+    triggering_actions:
+      - unverified_interrogatory_response
+      - missing_verification
+      - defective_verification
+      - filing_lacks_verification
+    burden_flip_questions:
+      - "Produce the verified versions of all responsive interrogatory answers."
+      - "Identify the natural person who personally verified the response."
+      - "Produce the original verification page bearing the signer's signature."
+    evidence_demanded:
+      - executed verification pages
+      - identity of verifying signer
+      - chain of custody for verified discovery
+    violation_remedy:
+      - Motion to strike defective filing
+      - Order compelling proper verification
+      - Sanctions for repeated failure
+
+  - id: proc_pa_002
+    name: Garnishment Answers (Pa.R.C.P. 3145)
+    class: procedural
+    source: Pa.R.C.P. 3145
+    source_title: Pa.R.C.P. 3145 (Garnishee Answer to Interrogatories)
+    jurisdiction: pa
+    applies_to_domains:
+      - procedural
+      - contract
+      - property
+    description: >
+      A garnishee shall file an answer to interrogatories within twenty
+      days after service. Failure to answer entitles the plaintiff to
+      judgment against the garnishee for the amount of plaintiff's
+      judgment plus costs.
+    triggering_actions:
+      - garnishee_in_default
+      - failed_to_answer_garnishment_interrogatories
+      - garnishee_answer_late
+      - garnishee_answer_unverified
+    burden_flip_questions:
+      - "Produce the garnishee's verified answer to the served interrogatories."
+      - "Identify the date of service and the date of the answer (if any)."
+      - "Produce all internal communications regarding the garnishment service."
+    evidence_demanded:
+      - sheriff's return of service on garnishee
+      - garnishee's verified answer
+      - communications between garnishee and judgment debtor
+    violation_remedy:
+      - Judgment against garnishee for full amount
+      - Costs and attorney fees
+      - Sanctions
+
+  - id: proc_pa_003
+    name: Default Judgment Procedure (Pa.R.C.P. 3146)
+    class: procedural
+    source: Pa.R.C.P. 3146
+    source_title: Pa.R.C.P. 3146 (Default Judgment in Garnishment)
+    jurisdiction: pa
+    applies_to_domains:
+      - procedural
+      - contract
+      - property
+    description: >
+      Where a garnishee has failed to answer interrogatories within the
+      time prescribed by Rule 3145, the prothonotary shall enter judgment
+      against the garnishee upon praecipe filed by the plaintiff.
+    triggering_actions:
+      - garnishee_in_default
+      - praecipe_for_judgment_filed
+      - garnishment_default_entered
+    burden_flip_questions:
+      - "Produce the praecipe for default judgment in the record."
+      - "Produce all evidence of garnishee's response within the statutory window."
+    evidence_demanded:
+      - praecipe filing record
+      - prothonotary entry of judgment
+    violation_remedy:
+      - Default judgment entered against garnishee
+      - Garnishee's funds subject to turnover
+
+  - id: proc_pa_004
+    name: Service of Original Process (Pa.R.C.P. 400-405)
+    class: procedural
+    source: Pa.R.C.P. 400-405
+    source_title: Pa.R.C.P. 400-405 (Service of Original Process)
+    jurisdiction: pa
+    applies_to_domains:
+      - procedural
+      - constitutional
+    description: >
+      Original process shall be served by the sheriff or other authorized
+      person within the time prescribed. Defective service deprives the
+      court of personal jurisdiction over the served party. Judgment
+      entered without proper service is void.
+    triggering_actions:
+      - no_proper_service
+      - defective_service
+      - improper_service
+      - service_outside_jurisdiction
+    burden_flip_questions:
+      - "Produce the sheriff's return of service for each served defendant."
+      - "Identify the natural person served and the date and place of service."
+      - "Produce any acknowledgment of service signed by defendant."
+    evidence_demanded:
+      - sheriff's returns
+      - acknowledgments of service
+      - process server affidavits
+    violation_remedy:
+      - Void judgment (no personal jurisdiction)
+      - Order setting aside default judgment
+      - Quash service and require re-service
+
+  - id: proc_pa_005
+    name: Discovery Sanctions (Pa.R.C.P. 4019)
+    class: procedural
+    source: Pa.R.C.P. 4019
+    source_title: Pa.R.C.P. 4019 (Sanctions for Discovery Violations)
+    jurisdiction: pa
+    applies_to_domains:
+      - procedural
+    description: >
+      The court may make any order on motion that is just where a party
+      fails to make discovery, including orders striking pleadings,
+      entering judgment, awarding fees and costs, or holding the
+      offending party in contempt.
+    triggering_actions:
+      - discovery_failure
+      - failure_to_supplement_discovery
+      - obstruction_of_discovery
+    burden_flip_questions:
+      - "Produce the complete discovery responses on a rolling basis."
+      - "Identify the date by which complete responses will be provided."
+    evidence_demanded:
+      - discovery responses
+      - logs of supplementations
+    violation_remedy:
+      - Striking pleadings
+      - Entry of judgment
+      - Fee shifting
+      - Contempt
+
+  # ============== FEDERAL RULES OF CIVIL PROCEDURE ==============
+
+  - id: proc_fed_001
+    name: Service of Process (Fed.R.Civ.P. 4)
+    class: procedural
+    source: Fed.R.Civ.P. 4
+    source_title: Federal Rule of Civil Procedure 4 (Summons; Service)
+    jurisdiction: federal
+    applies_to_domains:
+      - procedural
+      - constitutional
+    description: >
+      A summons must be served with a copy of the complaint within the
+      time allowed under Rule 4(m). Defective service deprives the court
+      of personal jurisdiction. Judgment entered without proper service
+      is void under Rule 60(b)(4).
+    triggering_actions:
+      - no_proper_service
+      - defective_service
+      - service_after_deadline
+      - improper_service
+    burden_flip_questions:
+      - "Produce the proof of service (Form AO 440) for each defendant."
+      - "Identify the date of service and method used."
+      - "Produce any waiver of service signed by defendant."
+    evidence_demanded:
+      - proof of service forms
+      - process server affidavits
+      - waivers of service
+    violation_remedy:
+      - Void judgment under Rule 60(b)(4)
+      - Quash service
+      - Dismissal under Rule 12(b)(5)
+
+  - id: proc_fed_002
+    name: Removal Procedure (28 U.S.C. 1446)
+    class: procedural
+    source: 28-USC-1446
+    source_title: 28 U.S.C. 1446 (Procedure for Removal)
+    jurisdiction: federal
+    applies_to_domains:
+      - procedural
+      - constitutional
+    description: >
+      A defendant desiring to remove any civil action must file a notice
+      of removal within 30 days after receipt of the initial pleading.
+      All defendants who have been properly joined and served must
+      consent to removal. Defective removal procedure is grounds for
+      remand under 28 U.S.C. 1447.
+    triggering_actions:
+      - improper_removal
+      - removed_without_consent
+      - late_removal
+      - removal_without_subject_matter_jurisdiction
+    burden_flip_questions:
+      - "Produce the notice of removal and the date of receipt of the initial pleading."
+      - "Produce the consent to removal from each properly joined defendant."
+      - "Identify the basis of subject matter jurisdiction asserted."
+    evidence_demanded:
+      - notice of removal
+      - consents to removal from co-defendants
+      - jurisdictional statement
+    violation_remedy:
+      - Remand to state court
+      - Costs and fees under 1447(c)
+      - Costs of improper removal
+
+  - id: proc_fed_003
+    name: Motion to Dismiss for Lack of Jurisdiction (Fed.R.Civ.P. 12(b)(1)-(2))
+    class: procedural
+    source: Fed.R.Civ.P. 12(b)
+    source_title: Federal Rule of Civil Procedure 12(b) (Defenses; Jurisdiction)
+    jurisdiction: federal
+    applies_to_domains:
+      - procedural
+      - constitutional
+    description: >
+      The defenses of lack of subject-matter jurisdiction (12(b)(1)) and
+      lack of personal jurisdiction (12(b)(2)) may be raised at any time.
+      A judgment without subject matter jurisdiction is void and may be
+      collaterally attacked.
+    triggering_actions:
+      - lack_of_jurisdiction
+      - lack_of_subject_matter_jurisdiction
+      - lack_of_personal_jurisdiction
+    burden_flip_questions:
+      - "Produce the basis of subject matter jurisdiction in the operative pleading."
+      - "Produce evidence of minimum contacts supporting personal jurisdiction."
+    evidence_demanded:
+      - jurisdictional statements
+      - contacts evidence
+    violation_remedy:
+      - Dismissal
+      - Void judgment subject to collateral attack

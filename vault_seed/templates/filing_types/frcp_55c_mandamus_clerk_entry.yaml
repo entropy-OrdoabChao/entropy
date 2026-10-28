@@ -1,0 +1,42 @@
+id: frcp_55c_mandamus_clerk_entry
+title: Writ of Mandamus to Compel Clerk Entry of Default
+description: >
+  Mandamus writ to compel clerk's administrative default entry under
+  FRCP 55(a). When clerk fails to enter default after receiving proper
+  request, this lever forces ministerial performance.
+court: fed_district
+required_authorities:
+  - FRCP 55(a) (Clerk's Entry of Default)
+  - FRCP 55(c) (Setting Aside Clerk's Entry)
+  - 28 U.S.C. 1361 (Area Mandamus)
+  - Kerr v. USCCIT, 835 F.2d 81 (2d Cir. 1987)
+trigger_defects:
+  - SERIOUS/SERVICE
+  - FATAL/ADMIN_DEFAULT_ENTRY_DELAY
+  - cross_case
+structure:
+  - block: boilerplate/caption_federal
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_enforcement
+  - block: sections/standard_of_review
+  - block: arguments/mandamus_clear_duty
+    when: clerk_has_received_request AND clerk_has_failed_to_act
+  - block: arguments/ministerial_nature_of_entry
+  - block: arguments/interim_relief_pending_entry
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order
+when_clauses:
+  - Use when clerk has received proper request for default entry and
+    failed to enter default within 3 days of receiving request,
+    blocking plaintiff's ability to proceed to default judgment
+    under FRCP 55(b).
+  - Use when clerk has accepted proof of service but has not
+    completed administrative entry despite time for response
+    having expired, creating a procedural gap.
+  - Use when opposing party has not entered appearance and
+    plaintiff has completed all steps to trigger clerk's
+    ministerial duty under FRCP 55(a), but clerk has stalled.
+resolution_path: "obsidian_sync/templates/filing_types/frcp_55c_mandamus_clerk_entry.yaml"

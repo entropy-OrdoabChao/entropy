@@ -1,0 +1,57 @@
+id: motion_for_premature_denial_response
+title: Motion for Statement of Reasons and Discovery Relief — Premature Denial Catch-22
+description: >
+  Filed when the court denies a motion as "premature" or "without prejudice" while
+  simultaneously denying discovery motions or imposing discovery barriers. This creates
+  a procedural catch-22: the movant cannot meet its burden because discovery was denied,
+  and the denial is justified by "prematurity." This filing invokes the court's duty to
+  state reasons under FRCP 52 and seeks discovery relief under FRCP 37, creating a
+  record for appellate review of the catch-22.
+
+  Triggered when: (a) SJ/MSJ denied as premature, (b) discovery motions denied,
+  (c) court labels proper filings "frivolous" or "premature" without analysis.
+
+court: federal_district
+
+required_authorities:
+  - FRCP 52(a)(1) (findings of fact and conclusions of law)
+  - FRCP 56 (summary judgment standard)
+  - FRCP 37(a) (motion to compel discovery)
+  - FRCP 37(a)(5)(A) (sanctions for failure to confer)
+  - FRCP 26(b)(1) (proportionality)
+  - FRCP 54(b) (certification of partial final judgment)
+  - "Curtiss-Wright Corp. v. General Elec. Co., 446 U.S. 1 (1980)"
+  - "Haines v. Kerner, 404 U.S. 519 (1972)"
+  - "Erickson v. Pardus, 551 U.S. 89 (2007)"
+  - "28 U.S.C. 1746 (unsworn declaration under penalty of perjury)"
+
+trigger_defects:
+  - premature_denial_catch22
+  - denial_of_54b_certification
+  - failure_to_analyze_curtiss_wright
+  - conclusory_denial
+  - failure_to_address_argument
+  - SERIOUS/AUTHORITY
+  - FATAL/AUTHORITY
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_federal
+  - block: sections/standard_of_review
+  - block: arguments/duty_to_state_reasons
+  - block: arguments/non_binding_authority
+    when: defect_categories.AUTHORITY > 0
+  - block: arguments/haines_v_kerner_standard
+    when: defect_categories.DISMISSAL > 0
+  - block: arguments/fr37_discovery_sanctions
+    when: defect_categories.DISCOVERY > 0
+  - block: sections/interrogatory_questions
+  - block: sections/prayer_for_statement_of_reasons
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion_opposition
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

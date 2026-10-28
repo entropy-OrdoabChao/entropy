@@ -1,0 +1,55 @@
+id: pro_se_liberal_construction_accommodation
+title: Motion for Pro Se Liberal Construction Accommodation
+description: >-
+  Filing type for when a court fails to apply the mandatory liberal construction
+  standard to a pro se pleading. This is a mandatory duty under Supreme Court
+  precedent — Haines v. Kerner, Neitzke v. Williams, Erickson v. Pardus — not a
+  discretionary courtesy. The motion targets courts that apply heightened scrutiny,
+  dismiss without reading the pleading liberally, or impose formal pleading
+  standards on pro se filers. Available in any court where the litigant proceeds
+  pro se or in forma pauperis.
+
+court: any
+required_authorities:
+  - Haines v. Kerner, 424 U.S. 505, 506–08 (1976) — "Pro se pleadings are
+    liberally construed" and "the requirements for pro se pleadings, different
+    from formal pleadings, are less harsh."
+  - Neitzke v. Williams, 490 U.S. 319, 324–26 (1989) — a pro se IFP complaint
+    that fails to state a claim under 12(b)(6) is NOT automatically frivolous
+    under 28 U.S.C. 1915(d); the lower standard must be applied before dismissal.
+  - Erickson v. Pardus, 551 U.S. 89, 91 (2007) — pro se complaints are "held to
+    less strict standards than formal pleadings" and must be liberally construed.
+  - Gilbert v. Continental Illinois Nat'l Bank, 740 F.2d 1242, 1245–46 (7th Cir.
+    1984) — pro se complaints are held to less strict standards.
+  - FRCP 8(e) — pleadings must be construed so as to do justice.
+
+trigger_defects:
+  - PRO_SE/HIGHED_SCRUTINY
+  - PRO_SE/FAILURE_TO_LIBERALLY_CONSTRU
+  - PRO_SE/FORMAL_STANDARDS_APPLIED
+  - FATAL/CONSTRUCTION
+  - SERIOUS/CONSTRUCTION
+
+required_facts:
+  - case_id
+  - caption
+  - pro_se_status
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_pro_se
+  - block: arguments/pro_se_liberal_construction
+    when: pro_se_status == true
+  - block: arguments/court_failed_liberally_construe
+    when: PRO_SE/FAILURE_TO_LIBERALLY_CONSTRU in defect_categories
+  - block: arguments/higher_standard_applied
+    when: PRO_SE/HIGHED_SCRUTINY in defect_categories
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: sections/propo

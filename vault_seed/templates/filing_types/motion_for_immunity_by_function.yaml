@@ -1,0 +1,56 @@
+id: motion_for_immunity_by_function
+title: Motion for Immunity-by-Function Determination
+description: |
+  Motion asking the court (or a higher court/JCB) to determine that judicial
+  immunity does NOT bar accountability for a challenged act because the act
+  was either (1) non-judicial by function (administrative/ministerial/executive)
+  or (2) in the clear absence of all jurisdiction over the subject matter.
+
+  This filing type is used when:
+  - A judge performs a ministerial act (record-keeping, mechanical selection)
+  - A judge contradicts the docket record sua sponte
+  - A judge fails to exercise jurisdiction over pending matters
+  - A judge dissolves a writ or order without motion/notice
+  - An immunity defense is asserted and must be pierced by function
+
+  NOT a motion for recusal (that is motion_for_recusal.yaml). This filing
+  type addresses the SUBSTANCE of whether immunity applies, not whether
+  the judge should be disqualified.
+
+required_authorities:
+  - Forrester v. White, 484 U.S. 219, 222 (1988) — "Immunity is defined by the function performed, not the person."
+  - Stump v. Sparkman, 435 U.S. 349, 356 (1978) — Two-prong immunity test
+  - Mireles v. Woltman, 502 U.S. 96, 102 (1991) — Ministerial vs discretionary acts
+  - Bradley v. Fisher, 80 U.S. 335, 351 (1872) — Clear absence of jurisdiction
+  - 28 U.S.C. § 351(a) — Complaints to judicial council
+  - 28 U.S.C. § 455(a) — Disqualification standard
+  - FRCP 60(b)(4) — Relief from void judgment
+  - 42 Pa.C.S. § 351 — Pennsylvania judicial conduct (state parallel)
+
+trigger_defects:
+  - FATAL/IMMUNITY_BY_FUNCTION
+  - SERIOUS/IMMUNITY_BY_FUNCTION
+  - FATAL/MINISTERIAL_ACT
+  - FATAL/CLEAR_ABSENCE_OF_JURISDICTION
+  - FATAL/VOID_JUDGMENT
+  - FATAL/ACTOR_SCOPE
+  - record_contradiction
+  - sua_sponte_intervention
+  - FATAL/JUDICIAL_FACT_ERROR
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/standard_of_review
+  - block: arguments/immunity_by_function
+  - block: arguments/ministerial_act_detection
+  - block: arguments/clear_absence_of_jurisdiction
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

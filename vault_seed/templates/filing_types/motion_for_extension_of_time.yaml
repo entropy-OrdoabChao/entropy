@@ -1,0 +1,50 @@
+id: motion_for_extension_of_time
+title: Motion for Extension of Time Under FRCP 6(b)
+description: |
+  Motion for an extension of time under Fed. R. Civ. P. 6(b)(1)(A) for good
+  cause, or under FRCP 6(b)(1)(B) for excusable neglect. Filed when the party
+  missed a deadline due to mistake, inadvertence, surprise, or excusable neglect.
+
+  Key timing rules:
+  - Good cause: may extend a deadline even if the motion is after the deadline expires
+  - Excusable neglect: may NOT extend if the time has already expired (FRCP 6(b)(1)(B))
+  - The court may not extend the time under (b)(1)(B) if the court or a rule sets the time
+  - For FRCP 59(a) motions that extend appeal time, FRCP 6(b) does NOT apply
+  - For notice of appeal (FRAP 4), excusable neglect standard applies per 6(b)(1)(B)
+
+court: any
+required_authorities:
+  - "Fed. R. Civ. P. 6(b)(1)(A) — Good cause extension (before or after deadline)"
+  - "Fed. R. Civ. P. 6(b)(1)(B) — Excusable neglect (only before deadline expires)"
+  - "Fed. R. Civ. P. 6(b)(2) — Non-extension of time for FRCP 50, 52, 59 motions"
+  - "Fed. R. App. P. 4(a)(3) — Extension for excusable neglect (appeal)"
+  - "Fed. R. App. P. 4(a)(5) — No extension beyond absolute deadline"
+  - "Fed. R. Evid. 201(b)(2) — Judicial notice"
+  - "28 U.S.C. 1746 — Unsworn declarations under penalty of perjury"
+
+trigger_defects:
+  - deadline_missed
+  - excusable_neglect
+  - good_cause
+  - FRCP_60B_eligible
+
+required_facts:
+  - case_id
+  - caption
+  - deadline_missed_date
+  - reason_for_extension
+  - proposed_extension_period
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/grounds_for_extension
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

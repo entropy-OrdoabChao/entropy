@@ -1,0 +1,103 @@
+id: default_judgment_frcp_55
+title: Motion for Default Judgment under Fed. R. Civ. P. 55
+description: >
+  The procedural vehicle for obtaining a default judgment when a defendant has failed
+  to respond to the complaint or otherwise defend — Fed. R. Civ. P. 55 provides the
+  two-step process: (a) entry of default by the clerk upon affidavit of non-response,
+  then (b) motion for default judgment by the plaintiff. FRCP 55(b)(1) allows the
+  clerk to enter judgment for the plaintiff on the clerk's own motion if the claim is
+  for a sum certain. FRCP 55(b)(2) allows the court to enter judgment on motion after
+  notice to the defaulting defendant. This filing type covers the full default judgment
+  workflow.
+
+  A default is not a judgment — it is a predicate. Entry of default (55(a)) is the
+  ministerial act; default judgment (55(b)) is the substantive relief. A default
+  remaining entry-only (not followed by judgment) preserves the defendant's right
+  to move to set aside under 55(c), but a default JUDGMENT is res judicata as to
+  liability and opens execution.
+
+  Service prerequisite: FRCP 4(h)(1)(B) permits service of process on a corporation
+  through state-law methods; Pa.R.C.P. 403 certified mail is an accepted method in
+  the EDPA. Proper service and proof of service must be in the record.
+
+  This filing type is needed when: (1) a defendant was served, (2) failed to answer
+  or otherwise defend within the FRCP 12(a) period (or FRCP 4(m) time extension),
+  and (3) no appearance has been made that cures the default.
+
+court: federal_district
+
+required_authorities:
+  - citation: "Fed. R. Civ. P. 55"
+    proposition: "When a party against whom a judgment for affirmative relief is sought has failed to defend, the clerk must enter the party's default upon request. If the plaintiff's claim is for a sum certain, the clerk may enter judgment. Otherwise, the plaintiff may apply to the court for a default judgment."
+  - citation: "Fed. R. Civ. P. 55(a)"
+    proposition: "Clerk's Entry of Default. When a party against whom a plaintiff is entitled to relief has failed to defend, the clerk must enter the party's default upon request — not judgment, just default."
+  - citation: "Fed. R. Civ. P. 55(b)"
+    proposition: "Entry of Default Judgment. (1) By the Clerk: if the claim states a sum certain, the clerk enters judgment upon request + affidavit. (2) By the Court: in all other cases, the court enters judgment on motion after notice to the defaulted party."
+  - citation: "Fed. R. Civ. P. 4(h)(1)(B)"
+    proposition: "Service on a corporation: by an authorized officer, managing agent, or by following state law for service — including state certified mail procedures."
+  - citation: "Fed. R. Civ. P. 4(m)"
+    proposition: "Time limit for service: 120 days after filing the complaint. Failure to serve within this period requires court permission for extension."
+  - citation: "Fed. R. Civ. P. 4(l)"
+    proposition: "Proof of service: the affidavit of the person making service establishes when service was made. The returning affidavit is conclusive absent contrary evidence."
+  - citation: "Fed. R. Civ. P. 55(c)"
+    proposition: "Setting aside a default: the court may set it aside for good cause; a default judgment may be set aside under FRCP 60(b) grounds."
+
+trigger_defects:
+  - defendant_default
+  - failed_to_answer
+  - no_appearance
+  - service_established
+  - FRCP_12_period_expired
+  - FRCP_4_service_complete
+
+structure:
+  - type: caption
+    block: boilerplate/caption_federal
+  - type: section
+    block: sections/introduction
+  - type: section
+    block: sections/procedural_history
+  - type: section
+    block: sections/factual_statement_federal
+  - type: section
+    block: sections/standard_of_review
+    content: >
+      Standard for default judgment: once default is entered, the court accepts the
+      well-pleaded factual allegations as true for liability purposes (citing Celotex
+      and related authority). The plaintiff must establish the basis for damages
+      through affidavit or hearing (FRCP 55(b)(2)).
+  - type: argument
+    block: arguments/default_entry
+    content: >
+      ARGUMENT FOR ENTRY OF DEFAULT:
+      The clerk must enter default upon the plaintiff's request because the defendant
+      has failed to defend. Cite specific defendant, service date, proof of service,
+      and elapsed time since service. Note that no appearance, answer, or motion has
+      been filed by the defaulting defendant.
+  - type: argument
+    block: arguments/default_judgment_clerk
+    when: claim_is_sum_certain == true
+    content: >
+      ARGUMENT FOR CLERK-ENTERED JUDGMENT:
+      Where the claim is for a sum certain (e.g., FCRA statutory damages, specific
+      monetary claims), the clerk may enter judgment upon the plaintiff's request
+      accompanied by an affidavit setting forth the amount due.
+  - type: argument
+    block: arguments/default_judgment_court
+    when: claim_is_sum_certain == false
+    content: >
+      ARGUMENT FOR COURT-ENTERED JUDGMENT:
+      Where the claim requires proof beyond a sum certain, the plaintiff moves the
+      court for a default judgment. The court may conduct hearings or make referrals
+      to determine damages, establish facts, or investigate any matter necessary to
+      effectuate the judgment (FRCP 55(b)(2)).
+  - type: section
+    block: sections/prayer_for_relief
+  - type: section
+    block: sections/conclusion
+  - type: boilerplate
+    block: boilerplate/signature_block_pro_se
+  - type: boilerplate
+    block: boilerplate/certificate_of_service
+  - type: boilerplate
+    block: boilerplate/proposed_order

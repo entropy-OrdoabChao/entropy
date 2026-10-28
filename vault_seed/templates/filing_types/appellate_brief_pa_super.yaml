@@ -1,0 +1,37 @@
+id: appellate_brief_pa_super
+title: Brief for Appellant
+description: 'Principal brief on appeal to the Pennsylvania Superior Court per
+
+  Pa.R.A.P. 2111 through 2135. Brief is limited to 14,000 words
+
+  (Pa.R.A.P. 2135(a)(1)). Requires Certificate of Compliance if
+
+  longer than 30 pages or by word count regardless of pages.
+
+  '
+court: PA_SUPER
+brief_type: principal
+required_authorities:
+- Pa.R.A.P. 903 (time for taking appeal)
+- Pa.R.A.P. 2111 (content of appellant's brief)
+- Pa.R.A.P. 2114 (statement of jurisdiction)
+- Pa.R.A.P. 2116 (statement of questions involved)
+- Pa.R.A.P. 2117 (statement of the case)
+- Pa.R.A.P. 2118 (summary of argument)
+- Pa.R.A.P. 2119 (argument)
+- Pa.R.A.P. 2135 (length of briefs)
+structure:
+- block: boilerplate/caption_pa_superior
+- block: appellate/statement_of_jurisdiction
+- block: sections/factual_statement_federal
+- block: appellate/statement_of_issues
+- block: appellate/statement_of_the_case
+- block: appellate/summary_of_argument
+- block: sections/standard_of_review
+- block: arguments/court_rules_violation
+  when: defect_categories.PROCEDURAL > 0
+- block: arguments/non_binding_authority
+  when: defect_categories.AUTHORITY > 0
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

@@ -1,0 +1,171 @@
+version: 1
+entity_type: bank_making_loan
+description: >
+  Duties owed by banks and lenders when making loans, under TILA, ECOA, HMDA,
+  UCC Articles 3 and 9, OCC guidance, and common law.
+
+duties:
+  - id: bk_stat_001
+    name: TILA Disclosures (15 USC § 1638)
+    class: statutory
+    source: 15-USC-1638
+    source_title: Truth in Lending Act - Transaction Disclosures
+    jurisdiction: federal
+    description: >
+      Creditor must provide required TILA disclosures including APR, finance
+      charge, amount financed, and total payments before consummation.
+    triggering_actions:
+      - consumer_loan_origination
+      - closing_loan
+    burden_flip_questions:
+      - "Produce the TILA disclosure statement signed by plaintiff with all required fields."
+    evidence_demanded:
+      - TILA disclosure
+      - Loan Estimate (LE)
+      - Closing Disclosure (CD)
+    violation_remedy:
+      - Rescission (for home secured)
+      - Statutory damages
+      - Actual damages
+      - Attorney fees
+    regulator: CFPB
+
+  - id: bk_stat_002
+    name: ECOA Adverse Action Notice (15 USC § 1691)
+    class: statutory
+    source: 15-USC-1691
+    source_title: Equal Credit Opportunity Act
+    jurisdiction: federal
+    description: >
+      Creditor must provide adverse action notice with specific reasons for
+      denial within 30 days.
+    triggering_actions:
+      - denying_credit
+      - adverse_action
+    burden_flip_questions:
+      - "Produce the adverse action notice sent to plaintiff and the credit decision file."
+    evidence_demanded:
+      - adverse action notice
+      - underwriting file
+    violation_remedy:
+      - Actual damages
+      - Punitive damages up to $10k
+      - Attorney fees
+    regulator: CFPB
+
+  - id: bk_stat_003
+    name: RESPA Servicing Transfer (12 USC § 2605)
+    class: statutory
+    source: 12-USC-2605
+    source_title: RESPA - Notice of Transfer of Servicing
+    jurisdiction: federal
+    description: >
+      When loan servicing is transferred, transferor and transferee must provide
+      notice within specified timeframe.
+    triggering_actions:
+      - transferring_servicing
+    burden_flip_questions:
+      - "Produce notices of transfer from transferor and transferee."
+    evidence_demanded:
+      - transfer notices
+    regulator: CFPB
+
+  - id: bk_stat_004
+    name: UCC Holder in Due Course Requirements
+    class: statutory
+    source: 13-Pa-CS-3302
+    source_title: PA UCC Article 3 - Holder in Due Course
+    jurisdiction: pa
+    description: >
+      To enforce a note, party must be holder or holder in due course.
+      Requires possession of original note with proper endorsements.
+    triggering_actions:
+      - enforcing_note
+      - foreclosure
+      - collecting_debt
+    burden_flip_questions:
+      - "Produce the original promissory note with all endorsements and allonges."
+      - "Produce chain of title from origination to current holder."
+    evidence_demanded:
+      - original note
+      - endorsements
+      - assignment chain
+
+  - id: bk_reg_001
+    name: OCC Safety and Soundness
+    class: regulatory
+    source: 12-CFR-30
+    source_title: OCC Safety and Soundness Standards
+    jurisdiction: federal
+    description: >
+      National banks must comply with OCC safety and soundness standards
+      including operational controls, loan documentation, and credit review.
+    triggering_actions: []
+    burden_flip_questions:
+      - "Produce OCC examination reports for the loan product at issue."
+    evidence_demanded:
+      - OCC exam reports
+    regulator: OCC
+
+  - id: bk_reg_002
+    name: CFPB Regulation Z Compliance
+    class: regulatory
+    source: 12-CFR-1026
+    source_title: Regulation Z - Truth in Lending
+    jurisdiction: federal
+    description: >
+      Implementing regulations for TILA including ability-to-repay, high-cost
+      loan rules, and disclosure requirements.
+    triggering_actions: []
+    burden_flip_questions:
+      - "Produce ATR documentation for the loan."
+    evidence_demanded:
+      - ability-to-repay file
+    regulator: CFPB
+
+  - id: bk_ind_001
+    name: FNMA Selling Guide Compliance
+    class: industry_standard
+    source: FNMA-Selling-Guide
+    source_title: Fannie Mae Single-Family Selling Guide
+    jurisdiction: industry
+    description: >
+      Industry standard for underwriting and documentation of conforming loans.
+    triggering_actions: []
+    burden_flip_questions:
+      - "Produce loan underwriting file showing FNMA Selling Guide compliance."
+    evidence_demanded:
+      - underwriting file
+
+  - id: bk_fid_001
+    name: Fiduciary Duty re Trust Funds
+    class: fiduciary
+    source: Bank-Trust-Doctrine
+    source_title: Common law fiduciary duty for bank-held trust funds
+    jurisdiction: common_law
+    description: >
+      Where bank holds funds in trust (escrow, fiduciary accounts), duties of
+      loyalty, prudence, and accounting apply.
+    triggering_actions:
+      - holding_trust_funds
+      - escrow_administration
+    burden_flip_questions:
+      - "Produce trust account statements and accountings."
+    evidence_demanded:
+      - trust account records
+
+  - id: bk_cl_001
+    name: Good Faith in Lending
+    class: common_law
+    source: Implied-Covenant-Doctrine
+    source_title: Common law good faith in banking relationships
+    jurisdiction: common_law
+    description: >
+      Implied covenant of good faith and fair dealing applies to lending
+      relationship, prohibiting conduct that frustrates borrower's reasonable
+      expectations.
+    triggering_actions: []
+    burden_flip_questions:
+      - "Produce internal lending policies and exceptions."
+    evidence_demanded:
+      - lending policies

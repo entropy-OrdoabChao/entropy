@@ -1,0 +1,57 @@
+id: amended_complaint
+title: Amended Complaint Under FRCP 15(a)
+description: |
+  Amended complaint filed under FRCP 15(a) to replace or supplement the original complaint.
+  In federal court, an amended complaint is filed directly without a separate motion
+  for leave to amend when amendment is as a matter of course (within 21 days after
+  serving the original complaint or responsive pleading) or when leave has been granted.
+  For a pro se litigant ordered to amend by court order, the amended complaint is filed
+  directly.
+  
+  Key authorities:
+  - FRCP 15(a)(1)(A) — Amendment as a matter of course within 21 days
+  - FRCP 15(a)(1)(B) — Amendment within 21 days after responsive pleading
+  - FRCP 15(a)(2) — Amendment with leave of court; "shall freely give leave"
+  - FRCP 15(c) — Relation back of amendments
+  
+  This filing type is used when the plaintiff files the amended complaint directly,
+  NOT when filing a motion for leave to amend (see motion_for_leave_to_amend).
+court: any
+required_authorities:
+  - FRCP 15(a)(1) — Amendment as a matter of course
+  - FRCP 15(a)(2) — Amendment with leave of court
+  - FRCP 15(c) — Relation back of amendments
+  - FRCP 15(d) — Supplemental pleadings
+  - Conley v. Gibson, 355 U.S. 41 (1957) — Liberal pleading standard for pro se
+  - Haines v. Kerner, 404 U.S. 519 (1972) — Pro se pleading liberal construction
+trigger_defects:
+  - amendment_eligible
+  - constructive_denial
+  - deadline_missed
+  - FATAL/CONSTRUCTION
+  - SERIOUS/CONSTRUCTION
+  - dismissal_without_prejudice
+required_facts:
+  - case_id
+  - caption
+  - defect_total
+  - amendment_purpose — description of what is being amended and why
+  - relation_back_request — boolean, whether relation back under FRCP 15(c) is requested
+  - original_complaint_filed — date of original complaint filing
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/statement_of_facts
+  - block: sections/factual_statement_enforcement
+    when: posture == enforcement
+  - block: sections/definitions_schedule_canons
+    when: has_definition_disputes == true
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

@@ -1,0 +1,372 @@
+# Bundle 14 - case_law_rules.yaml
+# Declarative rules for case_law_audit.py classification of every citation
+# found in the user's filings. User may edit this file to refine.
+
+# -----------------------------------------------------------------
+# KNOWN GOOD - binding precedent on-point for user's claim types
+# -----------------------------------------------------------------
+known_good:
+
+  # --- Pro Se Pleading Standard ---
+  - cite: "Haines v. Kerner, 404 U.S. 519"
+    label: BINDING_SCOTUS
+    propositions: [PRO_SE_PLEADING_STANDARD, DISMISSAL_DEFENSE]
+    note: "Pro se complaint held to less stringent standards; foundational"
+
+  - cite: "Erickson v. Pardus, 551 U.S. 89"
+    label: BINDING_SCOTUS
+    propositions: [PRO_SE_PLEADING_STANDARD, POST_TWOMBLY_PRO_SE]
+    note: "Reaffirms Haines after Twombly"
+
+  - cite: "Estelle v. Gamble, 429 U.S. 97"
+    label: BINDING_SCOTUS
+    propositions: [PRO_SE_PLEADING_STANDARD]
+    note: "Pro se document is to be liberally construed"
+
+  - cite: "Foman v. Davis, 371 U.S. 178"
+    label: BINDING_SCOTUS
+    propositions: [LEAVE_TO_AMEND, DISMISSAL_DEFENSE]
+    note: "Leave to amend shall be freely given; refusal without justifying reason is abuse of discretion"
+
+  # --- Summary Judgment / Evidence ---
+  - cite: "Anderson v. Liberty Lobby, Inc., 477 U.S. 242"
+    label: BINDING_SCOTUS
+    propositions: [SUMMARY_JUDGMENT_STANDARD]
+    note: "Evidence standard at MSJ; credibility determinations are jury function"
+
+  - cite: "Celotex Corp. v. Catrett, 477 U.S. 317"
+    label: BINDING_SCOTUS
+    propositions: [SUMMARY_JUDGMENT_STANDARD, MOVANT_BURDEN]
+    note: "Movant burden at MSJ"
+
+  - cite: "Adickes v. S.H. Kress & Co., 398 U.S. 144"
+    label: BINDING_SCOTUS
+    propositions: [SUMMARY_JUDGMENT_STANDARD, UNSWORN_STATEMENTS]
+    note: "Movant must show absence of genuine issue; unsworn counsel statements insufficient"
+
+  - cite: "Lujan v. National Wildlife Federation, 497 U.S. 871"
+    label: BINDING_SCOTUS
+    propositions: [SUMMARY_JUDGMENT_STANDARD, SWORN_AFFIDAVIT_REQUIRED]
+    note: "Sworn affidavit on personal knowledge required to defeat MSJ"
+
+  - cite: "Lujan v. Defenders of Wildlife, 504 U.S. 555"
+    label: BINDING_SCOTUS
+    propositions: [STANDING]
+    note: "Article III standing - injury, causation, redressability"
+
+  # --- Verified Pleading = Affidavit (3d Cir. binding) ---
+  - cite: "Reese v. Sparks, 760 F.2d 64"
+    label: BINDING_GOVERNING_CIRCUIT
+    propositions: [VERIFIED_PLEADING_AS_AFFIDAVIT]
+    note: "3d Cir.: verified complaint may be considered as affidavit at MSJ"
+
+  - cite: "Williams v. Borough of West Chester, 891 F.2d 458"
+    label: BINDING_GOVERNING_CIRCUIT
+    propositions: [VERIFIED_PLEADING_AS_AFFIDAVIT]
+    note: "3d Cir.: verified complaint serves as affidavit if Rule 56 standards met"
+
+  # --- 3d Cir. post-Twombly pro se ---
+  - cite: "Phillips v. County of Allegheny, 515 F.3d 224"
+    label: BINDING_GOVERNING_CIRCUIT
+    propositions: [POST_TWOMBLY_PRO_SE, TWOMBLY_3D_CIR]
+    note: "3d Cir. post-Twombly standard"
+
+  # --- FCRA ---
+  - cite: "Safeco Ins. Co. v. Burr, 551 U.S. 47"
+    label: BINDING_SCOTUS
+    propositions: [FCRA_WILLFUL, FCRA_RECKLESS]
+    note: "Defines willfulness under FCRA - knowing or reckless violation"
+
+  - cite: "TransUnion LLC v. Ramirez, 594 U.S. 413"
+    label: BINDING_SCOTUS
+    propositions: [FCRA_STANDING, CONCRETE_INJURY]
+    note: "FCRA standing - concrete injury required"
+
+  - cite: "Spokeo, Inc. v. Robins, 578 U.S. 330"
+    label: BINDING_SCOTUS
+    propositions: [FCRA_STANDING, CONCRETE_INJURY]
+    note: "Standing concrete-injury standard for statutory violations"
+
+  - cite: "Henson v. Santander Consumer USA Inc., 582 U.S. 79"
+    label: BINDING_SCOTUS
+    propositions: [FDCPA_DEBT_COLLECTOR, FDCPA_ORIGINAL_CREDITOR_EXCLUSION]
+    note: "Original creditors excluded from FDCPA definition"
+
+  # --- Due Process ---
+  - cite: "Mullane v. Central Hanover Bank & Trust Co., 339 U.S. 306"
+    label: BINDING_SCOTUS
+    propositions: [PROCEDURAL_DUE_PROCESS, NOTICE]
+    note: "Notice reasonably calculated to apprise"
+
+  - cite: "Mathews v. Eldridge, 424 U.S. 319"
+    label: BINDING_SCOTUS
+    propositions: [PROCEDURAL_DUE_PROCESS]
+    note: "Three-factor procedural due process balancing"
+
+  - cite: "Goldberg v. Kelly, 397 U.S. 254"
+    label: BINDING_SCOTUS
+    propositions: [PROCEDURAL_DUE_PROCESS, PRE_DEPRIVATION_HEARING]
+
+  # --- Service / Removal ---
+  - cite: "Henderson v. United States, 517 U.S. 654"
+    label: BINDING_SCOTUS
+    propositions: [SERVICE_OF_PROCESS, FRCP_4]
+    note: "Rule 4 liberally construed"
+
+  - cite: "Murphy Bros., Inc. v. Michetti Pipe Stringing, Inc., 526 U.S. 344"
+    label: BINDING_SCOTUS
+    propositions: [REMOVAL_TIMING, SERVICE_OF_PROCESS]
+    note: "30-day removal clock runs from formal service"
+
+  - cite: "Hagner v. United States, 285 U.S. 427"
+    label: BINDING_SCOTUS
+    propositions: [SERVICE_BY_MAIL, MAILBOX_RULE]
+    note: "Mailbox rule presumption"
+
+  - cite: "Rosenthal v. Walker, 111 U.S. 185"
+    label: BINDING_SCOTUS
+    propositions: [SERVICE_BY_MAIL, MAILBOX_RULE]
+
+  # --- Fraud on Court / Rule 60 ---
+  - cite: "Hazel-Atlas Glass Co. v. Hartford-Empire Co., 322 U.S. 238"
+    label: BINDING_SCOTUS
+    propositions: [FRAUD_ON_COURT, RULE_60D3]
+    note: "Fraud on court is grounds for vacating judgment"
+
+  # --- Judicial Immunity / Bias ---
+  - cite: "Bradley v. Fisher, 80 U.S. 335"
+    label: BINDING_SCOTUS
+    propositions: [JUDICIAL_IMMUNITY]
+    note: "Absolute judicial immunity for judicial acts"
+
+  - cite: "Imbler v. Pachtman, 424 U.S. 409"
+    label: BINDING_SCOTUS
+    propositions: [PROSECUTORIAL_IMMUNITY]
+
+  - cite: "Caperton v. A.T. Massey Coal Co., 556 U.S. 868"
+    label: BINDING_SCOTUS
+    propositions: [JUDICIAL_BIAS, RECUSAL]
+    note: "Appearance of bias violates due process"
+
+  - cite: "Liteky v. United States, 510 U.S. 540"
+    label: BINDING_SCOTUS
+    propositions: [JUDICIAL_BIAS, RECUSAL, EXTRAJUDICIAL_SOURCE]
+
+  # --- Access to Courts ---
+  - cite: "Procunier v. Martinez, 416 U.S. 396"
+    label: BINDING_SCOTUS
+    propositions: [ACCESS_TO_COURTS]
+
+  - cite: "Bounds v. Smith, 430 U.S. 817"
+    label: BINDING_SCOTUS
+    propositions: [ACCESS_TO_COURTS]
+
+  - cite: "Lewis v. Casey, 518 U.S. 343"
+    label: BINDING_SCOTUS
+    propositions: [ACCESS_TO_COURTS, ACTUAL_INJURY]
+
+  # --- McCarran-Ferguson / Insurance ---
+  - cite: "15 U.S.C. § 1011"
+    label: BINDING_FED_STATUTE
+    propositions: [MCCARRAN_FERGUSON]
+
+  - cite: "15 U.S.C. § 1012"
+    label: BINDING_FED_STATUTE
+    propositions: [MCCARRAN_FERGUSON]
+
+  # --- Federal Rules anchors ---
+  - cite: "Fed. R. Civ. P. 12(b)(6)"
+    label: BINDING_FED_RULE
+    propositions: [MOTION_TO_DISMISS]
+
+  - cite: "Fed. R. Civ. P. 15(a)"
+    label: BINDING_FED_RULE
+    propositions: [LEAVE_TO_AMEND]
+
+  - cite: "Fed. R. Civ. P. 56"
+    label: BINDING_FED_RULE
+    propositions: [SUMMARY_JUDGMENT]
+
+  - cite: "Fed. R. Civ. P. 56(c)(4)"
+    label: BINDING_FED_RULE
+    propositions: [AFFIDAVIT_STANDARD, PERSONAL_KNOWLEDGE]
+
+  - cite: "Fed. R. Civ. P. 55"
+    label: BINDING_FED_RULE
+    propositions: [DEFAULT_JUDGMENT]
+
+  - cite: "Fed. R. Civ. P. 60(b)"
+    label: BINDING_FED_RULE
+    propositions: [RELIEF_FROM_JUDGMENT]
+
+  - cite: "Fed. R. Civ. P. 60(d)(3)"
+    label: BINDING_FED_RULE
+    propositions: [FRAUD_ON_COURT]
+
+  # --- Statutory Anchors ---
+  - cite: "15 U.S.C. § 1681n"
+    label: BINDING_FED_STATUTE
+    propositions: [FCRA_WILLFUL]
+    note: "FCRA willful noncompliance - statutory + punitive damages"
+
+  - cite: "15 U.S.C. § 1681o"
+    label: BINDING_FED_STATUTE
+    propositions: [FCRA_NEGLIGENT]
+
+  - cite: "15 U.S.C. § 1681e(b)"
+    label: BINDING_FED_STATUTE
+    propositions: [FCRA_REASONABLE_PROCEDURES]
+    note: "Maximum possible accuracy duty"
+
+  - cite: "15 U.S.C. § 1681i"
+    label: BINDING_FED_STATUTE
+    propositions: [FCRA_REINVESTIGATION]
+
+  - cite: "28 U.S.C. § 1746"
+    label: BINDING_FED_STATUTE
+    propositions: [DECLARATION_PENALTY_PERJURY, VERIFICATION]
+
+  - cite: "28 U.S.C. § 1447(c)"
+    label: BINDING_FED_STATUTE
+    propositions: [REMAND, SUBJECT_MATTER_JURISDICTION]
+
+  - cite: "28 U.S.C. § 1446(b)"
+    label: BINDING_FED_STATUTE
+    propositions: [REMOVAL_PROCEDURE]
+
+  - cite: "28 U.S.C. § 351"
+    label: BINDING_FED_STATUTE
+    propositions: [JUDICIAL_MISCONDUCT_COMPLAINT]
+
+  - cite: "28 U.S.C. § 1361"
+    label: BINDING_FED_STATUTE
+    propositions: [MANDAMUS_JURISDICTION]
+
+  - cite: "5 U.S.C. § 706(1)"
+    label: BINDING_FED_STATUTE
+    propositions: [APA_AGENCY_ACTION_UNLAWFULLY_WITHHELD]
+
+  # --- Force-Placed Insurance / RESPA ---
+  - cite: "12 U.S.C. § 2605"
+    label: BINDING_FED_STATUTE
+    propositions: [RESPA_LOAN_SERVICING]
+
+  - cite: "12 C.F.R. § 1024.37"
+    label: BINDING_FED_REG
+    propositions: [FORCE_PLACED_INSURANCE]
+
+# -----------------------------------------------------------------
+# KNOWN BAD / RISKY - cites that should be approached with caution
+# or removed, with reasons
+# -----------------------------------------------------------------
+known_bad_or_risky:
+
+  - cite: "Pruden v. SCI Camp Hill, 252 F. App'x 436"
+    severity: CAUTION
+    reason: "Non-precedential per curiam under 3d Cir. I.O.P. 5.7; cannot be cited as binding authority. If court relied on this against you, that reliance is grounds for reconsideration."
+
+  - cite: "Westinghouse Electric Corp. v. Newman & Holtzinger, P.C., 90 F.3d 696"
+    severity: CAUTION
+    reason: "Per the court's own memorandum and rebuttal record, this case was misapplied by the court against Plaintiff. Distinguish on the facts and propositions; do not rely on it affirmatively."
+
+  - cite: "Conley v. Gibson, 355 U.S. 41"
+    severity: CAUTION
+    reason: "Famous 'no set of facts' language superseded by Bell Atlantic Corp. v. Twombly, 550 U.S. 544 (2007). Still good law for other propositions (fair notice), but do not cite for 'no set of facts' standard."
+
+  - cite: "Bell v. Hood, 327 U.S. 678"
+    severity: PERSUASIVE_ONLY
+    reason: "Frequently cited but should be paired with binding 3d Cir. case for the same proposition."
+
+# -----------------------------------------------------------------
+# PATTERN RULES - regex-detected concerns
+# -----------------------------------------------------------------
+patterns:
+
+  # Federal Appendix = NON-PRECEDENTIAL by definition
+  - regex: "F\\.\\s*App['\u2019]?x"
+    severity: CAUTION
+    label: NON_PRECEDENTIAL_FEDERAL_APPENDIX
+    reason: "Federal Appendix opinions are non-precedential and may not be cited as binding authority in many circuits (3d Cir. I.O.P. 5.7 etc.)"
+
+  - regex: "Fed\\.\\s*App['\u2019]?x"
+    severity: CAUTION
+    label: NON_PRECEDENTIAL_FEDERAL_APPENDIX
+    reason: "Federal Appendix opinions are non-precedential"
+
+  # WL / Westlaw unpublished
+  - regex: "\\d{4}\\s+WL\\s+\\d+"
+    severity: CAUTION
+    label: UNPUBLISHED_WL
+    reason: "Westlaw-only unpublished opinion; verify precedential status before citing"
+
+  # LEXIS unpublished
+  - regex: "\\d{4}\\s+U\\.S\\.\\s*Dist\\.\\s*LEXIS\\s+\\d+"
+    severity: CAUTION
+    label: UNPUBLISHED_LEXIS_DIST
+    reason: "Unpublished district court opinion via LEXIS"
+
+# -----------------------------------------------------------------
+# PSEUDOLAW PATTERNS - flag for REMOVAL from filings
+# -----------------------------------------------------------------
+canonical_authorities_by_claim:
+
+  FCRA_WILLFUL:
+    - "Safeco Ins. Co. v. Burr, 551 U.S. 47"
+    - "TransUnion LLC v. Ramirez, 594 U.S. 413"
+    - "15 U.S.C. § 1681n"
+    - "Spokeo, Inc. v. Robins, 578 U.S. 330"
+
+  FCRA_NEGLIGENT:
+    - "15 U.S.C. § 1681o"
+    - "15 U.S.C. § 1681e(b)"
+
+  PRO_SE_DISMISSAL_DEFENSE:
+    - "Haines v. Kerner, 404 U.S. 519"
+    - "Erickson v. Pardus, 551 U.S. 89"
+    - "Estelle v. Gamble, 429 U.S. 97"
+    - "Foman v. Davis, 371 U.S. 178"
+    - "Phillips v. County of Allegheny, 515 F.3d 224"
+
+  SUMMARY_JUDGMENT_OPPOSITION:
+    - "Anderson v. Liberty Lobby, Inc., 477 U.S. 242"
+    - "Celotex Corp. v. Catrett, 477 U.S. 317"
+    - "Adickes v. S.H. Kress & Co., 398 U.S. 144"
+    - "Lujan v. National Wildlife Federation, 497 U.S. 871"
+    - "Williams v. Borough of West Chester, 891 F.2d 458"
+    - "Reese v. Sparks, 760 F.2d 64"
+    - "Fed. R. Civ. P. 56(c)(4)"
+    - "28 U.S.C. § 1746"
+
+  REMAND_IMPROPER_REMOVAL:
+    - "Murphy Bros., Inc. v. Michetti Pipe Stringing, Inc., 526 U.S. 344"
+    - "28 U.S.C. § 1447(c)"
+    - "28 U.S.C. § 1446(b)"
+
+  PROCEDURAL_DUE_PROCESS:
+    - "Mullane v. Central Hanover Bank & Trust Co., 339 U.S. 306"
+    - "Mathews v. Eldridge, 424 U.S. 319"
+    - "Goldberg v. Kelly, 397 U.S. 254"
+
+  FRAUD_ON_COURT:
+    - "Hazel-Atlas Glass Co. v. Hartford-Empire Co., 322 U.S. 238"
+    - "Fed. R. Civ. P. 60(d)(3)"
+
+  JUDICIAL_RECUSAL:
+    - "Caperton v. A.T. Massey Coal Co., 556 U.S. 868"
+    - "Liteky v. United States, 510 U.S. 540"
+    - "28 U.S.C. § 455"
+    - "28 U.S.C. § 144"
+
+  ACCESS_TO_COURTS:
+    - "Procunier v. Martinez, 416 U.S. 396"
+    - "Bounds v. Smith, 430 U.S. 817"
+    - "Lewis v. Casey, 518 U.S. 343"
+
+  FORCE_PLACED_INSURANCE:
+    - "12 C.F.R. § 1024.37"
+    - "12 U.S.C. § 2605"
+
+  PA_BAD_FAITH_INSURANCE:
+    - "42 Pa.C.S. § 8371"
+    - "Terletsky v. Prudential Prop. & Cas. Ins. Co."
+    - "Ash v. Continental Ins. Co."

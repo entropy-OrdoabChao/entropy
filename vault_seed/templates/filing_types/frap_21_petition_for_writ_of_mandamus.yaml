@@ -1,0 +1,23 @@
+id: frap_21_petition_for_writ_of_mandamus
+title: Petition for Writ of Mandamus
+description: Petition under Fed. R. App. P. 21 for a writ of mandamus, where
+  the petitioner has a clear and indisputable right to relief and no other
+  adequate means to obtain it.
+court: federal_appellate
+required_authorities:
+- Fed. R. App. P. 21
+- Cheney v. U.S. Dist. Court, 542 U.S. 367 (2004)
+- Kerr v. U.S. Dist. Court, 426 U.S. 394 (1976)
+trigger_defects:
+- dismissal
+- FATAL/PROCEDURAL
+- FATAL/JURISDICTION
+structure:
+- block: boilerplate/caption_appellate_3rd_cir
+- block: sections/introduction
+- block: sections/factual_statement_federal
+- block: sections/standard_of_review
+- block: arguments/mandamus_grounds
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

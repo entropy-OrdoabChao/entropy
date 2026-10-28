@@ -1,0 +1,54 @@
+# Entropy desk <-> vault contract (2026-09-20)
+# The desk is a reader of the person's Obsidian vault (or plain folder). Each desk view maps to specific files in a case folder.
+# The desk NEVER edits these files by hand; changes go through the pipeline (case_facts_refresh, case_state, connected_notes, m0),
+# and the desk re-reads on file change (mtime watcher -> server-sent event -> view refresh). Copies for training/tests only.
+vault:
+  root: "{{ENTROPY_HOME}}/obsidian_sync"     # Settings > Files and vault > Vault folder (the folder name mirrors Beezle so the copied engine runs unchanged)
+  cases_dir: "cases"                        # per-case folders under the vault
+  registry: "{{ENTROPY_HOME}}/cases_index/case_registry.json"   # canonical_id -> slug, court, caption, judge, status, folder_path  == the case HEADER (caption, court, judge, status)
+  case_map: "{{ENTROPY_HOME}}/cases_index/case_map.json"        # canonical_id -> source_folders (where the person's documents live)
+  ignore: ["*.bak*", "*.tonight_broken", "_archive/**", "__pycache__/**", "*.tmp*"]
+case_folder:
+  required:                                  # a case shows in the desk when these exist; else it shows "needs first analysis"
+    CASE_FACTS.md:      {view: overview, render: "markdown sections (## headers become the Overview accordion); frontmatter case_id/case_slug/updated when present", note: "shape varies per case (frontmatter / BASIC INFO / free-form); header fields do NOT come from here"}
+    CASE_TIMELINE.json: {view: documents, fields: [updated, "entries[sha1, filename, rel_path, docket, date_filed, type, size_bytes]"]}
+  optional:
+    CASE_STATE.md:            {view: overview,   fields: [compiled, case, court, what_it_is, last_events, mailings, outbox], note: "pipeline.case_state compiles it; uniform; the case header's status line"}
+    MATTER_BRIEF.md:          {view: overview,   fields: [summary]}
+    docket_events.md:         {view: timeline,   fields: [events]}
+    compliance_events.md:     {view: timeline,   fields: [events]}
+    defect_inventory.md:      {view: defects,    fields: ["defects[rule, source, why_defect, remedy]"]}
+    _TRICK_INVENTORY.md:      {view: defects,    fields: [tactics]}
+    EXPOSURE_MAP.md:          {view: strategy,   fields: [exposures]}
+    _STATEMENT_LEDGER.json:   {view: defects,    fields: ["statements[who, said, contradicted_by]"]}
+    rule_check.json:          {view: defects,    fields: ["filings[control, title, filed_under[], contract_source, components[component, rule, requires, found, verdict, defect_ref]]"], note: "pipeline.rule_requirements applied to the OPPOSING filing (kind=movant_*): the rule the movant invoked + the court's local rule -> mandatory components and tests; verdict in present|missing|met|late|not_applied|n_a; a rule the library lacks renders as 'not in your library' (needs_rule.log), never a verdict"}
+    enforcement_inventory.md: {view: escalate,   fields: [rungs, agencies, deadlines]}
+    preservation_ledger.md:   {view: escalate,   fields: [preserved_issues]}
+    filing_readiness_checklist.md: {view: drafts, fields: [ready, blockers]}
+    reply_state.json:         {view: drafts,     fields: [pending_replies, due]}
+    deadlines.json:           {view: deadlines,  fields: ["deadlines[owed_by, what, rule, start, due, status, consequence, lever]"], note: "deadline_tracker.list_tracked_deadlines(owed_by=...) — yours AND theirs; a missed opposing/agency clock carries the rule's own consequence text (quoted) and the filing that claims it; rule not in library -> 'not in your library'"}
+    _cite_verification.md:    {view: drafts,     fields: ["cites[cite, exists, binding, stands_for]"]}
+    _draft_verification.md:   {view: drafts,     fields: [checks]}
+    scorecards/:              {view: scorecard,  glob: "scorecard_*.md"}
+    drafts/:                  {view: drafts,     glob: "**/*.md|**/*.docx", newest_first: true}
+    filings/:                 {view: mail,       glob: "**/*"}
+    _filing_ready/:           {view: mail,       glob: "**/*"}
+    exhibits/:                {view: documents,  glob: "**/*"}
+    intake/:                  {view: documents,  glob: "**/*", note: "the person's uploads; Inbox sort writes here"}
+    emails/:                  {view: inbox,      glob: "**/*"}
+    insights/:                {view: research,   glob: "**/*.md"}
+    definitions_learned/:     {view: research,   glob: "**/*.md"}
+    notes/:                   {view: research,   glob: "**/*.md"}
+    meta/:                    {view: hidden}
+    chain_outputs/:           {view: hidden}
+    audit_reports/:           {view: hidden}
+desk_writes:                                   # the only writes the desk performs itself; everything else is the pipeline's
+  - {what: "uploaded document", where: "<home>/intake/<file> (the drop folder) -> routed to cases/<slug>/intake/<file>", then: "pipeline: intake scan -> CASE_TIMELINE.json entry -> analysis"}
+  - {what: "move to another case", where: "cases/<slug>/intake/<file> -> cases/<other>/intake/<file>", then: "log line in both intake_analysis_log.md; re-analyze in the new case; flag drafts that cite it"}
+  - {what: "not a case document", where: "cases/_unsorted/<file>", then: "nothing; visible from Inbox"}
+  - {what: "story (new claim)", where: "cases/<slug>/intake/STORY.md", then: "pipeline: new_claim_engine.route_claim"}
+update_rules:
+  watcher: "poll mtimes every 2 s (or OS file events); a change to any contract file re-reads that file and pushes {slug, view} to open pages"
+  stale_guard: "if CASE_TIMELINE.json is newer than CASE_FACTS.md, Overview shows 'facts behind the documents: analysis pending' (mirrors case_facts_refresh._intake_newer_than_facts)"
+  backups: "*.bak* siblings are ignored by the desk and never shown"
+  never: "the desk never writes CASE_FACTS.md, CASE_STATE.md, scorecards or drafts; those are pipeline outputs"

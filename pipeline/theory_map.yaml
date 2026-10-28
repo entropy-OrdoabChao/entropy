@@ -1,0 +1,625 @@
+version: v3
+updated: 2026-04-14-v01
+total_theories: 15
+theories:
+  fcra_willful_violation:
+    display_name: FCRA Willful Violation
+    status: active
+    triggers:
+    - inaccurate credit report
+    - credit reporting
+    - reinsertion
+    - reasonable investigation
+    - dispute ignored
+    - disputed item
+    - furnisher
+    - credit bureau
+    core_elements:
+    - consumer_reporting_agency_or_furnisher
+    - inaccuracy_in_report
+    - reckless_disregard_of_duty
+    supporting_elements:
+    - dispute_submitted
+    - investigation_inadequate
+    - actual_damages_optional
+    domains:
+    - consumer_finance
+    - statutory
+    jurisdictions:
+    - federal
+    regulators:
+    - CFPB
+    - FTC
+    seed_nodes:
+    - 15-USC-1681n
+    - 15-USC-1681s-2
+    - 15-USC-1681i
+    - 15-USC-1681e
+    doctrines:
+    - safeco_willfulness_standard
+    remedies:
+      statutory_damages: $100-$1000 per violation, 15 USC 1681n(a)(1)
+      actual_damages: not required for statutory
+      punitive_damages: available, 15 USC 1681n(a)(2)
+      attorney_fees: mandatory, 15 USC 1681n(a)(3)
+    venue:
+      federal:
+        court: federal district court
+        basis: 15 USC 1681p federal question
+    procedural_vehicle: complaint
+  fcra_negligent_violation:
+    display_name: FCRA Negligent Violation
+    status: active
+    triggers:
+    - inaccurate credit report
+    - credit reporting
+    - negligent
+    - failed to investigate
+    - failed to update
+    core_elements:
+    - consumer_reporting_agency_or_furnisher
+    - negligent_failure_to_comply
+    - actual_damages
+    supporting_elements:
+    - dispute_submitted
+    domains:
+    - consumer_finance
+    - statutory
+    jurisdictions:
+    - federal
+    regulators:
+    - CFPB
+    - FTC
+    seed_nodes:
+    - 15-USC-1681o
+    - 15-USC-1681s-2
+    remedies:
+      actual_damages: required for negligent, 15 USC 1681o(a)(1)
+      attorney_fees: mandatory, 15 USC 1681o(a)(2)
+    venue:
+      federal:
+        court: federal district court
+        basis: 15 USC 1681p
+    procedural_vehicle: complaint
+  fdcpa_false_representation:
+    display_name: FDCPA False Representation
+    status: active
+    triggers:
+    - debt collector
+    - collection agency
+    - sent to collection
+    - collection letter
+    - false amount
+    - debt not owed
+    - falsely represented
+    - claimed i owed
+    - sent the disputed amount
+    - collector claimed
+    - debt collection agency
+    core_elements:
+    - debt_collector
+    - consumer_debt
+    - false_or_misleading_representation
+    supporting_elements:
+    - debt_disputed
+    domains:
+    - consumer_finance
+    - statutory
+    jurisdictions:
+    - federal
+    - state
+    regulators:
+    - CFPB
+    - FTC
+    seed_nodes:
+    - 15-USC-1692e
+    remedies:
+      statutory_damages: up to $1000, 15 USC 1692k(a)(2)(A)
+      actual_damages: 15 USC 1692k(a)(1)
+      attorney_fees: mandatory, 15 USC 1692k(a)(3)
+    venue:
+      federal:
+        court: federal district court
+        basis: federal question
+      state:
+        court: state court of competent jurisdiction
+        basis: concurrent jurisdiction
+    procedural_vehicle: complaint
+    entity_type: debt_collector
+  fdcpa_unfair_practices:
+    display_name: FDCPA Unfair Practices — Collecting Amount Not Owed
+    status: active
+    triggers:
+    - collected amount not owed
+    - amount not authorized
+    - unauthorized charge
+    - retained after cancellation
+    - absence of insurable interest
+    - not authorized by any agreement
+    - after risk ceased
+    - after cancellation
+    - beyond contract
+    - despite the absence
+    - no insurable interest
+    - not authorized by any agreement or by law
+    core_elements:
+    - debt_collector
+    - consumer_debt
+    - amount_not_authorized_by_agreement_or_law
+    supporting_elements: []
+    domains:
+    - consumer_finance
+    - statutory
+    jurisdictions:
+    - federal
+    regulators:
+    - CFPB
+    - FTC
+    seed_nodes:
+    - 15-USC-1692f
+    remedies:
+      statutory_damages: up to $1000, 15 USC 1692k
+      actual_damages: 15 USC 1692k
+      attorney_fees: mandatory
+    venue:
+      federal:
+        court: federal district court
+        basis: federal question
+    procedural_vehicle: complaint
+    entity_type: debt_collector
+  insurance_unearned_premium:
+    display_name: Unearned Premium — Retention After Risk Ceased
+    status: active
+    triggers:
+    - policy canceled
+    - sold the vehicle
+    - no insurable interest
+    - risk ceased
+    - continued billing
+    - retained premium
+    - refund refused
+    - no refund
+    - retained all collected premiums
+    - absence of insurable interest
+    - no insurable risk
+    - sold the insured vehicle
+    - sold my vehicle
+    - continued to charge premiums
+    core_elements:
+    - insurance_contract_existed
+    - insurable_risk_ceased
+    - premium_retained_after_risk_ceased
+    supporting_elements:
+    - notice_to_insurer
+    - refund_demanded
+    - refund_refused
+    domains:
+    - insurance
+    - contract
+    - equity
+    jurisdictions:
+    - state
+    regulators:
+    - state_insurance_department
+    - NAIC
+    seed_nodes:
+    - pa-insurance-code
+    - naic-unfair-claims
+    doctrines:
+    - insurable_interest_doctrine
+    remedies:
+      restitution: full return of premium paid after risk ceased
+      prejudgment_interest: state statutory rate
+      attorney_fees: if state insurance code authorizes
+    venue:
+      state:
+        court: PA Court of Common Pleas
+        basis: state contract/insurance law
+      agency:
+        body: PA Insurance Department
+        basis: regulated entity complaint
+    procedural_vehicle: complaint + agency complaint (parallel)
+    entity_type: insurance_company
+  bad_faith_insurance_pa:
+    display_name: Bad Faith Insurance (PA 42 Pa.C.S. § 8371)
+    status: active
+    triggers:
+    - denied claim
+    - bad faith
+    - claim delayed
+    - unreasonable denial
+    - no investigation
+    - lowball settlement
+    core_elements:
+    - insurance_contract_existed
+    - insurer_denied_or_delayed_claim
+    - no_reasonable_basis_for_denial
+    supporting_elements:
+    - insurer_knew_no_reasonable_basis
+    - pattern_of_bad_faith
+    domains:
+    - insurance
+    - statutory
+    jurisdictions:
+    - state
+    regulators:
+    - state_insurance_department
+    seed_nodes:
+    - 42-Pa-CS-8371
+    remedies:
+      interest_on_claim: prime + 3%, 42 Pa.C.S. 8371(1)
+      punitive_damages: 42 Pa.C.S. 8371(2)
+      attorney_fees: 42 Pa.C.S. 8371(3)
+      court_costs: 42 Pa.C.S. 8371(3)
+    venue:
+      state:
+        court: PA Court of Common Pleas
+        basis: state statute
+      federal:
+        court: federal district court
+        basis: diversity + supplemental
+    procedural_vehicle: complaint
+    entity_type: insurance_company
+  breach_of_insurance_contract:
+    display_name: Breach of Insurance Contract
+    status: active
+    triggers:
+    - policy breach
+    - failed to pay claim
+    - denied coverage
+    - contract violation
+    - retained premium
+    - continued billing
+    - retained all collected
+    - refused refund
+    - continued to charge
+    - breach of policy
+    - refused to perform
+    - continued charging after
+    - maintained an insurance policy
+    - insurance policy
+    core_elements:
+    - valid_insurance_contract
+    - performance_by_insured_or_excused
+    - breach_by_insurer
+    - damages
+    supporting_elements: []
+    domains:
+    - contract
+    - insurance
+    jurisdictions:
+    - state
+    regulators:
+    - state_insurance_department
+    seed_nodes:
+    - pa-contract-law
+    remedies:
+      expectation_damages: value of performance lost
+      consequential_damages: if foreseeable
+      restitution: if applicable
+    venue:
+      state:
+        court: PA Court of Common Pleas
+        basis: state contract law
+      federal:
+        court: federal district court
+        basis: diversity
+    procedural_vehicle: complaint
+    entity_type: insurance_company
+  unjust_enrichment:
+    display_name: Unjust Enrichment
+    status: active
+    triggers:
+    - retained money
+    - no service provided
+    - no consideration
+    - kept payment
+    - benefit retained
+    - unjust retention
+    - retained all
+    - retained all collected
+    - collected premiums
+    - kept the premium
+    - kept the money
+    - absence of insurable interest
+    - despite the absence
+    - no insurable risk
+    - risk ceased
+    - after cancellation
+    - continued to charge
+    core_elements:
+    - benefit_conferred_on_defendant
+    - appreciation_of_benefit
+    - retention_unjust_under_circumstances
+    supporting_elements:
+    - no_adequate_legal_remedy
+    domains:
+    - equity
+    - quasi_contract
+    jurisdictions:
+    - state
+    regulators: []
+    seed_nodes:
+    - pa-unjust-enrichment-doctrine
+    doctrines:
+    - restitution_doctrine
+    remedies:
+      restitution: disgorgement of benefit retained
+      constructive_trust: equitable
+      accounting: equitable
+    venue:
+      state:
+        court: PA Court of Common Pleas
+        basis: state common law
+    procedural_vehicle: complaint or counterclaim
+    entity_type: null
+  conversion:
+    display_name: Conversion
+    status: active
+    triggers:
+    - took money
+    - withheld money
+    - refused to return
+    - wrongful possession
+    - dominion over property
+    - refused refund
+    - refused to refund
+    - kept collected
+    - retained collected
+    - retained all collected
+    - demanded refund
+    - demanded return
+    - withheld
+    core_elements:
+    - plaintiff_ownership_or_right_to_possession
+    - defendant_exercise_of_dominion
+    - inconsistency_with_plaintiff_rights
+    - demand_for_return
+    supporting_elements: []
+    domains:
+    - tort
+    - property
+    jurisdictions:
+    - state
+    regulators: []
+    seed_nodes:
+    - pa-conversion-doctrine
+    remedies:
+      damages_fair_market_value: at time of conversion
+      punitive_damages: if malicious
+    venue:
+      state:
+        court: PA Court of Common Pleas
+        basis: state tort law
+    procedural_vehicle: complaint
+    entity_type: null
+  breach_of_contract_general:
+    display_name: Breach of Contract
+    status: active
+    triggers:
+    - breached contract
+    - failed to perform
+    - contract violated
+    - did not honor agreement
+    - continued to charge
+    - retained premium
+    - refused refund
+    - breach of policy
+    core_elements:
+    - valid_contract
+    - plaintiff_performance_or_excuse
+    - defendant_breach
+    - damages
+    supporting_elements: []
+    domains:
+    - contract
+    jurisdictions:
+    - state
+    regulators: []
+    seed_nodes:
+    - pa-contract-law
+    remedies:
+      expectation_damages: benefit of the bargain
+      consequential_damages: if foreseeable
+      restitution: if applicable
+      specific_performance: if unique
+    venue:
+      state:
+        court: PA Court of Common Pleas
+        basis: state contract law
+      federal:
+        court: federal district court
+        basis: diversity
+    procedural_vehicle: complaint
+    entity_type: null
+  pa_utpcpl_violation:
+    display_name: PA Unfair Trade Practices and Consumer Protection Law
+    status: active
+    triggers:
+    - deceptive practice
+    - unfair business practice
+    - misleading
+    - fraudulent conduct
+    - consumer harm
+    - refused refund
+    - continued to charge
+    - retained despite
+    - without authorization
+    - sent to collection
+    - claimed i failed to notify
+    - absence of insurable interest
+    - consumer
+    core_elements:
+    - consumer_transaction
+    - unfair_or_deceptive_act
+    - reliance
+    - ascertainable_loss
+    supporting_elements: []
+    domains:
+    - consumer_protection
+    - statutory
+    jurisdictions:
+    - state
+    regulators:
+    - PA_attorney_general
+    seed_nodes:
+    - 73-P-S-201-2
+    - 73-P-S-201-9-2
+    remedies:
+      actual_damages: plus up to treble, 73 P.S. 201-9.2(a)
+      attorney_fees: 73 P.S. 201-9.2(a)
+      costs: 73 P.S. 201-9.2(a)
+    venue:
+      state:
+        court: PA Court of Common Pleas
+        basis: state statute
+      federal:
+        court: federal district court
+        basis: diversity + supplemental
+      agency:
+        body: PA Attorney General Consumer Protection
+        basis: state complaint
+    procedural_vehicle: complaint + AG referral
+    entity_type: null
+  respa_qwr_violation:
+    display_name: RESPA Qualified Written Request Violation
+    status: active
+    triggers:
+    - qualified written request
+    - QWR
+    - servicer failed to respond
+    - servicer response inadequate
+    - mortgage inquiry
+    - loan servicing
+    core_elements:
+    - mortgage_loan
+    - qwr_sent_to_servicer
+    - servicer_failed_to_respond_within_timeframe
+    supporting_elements:
+    - actual_damages_or_pattern
+    domains:
+    - real_property
+    - consumer_finance
+    jurisdictions:
+    - federal
+    regulators:
+    - CFPB
+    seed_nodes:
+    - 12-USC-2605
+    - 12-CFR-1024-36
+    remedies:
+      actual_damages: 12 USC 2605(f)(1)(A)
+      statutory_damages: up to $2000 for pattern/practice, 12 USC 2605(f)(1)(B)
+      attorney_fees: 12 USC 2605(f)(3)
+    venue:
+      federal:
+        court: federal district court
+        basis: federal question
+    procedural_vehicle: complaint
+    entity_type: mortgage_servicer
+  quiet_title_chain_defect:
+    display_name: Quiet Title — Chain of Title Defect
+    status: active
+    triggers:
+    - broken chain of title
+    - no standing to foreclose
+    - MERS assignment
+    - robosigning
+    - lost note
+    - broken chain
+    core_elements:
+    - plaintiff_claim_of_ownership
+    - defendant_adverse_claim
+    - defect_in_defendant_chain
+    supporting_elements:
+    - ucc_article_3_issue
+    - recording_act_issue
+    domains:
+    - real_property
+    - equity
+    jurisdictions:
+    - state
+    regulators: []
+    seed_nodes:
+    - ucc-3-301
+    - ucc-3-302
+    - pa-recording-act
+    doctrines:
+    - holder_in_due_course
+    remedies:
+      declaratory_judgment: title quieted in plaintiff
+      injunctive_relief: bar defendant claims
+    venue:
+      state:
+        court: PA Court of Common Pleas
+        basis: in rem jurisdiction over property
+    procedural_vehicle: complaint for quiet title
+  fraudulent_concealment_tolling:
+    display_name: Fraudulent Concealment — Statute of Limitations Tolling
+    status: active
+    triggers:
+    - hid the facts
+    - concealed
+    - fraudulent concealment
+    - could not have known
+    - discovered later
+    - statute of limitations
+    core_elements:
+    - defendant_concealed_cause_of_action
+    - plaintiff_exercised_reasonable_diligence
+    - discovery_of_cause_date
+    supporting_elements:
+    - affirmative_acts_of_concealment
+    domains:
+    - procedural
+    - equity
+    jurisdictions:
+    - state
+    - federal
+    regulators: []
+    seed_nodes:
+    - pa-fraudulent-concealment-doctrine
+    - discovery-rule-doctrine
+    doctrines:
+    - fraudulent_concealment
+    - discovery_rule
+    remedies:
+      tolling: statute of limitations tolled until discovery
+    venue:
+      any:
+        note: pled as avoidance in reply brief or complaint
+    procedural_vehicle: reply brief opposing limitations defense
+  regulatory_noncompliance:
+    display_name: Regulatory Noncompliance (Burden-Flip)
+    status: active
+    triggers:
+    - regulated entity
+    - licensed business
+    - failed to comply
+    - no disclosure
+    - required duty
+    core_elements:
+    - defendant_is_regulated_entity
+    - regulation_imposes_duty
+    - facts_suggest_nonperformance
+    supporting_elements: []
+    domains:
+    - regulatory
+    - cross_cutting
+    jurisdictions:
+    - federal
+    - state
+    regulators:
+    - varies_by_entity_type
+    seed_nodes: []
+    remedies:
+      burden_flip: defendant must produce compliance records
+      regulatory_complaint: parallel complaint to regulator
+    venue:
+      any:
+        note: paired with primary claim, not standalone
+    procedural_vehicle: integrated into primary complaint + regulatory complaint
+changelog:
+- version: v3
+  patch: v04_autocall
+  change: Added entity_type field to 6 theories for duty engine auto-call

@@ -1,0 +1,41 @@
+id: motion_for_garnishee_default
+title: Motion for Default Judgment Against Garnishee
+description: 'Motion under Pa.R.C.P. 3146 to enter default against a garnishee that
+
+  failed to file verified responses to interrogatories or otherwise
+
+  comply with garnishment obligations.
+
+  '
+court: state_pa_ccp
+required_authorities:
+- Pa.R.C.P. 3146 (default judgment against garnishee)
+- Pa.R.C.P. 3144 (garnishee's answer)
+- 42 Pa.C.S. § 8123 (post-judgment garnishment)
+trigger_defects:
+- SERIOUS/SERVICE
+- FATAL/SERVICE
+- cross_case
+- dismissal
+structure:
+- block: boilerplate/caption_state_pa_ccp
+- block: sections/introduction
+- block: sections/procedural_history
+- block: sections/factual_statement_enforcement
+- block: sections/standard_of_review
+- block: arguments/procedural_defect
+- block: arguments/jurisdiction_attack
+  when: defect_categories.JURISDICTION > 0
+- block: arguments/haines_v_kerner_standard
+  when: defect_categories.DISMISSAL > 0
+- block: arguments/void_order_misuse
+  when: cross_case_count > 0
+- block: arguments/candor_violation
+  when: cross_case_count > 0
+- block: arguments/equity_maxims_argument
+- block: sections/prayer_for_relief
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service
+- block: boilerplate/verification
+- block: boilerplate/proposed_order

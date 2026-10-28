@@ -1,0 +1,65 @@
+id: motion_to_reinstate_ifp_fee_dismissal_1915a
+title: Motion to Reinstate / Reopen a Without-Prejudice Fee/IFP Dismissal (28 U.S.C. 1915(a))
+description: |
+  Motion to reinstate / reopen a case that the court dismissed WITHOUT PREJUDICE for
+  "failure to prosecute" where the only operative deficiency was that the pro se
+  plaintiff failed to prepay the filing fee or perfect an in forma pauperis (IFP)
+  affidavit.
+
+  Core lever: 28 U.S.C. 1915(a) is a DISCRETIONARY FEE-WAIVER grant ("any court ... MAY
+  authorize ... without prepayment of fees or security therefor"), NOT a pre-condition
+  to suing or to prosecuting a complaint that is already on the docket. A fee/IFP
+  defect is a clerk-level, fee-status matter; labeling it "failure to prosecute" is a
+  procedural docket action, not a merits determination. Because the dismissal was
+  WITHOUT PREJUDICE, the claims are preserved, and the plaintiff's remedy is to
+  reinstate/reopen and compel the court to treat the fee deficiency as the ministerial
+  1915(a) fee-waiver it is.
+
+  RECIPROCITY angle: the court invoked the 1915(a) complete-financial-disclosure
+  standard AGAINST the pro se plaintiff, but that same statute is what bound the
+  court to give a fee-waiver determination (a judicial/fee-status act), not to convert
+  a fee deficiency into a merits-level "failure to prosecute" that ends a pending
+  action. Distinguishes [[motion_to_proceed_informa_paupers]] (affirmative IFP at
+  commencement), [[request_de_novo_judicial_review]] (de novo review of an
+  administrative/magistrate IFP determination), and [[motion_to_reinstate_adm_closed_case]]
+  (administratively CLOSED docket, Poulis/54(a)/55(b)(1)) — this is a JUDICIAL
+  without-prejudice dismissal entered on fee/IFP grounds.
+
+court: federal_district
+
+required_authorities:
+  - 28 U.S.C. 1915(a)(1) (court MAY authorize suit without prepayment of fees; affidavit of inability to pay)
+  - 28 U.S.C. 1915(a) (in forma pauperis = fee-waiver grant, discretionary, not a jurisdictional gate)
+  - 28 U.S.C. 1915(g) (PLRA preclusion — confirm not applicable for non-prisoner)
+  - 28 U.S.C. 1915(e)(2) (frivolousness screening — the ONLY merits-adjacent gate the court may apply to an IFP case)
+  - Fed. R. Civ. P. 41(b) (dismissal for failure to prosecute — express/implicit; without-prejudice preserves claim)
+  - Fed. R. Civ. P. 60(b) (relief from judgment — alternative framing if the without-prejudice dismissal is treated as final)
+  - Haines v. Kerner, 404 U.S. 519 (1972) (pro se liberal construction)
+  - Neitzke v. Williams, 502 U.S. 319 (1992) (arguable-basis standard — the fee/IFP deficiency is NOT a frivolousness finding)
+  - Smith v. Robinson, 755 F.3d 456 (3d Cir. 2014) (IFP determination standard)
+
+trigger_defects:
+  - IFP_FEE_DISMISSAL
+  - WITHOUT_PREJUDICE_FAILURE_TO_PROSECUTE
+  - fee_prepayment_defect
+  - access_to_courts
+  - FATAL/ACCESS_TO_COURTS
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_federal
+  - block: sections/standard_of_review
+  - block: arguments/haines_v_kerner_standard
+    when: is_pro_se == true
+  - block: arguments/1915a_fee_waiver_not_gate
+    when: defect_categories.IFP_FEE_DISMISSAL > 0
+  - block: arguments/without_prejudice_preserves_claim
+    when: defect_categories.WITHOUT_PREJUDICE_FAILURE_TO_PROSECUTE > 0
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/verification

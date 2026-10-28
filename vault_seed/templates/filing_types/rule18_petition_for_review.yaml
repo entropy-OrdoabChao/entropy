@@ -1,0 +1,48 @@
+id: rule18_petition_for_review
+title: Petition for Review — Judicial Council of the Third Circuit (Rule 18)
+description: >
+  Petition for Review under Rule 18 of the Rules for Judicial-Conduct and Judicial-Disability
+  Proceedings, and 28 U.S.C. § 352(c), asking the Judicial Council of the Circuit to review and set
+  aside the Chief Judge's order dismissing a misconduct complaint. This is NOT a court filing — it is
+  an accountability filing to the Office of the Circuit Executive. The petition does not re-argue the
+  underlying rulings; it establishes that the dismissed allegations are CONDUCT — mandatory-duty
+  failures separable from the merits — and poses the governing duties as on-record numbered questions
+  the Council must answer or expose. Where the dismissal recasts a mandatory-duty failure as
+  "merits-related," the disposition ITSELF is court business reviewable at the § 357 national rung, and
+  each reviewing official who elects the bar over the duty joins the record.
+court: external
+required_authorities:
+  - 28 U.S.C. § 351(a) — cognizable misconduct: conduct prejudicial to the effective and expeditious administration of the business of the courts
+  - 28 U.S.C. § 352(b)(1)(A)(ii) — the "merits-related" bar (narrow)
+  - 28 U.S.C. § 352(c) — petition for review of a chief judge's dismissal
+  - 28 U.S.C. § 353 — special committee / limited inquiry
+  - 28 U.S.C. § 357 — review by the Committee on Judicial Conduct and Disability (national rung)
+  - Rules for Judicial-Conduct and Judicial-Disability Proceedings, Rules 3(h)(3)(A), 4(a), 11, 18
+  - 28 U.S.C. § 455(a) — self-executing duty to disqualify
+  - Fed. R. Evid. 201(c)(2) — mandatory judicial notice on request
+  - Fed. R. Civ. P. 12(h)(3) — subject-matter jurisdiction; no sua sponte adjudication without notice
+  - Code of Conduct for United States Judges, Canon 2A and Canon 3A(1)
+trigger_defects:
+  - judicial_oath_breach
+  - sua_sponte_unnoticed
+  - bias_indicator
+  - NO_REASONS_STATED
+  - record_contradiction
+  - pattern_of_conclusive_denials
+  - mandatory_judicial_notice_ignored
+  - stare_decisis_misuse
+required_facts:
+  - case_id
+  - caption
+  - judge_name
+  - defect_total
+  - specific_violations
+  - dismissal_order_reviewed
+structure:
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_enforcement
+  - block: arguments/liteky_bias_pattern
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se

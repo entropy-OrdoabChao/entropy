@@ -1,0 +1,55 @@
+id: rule_60d3_fraud_on_court
+title: Plaintiff's Motion for Relief from Judgment — Fraud on the Court Under FRCP 60(d)(3)
+description: |
+  Motion under FRCP 60(d)(3) for relief from a final judgment or order
+  obtained by fraud on the court. This is the most extreme grounds under
+  FRCP 60 and carries no time limitation — unlike FRCP 60(b)(1)-(5) which
+  are subject to a one-year clock.
+
+  FRCP 60(d)(3) applies when the fraud is directed at the court itself,
+  not just at an opposing party. The fraud must involve serious misconduct
+  that undermines the integrity of the judicial process.
+
+  Grounds include: court relied on a judgment/record obtained by fraud;
+  opposing party submitted false evidence to the court; the court's order
+  contradicts the docket record (e.g., claims a party was not served when
+  proof of service is filed on the docket).
+
+court: federal_district
+required_authorities:
+  - FRCP 60(d)(3) — Fraud on the court; no time limitation
+  - FRCP 60(c)(1) — Standard for motion under FRCP 60
+  - Hazel-Atlas Glass Co. v. Hartford-Empire Co., 322 U.S. 238 (1944) — Fraud on the court standard
+  - Herring v. United States, 424 F.3d 384 (3d Cir. 2005) — Fraud on the court in federal court
+  - United States v. A & P Trucking Co., 338 U.S. 121 (1949) — Fraud on the court vs. (b)(3) fraud distinction
+  - Fed. R. Civ. P. 4(l) — Proof of service establishes service of record
+  - Fed. R. Evid. 201(b)(2) — Judicial notice of court record
+trigger_defects:
+  - FRAUD_ON_COURT_JUDICIAL
+  - SERIOUS/FRAUD_ON_COURT
+  - judgment_contradicts_docket
+  - court_relied_on_fraud
+  - FATAL/JURISDICTION
+  - void_order
+  - FRCP_60B_eligible
+  - service_finding_contradicted_by_docket
+required_facts:
+  - case_id
+  - caption
+  - defendant_targeted — defendant whose judgment/order is being challenged
+  - fraud_description — specific description of the fraud on the court
+  - judgment_or_order_targeted — ECF number of the judgment/order
+  - evidence — evidence corrobating the fraud (e.g., docket entries, proof of service)
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/fraud_on_court
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

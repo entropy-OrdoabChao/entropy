@@ -1,0 +1,38 @@
+id: motion_to_stay_mandate
+title: Motion to Stay the Mandate Under FRAP 41(b)
+description: 'Motion under Fed. R. App. P. 41(b) to stay the mandate pending a
+  petition for rehearing. This is procedurally distinct from recall (FRAP 41(d)):
+  a STAY prevents the mandate from issuing; a RECALL withdraws an already-issued
+  mandate.
+
+  Use this vehicle when the mandate has NOT yet issued. A stay preserves
+  jurisdiction for reinstatement or rehearing. The stay must specify duration
+  and conditions.
+
+  Key provisions:
+  - FRAP 41(b)(1): A party may move to stay the mandate pending a petition
+    for rehearing. The stay must specify duration and conditions.
+  - FRAP 41(a): The mandate must issue 7 days after the time for filing a
+    petition for rehearing expires, unless the court orders otherwise.
+  - If a petition for rehearing is filed within the time for filing, the
+    mandate may not issue until 7 days after entry of the order denying
+    the petition.
+  '
+court: federal_appellate
+required_authorities:
+- Fed. R. App. P. 41(b) — Stay of Mandate
+- Fed. R. App. P. 41(a) — Issuance of the Mandate
+- Fed. R. App. P. 40 — Time for Filing Petition for Rehearing
+- 3d Cir. L.A.R. 107.2 — Reinstatement after dismissal
+trigger_defects:
+- dismissal
+- FATAL/PROCEDURAL
+- FATAL/JURISDICTION
+structure:
+- block: boilerplate/caption_appellate_3rd_cir
+- block: sections/introduction
+- block: sections/factual_statement_federal
+- block: arguments/stay_mandate_grounds
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

@@ -1,0 +1,27 @@
+name: capacity
+group: study
+unit: claim            # claim | term | cite | count | document | case | draft
+axis: "Axis 2 — CAPACITY / PARTY: who really owes the duty, who really holds the right, in what capacity. + IMMUNITY (any sovereign / public defendant): name the waiver statute's IMMUNITY sections the defendant WILL plead against this claim (discretion, failure to enforce a law, entity not liable for employee fraud/malice) AND each EXCEPTION that strips it (ministerial duty, actual fraud / actual malice / willful misconduct = the employee personally); say which defendant each one leaves liable."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - amjur_
+  - cjs_
+  - restatement
+  - duty_map
+  - pa_cs_15_
+  - pa_cs_40_
+  - usc_15_
+  - nj_stat
+  - pa_cs_42_
+queries:
+  - "{claim} capacity agent principal"
+  - "duty owed by whom {claim}"
+  - "real party in interest"
+  - "{claim} public entity is not liable for an injury immunity"
+  - "public employee not exonerated from liability actual fraud actual malice willful misconduct"
+  - "not liable for any injury caused by adopting or failing to adopt a law or by failing to enforce any law"
+  - "not liable for an injury resulting from the exercise of judgment or discretion"
+  - "sovereign immunity waived exceptions Commonwealth party local agency liability"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

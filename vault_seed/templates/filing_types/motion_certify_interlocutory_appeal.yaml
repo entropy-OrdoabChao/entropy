@@ -1,0 +1,42 @@
+id: motion_certify_interlocutory_appeal
+title: Motion to Certify for Interlocutory Appeal Under 28 U.S.C. § 1292(b)
+description: >
+  A district court motion to certify a controlling question of law for immediate
+  appeal to the circuit court under 28 U.S.C. § 1292(b). This is NOT the notice
+  of appeal itself — it is the certification request filed in the district court.
+  
+  Key requirements from 28 U.S.C. § 1292(b):
+  - The order must involve a "controlling question of law"
+  - There must be "substantial ground for difference of opinion"
+  - An "immediate appeal may materially advance the ultimate termination of the litigation"
+  
+  The district court certifies (does NOT grant the appeal — the circuit court does).
+  The party files a notice of appeal to the circuit court within 10 days of certification.
+  
+  Third Circuit Local Rules apply to formatting. Pro se litigants get liberal construction
+  (Haines v. Kerner, 404 U.S. 519 (1972)).
+
+court: federal_district
+required_authorities:
+  - 28 U.S.C. § 1292(b) (certification of interlocutory orders)
+  - Fed. R. App. P. 5(a) (notice of appeal after certification — 10 days)
+  - Fed. R. App. P. 4(a)(1) (30-day deadline for civil case — reference for contrast)
+  - 3d Cir. L.A.R. 3.1 (form of notice of appeal)
+  - Katz v. Carte Blanche Corp., 496 F.2d 747 (3d Cir. 1974) (en banc) (certification standard)
+  - Haines v. Kerner, 404 U.S. 519 (1972) (pro se liberal construction)
+  - Erickson v. Pardus, 551 U.S. 89 (2007) (liberal construction of pro se filings)
+trigger_defects:
+  - FATAL/PROCEDURAL
+  - FATAL/JURISDICTION
+  - FATAL/APPEAL
+  - interlocutory_order_not_final
+structure:
+  - block: boilerplate/caption_district_court
+  - block: sections/motion_header
+  - block: sections/statement_of_grounds_1292b
+  - block: sections/controlling_question_of_law
+  - block: sections/substantial_ground_difference_of_opinion
+  - block: sections/immediate_appeal_materially_advances_termination
+  - block: sections/relief_sought
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

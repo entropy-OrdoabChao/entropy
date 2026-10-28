@@ -1,0 +1,36 @@
+id: motion_to_quash_subpoena
+title: Motion to Quash or Modify Subpoena
+description: 'Motion under Fed. R. Civ. P. 45(c)(3)(A) or Fed. R. Crim. P. 17(d) to quash
+  or modify a subpoena on grounds of undue burden, relevance, privilege, or Fourth/Fifth
+  Amendment protections. Applies in civil and criminal proceedings. Covers subpoena
+  duces tecum scope limits (Hale v. Henkel, 201 U.S. 43, 76 (1906)), witness privilege
+  protections (Boyd v. United States, 116 U.S. 616 (1886); Kastigar v. United States,
+  403 U.S. 18 (1971)), and court-supervised discretion to prevent overreach.'
+court: federal_district
+required_authorities:
+- Fed. R. Civ. P. 45(c)(3)(A) (quash or modify)
+- Fed. R. Crim. P. 17(d) (civil rules apply in criminal cases)
+- Fed. R. Evid. 501 (privilege)
+- Fourth Amendment (unreasonable search and seizure — subpoena duces tecum limits)
+- Fifth Amendment (self-incrimination — Boyd v. United States)
+- Kastigar v. United States, 403 U.S. 18 (1971) (immunity co-extensive with privilege)
+- Hale v. Henkel, 201 U.S. 43, 76 (1906) (subpoona "far too sweeping" disallowed)
+trigger_defects:
+- undue_burden
+- privilege_assertion
+- relevance_failure
+- constitutional_protection
+- subpoena_abuse
+structure:
+- block: boilerplate/caption_trial
+- block: sections/introduction
+- block: sections/procedural_history
+- block: sections/statement_of_facts
+- block: sections/standard_of_review
+- block: arguments/quash_undue_burden
+- block: arguments/quash_privilege
+- block: arguments/quash_fourth_amendment_scope
+- block: arguments/quash_fifth_amendment
+- block: sections/prayer_for_relief
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

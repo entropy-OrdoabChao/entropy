@@ -1,0 +1,25 @@
+name: flip_checker
+group: record
+unit: claim            # claim | term | cite | count | document | case | draft
+axis: "RECORD — FLIP CHECKER: every axis turned on OUR draft, as the opponent's best lawyer would. For every waiver the opponent could claim against US, state whether the record shows a known right knowingly relinquished, or a reservation that defeats it."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - doctrine
+  - amjur_
+  - pa_rcp
+  - frcp
+  - usreports
+  - ca3_
+  - pa_
+  - amjur_estoppel
+  - amjur_dismissal
+  - amjur_federal_courts
+queries:
+  - "{claim} dismiss failure to state"
+  - "{claim} waived not raised"
+  - "{claim} no private right of action"
+  - "general appearance waives objection to jurisdiction of the person special appearance"
+  - "{claim} reservation of rights without prejudice is not a waiver"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

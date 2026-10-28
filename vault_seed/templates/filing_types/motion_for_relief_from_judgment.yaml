@@ -1,0 +1,40 @@
+id: motion_for_relief_from_judgment
+title: Motion for Relief from Judgment Under FRCP 60(b)
+description:
+  Motion for relief from final judgment under FRCP 60(b) for void judgment,
+  newly discovered evidence, fraud, or other grounds.
+court: any
+required_authorities:
+  - FRCP 60(b)(1) — Mistake, inadvertence, excusable neglect
+  - FRCP 60(b)(2) — Newly discovered evidence
+  - FRCP 60(b)(3) — Fraud, misrepresentation, or misconduct
+  - FRCP 60(b)(4) — Void judgment (no time limit)
+  - FRCP 60(b)(5) — Judgment no longer equitable
+  - FRCP 60(b)(6) — Catch-all for extraordinary circumstances
+  - FRCP 60(c)(1) — Time limits for Rule 60(b) motions
+  - FRCP 60(d)(3) — Time limit for reason (6)
+trigger_defects:
+  - FATAL/VOID_JUDGMENT
+  - FATAL/JURISDICTION
+  - SERIOUS/VOID_JUDGMENT
+  - SERIOUS/CONSTRUCTION
+  - judgment_vacated
+  - FRCP_60B_eligible
+required_facts:
+  - case_id
+  - caption
+  - defect_total
+  - judgment_date
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/rule60b_relief
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

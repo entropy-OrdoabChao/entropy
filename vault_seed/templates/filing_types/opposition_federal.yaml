@@ -1,0 +1,54 @@
+id: opposition_federal
+title: Plaintiff's Response in Opposition to Defendant's Dispositive Motion (Federal)
+description: 'EDPA brief in opposition to a defendant dispositive motion (Rule 12(c)
+
+  judgment on the pleadings, Rule 12(b)(6) dismissal, or Rule 56 summary judgment).
+
+  Opposes on the merits: accepts the well-pleaded facts as true, construes the pro se
+
+  filing liberally, rebuts each ground the movant advances, and grounds every point in
+
+  the binding-precedent hierarchy from the scorecard. A cross-motion to strike is filed
+
+  SEPARATELY (also_file) when the motion itself carries scorecard/procedural defects.
+
+  '
+court: federal_district
+required_authorities:
+- FRCP 12(c)
+- Bell Atlantic Corp. v. Twombly, 550 U.S. 544 (2007)
+- Ashcroft v. Iqbal, 556 U.S. 662 (2009)
+- Erickson v. Pardus, 551 U.S. 89 (2007)
+trigger_defects:
+- SERIOUS/AUTHORITY
+- FATAL/AUTHORITY
+- FATAL/CROSS_CASE_AUTHORITY
+- SERIOUS/PROCEDURAL
+- FATAL/PROCEDURAL
+- dismissal
+- cross_case
+structure:
+- block: boilerplate/caption_federal
+  when: is_federal == true
+- block: boilerplate/caption_state_pa_ccp
+  when: is_federal == false
+- block: sections/introduction
+- block: sections/standard_of_review
+- block: sections/procedural_history
+- block: sections/factual_statement_federal
+- block: arguments/failure_to_state_claim
+  when: defect_categories.DISMISSAL > 0
+- block: arguments/haines_v_kerner_standard
+- block: arguments/non_binding_authority
+  when: defect_categories.AUTHORITY > 0
+- block: arguments/lack_of_standing
+  when: defect_categories.JURISDICTION > 0
+- block: arguments/procedural_defect
+  when: defect_categories.PROCEDURAL > 0
+- block: arguments/void_order_misuse
+  when: cross_case_count > 0
+- block: arguments/equity_maxims_argument
+- block: sections/prayer_for_relief_opposition
+- block: sections/conclusion_opposition
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

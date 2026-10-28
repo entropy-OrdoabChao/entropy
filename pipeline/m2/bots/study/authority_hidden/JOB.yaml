@@ -1,0 +1,20 @@
+name: authority_hidden
+group: study
+unit: claim            # claim | term | cite | count | document | case | draft
+axis: "Axis 5c — AUTHORITY (hidden, not absent): the controlling case nobody cited; pull + ingest when it is outside the corpus."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - usreports
+  - cap_us_
+  - ca3_
+  - pa_
+  - courtlistener_
+  - amjur_
+  - cjs_
+queries:
+  - "{claim} Supreme Court held"
+  - "{claim} Pennsylvania Supreme Court held"
+  - "{claim} Third Circuit held"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

@@ -1,0 +1,96 @@
+id: fcra_1681i_cra_reinvestigation_filing
+
+title: FCRA Section 1681i — CRA Dispute Investigation and Reinvestigation Duty
+
+description: >
+  Filing targeting a Consumer Reporting Agency's (CRA) failure to conduct a
+  "reasonable reinvestigation" of a consumer dispute as required by 15 U.S.C.
+  § 1681i(a).  This is the CRA's distinct duty — separate from furnisher
+  investigation (15 U.S.C. § 1681s-2) and separate from the consumer's right
+  to a free credit file disclosure (15 U.S.C. § 1681g).  The core obligation
+  is triggered when a consumer disputes the completeness or accuracy of any
+  item in his or her consumer file: the CRA must conduct a reasonable
+  reinvestigation, review and consider all relevant information submitted by
+  the consumer, complete the reinvestigation within 30 days (or 45 days if
+  the consumer provides relevant information during the initial period),
+  report results to the consumer, and update or delete the disputed item
+  from the consumer's file.  The CRA must also notify the furnisher within
+  five business days of receiving the dispute.  A filing under § 1681i
+  asserts that the CRA breached one or more of these affirmative duties.
+
+court: federal_district
+
+required_authorities:
+  - 15 U.S.C. § 1681i(a)(1)(A) — Consumer reporting agency must conduct a
+    reasonable reinvestigation to determine whether the disputed information
+    is inaccurate and record the current status or delete the item.
+  - 15 U.S.C. § 1681i(a)(1)(B) — 30-day reinvestigation deadline; 15-day
+    extension if the consumer provides relevant information during the
+    period.
+  - 15 U.S.C. § 1681i(a)(2)(A) — CRA must notify the furnisher of the
+    dispute within five business days of receiving the consumer's dispute.
+  - 15 U.S.C. § 1681i(a)(4) — CRA must review and consider all relevant
+    information submitted by the consumer as part of the reinvestigation.
+  - 15 U.S.C. § 1681i(a)(5)(A) — Upon completion, CRA must provide
+    written notice of results to the consumer within five business days.
+  - 15 U.S.C. § 1681i(a)(6) — CRA must promptly notify the furnisher that
+    information is inaccurate and provide supporting documentation.
+  - 15 U.S.C. § 1681i(b) — CRA must provide written notice of the
+    reinvestigation results to the consumer.
+  - 15 U.S.C. § 1681i(c) — If reinvestigation determines information is
+    inaccurate or cannot be verified, CRA must delete or modify the item
+    in the consumer's file.
+  - 15 U.S.C. § 1681i(f) — Reseller reinvestigation requirements and
+    recalcification of disputed information.
+  - CFPB Supervisory Highlights, Consumer Reporting Special Edition —
+    enforcement guidance on CRA dispute reinvestigation failures (e.g.,
+    CRCs failing to review and consider consumer documentary evidence,
+    incorrectly recording dispute dates, failing to send results notices).
+  - Regulation V, 12 CFR Part 1022 — implements FCRA dispute-handling
+    procedures and reinforces CRA reinvestigation duties.
+
+court_rules:
+  - 15 U.S.C. § 1681i(a)(1)(A) — Reasonable reinvestigation duty
+  - 15 U.S.C. § 1681i(a)(1)(B) — 30/45-day timeline
+  - 15 U.S.C. § 1681i(a)(2) — Furnisher notification (5 business days)
+  - 15 U.S.C. § 1681i(a)(4) — Review all relevant consumer information
+  - 15 U.S.C. § 1681i(a)(5) — Results notice to consumer (5 business days)
+  - 15 U.S.C. § 1681i(c) — Delete or modify if inaccurate/unverifiable
+
+trigger_defects:
+  - FATAL/FCRA_CRA_REINVESTIGATION_FAILED
+  - FATAL/FCRA_CRA_TIMELINE_VIOLATION
+  - FATAL/FCRA_CRA_RESULTS_NOTICE_MISSING
+  - FATAL/FCRA_CRA_SUPPLEMENTARY_INFORMATION_IGNORED
+  - FATAL/FCRA_CRA_INACCURATE_INFORMATION_RETAINED
+
+required_facts:
+  - case_id
+  - caption
+  - consumer_name
+  - cra_name_or_identification — the consumer reporting agency that
+    received the dispute
+  - dispute_date — date CRA received the consumer's dispute notice
+  - dispute_content — what the consumer disputed (item(s) in dispute,
+    supporting documentation submitted)
+  - reinvestigation_outcome — what the CRA actually did (no reinvestigation,
+    incomplete reinvestigation, deleted item, confirmed item as accurate,
+    etc.)
+  - results_notice_provided — whether CRA provided written results to
+    consumer
+  - timeline_violation — whether CRA completed reinvestigation within
+    30 days (or 45 days with extension)
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_federal
+  - block: sections/standard_of_review
+  - block: sections/argument_fcra_1681i_reinvestigation
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

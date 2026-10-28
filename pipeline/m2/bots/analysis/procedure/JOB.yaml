@@ -1,0 +1,39 @@
+name: procedure
+group: analysis
+unit: claim            # claim | term | cite | count | document | case | draft
+axis: "Axis 4 — PROCEDURE / POSTURE: the SHALL rule at this posture, deadlines, waiver by silence (8(b)(6), 1029(b)), Zerbst symmetry. + waiver is a FACT question needing a known right and intent (no waiver inferred from a reservation, a motion, or silence without a duty to speak); fee/IFP rules are not jurisdictional."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - amjur_federal
+  - amjur_pleading
+  - frcp
+  - frap
+  - fre
+  - pa_rcp
+  - pa_rap
+  - pa_re
+  - pa_rja
+  - pa_bulletin
+  - amjur_estoppel
+  - amjur_dismissal
+  - amjur_costs
+  - amjur_clerks
+  - amjur_appeal
+  - amjur_summary_judgment   # vol 73 (S-m2-cure C1)
+  - amjur_courts             # vol 20 Courts (S-m2-cure C1)
+  - amjur_stare_decisis      # vol 20 Courts — stare decisis lane (S-m2-cure C1)
+  - nj_rules
+queries:
+  - "{claim} rule shall"
+  - "failure to deny admitted 1029"
+  - "waiver Zerbst intentional relinquishment known right"
+  - "waiver is ordinarily a question of fact intent to relinquish a known right"
+  - "no waiver or estoppel where the party lacked full knowledge of the facts and of his rights"
+  - "filing a paper is ministerial; payment of the fee is not jurisdictional"
+  - "in forma pauperis applicant need not be a pauper unable to pay costs"
+  - "summary judgment genuine issue of material fact burden on the moving party"
+  - "stare decisis lower court bound to follow decision of higher court"
+  - "clerk must serve notice of the entry of an order or judgment; lack of notice does not affect time to appeal"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

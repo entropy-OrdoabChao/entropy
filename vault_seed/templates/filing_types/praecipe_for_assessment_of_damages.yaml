@@ -1,0 +1,72 @@
+id: praecipe_for_assessment_of_damages
+title: Praecipe for Assessment of Damages
+description: >
+  Praecipe filed in PA state court to obtain an assessment of damages by a jury
+  after a default or default judgment has been entered. When damages are not
+  liquidated (i.e., not a specific sum that can be computed by mere calculation),
+  the court must assess damages by a jury or by the court sitting without a jury.
+  
+  Key provisions of Pa.R.C.P. 1041:
+  - When damages are not liquidated, the court must assess damages
+  - The praecipe must state the amount claimed or the nature of the claim
+  - The court may assess damages by a jury or by the court sitting without a jury
+  - The party must file the praecipe with the prothonotary
+  - If a jury is demanded, the matter is set for jury assessment
+  - If no jury is demanded, the court assesses damages by the court
+  
+  This is NOT a motion — it is a praecipe. The plaintiff files the praecipe
+  with the prothonotary, and the prothonotary sets the matter for assessment.
+
+court: state_pa_ccp
+required_authorities:
+  - citation: "Pa.R.C.P. 1041"
+    proposition: "Assessment of damages — when damages are not liquidated, the court shall assess damages by a jury or by the court sitting without a jury. The praecipe must state the amount claimed or the nature of the claim."
+  - citation: "Pa.R.C.P. 1040"
+    proposition: "Statement of cause — when a judgment is entered by confession, the plaintiff must file a statement of the cause of action."
+  - citation: "Pa.R.C.P. 1019"
+    proposition: "Time for answering — a party must answer within 30 days after service, unless the court orders a different time."
+  - citation: "42 Pa.C.S. § 8101"
+    proposition: "Post-judgment interest — a judgment for a specific sum of money shall bear interest at the lawful rate from the date of the verdict or entry of judgment until satisfied."
+
+trigger_defects:
+  - default_judgment
+  - default_judgment_entered
+  - damages_not_liquidated
+  - assessment_of_damages
+  - judgment_entered
+  - post_judgment
+  - SERIOUS/SERVICE
+  - FATAL/SERVICE
+
+structure:
+  - type: caption
+    block: boilerplate/caption_state_pa_ccp
+  - type: section
+    block: sections/introduction
+    content: "State the nature of the praecipe for assessment of damages, the underlying default or default judgment, and the request for assessment of unliquidated damages."
+  - type: section
+    block: sections/procedural_history
+    content: "Trace the entry of default or default judgment, the nature of the damages claimed, and the filing of the praecipe for assessment of damages."
+  - type: section
+    block: sections/factual_statement_enforcement
+    content: "Describe the nature of the damages claimed, why they are not liquidated, and the basis for the damages."
+  - type: section
+    block: sections/definitions_schedule_canons
+    content: "Define 'liquidated damages,' 'unliquidated damages,' 'assessment of damages,' and 'praecipe' per Pa.R.C.P. 1041 and relevant PA practice."
+  - type: argument
+    block: arguments/procedural_defect
+    content: "Argue that the damages are not liquidated and must be assessed by the court or a jury under Pa.R.C.P. 1041. The rule is mandatory — 'shall' assess damages. The court has no discretion to deny assessment."
+  - type: argument
+    block: arguments/void_order_misuse
+    content: "If the judgment debtor claims the damages are liquidated and no assessment is required, argue that the nature of the damages requires assessment. The debtor bears the burden of showing the damages are liquidated."
+  - type: section
+    block: sections/conclusion
+    content: "Request assessment of damages by the court or a jury, plus post-judgment interest per 42 Pa.C.S. § 8101."
+  - type: section
+    block: sections/prayer_for_relief
+    content: "Prayer for: (1) assessment of damages by the court or jury; (2) post-judgment interest at 6% per annum; (3) costs; (4) such other relief as the court deems just."
+  - type: boilerplate
+    block: boilerplate/certificate_of_service
+  - type: boilerplate
+    block: boilerplate/proposed_order
+

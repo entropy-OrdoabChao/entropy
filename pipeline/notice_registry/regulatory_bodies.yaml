@@ -1,0 +1,442 @@
+priority:
+- settlement
+- opposing_counsel
+- courtesy_copy
+- court_legal
+- debt_collection
+- dental
+- medical
+- insurance
+- credit_reporting
+- bank_creditor
+- utility
+- marketing
+reply_allowed:
+- courtesy_copy
+- debt_collection
+- dental
+- medical
+- insurance
+- credit_reporting
+- bank_creditor
+party_types:
+  settlement:
+    match:
+    - settlement offer
+    - offer to settle
+    - settle this matter
+    - settlement agreement
+    - release of all claims
+    - mutual release
+    - confidential settlement
+    - compromise and release
+    - settlement demand
+    - full and final settlement
+    - rule 408
+    - fed. r. evid. 408
+    - resolve this matter
+    - settlement proposal
+    - global settlement
+    no_auto_action: true
+    party_label: the settling party
+    regulators: []
+  courtesy_copy:
+    match:
+    - courtesy copy
+    - courtesy copies
+    - as a courtesy, i am
+    - as a courtesy, we are
+    - providing you with a courtesy
+    - attached is a courtesy
+    - courtesy of a copy
+    - sending you a courtesy
+    party_label: opposing counsel
+    notices:
+    - party_courtesy_decline
+    regulators: []
+  court_legal:
+    match:
+    - docket
+    - civil action
+    - u.s.c.
+    - pa.c.s
+    - summons
+    - subpoena
+    - hearing
+    - order of court
+    - case no
+    no_auto_action: true
+    regulators: []
+  # DRAFT-ONLY LANE (card t_7bc9ce71): opposing-counsel / lawyer correspondence.
+  # Classify + draft (m0, deterministic validator as gate); NEVER auto-send. Drafts are staged in
+  # output/email_replies/ as DRAFT cards (reply lane) for user approval and ship only after human
+  # go via pipeline/send_reply.py (allowlist gate).
+  # Markers are attorney-speak (recall over precision — over-capture lands in the
+  # human-reviewed draft lane, never an auto-send; under-capture keeps old behavior).
+  opposing_counsel:
+    match:
+    - on behalf of our client
+    - our client
+    - attorney at law
+    - attorney for
+    - attorneys for
+    - attorney of record
+    - law office
+    - law firm
+    - legal team
+    - legal representative
+    - counsel for
+    - esq
+    - esquire
+    - pro se
+    party_label: opposing counsel
+    draft_only: true
+    notices:
+    - party_opposing_counsel
+    regulators: []
+  debt_collection:
+    match:
+    - debt collector
+    - this is an attempt to collect
+    - amount owed
+    - validate the debt
+    - collection account
+    - '1692'
+    - past due balance
+    party_label: the debt collector
+    notices:
+    - party_dispute_validation
+    - regulatory_complaint
+    regulators:
+    - body: Consumer Financial Protection Bureau (CFPB)
+      authority: Fair Debt Collection Practices Act, 15 U.S.C. § 1692 et seq.; CFPA,
+        12 U.S.C. § 5481 et seq.
+      oversees: debt collectors; false/misleading representations, unfair practices,
+        failure to validate
+      where: CFPB, P.O. Box 27170, Washington, DC 20038 (consumerfinance.gov/complaint)
+      procedure: 'Consumer complaint re: FDCPA violation; CFPB forwards to the collector
+        for response.'
+    - body: Pennsylvania Office of Attorney General — Bureau of Consumer Protection
+      authority: PA Fair Credit Extension Uniformity Act, 73 P.S. § 2270.1; UTPCPL,
+        73 P.S. § 201-1
+      oversees: unfair/deceptive collection practices against PA consumers
+      where: Bureau of Consumer Protection, 15th Floor, Strawberry Square, Harrisburg,
+        PA 17120
+      procedure: Consumer-protection complaint; the AG may investigate and enforce.
+  dental:
+    match:
+    - dental
+    - dentist
+    - orthodont
+    - crown
+    - filling
+    - root canal
+    - cleaning
+    - hygienist
+    - tooth
+    - teeth
+    - invisalign
+    party_label: the dental practice
+    notices:
+    - party_records_dispute_noconsent
+    - regulatory_complaint
+    regulators:
+    - body: Pennsylvania State Board of Dentistry
+      authority: The Dental Law, 63 P.S. § 120 et seq.; 49 Pa. Code ch. 33 (unprofessional
+        conduct; billing)
+      oversees: licensed dentists — abandonment of treatment, billing for services
+        not rendered, pressuring unnecessary procedures, recordkeeping
+      where: State Board of Dentistry, P.O. Box 2649, Harrisburg, PA 17105-2649 (Bureau
+        of Professional & Occupational Affairs, Pa. Dept. of State)
+      procedure: Professional-conduct complaint to the licensing board; the Board
+        investigates and may discipline.
+  medical:
+    match:
+    - medical bill
+    - patient balance
+    - explanation of benefits
+    - physician
+    - hospital
+    - clinic
+    - copay
+    - co-pay
+    - diagnosis
+    - treatment plan
+    party_label: the medical provider
+    notices:
+    - party_records_dispute_noconsent
+    - regulatory_complaint
+    regulators:
+    - body: Pennsylvania State Board of Medicine
+      authority: Medical Practice Act of 1985, 63 P.S. § 422.1 et seq.; 49 Pa. Code
+        ch. 16-18
+      oversees: licensed physicians — standard of care, billing, recordkeeping
+      where: State Board of Medicine, P.O. Box 2649, Harrisburg, PA 17105-2649 (BPOA,
+        Pa. Dept. of State)
+      procedure: Professional-conduct complaint to the licensing board.
+  insurance:
+    match:
+    - claim denied
+    - policy
+    - premium
+    - coverage
+    - bad faith
+    - deductible
+    - '8371'
+    - adjuster
+    party_label: the insurer
+    notices:
+    - party_dispute_validation
+    - regulatory_complaint
+    regulators:
+    - body: Pennsylvania Insurance Department — Bureau of Consumer Services
+      authority: Unfair Insurance Practices Act, 40 P.S. § 1171.1; bad-faith remedy,
+        42 Pa.C.S. § 8371
+      oversees: insurers — unfair claims settlement, bad-faith denial, premium practices
+      where: PA Insurance Department, Bureau of Consumer Services, 1209 Strawberry
+        Square, Harrisburg, PA 17120
+      procedure: Consumer complaint; the Department investigates and the Commissioner
+        enforces.
+  credit_reporting:
+    match:
+    - credit report
+    - credit bureau
+    - consumer report
+    - '1681'
+    - dispute
+    - reinvestigation
+    - furnisher
+    party_label: the credit reporting agency / furnisher
+    notices:
+    - party_dispute_validation
+    - regulatory_complaint
+    regulators:
+    - body: Consumer Financial Protection Bureau (CFPB)
+      authority: Fair Credit Reporting Act, 15 U.S.C. § 1681 et seq.
+      oversees: CRAs and furnishers — accuracy, reinvestigation duties
+      where: CFPB, P.O. Box 27170, Washington, DC 20038 (consumerfinance.gov/complaint)
+      procedure: 'Consumer complaint re: FCRA inaccuracy / failure to reinvestigate.'
+  bank_creditor:
+    match:
+    - credit card
+    - billing error
+    - '1666'
+    - loan
+    - account
+    - overdraft
+    - mortgage
+    - statement
+    party_label: the bank / creditor
+    notices:
+    - party_dispute_validation
+    - regulatory_complaint
+    regulators:
+    - body: Consumer Financial Protection Bureau (CFPB)
+      authority: TILA/FCBA, 15 U.S.C. §§ 1601, 1666; CFPA, 12 U.S.C. § 5481
+      oversees: creditors — billing errors, unfair practices
+      where: CFPB, P.O. Box 27170, Washington, DC 20038 (consumerfinance.gov/complaint)
+      procedure: 'Consumer complaint re: billing error / TILA.'
+  marketing:
+    match: []
+    requires_unsub_header: true
+    no_auto_action: true
+    promo_markers:
+    - '% off'
+    - sale
+    - promotion
+    - promo
+    - limited time
+    - offer ends
+    - deal
+    - save now
+    - discount
+    - subscribe
+    - newsletter
+    - unsubscribe
+    - save with
+    - special
+    - exclusive
+    - today only
+    - shop now
+    - learn more
+    regulators: []
+  utility:
+    match:
+    - electric bill
+    - gas bill
+    - water bill
+    - sewer
+    - stormwater
+    - peco
+    - pgw
+    - gas works
+    - water revenue
+    - shut-off
+    - shutoff
+    - termination notice
+    - final bill notice
+    - utility
+    party_label: the utility
+    notices:
+    - party_dispute_validation
+    - regulatory_complaint
+    regulators:
+    - body: Pennsylvania Public Utility Commission (Bureau of Consumer Services)
+      authority: 66 Pa.C.S. ch. 14 (Responsible Utility Consumer Protection); 52 Pa.
+        Code ch. 56 (billing, disputes, termination) — utility must investigate a
+        dispute and report its result; termination is stayed while a timely dispute/complaint
+        is pending
+      oversees: PECO (electric), PGW (gas, per 66 Pa.C.S. 2212 city natural gas distribution)
+        — billing accuracy, dispute handling, termination procedure
+      procedure: Informal complaint to BCS (1-800-692-7380 or puc.pa.gov); utility
+        must respond; escalation = formal complaint before an ALJ. A pending complaint
+        stays termination under 52 Pa. Code 56.98.
+      where: PA PUC, Bureau of Consumer Services, 400 North Street, Harrisburg, PA
+        17120
+    - body: City of Philadelphia — Water Revenue Bureau informal review / Tax Review
+        Board
+      authority: Phila. Code ch. 19-1600; WRB dispute procedure — bill disputes get
+        informal review; adverse result appeals to the Tax Review Board
+      oversees: Water/sewer/stormwater bills issued by the Water Revenue Bureau
+      procedure: Written dispute to WRB within the bill period; informal hearing;
+        TRB petition if unresolved.
+      where: Water Revenue Bureau, 1401 JFK Blvd., Philadelphia, PA 19102; Tax Review
+        Board, 100 S. Broad St., Philadelphia, PA 19110
+notice_templates:
+  party_courtesy_decline: 'RE: {subject}
+
+
+    This matter is handled through an automated, self-operated system by which I,
+    {name}, proceeding
+
+    pro se, prepare my own filings and submit them to the Court by mail; I am not
+    a registered e-filer.
+
+    I monitor the docket directly and am served in the manner required by Fed. R.
+    Civ. P. 5. Emailed
+
+    courtesy copies are unnecessary, are not required, and are not accepted as a substitute
+    for service
+
+    of record — formal service must be made as the rule provides. You may save the
+    effort of emailing
+
+    courtesy copies.
+
+
+    I am preserving this correspondence and reserve all rights. — {name}
+
+    '
+  party_opposing_counsel: 'RE: {subject}
+
+    I, {name}, proceed in this matter on my own behalf (sui juris) and monitor
+    the docket directly. I acknowledge your correspondence and respond as
+    follows.
+
+    1. I preserve this correspondence and reserve all rights, defenses, and
+    remedies, without waiving anything by this reply.
+    2. Provide, in writing within thirty (30) days, the complete basis for any
+    demand or position asserted in your letter, with the full supporting file
+    and itemization.
+    3. Cease any adverse action or adverse reporting pending that accounting.
+
+    I am preserving this correspondence and reserve all rights and remedies.
+    — {name}
+
+    '
+  party_records_dispute_noconsent: "RE: {subject}\n\nThis is a written dispute and\
+    \ a request for records under my consumer rights. Regarding {party}:\n\n1. I DISPUTE\
+    \ the amount asserted. My insurance on file covers the service(s) at issue; provide\
+    \ the\n   specific basis for any patient balance, including the exact service\
+    \ billed and the reason it is\n   not covered.\n2. Within thirty (30) days, provide\
+    \ a FULL ITEMIZED ACCOUNTING of all charges, payments, insurance\n   submissions,\
+    \ and adjustments on my account. I previously requested this accounting and did\
+    \ not\n   receive a usable copy; please re-send it in writing.\n3. I DO NOT CONSENT\
+    \ to any crown, or to any additional procedure beyond the covered cleaning. Do\
+    \ not\n   bill for services not rendered or not consented to.\n4. Provide a complete\
+    \ copy of my treatment records, including any note asserting that treatment was\n\
+    \   \"not finished.\"\n\nPlease respond in writing. I am preserving this correspondence.\
+    \ — {name}\n"
+  party_dispute_validation: "RE: {subject}\n\nThis is a written dispute and demand\
+    \ for validation. Regarding {party}:\n\n1. I DISPUTE the amount and request full\
+    \ validation/itemization of the obligation, including its\n   origin, the amount,\
+    \ and your authority to assert it.\n2. Provide all supporting documentation in\
+    \ writing within thirty (30) days.\n3. Cease any adverse reporting or collection\
+    \ of the disputed amount until it is validated.\n\nI am preserving this correspondence\
+    \ and reserve all rights and remedies. — {name}\n"
+  regulatory_complaint: 'TO: {regulator}
+
+    RE: Regulatory complaint concerning {party}
+
+
+    Under {authority}, I submit this complaint. {regulator} oversees {oversees}.
+
+
+    Summary of the conduct (facts on the record below):
+
+    {asks}
+
+
+    I request that the {regulator} open an inquiry and take the action within its
+    authority. I have
+
+    also noticed the party directly. I will supplement with documentation as it is
+    gathered.
+
+
+    Respectfully, {name}
+
+    [Attach: the party correspondence + any itemized accounting / records received.]
+
+    '
+reply_directives:
+  opposing_counsel:
+    law: 42 Pa.C.S. ch. 55 (Limitations of Action — the limitations clock is running)
+    points:
+    - Acknowledge receipt; proceed sui juris and monitor the docket directly.
+    - Preserve this correspondence; reserve all rights, defenses, and remedies — no waiver by this reply.
+    - Demand the complete written basis + full supporting file for any demand, within 30 days.
+    - Cease any adverse action or reporting pending that accounting.
+    must_include:
+    - reserve
+  dental:
+    law: 73 P.S. § 201-1 et seq. (PA UTPCPL); my right to an itemized accounting
+    points:
+    - Dispute the balance — insurance on file covers the cleaning.
+    - Demand an itemized accounting within 30 days.
+    - Withhold consent to any crown or uncovered procedure.
+    must_include:
+    - dispute
+  medical:
+    law: 73 P.S. § 201-1 (PA UTPCPL)
+    points:
+    - Dispute the balance given the insurance on file; demand an itemized accounting
+      and records within 30 days.
+    must_include:
+    - dispute
+  debt_collection:
+    law: 15 U.S.C. § 1692g (FDCPA — validation)
+    points:
+    - Dispute the debt and demand validation within 30 days.
+    - Cease collection and adverse reporting until it is validated.
+    must_include:
+    - dispute
+  insurance:
+    law: 42 Pa.C.S. § 8371; 40 P.S. § 1171 (UIPA)
+    points:
+    - Dispute the denial; demand the claim file and the basis under the policy within
+      30 days.
+    must_include:
+    - dispute
+  credit_reporting:
+    law: 15 U.S.C. § 1681i (FCRA — reinvestigation)
+    points:
+    - Dispute the item; demand a reinvestigation and the method of verification.
+    must_include:
+    - dispute
+  bank_creditor:
+    law: 15 U.S.C. § 1666 (FCBA — billing error)
+    points:
+    - Assert a billing-error dispute; demand investigation and correction.
+    must_include:
+    - dispute

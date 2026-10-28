@@ -1,0 +1,50 @@
+id: frcp_37_discovery_sanctions
+title: Motion for Discovery Sanctions — FRCP 37
+
+description: |
+  Filing type for Motion for Discovery Sanctions under Federal Rule of Civil
+  Procedure 37. Used when the opposing party (or a non-party) fails to comply
+  with discovery obligations — failure to respond to requests, evading
+  deposition, withholding documents, or disobeying a prior discovery order.
+
+  The court may impose escalating sanctions: adverse inference, deeming facts
+  established, precluding evidence, staying the action, dismissing claims,
+  or awarding attorneys' fees and costs. FRCP 37 is a DIRECT enforcement
+  mechanism — the moving party does NOT need to wait for trial.
+
+  This is NOT a general "discovery dispute" filing. It requires:
+  (a) A specific discovery rule violation (FRCP 26-36 failure); AND
+  (b) A prior motion to compel OR court ORDER that was disobeyed; OR
+  (c) A willful refusal to respond to discovery that prejudices the movant.
+
+  The motion asks the court to exercise its inherent authority to sanction
+  the discovery abuse and level the playing field.
+
+trigger_defects:
+  - FAILURE_TO_RESPOND_TO_REQUESTS (FRCP 33/34/36 no response within time)
+  - DEPOSITION_AVOIDANCE (non-party or party evades subpoena/deposition)
+  - WITHHOLDING_DOCUMENTS (incomplete production, redaction abuse)
+  - DISOBEDIENCE_TO_DISCOVERY_ORDER (ignores prior court order compelling discovery)
+  - FAILURE_TO_RETAIN_EVIDENCE (spoliation / failure to preserve)
+
+required_authorities:
+  - FRCP 37(a)(1) — "If a party fails to provide information or finalize a discovery response, the court, upon motion, may order sanctions"
+  - FRCP 37(a)(5) — "If a party or deponent fails to appear, the court may order sanctions including attorney's fees"
+  - FRCP 37(b)(2) — "If a party or officer fails to obey...the court may order: (A) Further matters deemed established; (B) Prohibiting opposition; (C) Striking claims; (D) Dismissing action; (E) Contempt; (F) Imposing fees"
+  - FRCP 37(c)(1) — "If a party fails to disclose...the court may exclude any undisclosed information"
+  - FRCP 37(d) — "If a party or its officer fails to appear at a deposition...the court may order sanctions including fees and costs"
+
+structure:
+  - block: boilerplate/caption_federal
+  - block: sections/introduction
+  - block: sections/grounds_for_sanctions
+  - block: sections/evidence_of_non_compliance
+  - block: arguments/scaling_sanctions_framework
+  - block: arguments/prejudice_to_movant
+  - block: arguments/proportional_remedies
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: sections/proposed_order_sanctions
+
+resolution_path: obsidian_sync/templates/filing_types/frcp_37_discovery_sanctions.yaml

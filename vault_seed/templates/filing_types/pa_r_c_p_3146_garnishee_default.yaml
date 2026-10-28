@@ -1,0 +1,77 @@
+---
+id: pa_r_c_p_3146_garnishee_default
+title: Motion for Garnishee Default Judgment — PA Rule 3146(b)
+
+description: >-
+  Filing type for motion to enter default judgment against a garnishee that has
+  failed to respond to garnishee interrogatories or otherwise comply with
+  Pa.R.C.P. 3145–3146 duties.
+
+  This is the post-judgment collection vehicle when the judgment creditor has
+  a money judgment and seeks to reach the debtor's assets held by a third
+  party (the garnishee). The garnishee is served with interrogatories
+  (Pa.R.C.P. 3145); if the garnishee fails to answer within 20 days or
+  files an incomplete/unverified answer, the judgment creditor moves for
+  default judgment against the garnishee (Pa.R.C.P. 3146(b)).
+
+  KEY: Unlike praecipo default (where prothonotary enters default ministerially),
+  garnishee default requires a MOTION to the court. But once default is entered,
+  the garnishee's assets (insurance proceeds, bank accounts, wages) are
+  subject to levy/execution.
+
+  Procedure (Pa.R.C.P. 3101 → 3145 → 3146):
+  (a) Obtain money judgment against principal debtor.
+  (b) Issue praecipo for writ of execution naming garnishee (Pa.R.C.P. 3101).
+  (c) Serve garnishee with interrogatories per Pa.R.C.P. 3145(a).
+  (d) Garnishee fails to respond within 20 days OR files incomplete/unverified answer.
+  (e) File Motion for Garnishee Default Judgment (Pa.R.C.P. 3146(b)).
+  (f) Court enters judgment against garnishee up to value of garnished assets.
+
+  This is the PRIMARY enforcement vehicle in the {{OPPOSING_PARTY}} matter ({{CASE_ID}})
+  where default judgment was entered $200,000 against {{OPPOSING_PARTY}}/{{OPPOSING_PARTY}}/MGGT and
+  garnishee State Farm (and Example Trust Co as custodian-garnishee) have failed
+  to respond to direct claim/garnishee interrogatories.
+
+required_authorities:
+  - Pa.R.C.P. 3101 — "The judgment creditor may proceed against property of judgment debtor in hands of a third person by proceeding under this part."
+  - Pa.R.C.P. 3145(a) — "Interrogatories may be served upon the garnishee ... within 20 days after service of the writ of execution."
+  - Pa.R.C.P. 3145(b) — Garnishee response requirements: answer under oath within 20 days, stating what property/credits of debtor are in garnishee's possession.
+  - Pa.R.C.P. 3146(a) — Garnishee duties: "If the garnishee fails to answer the interrogatories ... the court may ... enter judgment against the garnishee..."
+  - Pa.R.C.P. 3146(b) — "If the garnishee fails to answer the interrogatories ... the court may enter judgment against the garnishee for the value of the property or credits of the judgment debtor in the garnishee's hands."
+
+trigger_defects:
+  - GARNISHEE_INTERROGATORIES_UNSERVED (writ issued but interrogatories not served on garnishee)
+  - GARNISHEE_INTERROGATORIES_UNRESPONSIVE (interrogatories served but garnishee failed to answer within 20 days)
+  - GARNISHEE_INTERROGATORIES_UNVERIFIED (garnishee answered but response not verified under oath — Pa.R.C.P. 3145(b))
+  - GARNISHEE_DIRECT_CLAIM_IGNORED (garnishee received direct claim under insurance policy but failed to respond)
+  - WRIT_OF_EXECUTION_NOT_ISSUED (praecipo for writ never filed — prerequisite to garnishee process)
+  - GARNISHEE_DEFAULT_ENTRY_REFUSED (garnishee default entered but court refuses to enforce)
+
+structure:
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/jurisdictional_basis
+  - block: arguments/garnishee_identification
+  - block: arguments/writ_of_execution_issued
+  - block: arguments/garnishee_interrogatories_served
+  - block: arguments/garnishee_failed_to_respond
+  - block: arguments/default_entry_proper
+  - block: arguments/garnishee_assets_subject_to_levy
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: sections/proposed_order_garnishee_default
+
+case_applications:
+  - case_id: "{{CASE_ID}}"
+    caption: "{{USER_LAST}} v. {{OPPOSING_PARTY}}, {{OPPOSING_PARTY}}, MGGT Group LLC"
+    judgment_amount: 200000.00
+    judgment_date: 2025-11-07
+    garnishees:
+      - State Farm Insurance Company (primary — homeowner policy Coverage E direct claim)
+      - Example Trust Co (custodian-garnishee — unverified interrogatory response)
+    writ_of_execution_date: 2026-03-17
+    status: GARNISHEES IN DEFAULT — Motion for Garnishee Default is PRIORITY #1
+
+resolution_path: obsidian_sync/templates/filing_types/pa_r_c_p_3146_garnishee_default.yaml

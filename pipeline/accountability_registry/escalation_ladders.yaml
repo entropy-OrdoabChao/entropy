@@ -1,0 +1,481 @@
+# escalation_ladders.yaml  — SANDBOX DRAFT (not yet live)
+# Per-forum ESCALATION LEVELS with each level's day-clock, grounding cite, and on_expiry consequence.
+# Extends accountability_forums.yaml (which has the forum CHAINS but no deadlines/sub-levels).
+# Feeds: the accountability_tracker deadline sweep (RUNG_DEADLINES) + the per-claim ledger next-best-action.
+#
+# provenance per level:
+#   corpus:<cite>   = statutory/rule deadline FTS-CONFIRMED present in the corpus (chunk_text.db) on 2026-08-12
+#   NEEDS_GROUNDING = an agency INTERNAL/policy response window (not statutory); ground via corpus semantic
+#                     or fetch the official policy page + INSERT->turbovec_ingest. NEVER guess the number.
+# working: true = business days (weekends excluded); on_expiry names the legal consequence recorded.
+# R2: no case/party names here — actor/forum keys only, data-driven.
+
+ladders:
+
+  # ---- FEDERAL AGENCY RECORDS (evidence-getter for every matter) ----
+  foia:
+    forum: "Federal agency FOIA/Privacy Act office"
+    levels:
+      - level: request
+        deadline_days: 20
+        working: true
+        cite: "5 U.S.C. 552(a)(6)(A)(i)"
+        provenance: "corpus:552(a)(6)(A)(i)"
+        on_expiry: "constructive denial — deemed exhausted (5 U.S.C. 552(a)(6)(C)(i))"
+      - level: administrative_appeal
+        deadline_days: 20
+        working: true
+        cite: "5 U.S.C. 552(a)(6)(A)(ii)"
+        provenance: "corpus:552(a)(6)(A)(ii)"
+        on_expiry: "appeal deemed denied — judicial review ripe"
+      - level: ogis_mediation                 # optional, NON-tolling dispute resolution
+        deadline_days: null
+        working: false
+        cite: "5 U.S.C. 552(h)"
+        provenance: "corpus:552(h)"
+        on_expiry: "mediation exhausted/declined — proceed to court"
+      - level: district_court
+        deadline_days: 30                      # agency answer window once suit filed
+        working: false
+        cite: "5 U.S.C. 552(a)(4)(B), (a)(4)(C)"
+        provenance: "corpus:552(a)(4)(B)"
+        on_expiry: "de novo review; agency bears burden"
+
+  # ---- TORT vs. a FEDERAL agency/regulator that failed its duty (ladder rung 4) ----
+  ftca:
+    forum: "Federal agency (administrative tort claim) -> U.S. District Court"
+    levels:
+      - level: administrative_claim            # SF-95 presentment
+        deadline_days: 180                     # agency has 6 months to act
+        working: false
+        cite: "28 U.S.C. 2675(a)"
+        provenance: "corpus:2675(a)"
+        on_expiry: "deemed final denial — suit permitted"
+      - level: district_court
+        deadline_days: 180                     # suit within 6 months of final denial
+        working: false
+        cite: "28 U.S.C. 2401(b)"
+        provenance: "corpus:2401(b)"
+        on_expiry: "FTCA suit filed / time-barred if missed"
+
+  # ---- COMPEL / REVIEW agency action (APA) ----
+  apa_review:
+    forum: "Reviewing court designated by the agency's statute"
+    levels:
+      - level: final_agency_action
+        deadline_days: null                    # no fixed clock; 'unreasonably delayed' is the trigger
+        working: false
+        cite: "5 U.S.C. 706(1)"
+        provenance: "corpus:706(1)"
+        on_expiry: "compel withheld/unreasonably delayed action"
+      - level: petition_for_review
+        deadline_days: 2190                     # general 6-yr SOL against the U.S. (~6*365)
+        working: false
+        cite: "28 U.S.C. 2401(a)"
+        provenance: "corpus:2401(a)"
+        on_expiry: "review barred if not filed within limitations"
+
+  # ---- JUDICIAL MISCONDUCT (federal Art. III judge) ----
+  judge_federal:
+    forum: "Circuit Judicial Council -> Judicial Conference Committee -> (DOJ / impeachment)"
+    levels:
+      - level: circuit_complaint               # filed with the CIRCUIT (Chief Judge review)
+        deadline_days: null                    # no complainant filing deadline
+        working: false
+        cite: "28 U.S.C. 351-352; Rules for Judicial-Conduct Proceedings Rule 6-11"
+        provenance: "corpus:351"
+        on_expiry: "Chief Judge disposition triggers the petition clock"
+      - level: petition_for_review             # to the Judicial Council after a 352 dismissal
+        deadline_days: 42
+        working: false
+        cite: "Rules for Judicial-Conduct Proceedings Rule 18(b); 28 U.S.C. 352(c)"
+        provenance: "corpus:42 days / Rule 18"
+        on_expiry: "Council review; then national Committee"
+      - level: national_committee_review       # Committee on Judicial Conduct & Disability of the Judicial Conference of the U.S. (the NATIONAL body)
+        deadline_days: null
+        working: false
+        cite: "28 U.S.C. 331 (Judicial Conference); 28 U.S.C. 357; Rules for Judicial-Conduct Proceedings 21-22"
+        provenance: "corpus:331 + Committee on Judicial Conduct and Disability"  # FTS-confirmed 2026-08-12
+        on_expiry: "FINAL — 28 U.S.C. 357(c): the conduct orders are NOT subject to judicial review; no court sits above the national committee"
+      - level: congressional_impeachment       # the ONLY removal for an Art. III judge once conduct review is final
+        deadline_days: null
+        working: false
+        cite: "U.S. Const. art. III (good-Behaviour tenure); art. I (House sole power of impeachment; Senate tries)"
+        provenance: "corpus:good behaviour + sole power of impeachment"
+        on_expiry: "House Judiciary refer -> House impeach -> Senate try/remove"
+      - level: doj_criminal_referral
+        deadline_days: null
+        working: false
+        cite: "18 U.S.C. 242, 241 (color-of-law); general SOL 18 U.S.C. 3282 (5 yr)"
+        provenance: "corpus:242"
+        on_expiry: "criminal referral (civil damages barred by absolute judicial immunity — the immunity to pierce)"
+
+  # ---- JUDICIAL MISCONDUCT (PA state judge) ----
+  judge_state_pa:
+    forum: "PA Judicial Conduct Board -> Court of Judicial Discipline -> PA Supreme Court"
+    levels:
+      - level: jcb_complaint
+        deadline_days: null
+        working: false
+        cite: "Pa. Const. art. V, 18; C.J.D.R.P."
+        provenance: "corpus:Judicial Conduct Board"
+        on_expiry: "Board investigates; may file charges"
+      - level: court_of_judicial_discipline
+        deadline_days: null
+        working: false
+        cite: "Pa. Const. art. V, 18(b); C.J.D.R.P."
+        provenance: "corpus:Judicial Conduct Board"  # FTS-confirmed; CJD adjudication has no complainant clock
+        on_expiry: "adjudication; sanctions"
+
+  # ---- WHEN THE OVERSIGHT BODY ITSELF FAILS (JCB/CJD/ODC/regulator covers for the person it oversees) ----
+  # The watchers of the watchers. The PA JCB is constitutionally INDEPENDENT (Pa. Const. art. V, 18) — no
+  # single regulator sits above it — so accountability is multi-avenue. This is ladder-rung 4 (sue the
+  # overseer who won't do its job) applied RECURSIVELY to the oversight body. Fires when an oversight body
+  # refuses to act, breaks its own rules/policy, or covers up. The federal color-of-law rung is the
+  # immunity-piercing avenue that climbs to the Supreme Court (the mission's endgame).
+  oversight_of_oversight:
+    forum: "PA Supreme Court (King's Bench) -> mandamus -> General Assembly (impeachment) -> DOJ / federal color-of-law"
+    applies_when: "an oversight body (JCB, CJD, ODC, an agency/regulator) refuses to act, violates its own rules, or covers for the person it oversees"
+    levels:
+      - level: kings_bench_petition            # in-system supervisory backstop
+        deadline_days: null
+        working: false
+        cite: "42 Pa.C.S. 726 (extraordinary/plenary jurisdiction); Pa. Const. art. V, 10(a) (supervisory authority over all courts)"
+        provenance: "corpus:art V 10(a) + extraordinary jurisdiction"
+        on_expiry: "Supreme Court may assume plenary jurisdiction to compel/review"
+      - level: mandamus                         # compel a non-discretionary duty
+        deadline_days: null
+        working: false
+        cite: "42 Pa.C.S. 761 (Cmwlth Ct original jurisdiction); Pa.R.A.P. 1531"
+        provenance: "corpus:mandamus / 761"
+        on_expiry: "compel the body to perform its mandatory duty"
+      - level: impeachment_referral             # removal of the covering officers
+        deadline_days: null
+        working: false
+        cite: "Pa. Const. art. VI (House impeaches; Senate tries; all civil officers liable)"
+        provenance: "corpus:impeachment of civil officers"
+        on_expiry: "General Assembly may impeach/remove"
+      - level: federal_color_of_law             # THE IMMUNITY-PIERCING avenue -> SCOTUS endgame
+        deadline_days: null
+        working: false
+        cite: "18 U.S.C. 242, 241 (criminal color-of-law); 42 U.S.C. 1983 (civil, individual capacity)"
+        provenance: "corpus:242 + 1983"
+        on_expiry: "DOJ Civil Rights referral + 1983 suit; quasi-judicial immunity litigated -> appeals -> SCOTUS (pierce immunity where it does not serve law/justice)"
+
+  # ---- WHEN THE BAR / ATTORNEY-DISCIPLINE BODY FAILS (Disciplinary Board / ODC covers for a lawyer) ----
+  # The disciplinary board is an ARM of the state's highest court, which has EXCLUSIVE jurisdiction over
+  # attorney admission and discipline (Pa. Const. art. V, 10(c); Pa.R.D.E.). So the board answers to the
+  # PA Supreme Court, which reviews. CAVEAT: the American Bar Association is a PRIVATE, voluntary body — it
+  # accredits law schools + writes Model Rules but has ZERO disciplinary authority; a complaint to the ABA
+  # is unenforceable. The real regulator is the state supreme court's board.
+  bar_oversight:
+    forum: "State Supreme Court (exclusive attorney-discipline jurisdiction) -> King's Bench -> impeachment -> DOJ / federal"
+    applies_when: "the Disciplinary Board / Office of Disciplinary Counsel refuses to act, breaks its own rules, or covers for a lawyer"
+    levels:
+      - level: supreme_court_review             # the board is the Court's own arm
+        deadline_days: null
+        working: false
+        cite: "Pa. Const. art. V, 10(c) (Supreme Court exclusive rule-making over bar admission/practice); Pa.R.D.E."
+        provenance: "corpus:exclusive jurisdiction over attorney discipline + Rules of Disciplinary Enforcement"
+        on_expiry: "petition the PA Supreme Court to review/compel the board"
+      - level: kings_bench_mandamus             # if the Court/board still will not act
+        deadline_days: null
+        working: false
+        cite: "42 Pa.C.S. 726 (extraordinary jurisdiction); 42 Pa.C.S. 761 + Pa.R.A.P. 1531 (mandamus)"
+        provenance: "corpus:extraordinary jurisdiction + mandamus"
+        on_expiry: "compel the mandatory disciplinary duty"
+      - level: federal_color_of_law             # cover-up under color of state law
+        deadline_days: null
+        working: false
+        cite: "18 U.S.C. 242, 241; 42 U.S.C. 1983"
+        provenance: "corpus:242 + 1983"
+        on_expiry: "DOJ referral + 1983 suit -> appeals -> SCOTUS"
+      # NOTE: American Bar Association = PRIVATE/voluntary accreditor, NO disciplinary authority — never route enforcement there.
+      - level: federal_court_bar                 # misconduct before a federal court
+        deadline_days: null
+        working: false
+        cite: "each federal court's admission/discipline authority; reciprocal discipline"
+        provenance: "corpus:American Bar Association (contrast) + federal court bar"
+        on_expiry: "the federal court disciplines + refers for reciprocal discipline"
+
+  # ---- OPPOSING COUNSEL ----
+  opposing_counsel:
+    forum: "Office of Disciplinary Counsel -> in-case sanctions -> DOJ"
+    levels:
+      - level: odc_complaint
+        deadline_days: null
+        working: false
+        cite: "Pa. R.P.C. 8.3, 3.1, 3.3, 8.4; Pa.R.D.E."
+        provenance: "corpus:Rules of Professional Conduct"
+        on_expiry: "ODC investigates"
+      - level: in_case_sanctions               # Rule 11 safe-harbor
+        deadline_days: 21
+        working: false
+        cite: "Fed. R. Civ. P. 11(c)(2) (21-day safe harbor); 42 Pa.C.S. 2503; Pa.R.C.P. 1023.1"
+        provenance: "corpus:Rule 11 safe harbor"
+        on_expiry: "sanctions motion may be filed after 21-day cure period"
+      - level: doj_referral
+        deadline_days: null
+        working: false
+        cite: "18 U.S.C. 1001, 1503"
+        provenance: "corpus:1001"
+        on_expiry: "criminal referral for false statements/obstruction"
+
+  # ---- TAX INSTRUMENT (1099-C / cancellation of debt) ----
+  tax:
+    forum: "TIGTA -> IRS OPR -> U.S. Tax Court"
+    levels:
+      - level: tigta_complaint
+        deadline_days: null
+        working: false
+        cite: "26 U.S.C. 7803(d)"
+        provenance: "corpus:7803(d)"
+        on_expiry: "TIGTA reviews IRS-employee integrity"
+      - level: irs_opr
+        deadline_days: null
+        working: false
+        cite: "Circular 230, 31 C.F.R. Part 10"
+        provenance: "corpus:Circular 230 / 31 CFR Part 10"  # FTS-confirmed; practitioner-conduct review, no fixed clock
+        on_expiry: "practitioner conduct review"
+      - level: tax_court_petition
+        deadline_days: 90
+        working: false
+        cite: "26 U.S.C. 6213(a)"
+        provenance: "corpus:6213"
+        on_expiry: "deficiency assessed if no timely petition"
+
+  # ---- INSURANCE (PA UIPA / bad faith) ----
+  insurance_pa:
+    forum: "PA Insurance Dept Bureau of Consumer Services -> Insurance Commissioner -> civil suit"
+    levels:
+      - level: dept_complaint
+        deadline_days: null
+        working: false
+        cite: "Unfair Insurance Practices Act, 40 P.S. 1171.1 et seq."
+        provenance: "corpus:1171.1 (statute) | OPTIONAL_POLICY: Dept internal response SLA — webfetch insurance.pa.gov; not a legal clock"
+        on_expiry: "Department investigates; refer to Commissioner"
+      - level: commissioner_enforcement
+        deadline_days: null
+        working: false
+        cite: "40 P.S. 1171.5"
+        provenance: "corpus:1171.5"
+        on_expiry: "market-conduct exam / enforcement"
+      - level: civil_bad_faith_suit
+        deadline_days: 730                      # 2-yr SOL (case law, not the statute text)
+        working: false
+        cite: "42 Pa.C.S. 8371; 42 Pa.C.S. 5524 (2-yr SOL)"
+        provenance: "corpus:5524 two years"    # FTS-confirmed; 8371 bad-faith runs on the 5524 2-yr clock (case law)
+        on_expiry: "bad-faith suit / time-barred if missed"
+
+  # ---- MORTGAGE SERVICING (RESPA/Reg X) — the foreclosure-defense clock ladder ----
+  # CFPB is the PRIMARY regulator for ANY mortgage servicer, bank or non-bank (webfetch usa.gov/mortgage-
+  # company-complaints + consumerfinance.gov, 2026-08-13). QWR/NOE must go to the servicer's DESIGNATED
+  # address (Reg X). State banking dept = licensing; HUD = fair-housing/FHA; Ginnie Mae facilitates the
+  # MBS (FHA/VA/USDA), does not guarantee default risk.
+  mortgage_servicing:
+    forum: "servicer QWR/NOE -> CFPB -> state banking dept -> HUD (FHA/fair-housing) -> RESPA suit"
+    levels:
+      - level: qwr_acknowledgment              # servicer must acknowledge
+        deadline_days: 5
+        working: true
+        cite: "12 U.S.C. 2605(e)(1); Reg X 12 C.F.R. 1024.36 (send to DESIGNATED address)"
+        provenance: "corpus:2605(e) 5 days + designated address"
+        on_expiry: "servicer in default of acknowledgment duty"
+      - level: qwr_response                     # servicer must correct/explain
+        deadline_days: 30
+        working: true
+        cite: "12 U.S.C. 2605(e)(2); Reg X 1024.35/.36 (30 business days, +15 extension)"
+        provenance: "corpus:2605(e) 30 days"
+        on_expiry: "RESPA violation — actual + statutory damages accrue"
+      - level: cfpb_complaint                   # primary regulator for servicers
+        deadline_days: 15
+        working: false
+        cite: "12 U.S.C. 5481 (CFPA); CFPB complaint program"
+        provenance: "corpus:CFPA 5481 | official:consumerfinance.gov/complaint/process (2026-08-13) — company responds 15 cal days, final <=60"
+        on_expiry: "company response (or 60-day final); then escalate"
+      - level: state_banking_dept               # licensing / state consumer protection
+        deadline_days: null
+        working: false
+        cite: "PA Dept of Banking and Securities (7 P.S. / 63 P.S. licensing); state UDAP"
+        provenance: "corpus:Department of Banking and Securities"
+        on_expiry: "state licensing/enforcement referral"
+      - level: hud_fha_fairhousing              # FHA-insured / fair-housing angle
+        deadline_days: null
+        working: false
+        cite: "HUD (FHA servicing, 24 C.F.R.); Fair Housing Act 42 U.S.C. 3610 (discrimination)"
+        provenance: "corpus:HUD / Government National Mortgage Association"
+        on_expiry: "HUD complaint (FHA servicing / housing discrimination)"
+      - level: respa_suit
+        deadline_days: 1095                      # 3-yr SOL for 2605 servicing claims
+        working: false
+        cite: "12 U.S.C. 2614 (3 yr for 2605; 1 yr for 2607/2608)"
+        provenance: "corpus:2614"
+        on_expiry: "RESPA suit / time-barred if missed"
+
+  # ---- CREDIT REPORTING (FCRA) — the Equifax/CRA dispute ladder ----
+  fcra_dispute:
+    forum: "CRA + furnisher dispute -> CFPB -> FCRA suit"
+    levels:
+      - level: cra_reinvestigation             # dispute to the credit bureau
+        deadline_days: 30
+        working: false
+        cite: "15 U.S.C. 1681i(a)(1) (30-day reinvestigation, +15 if new info)"
+        provenance: "corpus:1681i reinvestigate"
+        on_expiry: "unverified item must be deleted; failure = FCRA violation"
+      - level: furnisher_dispute               # dispute to who reported it
+        deadline_days: 30
+        working: false
+        cite: "15 U.S.C. 1681s-2(b) (furnisher investigation duty on notice)"
+        provenance: "corpus:1681s-2 furnisher"
+        on_expiry: "furnisher liability on failure to investigate"
+      - level: cfpb_complaint
+        deadline_days: 15
+        working: false
+        cite: "12 U.S.C. 5481; CFPB complaint program"
+        provenance: "official:consumerfinance.gov/complaint/process (2026-08-13) — 15 cal / 60 final"
+        on_expiry: "company response; then escalate"
+      - level: fcra_suit
+        deadline_days: 730                       # 2 yr from discovery (5 yr max), 1681p
+        working: false
+        cite: "15 U.S.C. 1681p (2 yr from discovery / 5 yr repose); 1681n willful / 1681o negligent"
+        provenance: "corpus:1681p"
+        on_expiry: "FCRA suit / time-barred if missed"
+
+  # ---- BANKING-REGULATOR ROUTING (which regulator by charter) — reference, not a clock ----
+  banking_regulators:
+    forum: "route by charter: OCC | FDIC | Federal Reserve | NCUA | CFPB | state banking dept"
+    applies_when: "a depository institution or its affiliate is the obligor — pick the correct prudential regulator"
+    levels:
+      - level: occ_national_bank
+        deadline_days: null
+        working: false
+        cite: "12 U.S.C. 1 et seq. (OCC supervises national banks + federal thrifts)"
+        provenance: "corpus:Comptroller of the Currency"
+        on_expiry: "OCC customer-assistance / enforcement"
+      - level: fdic_state_nonmember
+        deadline_days: null
+        working: false
+        cite: "12 U.S.C. 1811 et seq. (FDIC — state-chartered non-member banks)"
+        provenance: "corpus:Federal Deposit Insurance Corporation"
+        on_expiry: "FDIC consumer response"
+      - level: frb_state_member
+        deadline_days: null
+        working: false
+        cite: "12 U.S.C. 248 (Federal Reserve — state member banks + holding companies)"
+        provenance: "corpus:Board of Governors of the Federal Reserve"
+        on_expiry: "FRB consumer complaint"
+      - level: cfpb_large_bank_and_servicers
+        deadline_days: 15
+        working: false
+        cite: "12 U.S.C. 5515 (banks >$10B) + 5514 (nonbank servicers/originators)"
+        provenance: "official:usa.gov/mortgage-company-complaints (2026-08-13) — CFPB primary for all servicers"
+        on_expiry: "CFPB complaint (15/60)"
+
+  # ---- IRS INTERNAL ESCALATION (tax determination / collection — 1099-C matters) ----
+  irs_internal:
+    forum: "IRS Independent Office of Appeals -> National Taxpayer Advocate -> Collection Due Process -> Tax Court"
+    levels:
+      - level: irs_appeals
+        deadline_days: null
+        working: false
+        cite: "26 U.S.C. 7803(e) (Independent Office of Appeals)"
+        provenance: "corpus:Independent Office of Appeals"
+        on_expiry: "administrative appeal of the determination"
+      - level: taxpayer_advocate
+        deadline_days: null
+        working: false
+        cite: "26 U.S.C. 7803(c) (National Taxpayer Advocate); 7811 (Taxpayer Assistance Order)"
+        provenance: "corpus:National Taxpayer Advocate"
+        on_expiry: "TAS intervention on significant hardship / systemic failure"
+      - level: cdp_hearing
+        deadline_days: 30
+        working: false
+        cite: "26 U.S.C. 6330(a)(3)(B) (request CDP hearing within 30 days of notice)"
+        provenance: "corpus:6330 collection due process"
+        on_expiry: "CDP right lost if not requested in 30 days (equivalent hearing only)"
+      - level: tax_court_cdp_review
+        deadline_days: 30
+        working: false
+        cite: "26 U.S.C. 6330(d)(1) (petition Tax Court within 30 days of CDP determination)"
+        provenance: "corpus:6330(d)"
+        on_expiry: "judicial review of the CDP determination"
+
+  # ---- SECURITIES (securitization / MBS / trust — the Ginnie Mae/holder-vs-owner angle) ----
+  securities_sec:
+    forum: "SEC (TCR complaint / whistleblower) -> enforcement -> private securities action"
+    levels:
+      - level: sec_tcr_complaint
+        deadline_days: null
+        working: false
+        cite: "Securities Exchange Act, 15 U.S.C. 78u (SEC investigation/enforcement)"
+        provenance: "corpus:Securities and Exchange Commission"
+        on_expiry: "SEC reviews tip/complaint/referral (TCR)"
+      - level: sec_whistleblower
+        deadline_days: null
+        working: false
+        cite: "15 U.S.C. 78u-6 (Dodd-Frank Sec. 21F whistleblower + anti-retaliation)"
+        provenance: "corpus:whistleblower 21F"
+        on_expiry: "whistleblower award / anti-retaliation track"
+
+  # ---- FAIR HOUSING (HUD FHEO) ----
+  fair_housing_hud:
+    forum: "HUD FHEO administrative complaint -> DOJ pattern-or-practice -> FHA civil suit"
+    levels:
+      - level: hud_fheo_complaint
+        deadline_days: 365
+        working: false
+        cite: "42 U.S.C. 3610(a)(1)(A)(i) (complaint within 1 year of the discriminatory housing practice)"
+        provenance: "corpus:one year after an alleged discriminatory housing practice"
+        on_expiry: "administrative complaint time-barred; civil suit still available"
+      - level: fha_civil_suit
+        deadline_days: 730
+        working: false
+        cite: "42 U.S.C. 3613(a)(1)(A) (civil action within 2 years)"
+        provenance: "corpus:aggrieved person may commence a civil action"
+        on_expiry: "FHA suit / time-barred if missed"
+
+  # ---- STATE ATTORNEY GENERAL — CONSUMER PROTECTION ----
+  state_ag_consumer:
+    forum: "PA Office of Attorney General Bureau of Consumer Protection -> UTPCPL private/AG action"
+    levels:
+      - level: ag_consumer_complaint
+        deadline_days: null
+        working: false
+        cite: "73 P.S. 201-1 et seq. (UTPCPL); Commonwealth Attorneys Act"
+        provenance: "corpus:Unfair Trade Practices and Consumer Protection"
+        on_expiry: "AG may investigate/enforce; consumer keeps private action"
+      - level: utpcpl_private_suit
+        deadline_days: null                       # SOL: 42 Pa.C.S. 5527(b) 6-yr catch-all (case-law dependent) — kept null vs asserting
+        working: false
+        cite: "73 P.S. 201-9.2 (private UTPCPL action, treble damages); SOL 42 Pa.C.S. 5527(b) (6 yr, case-law)"
+        provenance: "corpus:UTPCPL + 5527"
+        on_expiry: "private UTPCPL suit (treble damages + fees)"
+
+  # ---- DEBT COLLECTION (FDCPA) ----
+  debt_collection:
+    forum: "party validation -> CFPB -> PA AG -> FDCPA suit"
+    levels:
+      - level: validation_dispute              # consumer's window to dispute
+        deadline_days: 30
+        working: false
+        cite: "15 U.S.C. 1692g(a)-(b)"
+        provenance: "corpus:1692g 30 days"
+        on_expiry: "collector must cease until it validates"
+      - level: cfpb_complaint
+        deadline_days: null
+        working: false
+        cite: "15 U.S.C. 1692 et seq.; 12 U.S.C. 5481 (CFPA)"
+        provenance: "corpus:1692 / CFPA 5481 (statute) | OPTIONAL_POLICY: CFPB ~15-day company-response SLA — webfetch consumerfinance.gov; not a legal clock"
+        on_expiry: "CFPB forwards; company responds"
+      - level: pa_ag_consumer_protection
+        deadline_days: null
+        working: false
+        cite: "73 P.S. 2270.1 (FCEUA); 73 P.S. 201-1 (UTPCPL)"
+        provenance: "corpus:UTPCPL"
+        on_expiry: "AG may investigate/enforce"
+      - level: fdcpa_suit
+        deadline_days: 365                      # 1-yr SOL
+        working: false
+        cite: "15 U.S.C. 1692k(d)"
+        provenance: "corpus:1692k(d) one year"
+        on_expiry: "FDCPA suit / time-barred if missed"

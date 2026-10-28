@@ -1,0 +1,34 @@
+id: motion_to_remand
+title: Motion to Remand for Defective Removal
+description: 'Motion to remand a case improperly removed from state court, typically
+
+  on subject-matter-jurisdiction grounds.
+
+  '
+court: federal_district
+required_authorities:
+- 28 U.S.C. § 1447(c) (remand procedures)
+- 28 U.S.C. § 1441 (removal of civil actions)
+- 28 U.S.C. § 1446 (procedure for removal)
+trigger_defects:
+- FATAL/JURISDICTION
+- SERIOUS/REMOVAL
+- dismissal
+structure:
+- block: boilerplate/caption_federal
+- block: sections/introduction
+- block: sections/procedural_history
+- block: sections/factual_statement_federal
+- block: sections/standard_of_review
+- block: arguments/jurisdiction_attack
+- block: arguments/procedural_defect
+- block: arguments/non_binding_authority
+  when: defect_categories.AUTHORITY > 0
+- block: arguments/haines_v_kerner_standard
+  when: defect_categories.DISMISSAL > 0
+- block: arguments/equity_maxims_argument
+- block: sections/prayer_for_relief
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service
+- block: boilerplate/proposed_order

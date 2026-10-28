@@ -1,0 +1,111 @@
+# Accountability forums + dimension triggers — DATA, not code. who_to_notify.py loads this.
+# Add a forum or a whole new dimension here; no code change needed (R2: agnostic, data-driven).
+# Each forum: forum, authority, procedure, where.  Dimension triggers are matched word-boundary.
+
+# shared/reused forum blocks
+_doj_civil_rights: &doj_civil_rights
+  forum: "U.S. Department of Justice — Civil Rights Division"
+  authority: "18 U.S.C. § 242 (deprivation of rights under color of law); § 241 (conspiracy)"
+  procedure: "Criminal referral for color-of-law deprivation by a judge/official; complaint to the Civil Rights Division and the U.S. Attorney."
+  where: "U.S. DOJ Civil Rights Division, 950 Pennsylvania Ave NW, Washington, DC 20530; U.S. Attorney, E.D. Pa., 615 Chestnut St., Philadelphia, PA 19106"
+
+# actor -> jurisdiction -> [forums].  jurisdiction 'any' applies to all.
+actor_forums:
+  judge:
+    federal:
+      - forum: "Judicial Council of the Third Circuit (Circuit Clerk / Circuit Executive)"
+        authority: "Judicial Councils Reform and Judicial Conduct and Disability Act of 1980, 28 U.S.C. §§ 351–364"
+        procedure: "ENTRY POINT: the misconduct complaint is filed with the CIRCUIT where the judge sits (the Third Circuit for an EDPA judge) — NOT in DC. The Chief Judge of the Circuit reviews (cf. J.C. No. 03-26-90000). DC review comes only on petition under § 357 (next rung)."
+        where: "Office of the Circuit Executive, U.S. Court of Appeals for the Third Circuit, 601 Market St., Philadelphia, PA 19106"
+      - forum: "Judicial Conference Committee on Judicial Conduct and Disability (national review, Washington DC)"
+        authority: "28 U.S.C. § 357; Rules for Judicial-Conduct and Judicial-Disability Proceedings"
+        procedure: "The DC-based national Committee REVIEWS the Circuit Judicial Council's disposition on petition (this is the 'DC judicial conduct' body — it does not take the complaint first)."
+        where: "Committee on Judicial Conduct & Disability, Administrative Office of the U.S. Courts, One Columbus Circle NE, Washington, DC 20544"
+      - forum: "Recusal / disqualification (in-case)"
+        authority: "28 U.S.C. § 455 (appearance of partiality) + § 144 (affidavit of bias)"
+        procedure: "Motion to disqualify in the case itself."
+        where: "the presiding court"
+      - *doj_civil_rights
+      - forum: "Impeachment (only removal for Art. III judges)"
+        authority: "U.S. Const. art. I; art. III good-behavior tenure"
+        procedure: "Refer to the House Judiciary Committee."
+        where: "U.S. House Committee on the Judiciary, Washington, DC"
+    state:
+      - forum: "Pennsylvania Judicial Conduct Board"
+        authority: "Pa. Const. art. V § 18; Code of Judicial Conduct"
+        procedure: "Complaint to the JCB; if charged, prosecuted before the Court of Judicial Discipline."
+        where: "Judicial Conduct Board, Pennsylvania Judicial Center, 601 Commonwealth Ave., Suite 3500, P.O. Box 62525, Harrisburg, PA 17106"
+      - forum: "Recusal / disqualification (in-case)"
+        authority: "Pa. Code of Judicial Conduct Rule 2.11"
+        procedure: "Motion to recuse."
+        where: "the presiding court"
+      - *doj_civil_rights
+  opposing_counsel:
+    any:
+      - forum: "Office of Disciplinary Counsel — Disciplinary Board of the Supreme Court of PA"
+        authority: "PA Rules of Prof. Conduct (RPC 3.1 frivolous; 3.3 candor; 8.4 misconduct); RPC 8.3 reporting"
+        procedure: "Complaint to the ODC (attorneys are officers of the court under judicial supervision)."
+        where: "Office of Disciplinary Counsel, Disciplinary Board of the Supreme Court of PA, 601 Commonwealth Ave., Suite 2700, P.O. Box 62625, Harrisburg, PA 17106"
+      - forum: "Sanctions in the case"
+        authority: "Fed. R. Civ. P. 11 (federal) / 42 Pa.C.S. § 2503 + Pa.R.C.P. 1023.1 (state)"
+        procedure: "Motion for sanctions in the pending case."
+        where: "the presiding court"
+      - forum: "U.S. Department of Justice / U.S. Attorney (E.D. Pa.)"
+        authority: "18 U.S.C. § 1001 (false statements); § 1503 (obstruction); fraud on the court"
+        procedure: "Criminal referral where counsel made material false statements to the tribunal or obstructed justice."
+        where: "U.S. Attorney, E.D. Pa., 615 Chestnut St., Philadelphia, PA 19106"
+  agency:
+    any:
+      - forum: "Judicial review of agency action"
+        authority: "APA, 5 U.S.C. §§ 701–706 (+ the agency's specific review statute — Siegel, Sourcebook of Federal Judicial Review Statutes)"
+        procedure: "Petition for review of final agency action; compel withheld action under § 706(1)."
+        where: "the reviewing court designated by the agency's statute"
+      - forum: "Petition the Secretary + State Attorney General (enforcement officers)"
+        authority: "agency-head enforcement authority; mandamus 28 U.S.C. § 1361; parens patriae"
+        procedure: "Petition the Secretary for enforcement; AG consumer-protection referral."
+        where: "the relevant Secretary; State AG Bureau of Consumer Protection"
+      - *doj_civil_rights
+
+# dimension -> {triggers (word-boundary), actor label, forums}.  Add new dimensions freely.
+dimensions:
+  tax:
+    actor: tax_administration
+    actor_name: "IRS / tax instrument issuer"
+    trigger: "Form 1099-C / cancellation-of-debt used as evidence"
+    triggers: ["1099", "1099-c", "cancellation of debt", "discharge of indebtedness", "form 1099", "26 u.s.c", "IRS"]
+    forums:
+      - forum: "Treasury Inspector General for Tax Administration (TIGTA)"
+        authority: "26 U.S.C. § 7803(d); IRS Restructuring & Reform Act of 1998"
+        procedure: "Complaint where a tax instrument used as evidence (Form 1099-C) implicates IRS-employee misconduct or integrity in tax administration."
+        where: "TIGTA, P.O. Box 589, Ben Franklin Station, Washington, DC 20044-0589"
+      - forum: "IRS Office of Professional Responsibility (OPR)"
+        authority: "Circular 230, 31 C.F.R. Part 10"
+        procedure: "Complaint re: a practitioner's conduct before the IRS / improper Form 1099-C issuance."
+        where: "IRS OPR, SE:OPR, 1111 Constitution Ave NW, Washington, DC 20224"
+      - forum: "U.S. Tax Court (jurisdiction over the tax determination)"
+        authority: "26 U.S.C. §§ 6213, 7442"
+        procedure: "Where the dispute turns on a tax determination (cancellation-of-debt income on Form 1099-C), the Tax Court has jurisdiction over the underlying determination."
+        where: "U.S. Tax Court, 400 Second St NW, Washington, DC 20217"
+  insurance:
+    actor: insurance_regulator
+    actor_name: "the insurer / its claims practices"
+    trigger: "bad-faith / unfair claims-settlement (42 Pa.C.S. § 8371)"
+    # strong signals fire alone; "bad faith" fires ONLY with insurance context (it appears in
+    # FCRA/credit contexts too, so it is context-gated to avoid over-firing on the credit cases)
+    triggers: ["8371", "unfair insurance", "unfair claims"]
+    context_triggers: ["bad faith", "bad-faith"]
+    # insurer-SPECIFIC context (generic "insurance" appears in credit cases too, so it is excluded)
+    context: ["state farm", "allstate", "progressive", "geico", "nationwide", "claim denial",
+              "insurance bad faith", "policy claim"]
+    # PARTY GATE: insurance fires only if an INSURER is actually a party/garnishee in THIS case
+    # (prevents cross-case bleed onto the mortgage/credit cases like AmeriSave/Experian-FCRA).
+    party_required: ["state farm", "allstate", "progressive", "geico", "nationwide", "insurance"]
+    forums:
+      - forum: "Pennsylvania Insurance Department — Bureau of Consumer Services"
+        authority: "Unfair Insurance Practices Act, 40 P.S. § 1171.1 et seq.; bad-faith civil remedy 42 Pa.C.S. § 8371"
+        procedure: "Complaint re: unfair claims-settlement / bad-faith denial; the Department investigates and the Commissioner enforces."
+        where: "PA Insurance Department, Bureau of Consumer Services, 1209 Strawberry Square, Harrisburg, PA 17120"
+      - forum: "Insurance Commissioner (market-conduct / enforcement)"
+        authority: "40 P.S. § 1171.5 (Commissioner enforcement) — the Secretary-equivalent officer"
+        procedure: "Petition the Commissioner for market-conduct examination / enforcement action."
+        where: "Pennsylvania Insurance Commissioner, Harrisburg, PA 17120"

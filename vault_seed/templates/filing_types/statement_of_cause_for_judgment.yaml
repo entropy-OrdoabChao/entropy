@@ -1,0 +1,79 @@
+id: statement_of_cause_for_judgment
+title: Statement of Cause for Judgment
+description: >
+  Statement filed in PA state court after a default has been entered against the
+  judgment debtor, establishing the cause of action and the amount of the judgment.
+  Under Pa.R.C.P. 1040, when a default is entered, the plaintiff must file a
+  statement of the cause of action and the amount claimed, or the nature of the
+  claim if damages are not liquidated.
+  
+  Key provisions of Pa.R.C.P. 1040:
+  - When a default is entered, the plaintiff must file a statement of the cause
+    of action and the amount claimed
+  - If damages are not liquidated, the plaintiff must file a statement of the
+    nature of the claim
+  - The statement must be verified by oath
+  - The statement is filed with the prothonotary
+  - After filing the statement, the prothonotary enters judgment
+  - If the default is entered by confession, the plaintiff files a praecipe for
+    judgment with the statement of the cause of action
+  - If the default is entered by the prothonotary, the plaintiff files the
+    statement with the prothonotary
+  
+  This is NOT a motion — it is a statement. The plaintiff files the statement
+  with the prothonotary, and the prothonotary enters judgment.
+
+court: state_pa_ccp
+required_authorities:
+  - citation: "Pa.R.C.P. 1040"
+    proposition: "Statement of cause of action after default — when a default is entered, the plaintiff must file a statement of the cause of action and the amount claimed, or the nature of the claim if damages are not liquidated. The statement must be verified by oath."
+  - citation: "Pa.R.C.P. 1041"
+    proposition: "Assessment of damages — when damages are not liquidated, the court shall assess damages by a jury or by the court sitting without a jury."
+  - citation: "Pa.R.C.P. 1019"
+    proposition: "Time for answering — a party must answer within 30 days after service, unless the court orders a different time."
+  - citation: "42 Pa.C.S. § 8101"
+    proposition: "Post-judgment interest — a judgment for a specific sum of money shall bear interest at the lawful rate from the date of the verdict or entry of judgment until satisfied."
+
+trigger_defects:
+  - default_entered
+  - default_judgment
+  - default_judgment_entered
+  - judgment_entered
+  - post_judgment
+  - damages_not_liquidated
+  - assessment_of_damages
+  - SERIOUS/SERVICE
+  - FATAL/SERVICE
+
+structure:
+  - type: caption
+    block: boilerplate/caption_state_pa_ccp
+  - type: section
+    block: sections/introduction
+    content: "State the nature of the statement of the cause of action, the default entered against the judgment debtor, and the basis for the judgment."
+  - type: section
+    block: sections/procedural_history
+    content: "Trace the filing of the complaint, service of process, the default entered against the judgment debtor, and the filing of the statement of the cause of action."
+  - type: section
+    block: sections/factual_statement_enforcement
+    content: "Set forth the cause of action and the amount claimed, or the nature of the claim if damages are not liquidated. The statement must be verified by oath."
+  - type: section
+    block: sections/definitions_schedule_canons
+    content: "Define 'default,' 'statement of cause of action,' 'judgment,' and 'praecipe' per Pa.R.C.P. 1040 and relevant PA practice."
+  - type: argument
+    block: arguments/procedural_defect
+    content: "Argue that the statement of the cause of action establishes the basis for the judgment. The rule is mandatory — 'shall' file the statement upon default. The prothonotary must enter judgment upon receipt of a proper statement."
+  - type: argument
+    block: arguments/void_order_misuse
+    content: "If the judgment debtor claims the default was improperly entered, argue that the burden is on the debtor to show the default was improperly entered. A default that was properly entered must stand until set aside."
+  - type: section
+    block: sections/conclusion
+    content: "Request entry of judgment against the judgment debtor, plus post-judgment interest per 42 Pa.C.S. § 8101."
+  - type: section
+    block: sections/prayer_for_relief
+    content: "Prayer for: (1) entry of judgment against the judgment debtor; (2) post-judgment interest at 6% per annum; (3) costs; (4) such other relief as the court deems just."
+  - type: boilerplate
+    block: boilerplate/certificate_of_service
+  - type: boilerplate
+    block: boilerplate/proposed_order
+

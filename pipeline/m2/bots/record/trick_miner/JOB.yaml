@@ -1,0 +1,28 @@
+name: trick_miner
+group: record
+unit: claim            # claim | term | cite | count | document | case | draft
+axis: "RECORD — TRICK MINER: the opponent's side-step moves, named and countered. Includes: process used for an ulterior purpose (abuse of process / malicious use), positions inconsistent with their own prior filings, silence where they had a duty to speak, presumptions asserted without the predicate facts."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - amjur_pleading
+  - doctrine
+  - amjur_
+  - pa_rcp
+  - frcp
+  - usreports
+  - ca3_
+  - pa_
+  - amjur_malicious
+  - amjur_estoppel
+  - amjur_officers
+  - amjur_discovery
+queries:
+  - "{claim} mischaracterize"
+  - "straw man argument brief"
+  - "waiver by failure to respond"
+  - "abuse of process perversion of process to accomplish an ulterior purpose"
+  - "malicious use of civil proceedings without probable cause and for an improper purpose"
+  - "inconsistent positions taken in a prior proceeding judicial estoppel"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

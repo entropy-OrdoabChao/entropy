@@ -1,0 +1,47 @@
+id: writ_of_scire_facias_revival
+title: Writ of Scire Facias / Writ of Revival to Enforce Dormant Judgment
+description: Common law writ of scire facias to revive dormant judgment liens against successors in interest (heirs, devisees, terre-tenants, personal representatives of deceased judgment debtors). Grounded in common law (Bacon's Abridgment, Erwin's Lessee v. Dundas) and PA procedure (Pa.R.C.P. 3028-3049, Judgment Lien Law 12 P.S. 883).
+court: state_pa
+required_authorities:
+  - Mitchell v. St. Maxent's Lessee, 493 U.S. 265 (1866) - death of defendant before execution test compels scire facias
+  - Erwin's Lessee v. Dundas, 4 How. 58 - scire facias prerequisite for enforcing judgment against successor party
+  - Bacon's Abridgment, Title Scire Facias - common law origin
+  - Pa.R.C.P. 3028-3049 - PA procedural rules governing scire facias practice
+  - 12 P.S. 883 - Judgment Lien Law
+  - Pa.R.C.P. 3104(a) - cross-reference to property subject to execution
+court_rules:
+  - Pa.R.C.P. 3028 - Writ of scire facias to revive judgments
+  - Pa.R.C.P. 3048 - service of writ
+  - Pa.R.C.P. 3049 - Acts of Assembly not suspended
+  - Pa.R.C.P. 3104 - Writ of execution
+trigger_defects:
+  - SERIOUS/JUDGMENT_DORMANT
+  - SERIOUS/JUDGMENT_NOT_REVIVED
+  - SERIOUS/EXECUTION_AGAINST_SUCCESSOR
+  - FATAL/JUDGMENT_LAPSED_LIEN
+required_facts:
+  - case_id
+  - caption
+  - judgment_entry_date
+  - judgment_docket_number
+  - judgment_creditor_name
+  - judgment_debtor_name
+  - successor_party_name
+  - successor_interest_type
+  - judgment_venue_county
+  - property_description
+structure:
+  - block: boilerplate/caption_state_pa_ccp
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/judgment_entry
+  - block: sections/judgment_dormancy
+  - block: sections/successor_party_identification
+  - block: sections/service_notice_to_successor
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order
+reciprocal_duty: When court allows judgment enforcement against successor without scire facias, Pa.R.C.P. 3028-3049 procedure was bypassed - reciprocal duty to observe the writ mechanism applies to judgment creditor
+notes: Common law scire facias is not the same as modern Rule 60(b) relief - it is a separate procedural vehicle for judgment revival against successors

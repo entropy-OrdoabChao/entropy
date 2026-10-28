@@ -1,0 +1,77 @@
+id: praecipe_for_garnishee_default
+title: Praecipe for Default Judgment Against Garnishee Under Pa.R.C.P. 3146(b)
+description: >
+  Praecipe filed in PA state court to enter default judgment against a garnishee
+  that failed to file verified responses to interrogatories or otherwise comply with
+  garnishment obligations under Pa.R.C.P. 3146(b).
+  
+  This is NOT a motion — it is a praecipe. The rule requires a praecipe, not a motion.
+  The plaintiff files the praecipe with the court clerk, and the prothonotary enters
+  judgment against the garnishee for the amount of the judgment debtor's property,
+  credits, or effects in the garnishee's possession.
+  
+  Key provisions of Pa.R.C.P. 3146(b):
+  - Garnishee must answer interrogatories within the time prescribed by Pa.R.C.P. 3145
+  - Answers must be verified by oath (Pa.R.C.P. 3145)
+  - If the garnishee fails to answer, the plaintiff may file a praecipe for default
+  - Judgment is entered for the amount owed to the judgment debtor
+  - Scope of garnishment: limited to judgment debtor's property, credits, or effects
+    in the garnishee's possession at the time of service
+  - If the garnishee is an insurance company, the judgment is limited to the amount
+    of coverage available under the policy (Coverage E homeowner's policy in the
+    State Farm context)
+
+court: state_pa_ccp
+required_authorities:
+  - citation: "Pa.R.C.P. 3146(b)"
+    proposition: "Garnishee default judgment — when a garnishee fails to answer interrogatories within the time prescribed by Pa.R.C.P. 3145, the plaintiff may file a praecipe for default judgment against the garnishee."
+  - citation: "Pa.R.C.P. 3145"
+    proposition: "Garnishee interrogatories — when a writ of execution is issued against a garnishee, the plaintiff must serve interrogatories upon the garnishee, and the garnishee must answer within the time prescribed by Pa.R.C.P. 1019 (10 days after service). Answers must be verified by oath."
+  - citation: "Pa.R.C.P. 1019"
+    proposition: "Time for answering interrogatories — a party must answer interrogatories within 30 days after service, unless the court orders a different time."
+  - citation: "Pa.R.C.P. 3101 et seq."
+    proposition: "Writ of execution — post-judgment enforcement procedure."
+  - citation: "42 Pa.C.S. § 8101"
+    proposition: "Post-judgment interest at 6% per annum."
+
+trigger_defects:
+  - SERIOUS/SERVICE
+  - FATAL/SERVICE
+  - cross_case
+  - dismissal
+  - garnishee_default
+  - garnishee_in_default
+  - unverified_response
+  - failure_to_respond_garnishee
+
+structure:
+  - type: caption
+    block: boilerplate/caption_state_pa_ccp
+  - type: section
+    block: sections/introduction
+    content: "State the nature of the praecipe, the underlying judgment, and the garnishee's default."
+  - type: section
+    block: sections/procedural_history
+    content: "Trace the issuance of the writ of execution, service of interrogatories on the garnishee, and the garnishee's failure to respond."
+  - type: section
+    block: sections/factual_statement_enforcement
+    content: "Establish: (1) the entered judgment against defendants; (2) the writ of execution issued against the garnishee; (3) service of interrogatories on the garnishee; (4) the garnishee's failure to answer or verified answer; (5) the amount of the judgment."
+  - type: section
+    block: sections/definitions_schedule_canons
+    content: "Define 'garnishee,' 'writ of execution,' 'interrogatories,' 'verified response,' and 'default judgment against garnishee' per Pa.R.C.P. 3145, 3146(b), and 3101 et seq."
+  - type: argument
+    block: arguments/procedural_defect
+    content: "Argue that the garnishee's failure to answer interrogatories or file a verified response constitutes default under Pa.R.C.P. 3146(b). The rule is mandatory — 'shall' answer. Failure triggers the praecipe mechanism."
+  - type: argument
+    block: arguments/void_order_misuse
+    content: "If the garnishee claims lack of property, argue that the burden is on the garnishee to establish what property, credits, or effects it holds for the judgment debtor. An unverified response is not a sufficient showing."
+  - type: section
+    block: sections/conclusion
+    content: "Request entry of default judgment against the garnishee for the amount of the judgment debtor's property, credits, or effects in the garnishee's possession, plus post-judgment interest per 42 Pa.C.S. § 8101."
+  - type: section
+    block: sections/prayer_for_relief
+    content: "Prayer for: (1) default judgment against garnishee; (2) post-judgment interest; (3) costs; (4) such other relief as the court deems just."
+  - type: boilerplate
+    block: boilerplate/certificate_of_service
+  - type: boilerplate
+    block: boilerplate/proposed_order

@@ -1,0 +1,70 @@
+id: motion_for_post_judgment_interest
+title: Motion for Post-Judgment Interest
+description: >
+  Motion filed in PA state court to obtain post-judgment interest on a money
+  judgment. Under 42 Pa.C.S. § 8101, interest at the rate of 6% per annum
+  shall be allowed on all money judgments in civil actions from the date of
+  entry of judgment until satisfied. The statute mandates post-judgment interest
+  — the court has no discretion to set a different rate.
+  
+  Key provisions of 42 Pa.C.S. § 8101:
+  - Interest at 6% per annum shall be allowed on all money judgments
+  - Interest accrues from the date of the verdict or entry of judgment
+  - Interest continues until the judgment is satisfied
+  - The rate is fixed by statute — the court cannot vary it
+  - The statute applies to all civil actions in Pennsylvania courts
+  
+  This is NOT a motion for relief from judgment — it is a motion to enforce
+  the judgment and collect the full amount owed, including the interest that
+  has accrued and will continue to accrue.
+
+court: state_pa_ccp
+required_authorities:
+  - citation: "42 Pa.C.S. § 8101"
+    proposition: "Post-judgment interest — a judgment for a specific sum of money shall bear interest at the lawful rate from the date of the verdict or entry of judgment until satisfied. The rate is fixed at 6% per annum by statute."
+  - citation: "Pa.R.C.P. 3101 et seq."
+    proposition: "Writ of execution — post-judgment enforcement procedure. The writ commands the sheriff to levy on the judgment debtor's property, credits, or effects."
+  - citation: "Pa.R.C.P. 1041"
+    proposition: "Assessment of damages — when damages are not liquidated, the court shall assess damages by a jury or by the court sitting without a jury."
+
+trigger_defects:
+  - judgment_entered
+  - post_judgment
+  - enforcement
+  - SERIOUS/SERVICE
+  - FATAL/SERVICE
+  - garnishee_in_default
+  - unverified_response
+
+structure:
+  - type: caption
+    block: boilerplate/caption_state_pa_ccp
+  - type: section
+    block: sections/introduction
+    content: "State the nature of the motion for post-judgment interest, the underlying judgment, and the request for post-judgment interest at 6% per annum under 42 Pa.C.S. § 8101."
+  - type: section
+    block: sections/procedural_history
+    content: "Trace the entry of judgment, the date of entry, and the calculation of post-judgment interest from the date of entry through the present."
+  - type: section
+    block: sections/factual_statement_enforcement
+    content: "Calculate the post-judgment interest from the date of entry of judgment to the present, and state the amount of interest that has accrued and will continue to accrue until satisfied."
+  - type: section
+    block: sections/definitions_schedule_canons
+    content: "Define 'post-judgment interest,' 'lawful rate,' and 'satisfied' per 42 Pa.C.S. § 8101 and relevant PA practice."
+  - type: argument
+    block: arguments/procedural_defect
+    content: "Argue that post-judgment interest is mandatory under 42 Pa.C.S. § 8101. The statute says 'shall' — the court has no discretion. The judgment creditor is entitled to interest at 6% per annum from the date of entry of judgment until satisfied."
+  - type: argument
+    block: arguments/void_order_misuse
+    content: "If the judgment debtor claims the interest rate is too high, argue that the rate is fixed by statute and the court has no discretion to vary it. The statute mandates 6% per annum."
+  - type: section
+    block: sections/conclusion
+    content: "Request entry of an order directing the judgment debtor to pay post-judgment interest at 6% per annum from the date of entry of judgment until satisfied, plus costs."
+  - type: section
+    block: sections/prayer_for_relief
+    content: "Prayer for: (1) post-judgment interest at 6% per annum; (2) costs; (3) such other relief as the court deems just."
+  - type: boilerplate
+    block: boilerplate/certificate_of_service
+  - type: boilerplate
+    block: boilerplate/proposed_order
+

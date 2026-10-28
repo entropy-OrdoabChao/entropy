@@ -1,0 +1,27 @@
+﻿id: motion_to_compel_discovery
+title: Motion to Compel Discovery
+description: |
+  Motion to compel production of documents or responses to discovery
+  under FRCP 37 (federal) or Pa.R.C.P. 4019 (state).
+court: any
+required_authorities:
+  - Fed. R. Civ. P. 26(b)(1) (scope of discovery)
+  - Fed. R. Civ. P. 37(a) (motion to compel)
+  - Fed. R. Civ. P. 37(b) (sanctions for failure to comply)
+  - Pa.R.C.P. 4019 (sanctions for failure to make discovery)
+trigger_defects:
+  - SERIOUS/DISCOVERY
+  - FATAL/DISCOVERY
+  - SERIOUS/EVIDENCE
+  - FATAL/EVIDENCE
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

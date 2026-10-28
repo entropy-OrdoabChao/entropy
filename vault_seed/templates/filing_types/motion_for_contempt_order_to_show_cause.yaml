@@ -1,0 +1,62 @@
+id: motion_for_contempt_order_to_show_cause
+title: Motion for Contempt / Order to Show Cause
+description: |
+  Motion for civil contempt or criminal contempt based on violation of a court order,
+  judgment, or rule. Grounded in FRCP 70(b) (additional process to compel compliance),
+  FRCP 45(d)(2)(C) (contempt for subpoena violation), FRCP 11(e) (inherent power),
+  and Pa.R.C.P. 218.1-218.3 (show-cause order procedure). Includes both civil contempt
+  (coercive sanctions to compel compliance) and criminal contempt (punitive sanctions
+  for past violations). Due process hearing rights before incarceration.
+
+court: federal_district
+required_authorities:
+  - FRCP 70(b) — Additional process to enforce judgments
+  - FRCP 45(d)(2)(C) — Contempt for failure to obey subpoena
+  - FRCP 11(e) — Inherent power of court
+  - 28 U.S.C. § 1927 — Counsel liability (when counsel at fault)
+  - Cozzi v. Cozzi, 41 A.3d 746 (Pa. Super. 2012) — Pa. contempt standard
+  - Chambers v. NASCO, Inc., 501 U.S. 32 (1991) — Inherent power doctrine
+  - Shapiro v. United States, 335 U.S. 1 (1948) — Criminal contempt procedural protections
+  - Pa.R.C.P. 218.1 — Show-cause order procedure
+  - Pa.R.C.P. 218.2 — Hearing and findings
+  - Pa.R.C.P. 218.3 — Sanctions and enforcement
+court_rules:
+  - FRCP 70(b) — Court may issue additional writ or process
+  - FRCP 45(d)(2)(C) — Contempt as sanction for subpoena disobedience
+  - Pa.R.C.P. 218.1-218.3 — State-level show-cause procedure
+trigger_defects:
+  - FATAL/ENFORCEMENT_FAILURE — Opponent's willful non-compliance with court order
+  - SERIOUS/ORDER_VIOLATION — Opponent's violation of specific judicial directive
+  - FATAL/SUBPOENA_DISOBEYANCE — Failure to comply with lawful subpoena
+  - SERIOUS/FRAUD_ON_COURT — Obstruction of judicial process
+required_facts:
+  - case_id
+  - caption
+  - violated_order — specific court order, judgment, or rule violated
+  - order_date — date of the original order/judgment
+  - violation_date — date of non-compliance or violation
+  - compliance_deadline — deadline set by the violated order
+  - willful_violation — boolean, whether violation was willful or knowing
+  - due_process_hearing — boolean, whether due process hearing was provided
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement
+  - block: sections/standard_of_review
+  - block: arguments/contempt_elements
+    when: is_civil_contempt == true
+  - block: arguments/criminal_contempt
+    when: is_criminal_contempt == true
+  - block: sections/show_cause_order
+    when: request_show_cause == true
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order
+  - block: boilerplate/hearing_notice
+    when: is_federal == true

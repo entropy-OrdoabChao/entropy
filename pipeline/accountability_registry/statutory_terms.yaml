@@ -1,0 +1,339 @@
+# statutory_terms.yaml — statutorily-defined terms with verbatim definition text
+#
+# Each entry contains:
+#   - term: the statutory term as defined
+#   - source: literal statute/code section where defined
+#   - jurisdiction: federal | pa_state
+#   - scope: which body of law this definition governs (e.g. "Title 26 Internal
+#       Revenue Code only" vs. "all federal statutes via Dictionary Act")
+#   - definition_verbatim: the EXACT text of the definition as it appears
+#       in the statute (verifiable against source)
+#   - related_terms: cross-references to other defined terms
+#   - notes: structural observations from statute text itself (NOT court
+#       interpretations)
+#
+# This file is a DEFINITIONS DICTIONARY — it reports what statutes say,
+# not what courts have said about statutes.
+
+version: "0.1"
+
+terms:
+  # ════════════════════════════════════════════════════════════════════════════
+  # FEDERAL "PERSON" / "NATURAL PERSON" / "INDIVIDUAL" DEFINITIONS
+  # ════════════════════════════════════════════════════════════════════════════
+  - term: "person"
+    source: "1 U.S.C. § 1 (Dictionary Act)"
+    jurisdiction: federal
+    scope: "All Acts of Congress, unless the context indicates otherwise"
+    definition_verbatim: |
+      In determining the meaning of any Act of Congress, unless the context
+      indicates otherwise—the words 'person' and 'whoever' include
+      corporations, companies, associations, firms, partnerships, societies,
+      and joint stock companies, as well as individuals.
+    related_terms: ["whoever", "individual"]
+    notes: |
+      The Dictionary Act expressly recognizes BOTH natural persons
+      ("individuals") AND artificial entities (corporations, companies,
+      associations, firms, partnerships, societies, joint stock companies)
+      within the term "person." The phrase "as well as" makes the inclusion
+      of natural persons explicit.
+    citation_tokens:
+      - "1 U.S.C. § 1"
+      - "Dictionary Act"
+      - "as well as individuals"
+    verified: "2026-05-31"
+
+  - term: "individual"
+    source: "1 U.S.C. § 1; 26 U.S.C. § 7701(a)(1)"
+    jurisdiction: federal
+    scope: "Statutes incorporating Dictionary Act; Internal Revenue Code"
+    definition_verbatim: |
+      26 U.S.C. § 7701(a)(1) — 'The term "person" shall be construed to mean
+      and include an individual, a trust, estate, partnership, association,
+      company or corporation.'
+      [Note: "individual" is enumerated separately from artificial entities,
+      indicating the term refers to a natural human person within the IRC.]
+    related_terms: ["person", "natural person", "taxpayer"]
+    notes: |
+      Under the Internal Revenue Code's general definitions, "individual"
+      appears in the list of types of "persons" alongside trust, estate,
+      partnership, association, company, and corporation — distinguishing
+      natural persons from artificial legal entities.
+    citation_tokens:
+      - "26 U.S.C. § 7701(a)(1)"
+      - "individual"
+    verified: "2026-05-31"
+
+  - term: "natural person"
+    source: "Multiple federal statutes use the term; defined contextually"
+    jurisdiction: federal
+    scope: "Term appears across federal code, generally meaning a human being as distinguished from a legal person/entity"
+    definition_verbatim: |
+      The term "natural person" is used throughout federal law to distinguish
+      human beings from "artificial persons" or "legal persons" (corporations,
+      partnerships, trusts, etc.). It is expressly used in, e.g.:
+
+      - 15 U.S.C. § 6809(4) (GLBA): "The term 'consumer' means an individual
+        who obtains, from a financial institution, financial products or
+        services which are to be used primarily for personal, family, or
+        household purposes..." (natural-person consumer protections)
+
+      - 15 U.S.C. § 1681a(c) (FCRA): "The term 'consumer' means an individual."
+
+      - 12 U.S.C. § 5481(4) (Dodd-Frank): "The term 'consumer' means an
+        individual or an agent, trustee, or representative acting on behalf
+        of an individual."
+
+      - 31 C.F.R. § 1010.100(mm): definitions distinguishing natural persons
+        from legal entities for BSA/AML purposes.
+
+      Under 1 U.S.C. § 1, "person" includes both individuals (natural persons)
+      AND corporations and other entities; the term "natural person" narrows
+      the reference to the individual/human side of that broader category.
+    related_terms: ["person", "individual", "consumer", "legal person", "artificial person"]
+    notes: |
+      "Natural person" is a real, widely-used statutory term. It functions
+      to distinguish human beings from artificial entities for purposes of
+      the statute in which it appears. The term carries no special doctrinal
+      content beyond that distinction.
+    citation_tokens:
+      - "1 U.S.C. § 1"
+      - "natural person"
+      - "individual"
+      - "15 U.S.C. § 1681a(c)"
+    verified: "2026-05-31"
+
+  - term: "taxpayer"
+    source: "26 U.S.C. § 7701(a)(14)"
+    jurisdiction: federal
+    scope: "Internal Revenue Code (Title 26)"
+    definition_verbatim: |
+      The term 'taxpayer' means any person subject to any internal revenue tax.
+    related_terms: ["person", "individual", "internal revenue tax"]
+    notes: |
+      "Taxpayer" is defined functionally: any person subject to internal
+      revenue tax. The definition incorporates the broader § 7701(a)(1)
+      "person" definition, which includes individuals, trusts, estates,
+      partnerships, associations, companies, and corporations.
+    citation_tokens:
+      - "26 U.S.C. § 7701(a)(14)"
+      - "taxpayer"
+    verified: "2026-05-31"
+
+  - term: 'United States (geographical sense)'
+    source: "26 U.S.C. § 7701(a)(9); 26 U.S.C. § 7701(a)(10)"
+    jurisdiction: federal
+    scope: "Internal Revenue Code"
+    definition_verbatim: |
+      26 U.S.C. § 7701(a)(9): "The term 'United States' when used in a
+      geographical sense includes only the States and the District of Columbia."
+
+      26 U.S.C. § 7701(a)(10): "The term 'State' shall be construed to include
+      the District of Columbia, where such construction is necessary to carry
+      out provisions of this title."
+    related_terms: ["State", "citizen", "resident"]
+    notes: |
+      The IRC's geographical "United States" expressly includes the 50 states
+      and DC. § 7701(a)(10) extends "State" to include DC where context
+      requires. These are tax-code-specific geographical definitions.
+    citation_tokens:
+      - "26 U.S.C. § 7701(a)(9)"
+      - "26 U.S.C. § 7701(a)(10)"
+      - "United States"
+    verified: "2026-05-31"
+
+  - term: 'citizen (Fourteenth Amendment)'
+    source: "U.S. Const. amend. XIV § 1"
+    jurisdiction: federal
+    scope: "Constitutional definition of US citizenship"
+    definition_verbatim: |
+      All persons born or naturalized in the United States, and subject to the
+      jurisdiction thereof, are citizens of the United States and of the
+      State wherein they reside.
+    related_terms: ["person", "United States", "State"]
+    notes: |
+      14A § 1 establishes dual citizenship — both federal ("United States")
+      and state ("the State wherein they reside") — for persons born or
+      naturalized in the US and subject to its jurisdiction. The text uses
+      "persons" not "natural persons"; the context (born or naturalized)
+      necessarily restricts to natural persons.
+    citation_tokens:
+      - "U.S. Const. amend. XIV § 1"
+      - "citizens of the United States"
+      - "born or naturalized"
+    verified: "2026-05-31"
+
+  - term: 'consumer (FCRA)'
+    source: "15 U.S.C. § 1681a(c)"
+    jurisdiction: federal
+    scope: "Fair Credit Reporting Act (FCRA)"
+    definition_verbatim: |
+      The term 'consumer' means an individual.
+    related_terms: ["individual", "natural person"]
+    notes: |
+      FCRA expressly narrows its protected class to "individuals" —
+      i.e., natural persons. Artificial entities are not "consumers"
+      and therefore lack FCRA standing.
+    citation_tokens:
+      - "15 U.S.C. § 1681a(c)"
+      - "consumer means an individual"
+    verified: "2026-05-31"
+
+  - term: 'consumer (Dodd-Frank / CFPA)'
+    source: "12 U.S.C. § 5481(4)"
+    jurisdiction: federal
+    scope: "Consumer Financial Protection Act of 2010"
+    definition_verbatim: |
+      The term 'consumer' means an individual or an agent, trustee, or
+      representative acting on behalf of an individual.
+    related_terms: ["individual", "natural person"]
+    citation_tokens:
+      - "12 U.S.C. § 5481(4)"
+      - "consumer"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # PENNSYLVANIA "PERSON" / "NATURAL PERSON" DEFINITIONS
+  # ════════════════════════════════════════════════════════════════════════════
+  - term: 'person (Pennsylvania)'
+    source: "1 Pa.C.S. § 1991 (Statutory Construction Act)"
+    jurisdiction: pa_state
+    scope: "Any PA statute finally enacted on or after September 1, 1937, unless context clearly indicates otherwise"
+    definition_verbatim: |
+      'Person.' Includes a corporation, partnership, limited liability company,
+      business trust, other association, government entity (other than the
+      Commonwealth), estate, trust, foundation or natural person.
+    related_terms: ["natural person", "corporation", "Commonwealth"]
+    notes: |
+      Pennsylvania's Statutory Construction Act EXPRESSLY uses the term
+      "natural person" as one type of "person" — alongside corporations,
+      partnerships, LLCs, business trusts, associations, government entities,
+      estates, trusts, and foundations. The Commonwealth itself is excluded.
+      This confirms "natural person" is a defined statutory term in PA law.
+    citation_tokens:
+      - "1 Pa.C.S. § 1991"
+      - "natural person"
+      - "Statutory Construction Act"
+    verified: "2026-05-31"
+
+  - term: 'Commonwealth (Pennsylvania)'
+    source: "1 Pa.C.S. § 1991"
+    jurisdiction: pa_state
+    scope: "All PA statutes"
+    definition_verbatim: |
+      'Commonwealth.' The Commonwealth of Pennsylvania, including all
+      Commonwealth agencies.
+    related_terms: ["Commonwealth agency", "person"]
+    citation_tokens:
+      - "1 Pa.C.S. § 1991"
+      - "Commonwealth"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # UCC TERMS (relevant for some user matters)
+  # ════════════════════════════════════════════════════════════════════════════
+  - term: 'person (Uniform Commercial Code)'
+    source: "13 Pa.C.S. § 1201 (UCC § 1-201)"
+    jurisdiction: pa_state
+    scope: "Pennsylvania UCC"
+    definition_verbatim: |
+      'Person.' An individual, corporation, business trust, estate, trust,
+      partnership, limited liability company, association, joint venture,
+      government, governmental subdivision, agency or instrumentality, public
+      corporation or any other legal or commercial entity.
+    related_terms: ["individual", "organization"]
+    notes: |
+      UCC § 1-201's "person" definition includes "individual" as the first
+      enumerated type, alongside artificial entities. "Individual" is the
+      UCC's term for natural person.
+    citation_tokens:
+      - "13 Pa.C.S. § 1201"
+      - "UCC § 1-201"
+      - "individual"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # FEDERAL "STATE ACTOR" / "UNDER COLOR OF LAW" — literal § 1983 text
+  # ════════════════════════════════════════════════════════════════════════════
+  - term: 'under color of state law (§ 1983)'
+    source: "42 U.S.C. § 1983"
+    jurisdiction: federal
+    scope: "Civil Rights Act § 1983 cause of action"
+    definition_verbatim: |
+      Every person who, under color of any statute, ordinance, regulation,
+      custom, or usage, of any State or Territory or the District of Columbia,
+      subjects, or causes to be subjected, any citizen of the United States or
+      other person within the jurisdiction thereof to the deprivation of any
+      rights, privileges, or immunities secured by the Constitution and laws,
+      shall be liable to the party injured in an action at law, suit in equity,
+      or other proper proceeding for redress...
+    related_terms: ["person", "citizen", "State"]
+    notes: |
+      The literal statutory text uses "any State or Territory or the District
+      of Columbia" — defining the scope of "under color of" as state-level
+      (not federal). The statute is a private right of action ("shall be
+      liable to the party injured"). Plaintiff may be "any citizen of the
+      United States or other person within the jurisdiction thereof."
+    citation_tokens:
+      - "42 U.S.C. § 1983"
+      - "under color of"
+      - "State or Territory or the District of Columbia"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # INFORMATION RETURN — verbatim § 6724(d)(1) for § 7434 scope
+  # ════════════════════════════════════════════════════════════════════════════
+  - term: "information return (26 U.S.C. § 6724(d)(1))"
+    source: "26 U.S.C. § 6724(d)(1)"
+    jurisdiction: federal
+    scope: "Internal Revenue Code information reporting penalty provisions; incorporated by reference into § 7434"
+    definition_verbatim: |
+      26 U.S.C. § 6724(d)(1) enumerates "information returns" subject to
+      § 6721/6722 penalty provisions, including (among many) statements
+      filed under: § 6041 (returns of information at source); § 6041A
+      (returns regarding payments of remuneration for services and direct
+      sales); § 6042 (returns regarding payments of dividends);
+      § 6043 (returns regarding liquidations); § 6044 (returns regarding
+      patronage dividends); § 6045 (returns regarding brokers and barter
+      exchanges); § 6049 (returns regarding payments of interest); § 6050A
+      (information returns of certain fishing boat operators); § 6050I
+      (returns relating to cash received in trade or business); § 6050N
+      (information regarding payments of royalties); § 6050P (returns
+      relating to the cancellation of indebtedness by certain financial
+      entities) — and others.
+    related_terms: ["form 1099-C", "§ 7434"]
+    notes: |
+      The list expressly includes § 6050P (cancellation of indebtedness —
+      i.e., Form 1099-C). § 7434's reference to "information return" thus
+      reaches 1099-C filings by statutory cross-reference.
+    citation_tokens:
+      - "26 U.S.C. § 6724(d)(1)"
+      - "information return"
+      - "§ 6050P"
+    verified: "2026-05-31"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # ARTICLE VI SUPREMACY — literal text
+  # ════════════════════════════════════════════════════════════════════════════
+  - term: 'supreme Law of the Land (Supremacy Clause)'
+    source: "U.S. Const. art. VI cl. 2"
+    jurisdiction: federal
+    scope: "Constitutional supremacy of federal law"
+    definition_verbatim: |
+      This Constitution, and the Laws of the United States which shall be made
+      in Pursuance thereof; and all Treaties made, or which shall be made,
+      under the Authority of the United States, shall be the supreme Law of
+      the Land; and the Judges in every State shall be bound thereby, any
+      Thing in the Constitution or Laws of any State to the Contrary
+      notwithstanding.
+    related_terms: ["Constitution", "treaty"]
+    notes: |
+      The Constitution itself is the supreme law of the land. Federal statutes
+      are supreme ONLY IF "made in Pursuance" of the Constitution — i.e., a
+      statute that exceeds constitutional authority is NOT supreme. State
+      judges are EXPRESSLY bound by this supremacy.
+    citation_tokens:
+      - "U.S. Const. art. VI cl. 2"
+      - "supreme Law of the Land"
+      - "in Pursuance thereof"
+    verified: "2026-05-31"

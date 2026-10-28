@@ -1,0 +1,49 @@
+id: notice_of_appeal_federal
+title: Notice of Appeal to the United States Court of Appeals
+description: >
+  The FIRST document in the federal appeal process. Filed under FRAP 3 and FRAP 4(a)(1).
+  This is NOT a brief — it is a notice that starts the appeal clock.
+  Without this filing, no appeal can proceed.
+  
+  Key deadlines:
+  - Civil case (non-US party): 30 days after entry of judgment (FRAP 4(a)(1)(A))
+  - US or US officer as party: 60 days after entry of judgment (FRAP 4(a)(1)(B))
+  - Extension for excusable neglect: district court may extend (FRAP 4(a)(3))
+  - Extension for mistake/inadvertence/excusable neglect: up to 30 days after deadline (FRAP 4(a)(5))
+  - Reopen for failure to timely file: 14 days after notice of judgment (FRAP 4(a)(6))
+  - Tolling by FRCP 50, 52, 59 motion: appeal clock does NOT toll for FRCP 59(e) (FRAP 4(a)(4))
+  - After 1292(b) certification: 10 days after certification (FRAP 5(a)(1))
+  
+  Third Circuit Local Rules apply to formatting. Pro se litigants get liberal construction
+  (Haines v. Kerner, 404 U.S. 519 (1972)) but the notice must still identify the judgment
+  and the parties affected.
+court: federal_appellate
+required_authorities:
+  - Fed. R. App. P. 3 (commencing appeal; designation of parties)
+  - Fed. R. App. P. 4(a)(1)(A) (30-day deadline for civil case)
+  - Fed. R. App. P. 4(a)(1)(B) (60-day deadline when United States is party)
+  - Fed. R. App. P. 4(a)(3) (extension for excusable neglect or good cause)
+  - Fed. R. App. P. 4(a)(4) (tolling by FRCP 50, 52, 59 — NOT 59(e))
+  - Fed. R. App. P. 4(a)(5) (extension for mistake, inadvertence, excusable neglect, or justifiable excuse)
+  - Fed. R. App. P. 4(a)(6) (reopen for failure to timely file within 14 days of notice)
+  - Fed. R. App. P. 5(a)(1) (10-day deadline after 1292(b) certification)
+  - Fed. R. App. P. 31(c) (scheduling order for briefing)
+  - 3d Cir. L.A.R. 3.1 (form of notice of appeal)
+  - Haines v. Kerner, 404 U.S. 519 (1972) (pro se liberal construction)
+  - Erickson v. Pardus, 551 U.S. 89 (2007) (liberal construction of pro se filings)
+trigger_defects:
+  - final_judgment_entered
+  - dismissal_with_prejudice
+  - adverse_final_order
+  - FATAL/PROCEDURAL
+  - FATAL/JURISDICTION
+  - FATAL/APPEAL
+  - interlocutory_order_not_final
+structure:
+  - block: boilerplate/caption_appellate_3rd_cir
+  - block: sections/notice_of_appeal_header
+  - block: sections/judgment_appealed
+  - block: sections/parties_appealed
+  - block: sections/relief_sought
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

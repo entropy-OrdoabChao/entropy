@@ -1,0 +1,48 @@
+id: motion_vacate_judgment_frcp_60
+title: Motion to Vacate the Judgment — Fed. R. Civ. P. 60(b)(4) (Void Judgment)
+
+description: >
+  Filing type for Federal Rule of Civil Procedure 60(b)(4): relief from a final
+  judgment on the ground that the judgment is VOID. A judgment is void (not merely
+  voidable) when the rendering court lacked subject-matter jurisdiction, lacked
+  personal jurisdiction, or violated due process — the classic coram non judice
+  posture. Unlike Rule 60(b)(1)-(5), which carry a one-year outer limit, a motion
+  under subdivision (4) may be brought "within a reasonable time" with no one-year
+  bar, so a void judgment can be attacked long after entry. The controlling standard
+  is United Student Aid Funds, Inc. v. Espinosa, 559 U.S. 260 (2010): the judgment
+  must be vacated only where it is clear from the face of the record that the court
+  lacked jurisdiction. This vehicle BRIDGES the gap where a pro-se party has been
+  dismissed on the pleadings (e.g. FRCP 12(c)) and the entry rests on a defect that
+  goes to the court's power to adjudicate — it is the filing the human must never
+  again have to name after the Pa.R.A.P. 1925(b) precedent.
+
+required_authorities:
+  - Fed. R. Civ. P. 60(b)(4)
+  - Fed. R. Civ. P. 58 (separation of judgment from order; a judgment is not entered until it stands alone on a separate document)
+  - United Student Aid Funds, Inc. v. Espinosa, 559 U.S. 260 (2010)
+  - Black's Law Dictionary, "coram non judice" — before a judge or court not the proper one that cannot take legal cognizance of the matter
+  - Marshall v. Holmes, 141 U.S. 600 (1891)
+  - Julian v. Central Trust Co., 193 U.S. 112 (1904)
+
+trigger_defects:
+  - FINAL_JUDGMENT_VOID_LACK_OF_SUBJECT_MATTER_JURISDICTION
+  - FINAL_JUDGMENT_VOID_LACK_OF_PERSONAL_JURISDICTION
+  - FINAL_JUDGMENT_VOID_VIOLATION_OF_DUE_PROCESS
+  - JUDGMENT_ON_PLEADINGS_12C_DISMISSAL_RESTS_ON_POWER_DEFECT
+  - DISMISSED_WITH_PREJUDICE_NO_FINAL_JUDGMENT_ON_SEPARATE_DOCUMENT_RULE_58
+  - PRIOR_VACATE_MOTION_DENIED_RECORD_SUPPORTS_CORAM_NON_JUDICE
+
+structure:
+  - block: boilerplate/caption_federal
+  - block: sections/introduction
+  - block: arguments/judgment_is_final_and_entered
+  - block: arguments/judgment_is_void_coram_non_judice
+  - block: arguments/no_just_reason_one_year_limit_does_not_apply_subdivision_4
+  - block: arguments/espinosa_face_of_the_record_test
+  - block: arguments/rule_58_separate_document_check
+  - block: arguments/pro_se_liberally_construed
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+
+resolution_path: obsidian_sync/templates/filing_types/motion_vacate_judgment_frcp_60.yaml

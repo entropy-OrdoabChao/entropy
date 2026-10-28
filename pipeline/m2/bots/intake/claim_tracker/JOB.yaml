@@ -1,0 +1,21 @@
+name: claim_tracker
+group: intake
+unit: document            # claim | term | cite | count | document | case | draft
+axis: "INTAKE — CLAIM TRACKER: emails, bills, letters, OCR'd mail → new claims (tort, contract, statutory, regulator) → ledger."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - duty_map
+  - amjur_
+  - pa_cs_42_
+  - pa_73ps_
+  - usc_15_
+  - restatement
+  - pa_jury
+queries:
+  - "{claim} negligence duty breach"
+  - "conversion wrongful charge"
+  - "bad faith insurer 8371"
+  - "unfair trade practice billing"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

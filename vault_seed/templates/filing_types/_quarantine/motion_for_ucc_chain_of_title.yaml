@@ -1,0 +1,48 @@
+id: motion_for_ucc_chain_of_title
+title: Motion to Establish UCC Chain of Title — Loan Was Collateralized Without Notice Under Article 3/4
+description: |
+  Motion under UCC Articles 3 and 4 to establish chain of title for a loan that was pooled and sold as collateral without proper notice.
+
+Under UCC Article 3, a holder in due course must take the instrument for value, in good faith, and without notice of any claim or defense. When a loan is pooled into a GNMA REMIC trust without disclosure of the servicing transfer, the transferee may not be a holder in due course.
+
+Under UCC Article 4, a bank that is the holder of an item must provide proper notice of dishonor and other required communications. When the servicing transfer is not properly disclosed, the bank may have breached its Article 4 duties.
+
+This motion targets cases where:
+- GNMA REMIC trust files exist indicating the loan was pooled as collateral
+- The pool identifies the loan as collateral (e.g., in the MTF or SRF files)
+- The loan was sold/transferred without proper UCC Article 3 notice to the borrower
+- The servicer has no proper chain of title under UCC Article 3-203
+
+court: any
+required_authorities:
+  - UCC Article 3 — Negotiable Instruments
+  - UCC § 3-203 — Transfer of instrument; holder in due course status
+  - UCC Article 4 — Bank Deposits and Collections
+  - UCC § 4-202 — Duties of collecting bank
+  - UCC § 3-302 — Holder in due course requirements
+  - UCC § 4-401 — Bank authorized to charge account
+
+court_rules:
+  - FRCP 60(d)(3) — Fraud on the court; no time limitation
+court_rules:
+  - FRCP 60(b)(3) — Fraud/misrepresentation; one-year limit
+court_rules:
+  - FRCP 54(d)(2) — Attorney's fees
+court_rules:
+  - FRCP 65 — Injunction and restraining order
+court_rules:
+  - FRCP 65.1 — Special masters
+
+court_rules:
+  - FRCP 65.1 — Special masters
+
+court_rules:
+  - FRCP 65.1 — Special masters
+
+trigger_defects:
+  - REMIC_TRUST_EXISTS
+
+evidence_classes:
+  - gnma_remic
+
+damages: Actual damages, equitable relief, declaratory judgment under UCC Article 3

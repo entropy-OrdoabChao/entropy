@@ -1,0 +1,55 @@
+id: motion_for_judgment_as_matter_of_law
+title: Motion for Judgment as a Matter of Law Under FRCP 50(a)
+description: |
+  Motion for judgment as a matter of law under Fed. R. Civ. P. 50(a) —
+  when the opposing party has failed to establish a necessary element of its
+  claim or defense. Filed during the trial after the opposing party has been
+  fully heard on an issue.
+
+  Critical preservation requirement: The party must have been "fully heard" on
+  the issue before making the motion. FRCP 50(a) requires a prior motion for
+  directed verdict at the close of the opposing party's case. The motion for
+  JMOL must be made after the jury returns its verdict and within 28 days
+  after the jury was discharged.
+
+  This is NOT a summary judgment motion. It operates at the trial level, not
+  the pretrial level. It requires that the evidence, viewed in the light most
+  favorable to the opposing party, is insufficient for a reasonable jury to
+  return a verdict for that party.
+
+court: any
+required_authorities:
+  - "Fed. R. Civ. P. 50(a) — Judgment as a Matter of Law"
+  - "Fed. R. Civ. P. 50(b) — Renewing the motion after jury verdict"
+  - "Fed. R. Civ. P. 50(c) — Conditional ruling on a motion for JMOL"
+  - "Fed. R. Civ. P. 50(d) — Motion for new trial after JMOL"
+  - "Fed. R. Civ. P. 50(e) — New trial granted; motion for JMOL denied"
+  - "28 U.S.C. 1746 — Unsworn declarations under penalty of perjury"
+  - "Fed. R. Evid. 201(b)(2) — Judicial notice"
+
+trigger_defects:
+  - verdict_against_weight
+  - insufficient_evidence
+  - judgment_vacated
+
+required_facts:
+  - case_id
+  - caption
+  - trial_court
+  - jury_verdict_date
+  - issue_judgment_as_matter_of_law
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/standard_of_review
+  - block: sections/arguments
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

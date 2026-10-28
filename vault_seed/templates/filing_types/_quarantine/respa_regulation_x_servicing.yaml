@@ -1,0 +1,56 @@
+id: respa_regulation_x_servicing
+
+title: RESPA Regulation X Mortgage Servicing Violations
+
+description: |
+  Filing type for enforcing borrower rights under the Real Estate Settlement
+  Procedures Act (RESPA), 12 U.S.C. §§ 2601-2617, and its implementing
+  regulation, Regulation X (12 CFR Part 1024). This covers:
+
+  (1) Servicing transfer notice: prior servicer sends notice to borrower
+  at least 15 days before transfer effective date; new servicer must
+  provide information within 15 days after transfer. [RESPA § 6(a); 12 CFR 1024.33(e)]
+
+  (2) Error resolution: borrower sends written error notice; servicer
+  must acknowledge within 5 business days, resolve within 30 days (or
+  90 days for foreclosure-related errors). No late fees during
+  resolution period. [RESPA § 6(e); 12 CFR 1024.35]
+
+  (3) Early intervention: servicer provides oral and written notice
+  regarding loss mitigation options not later than 45 days after
+  default. [RESPA § 6(f); 12 CFR 1024.39]
+
+  (4) Successor in interest: servicer acknowledges claim within 5
+  business days and determines status within 30 days. Borrower has
+  right to request loan balance/payoff information. [12 CFR 1024.31]
+
+  (5) Escrow disclosures: periodic statements, escrow analysis, changes.
+  [12 CFR 1024.17-1024.18]
+
+  COMPLIANCE-DRIVEN filing: servicer duties are mandatory and
+  non-discretionary (statutory "shall"). Non-compliance = RESPA
+  violation regardless of underlying claim merit.
+
+  Grounding: 12 U.S.C. §§ 2601-2617 (RESPA); 12 CFR Part 1024
+  (Regulation X); CFPB Supervisory Guidelines.
+
+required_authorities:
+  - 12 U.S.C. § 2605(a) - servicer obligation to respond to qualified written requests
+  - 12 U.S.C. § 2605(e) - servicer obligation to respond to error notices
+  - 12 U.S.C. § 2605(f) - servicer obligation to provide early intervention
+  - 12 U.S.C. § 2605(g) - prohibition on fee stacking
+  - 12 U.S.C. § 2607(a)(2) - servicing transfer notice requirements
+  - 12 CFR 1024.31 - successor in interest recognition
+  - 12 CFR 1024.35 - error resolution procedures
+  - 12 CFR 1024.36 - information requests
+  - 12 CFR 1024.39 - early intervention / delinquency notice
+  - 12 CFR 1024.41 - loss mitigation procedures
+
+trigger_defects:
+  - COMPLIANCE/SERVICING_ERROR_RESOLUTION
+  - COMPLIANCE/SERVICING_TRANSFER_NOTICE
+  - COMPLIANCE/EARLY_INTERVENTION_DELINQUENCY
+  - COMPLIANCE/SUCCESSOR_IN_INTEREST_RECOGNITION
+  - COMPLIANCE/ESCROW_ACCOUNT_VIOLATION
+  - COMPLIANCE/FEE_STACKING_PROHIBITION
+  - COMPLIANCE/QUA

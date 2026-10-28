@@ -1,0 +1,59 @@
+# Constitutional / consent framework — DATA for the constitutional_consent_engine (R2: agnostic).
+#
+# NOT sovereign-citizen pseudo-law. The premise is legitimate, black-letter:
+#   1. Constitutional POSITIVE LAW (Public Laws / Statutes at Large that do not violate the
+#      Constitution) applies BY FORCE OF LAW to all persons within the jurisdiction.
+#   2. Everything else binds only by CONSENT or CONTRACT — absent consent/a contract, it does not apply.
+#   3. A public OFFICIAL is constrained by the Constitution (cannot overreach; color-of-law liability).
+#      A private CITIZEN is bound by consent/contract, not by status.
+#   4. Any law, contract, or order is VOID to the extent it violates a constitutional right —
+#      even a contract (a right cannot be bargained away; an unconstitutional act is void ab initio).
+
+constitutional_rights:          # right -> {source, markers that flag an order/law touching it}
+  due_process:        {source: "U.S. Const. amends. V & XIV", markers: ["without notice", "without hearing", "denied opportunity to be heard", "ex parte", "summarily", "no opportunity", "due process", "due_process", "notice_inadequate", "disqualification", "evidence_ignored", "prima_facie_evidence_ignored"]}
+  access_to_courts:   {source: "U.S. Const. amend. I (petition clause); art. III", markers: ["filing ban", "prior restraint", "do not file", "enjoined from filing", "pre-filing", "vexatious litigant", "gatekeeping"]}
+  equal_protection:   {source: "U.S. Const. amend. XIV", markers: ["held to a higher standard", "disparate", "pro se gatekeeping", "pro_se_gatekeeping", "pro se", "singled out", "punitive"]}
+  property_no_taking: {source: "U.S. Const. amend. V (takings)", markers: ["garnish", "seiz", "levy", "writ of execution", "without compensation", "attach"]}
+  contracts_clause:   {source: "U.S. Const. art. I § 10", markers: ["impair", "obligation of contract"]}
+  self_incrimination: {source: "U.S. Const. amend. V", markers: ["compelled to testify", "against himself"]}
+
+law_types:                      # how a law BINDS — the consent distinction
+  positive_law:   {binds: "all persons within the jurisdiction by force of law", markers: ["public law", "statute at large", "u.s.c", "stat.", "pa.c.s", "p.s.", "enacted", "fcra", "fdcpa", "tila", "respa", "ecoa"]}
+  consent_based:  {binds: "only via the person's consent / voluntary participation", markers: ["registration", "license", "benefit", "enroll", "opt-in", "appearance", "waiver", "consent to jurisdiction", "voluntarily submitted"]}
+  contract_based: {binds: "only the parties to the contract", markers: ["agreement", "contract", "terms and conditions", "signed", "promissory note", "account holder", "cardmember", "borrower"]}
+
+actor_types:                    # who an actor IS determines what binds them
+  public_official: {constrained_by: "the Constitution — cannot overreach; color-of-law liability under 18 U.S.C. 242 / 42 U.S.C. 1983", markers: ["judge", "the court", "clerk", "officer", "agency", "commissioner", "secretary", "state actor", "under color of"]}
+  private_citizen: {bound_by: "consent / contract — not by status", markers: ["defendant", "plaintiff", "party", "individual", "llc", "corporation", "bank", "furnisher", "insurer", "garnishee"]}
+
+consent_signals:
+  present: ["signed", "registered", "enrolled", "accepted the benefit", "entered an appearance", "agreed", "executed the contract", "voluntarily"]
+  absent:  ["did not consent", "no consent", "without agreement", "under protest", "reserved rights", "non-consent", "compelled", "without authorization", "objected"]
+
+# UMBRELLA ACTS — group scattered citations under their parent Act so they cannot be "wealed out"
+# (whittled off one section at a time). When m0 cites multiple provisions, cite them AS the umbrella
+# Act (e.g. "under the FCRA, 15 U.S.C. §§ 1681e, 1681i, 1681n") rather than as loose sections.
+# KEY: one Act can SPAN MULTIPLE U.S.C. TITLES (e.g. the Bank Secrecy Act lives in both 12 U.S.C. AND
+# 31 U.S.C.). Such provisions group under the ONE umbrella regardless of their title.
+umbrella_acts:
+  - {match: ["1681"], act: "Fair Credit Reporting Act, 15 U.S.C. § 1681 et seq."}
+  - {match: ["1692"], act: "Fair Debt Collection Practices Act, 15 U.S.C. § 1692 et seq."}
+  - {match: ["1601", "1666", "tila"], act: "Truth in Lending Act, 15 U.S.C. § 1601 et seq."}
+  - {match: ["351", "357", "360", "363", "364"], act: "Judicial Councils Reform and Judicial Conduct and Disability Act of 1980, 28 U.S.C. §§ 351-364"}
+  - {match: ["144", "455"], act: "Federal recusal statutes, 28 U.S.C. §§ 144, 455"}
+  - {match: ["1441", "1446", "1447", "1331", "1332", "1367"], act: "Title 28 removal & jurisdiction, 28 U.S.C."}
+  # Bank Secrecy Act — the umbrella spans the STATUTE (12 U.S.C. §§ 1829b, 1951-1960; 31 U.S.C.
+  # §§ 5311-5332) AND its implementing regulations: FinCEN (31 CFR Chapter X, pt. 1010 et seq.).
+  - {match: ["5311", "5312", "5313", "5314", "5316", "5318", "5322", "5331", "5332", "1829b", "1951", "1952", "1953", "1955", "1959", "bank secrecy", "fincen", "31 cfr", "1010", "1020", "chapter x"], act: "Bank Secrecy Act + FinCEN regs (12 U.S.C. §§ 1829b, 1951-1960; 31 U.S.C. §§ 5311-5332; 31 C.F.R. ch. X)"}
+  # National-bank / banking umbrella — the STATUTE (12 U.S.C.) AND OCC implementing regs (12 CFR).
+  - {match: ["12 u.s.c", "12 cfr", "national bank", "glass-steagall", "banking act", "federal reserve act", "comptroller", "occ ", " 1811", " 1813", " 1818", " 1831"], act: "National Bank Act / Banking laws + OCC regs (12 U.S.C.; 12 C.F.R.; Comptroller of the Currency)"}
+  # Treasury Financial Manual — Treasury/Fiscal Service umbrella (31 CFR pt. 2; the TFM).
+  - {match: ["tfm", "treasury financial manual", "fiscal service", "31 cfr 2", "bureau of the fiscal"], act: "Treasury Financial Manual / Fiscal Service (31 C.F.R. pt. 2; TFM)"}
+  - {match: ["241", "242"], act: "Civil-rights criminal statutes, 18 U.S.C. §§ 241-242"}
+  - {match: ["1983"], act: "Civil Rights Act, 42 U.S.C. § 1983"}
+  - {match: ["8371"], act: "PA bad-faith insurance remedy, 42 Pa.C.S. § 8371"}
+  - {match: ["1171"], act: "PA Unfair Insurance Practices Act, 40 P.S. § 1171.1 et seq."}
+  - {match: ["rpc", "rule 3.1", "rule 3.3", "rule 8.4", "rule 8.3", "prof. conduct", "professional conduct"], act: "PA Rules of Professional Conduct (RPC 3.1, 3.3, 8.3, 8.4)"}
+  - {match: ["701", "702", "703", "704", "705", "706", "apa"], act: "Administrative Procedure Act, 5 U.S.C. §§ 701-706"}
+  - {match: ["7803", "6213", "7442", "1099", "26 u.s.c"], act: "Internal Revenue Code, 26 U.S.C."}
+  - {match: ["4301", "trading with the enemy"], act: "Trading with the Enemy Act, 50 U.S.C. § 4301 et seq."}

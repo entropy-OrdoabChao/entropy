@@ -1,0 +1,52 @@
+id: motion_for_declaratory_judgment_resa
+title: Motion for Declaratory Judgment — Loan Status Under RESA and UCC Articles 3/4
+description: |
+  Motion for declaratory judgment on the legal status of a loan that was pooled and sold as collateral without proper notice under RESA and UCC Articles 3/4.
+
+Under RESA, when a loan is transferred without proper notice, the borrower has standing to seek a declaration that the loan remains a "federally related mortgage loan" under RESA and that the servicing transfer was ineffective.
+
+Under UCC Article 3, when a loan is pooled without proper notice, the borrower has standing to seek a declaration that the transferee is not a holder in due course.
+
+This motion targets cases where:
+- GNMA REMIC trust files exist indicating the loan was pooled as collateral
+- The borrower has been denied proper notice under RESA
+- The loan's legal status is uncertain due to the pooling
+- The borrower needs a declaration to assert defenses to foreclosure
+
+court: any
+required_authorities:
+  - 28 U.S.C. § 2201 — Declaratory judgments
+  - 28 U.S.C. § 2202 — Further relief upon declaratory judgment
+  - 12 U.S.C. § 2605(b)(1) — Notice by transferor of loan servicing
+  - 12 U.S.C. § 2605(a) — Prohibition on transfer of servicing
+  - UCC § 3-203 — Transfer of instrument
+  - UCC § 3-302 — Holder in due course
+
+court_rules:
+  - FRCP 60(d)(3) — Fraud on the court; no time limitation
+court_rules:
+  - FRCP 60(b)(3) — Fraud/misrepresentation; one-year limit
+court_rules:
+  - FRCP 54(d)(2) — Attorney's fees
+court_rules:
+  - FRCP 65 — Injunction and restraining order
+court_rules:
+  - FRCP 65.1 — Special masters
+
+court_rules:
+  - FRCP 65.1 — Special masters
+
+court_rules:
+  - FRCP 65.1 — Special masters
+
+trigger_defects:
+  - REMIC_TRUST_EXISTS
+  - SERVICING_TRANSFER
+  - 1099C_CANCELLED_DEBT
+
+evidence_classes:
+  - gnma_remic
+  - servicing_transfer
+  - 1099C
+
+damages: Declaratory judgment, equitable relief

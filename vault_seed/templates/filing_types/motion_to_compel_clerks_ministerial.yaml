@@ -1,0 +1,60 @@
+id: motion_to_compel_clerks_ministerial
+title: Motion to Compel Clerk's Ministerial Duties
+description: |
+  Motion targeting a court clerk's failure to perform ministerial duties
+  imposed by statute, rule, or court order — e.g., failure to enter judgment
+  (FRCP 58), failure to mark case closed (FRCP 79(a)-(c)), failure to
+  issue certified copies, failure to update the docket, failure to execute
+  a mandate on remand. The clerk's duties are purely ministerial: no
+  discretion required. Mandamus and inherent judicial powers compel
+  performance.
+
+court: federal_district
+required_authorities:
+  - Marbury v. Madison, 5 U.S. 137, 162 (1803) — "The secretary does wrong
+    if he withholds the commission"; ministerial acts of officers of the
+    government are subject to mandamus.
+  - Louisiana v. Jumel, 107 U.S. 711, 762 (1883) — mandamus "will lie to
+    compel the performance by a public officer of a plain ministerial duty,
+    requiring no exercise of discretion."
+  - FRCP 58 — Entry of judgment; Clerk must enter judgment if one is not
+    directed to be entered by the court.
+  - FRCP 79(a) — Clerk must keep records called civil dockets;
+  - FRCP 79(b) — Clerk must keep a docket for all orders and judgments;
+  - FRCP 79(c) — Clerk must keep a file of all papers deposited with clerk.
+  - 28 U.S.C. § 1651 — Writ of mandamus;
+  - Chambers v. NASCO, Inc., 501 U.S. 32 (1991) — court's inherent power
+    to enforce compliance with its own orders, including directing its clerk.
+court_rules:
+  - FRCP 58 — Entry of judgment
+  - FRCP 79(a) — Civil docket
+  - FRCP 79(b) — Orders and judgments docket
+  - FRCP 79(c) — Papers filed with clerk
+trigger_defects:
+  - FATAL/CLERK_MINISTERIAL
+  - FATAL/MANDATE_NOT_EXECUTED
+  - FATAL/DOCKET_NOT_UPDATED
+  - FATAL/JUDGMENT_NOT_ENTERED
+required_facts:
+  - case_id
+  - caption
+  - court_name
+  - clerk_name_or_office
+  - order_or_rule_that_imposes_duty — the specific order or rule imposing the
+    ministerial duty on the clerk
+  - date_duty_became_due — when the clerk should have performed the duty
+  - duty_described — what the clerk failed to do (enter judgment, mark
+    closed, issue certified copies, update docket, execute mandate, etc.)
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_federal
+  - block: sections/standard_of_review
+  - block: sections/argument_clerks_ministerial
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

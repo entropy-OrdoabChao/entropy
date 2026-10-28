@@ -1,0 +1,72 @@
+id: frap_31_appellate_briefing_schedule
+title: Motion to Compel Appellate Briefing Schedule (FRAP 31)
+description: |
+  Motion directed at the appellate clerk/judge to perform the MANDATORY duty
+  under FRAP 31(a)-(c) to promptly schedule the case for briefing and to
+  serve written notice of the time limits for filing briefs, replies, and
+  cross-appeals — where the notice of appeal has been filed but no
+  briefing schedule has been issued. A party may not be held to a briefing
+  deadline (and may not be dismissed for "failure to file brief") where no
+  schedule was ever set or noticed, because FRAP 31(a) is the source of the
+  deadline itself. Ministerial duty; compel via the clerk (3d Cir. L.A.R.
+  27.6 empowers the clerk to dispose of ministerial motions under FRAP 27(c))
+  or the panel.
+
+  RECIPROCITY: the deadline the court enforces against the appellant is a
+  deadline the CLERK is ordered by FRAP 31(a) to create and notice. Enforcing
+  an un-issued schedule against a pro se appellant while the court's own
+  ministerial duty to issue it goes unperformed is the divergence to expose.
+
+required_authorities:
+  - >-
+    FRAP 31(a) — "The clerk of the court of appeals shall promptly schedule
+    the case for briefing and oral argument. The clerk shall notify all
+    parties of the dates for filing briefs and for oral argument."
+    [corpus: pa_legal_defs]
+  - >-
+    FRAP 31(c) — clerk must serve notice of the time limits for filing
+    briefs; times run from the notice/scheduling order, not from the notice
+    of appeal absent a schedule. [corpus: pa_legal_defs]
+  - >-
+    3d Cir. L.A.R. 27.6 — the clerk may entertain and dispose of any motion
+    ordinarily disposable by a single judge under FRAP 27(c), provided the
+    subject is ministerial. [corpus: ca3_local_appellate_rules]
+  - >-
+    3d Cir. L.A.R. 27.5 — single-judge motions, incl. leave-to-file motions,
+    may be entertained. [corpus: ca3_local_appellate_rules]
+  - >-
+    Marbury v. Madison, 5 U.S. 137, 162 (1803) — ministerial duties of
+    officers of the government are subject to compulsion; Louisiana v.
+    Jumel, 107 U.S. 711, 762 (1883) — mandamus lies for plain ministerial
+    duty requiring no discretion.
+
+trigger_defects:
+  - BRIEFING_SCHEDULE_NOT_ISSUED (notice of appeal docketed; no briefing schedule or time-limit notice on the docket)
+  - DISMISSED_FOR_MISSING_BRIEF_WITHOUT_SCHEDULE (court dismissed for "failure to file brief" although no schedule was ever issued — the {{CASE_ID}} pattern)
+  - CLERK_NO_NOTICE_OF_BRIEF_TIMES (no written notice of filing dates served under FRAP 31(a))
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_federal
+  - block: sections/standard_of_review
+  - block: sections/argument_clerks_ministerial
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order
+
+case_applications:
+  - case_id: "{{CASE_ID}}"
+    caption: Reyes-Pellegrino / FCRA, Judge {{JUDGE}} (EDPA)
+    context: >-
+      3d Cir. appellate stage — no briefing schedule issued; a prior 3d Cir.
+      appeal ({{CASE_ID}}) was dismissed for "failure to file brief" despite the
+      brief being timely filed (systemic clerk-error pattern). This motion
+      compels the FRAP 31(a) schedule so no deadline can attach to a party
+      that was never given one.
+
+resolution_path: obsidian_sync/templates/filing_types/frap_31_appellate_briefing_schedule.yaml

@@ -1,0 +1,47 @@
+id: clear_absence_of_jurisdiction
+title: Clear Absence of Jurisdiction Test (Bradley/Stump)
+description: |
+  Apply the Bradley v. Fisher / Stump v. Sparkman test: was the challenged
+  act performed in the CLEAR ABSENCE OF ALL JURISDICTION over the subject
+  matter? If so, the act is void ab initio and immunity does NOT apply.
+
+  STUMP TWO-PRONG TEST:
+  1. Was the act a "judicial function" normally performed by a judge?
+  2. Did the judge have jurisdiction OVER THE SUBJECT MATTER (not just
+     personal jurisdiction or authority to decide the particular case)?
+
+  BRADLEY V. FISHER:
+  "Where a court acts not in excess of its jurisdiction, but only
+  erroneously, its judgment, however wrong, is voidable, not void.
+  But where the court has no jurisdiction, the judgment is void."
+  80 U.S. at 351.
+
+  APPLICATION TO ACTIVE CASES:
+  - Judge {{JUDGE}} ({{CASE_ID}}): Dkt 141 denied motion to vacate
+    based on a factual finding (no service) that contradicts the docket.
+    When a judge's order contradicts the docket record, the order operates
+    in the clear absence of jurisdiction over the true state of the record.
+    The judge cannot lawfully declare the record to be something other than
+    what the record shows.
+  - Judge {{JUDGE}} ({{CASE_ID}}): Pending mandamus for failure to
+    rule on motions since 12/02/2025. When a judge fails to exercise
+    jurisdiction over pending matters, the inaction is in clear absence
+    of the judicial function.
+
+required_authorities:
+  - Bradley v. Fisher, 80 U.S. 335, 351 (1872)
+  - Stump v. Sparkman, 435 U.S. 349, 356 (1978)
+  - United Student Aid Funds v. Espinosa, 559 U.S. 260 (2010) — 60(b)(4)
+    applies when a judgment is void for clear absence of jurisdiction
+
+trigger_defects:
+  - FATAL/CLEAR_ABSENCE_OF_JURISDICTION
+  - SERIOUS/CLEAR_ABSENCE_OF_JURISDICTION
+  - FATAL/VOID_JUDGMENT
+  - FATAL/60B4
+
+logic:
+  - IF judge_contradicts_docket_record THEN clear_absence_of_jurisdiction
+  - IF judge_fails_to_exercise_jurisdiction_over_pending_matter THEN clear_absence_of_jurisdiction
+  - IF judgment_is_void_ab_initio THEN 60b4_relief_available
+  - IF judge_acts_without_subject_matter_jurisdiction THEN immunity_does_not_apply

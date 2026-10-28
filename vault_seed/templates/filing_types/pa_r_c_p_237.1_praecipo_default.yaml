@@ -1,0 +1,56 @@
+id: pa_r_c_p_237.1_praecipo_default
+title: Praecipo for Default Judgment of Non Pros — PA Rule 237.1 / 236.1
+
+description: |
+  Filing type for PA-specific praecipo for judgment of non pros — the prothonotary's
+  **ministerial, non-discretionary** duty to enter default when the opposing party
+  has failed to plead within the time prescribed by Pa.R.C.P. 1026(a) (20 days).
+
+  This is NOT a judicial act. The prothonotary ENTERS default upon proper praecipo —
+  no court order, no judicial discretion, no finding of merit required.
+
+  Procedure (Pa.R.C.P. 236.1 → 237.1):
+  (a) Opposing party fails to plead within 20 days of service (Pa.R.C.P. 1026(a)).
+  (b) Movant serves 10-day Notice of Intent to file praecipo (Pa.R.C.P. 236.1).
+  (c) If no pleading filed within 10 days, movant presents praecipo to prothonotary
+      with required certification (Pa.R.C.P. 237.1(a)(2)).
+  (d) Prothonotary ENTERS judgment of non pros — ministerial, automatic, mandatory.
+
+  KEY DISTINCTION from FRCP 55: Federal default requires clerk/judge entry (FRCP 55(a)(1))
+  or, for damages, sheriff/magistrate/judge (FRCP 55(b)(2)). PA praecipo requires NO
+  judicial act whatsoever — the prothonotary's duty is purely administrative/ministerial.
+
+  The court cannot undo a properly-entered default except via Pa.R.C.P. 238 (post-judgment
+  relief) — and that requires showing a meritorious defense AND excusable delay.
+
+  For pro se litigants, this is the FIRST leverage: if defendant never answered within
+  20 days, the praecipo triggers default WITHOUT asking a judge for anything.
+
+required_authorities:
+  - Pa.R.C.P. 1026(a) — "Every defendant other than a commonwealth or commonwealth agency shall serve an answer within 20 days after service of the complaint."
+  - Pa.R.C.P. 236.1 — "Notice of intention to file praecipo for entry of judgment of non pros for failure to plead" — 10-day notice requirement.
+  - Pa.R.C.P. 237.1(a)(2) — "No judgment of non pros for failure to file a complaint or by default for failure to plead shall be entered by the prothonotary unless the praecipo for entry ... includes a certification that a written notice of intention to file the praecipo was mailed or delivered..."
+  - Pa.R.C.P. 238 — "Petition to Strie Off Judgment of Non Pros" — post-entry relief requiring meritorious defense showing.
+
+trigger_defects:
+  - DEFENDANT/FAIL_TO_PLEAD (20+ days beyond service)
+  - NOTICE_236.1_UNSERVED (10-day notice not served)
+  - PROTHONOTARY_REFUSAL_TO_ENTER (ministerial duty ignored)
+  - PRAECIPO_CERTIFICATION_MISSING (form defect — cureable)
+
+structure:
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/jurisdictional_basis
+  - block: arguments/pracipo_procedural_path
+  - block: arguments/prothonotary_ministerial_duty
+  - block: arguments/defendant_failed_to_plead
+  - block: arguments/notice_236.1_compliance
+  - block: sections/case_specific_default
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: sections/proposed_order_praecipo
+
+resolution_path: obsidian_sync/templates/filing_types/pa_r_c_p_237.1_praecipo_default.yaml

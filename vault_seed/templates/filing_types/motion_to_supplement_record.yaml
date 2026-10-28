@@ -1,0 +1,39 @@
+id: motion_to_supplement_record
+title: Motion to Supplement the Record Under FRAP 10(e)
+description: 'Motion under Fed. R. App. P. 10(e) to SUPPLEMENT the appellate record
+  with documents that should be part of the record but are not — e.g., a USPS
+  signed receipt proving the appellant''s brief was delivered and signed for by
+  the Clerk''s Office. Distinct from record correction (which fixes errors in
+  what the record shows); this is adding a document the record should contain
+  but does not.
+
+  Grounded in the court''s inherent authority to maintain an accurate record
+  and FRAP 10(e)''s mandate that the record be corrected when it does not
+  reflect what actually occurred.
+
+  Key provisions:
+  - FRAP 10(e): "On appeal the record should be corrected if there is any
+    difference between what actually occurred and what the reporter''s
+    transcription shows."
+  - Pro se litigants get liberal construction (Haines v. Kerner, 404 U.S. 519)
+  - The court has inherent authority to correct clerical errors in the record
+  '
+court: federal_appellate
+required_authorities:
+- Fed. R. App. P. 10(e) — Correction/Supplement of the Record on Appeal
+- Fed. R. App. P. 10(a) — The Record on Appeal
+- Haines v. Kerner, 404 U.S. 519 (1972) — Pro se liberal construction
+- 28 U.S.C. § 2077 — Inherent authority of appellate courts
+trigger_defects:
+- dismissal
+- FATAL/PROCEDURAL
+- material_omission
+- FATAL/JURISDICTION
+structure:
+- block: boilerplate/caption_appellate_3rd_cir
+- block: sections/introduction
+- block: sections/factual_statement_federal
+- block: arguments/supplement_record_grounds
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

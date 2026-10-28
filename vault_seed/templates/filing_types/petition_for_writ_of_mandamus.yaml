@@ -1,0 +1,34 @@
+id: petition_for_writ_of_mandamus
+title: Petition for Writ of Mandamus
+description: 'Petition to the Third Circuit (or PA Superior Court) under 28 U.S.C. § 1651
+
+  challenging a void order issued by the lower court.
+
+  '
+court: federal_appellate
+required_authorities:
+- 28 U.S.C. § 1651 (All Writs Act)
+- FRAP 21 (Writs of Mandamus and Prohibition)
+- Cheney v. U.S. Dist. Court, 542 U.S. 367 (2004)
+- Allied Chem. Corp. v. Daiflon, Inc., 449 U.S. 33 (1980)
+trigger_defects:
+- FATAL/JURISDICTION
+- void_order
+- dismissal
+structure:
+- block: boilerplate/caption_appellate_3rd_cir
+- block: sections/introduction
+- block: sections/procedural_history
+- block: sections/factual_statement_federal
+- block: sections/statement_of_facts
+- block: sections/standard_of_review
+- block: arguments/jurisdiction_attack
+- block: arguments/non_binding_authority
+  when: defect_categories.AUTHORITY > 0
+- block: arguments/haines_v_kerner_standard
+  when: defect_categories.DISMISSAL > 0
+- block: arguments/equity_maxims_argument
+- block: sections/prayer_for_relief
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

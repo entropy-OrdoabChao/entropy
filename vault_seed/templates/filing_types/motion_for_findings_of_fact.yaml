@@ -1,0 +1,33 @@
+id: motion_for_findings_of_fact
+title: Motion for Findings of Fact and Conclusions of Law Under FRCP 52
+description:
+  Motion for required findings of fact and conclusions of law under FRCP
+  52(a) when the court has issued an order without the required findings.
+court: any
+required_authorities:
+  - FRCP 52(a) — Findings of fact and conclusions of law
+  - FRCP 52(b) — Amendment of findings after judgment
+  - 28 U.S.C. 2106 — Supreme Court authority to vacate, modify, and remand
+  - FRCP 59 — New trial (alternative relief)
+trigger_defects:
+  - FATAL/CONSTRUCTION
+  - SERIOUS/CONSTRUCTION
+  - void_order_misuse
+  - mandamus_grounds
+required_facts:
+  - case_id
+  - caption
+  - defect_total
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/fr52_findings
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

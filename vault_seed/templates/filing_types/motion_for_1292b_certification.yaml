@@ -1,0 +1,34 @@
+---
+id: motion_for_1292b_certification
+title: Motion for 28 U.S.C. § 1292(b) Certification for Interlocutory Appeal
+description: 'Motion requesting the district court certify a controlling question
+  of law for interlocutory appeal under 28 U.S.C. § 1292(b) when FRCP 54(b)
+  certification has been denied or is unavailable. This is the alternative path
+  when 54(b) fails — asking the court to certify for appeal under the statute
+  that authorizes it.'
+court: federal_district
+required_authorities:
+- 28 U.S.C. § 1292(b)
+- Fed. R. App. P. 5
+- Mohawk Industries, Inc. v. Carpenter, 558 U.S. 100 (2009)
+trigger_defects:
+- denial_of_54b_certification
+- FATAL/JURISDICTION
+- partial_dismissal
+- dismissal
+structure:
+- block: boilerplate/caption_federal
+  when: is_federal == true
+- block: sections/introduction
+- block: sections/procedural_history
+- block: sections/factual_statement_federal
+- block: sections/standard_of_review
+- block: arguments/section_1292b_interlocutory_path
+  when: denial_of_54b_certification == true
+- block: arguments/jurisdiction_attack
+  when: defect_categories.JURISDICTION > 0
+- block: sections/prayer_for_relief
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service
+- block: boilerplate/proposed_order

@@ -1,0 +1,37 @@
+id: motion_to_reinstate_appeal
+title: Motion to Reinstate Appeal
+description: 'Motion under Fed. R. App. P. 3(a) and 3d Cir. L.A.R. 107.2(b)
+  to reinstate an appeal dismissed for failure to prosecute, where the
+  appellant did file the brief and appendix and the dismissal rests on a
+  premise contradicted by the record.
+  '
+court: federal_appellate
+required_authorities:
+- Fed. R. App. P. 3(a)
+- 3d Cir. L.A.R. 107.2(b)
+- Fed. R. App. P. 26(b) (enlargement / excusable neglect)
+- Poulis v. State Farm Fire & Cas. Co., 747 F.2d 863 (3d Cir. 1984)
+trigger_defects:
+  - dismissal
+  - FATAL/PROCEDURAL
+  - FATAL/JURISDICTION
+  - FATAL/OPERATIVE_TEXT
+  - SERIOUS/OPERATIVE_TEXT
+  - FATAL/NO_WORD_ADDED_OR_SUBTRACTED
+  - SERIOUS/NO_WORD_ADDED_OR_SUBTRACTED
+structure:
+- block: boilerplate/caption_appellate_3rd_cir
+- block: sections/introduction
+- block: sections/factual_statement_federal
+- block: arguments/reinstatement_grounds
+- block: arguments/no_word_added_or_subtracted
+  when: operative_text_violation == true
+- block: arguments/operative_text_discipline
+  when: operative_text_violation == true
+- block: arguments/court_rules_violation
+  when: court_rule_violation == true
+- block: arguments/procedural_defect
+  when: procedural_defect == true
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

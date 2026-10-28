@@ -1,0 +1,32 @@
+﻿id: motion_for_default_judgment
+title: Motion for Default Judgment
+description: |
+  Motion for default judgment under FRCP 55(b)(2) after clerk's
+  entry of default.
+court: any
+required_authorities:
+  - Fed. R. Civ. P. 55(a) (entry of default)
+  - Fed. R. Civ. P. 55(b)(2) (default judgment by court)
+  - Chamberlain v. Giampapa, 210 F.3d 154 (3d Cir. 2000)
+  - Pa.R.C.P. 237.1 (entry of default judgment)
+trigger_defects:
+  - FATAL/SERVICE
+  - FATAL/DEFAULT
+  - SERIOUS/DEFAULT
+  - default_eligible
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/statement_of_facts
+  - block: arguments/procedural_defect
+    when: defect_categories.SERVICE > 0
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order
+  - block: boilerplate/verification

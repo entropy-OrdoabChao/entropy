@@ -1,0 +1,35 @@
+id: motion_for_leave_to_amend
+title: Motion for Leave to Amend Under FRCP 15(a)
+description:
+  Motion for leave to amend pleading under FRCP 15(a).
+  The liberal standard applies — court shall freely give leave when justice so
+  requires.
+court: any
+required_authorities:
+  - FRCP 15(a)(1)(A) — Amendment as a matter of course within 21 days
+  - FRCP 15(a)(1)(B) — Amendment within 21 days after responsive pleading
+  - FRCP 15(a)(2) — Amendment with leave of court; shall freely give leave
+  - FRCP 15(c) — Relation back of amendments
+  - FRCP 15(d) — Supplemental pleadings
+trigger_defects:
+  - FATAL/CONSTRUCTION
+  - SERIOUS/CONSTRUCTION
+  - amendment_eligible
+  - constructive_denial
+required_facts:
+  - case_id
+  - caption
+  - defect_total
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/fr15_amendment
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

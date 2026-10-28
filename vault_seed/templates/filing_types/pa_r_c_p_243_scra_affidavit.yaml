@@ -1,0 +1,85 @@
+---
+id: pa_r_c_p_243_scra_affidavit
+title: SCRA Affidavit — Statement of Claim and Relief, Pa.R.C.P. 243
+description: >-
+  Filing type for the Pa.R.C.P. 243 Statement of Claim and Relief (SCRA) —
+  the verified statement/affidavit of the claim and the relief demanded that
+  the record must carry for any judgment entry in a civil action, and the
+  first prerequisite of the post-judgment garnishment chain (Pa.R.C.P.
+  3101 → 3145 → 3146).
+
+  WHY THIS VEHICLE: Beezle had armed the garnishee-default template
+  (pa_r_c_p_3146_garnishee_default.yaml) but never armed the SCRA affidavit
+  it gates. In {{CASE_ID}} the court denied the motion to strike
+  the unverified Example Trust Co garnishee response (control 26032282) and
+  dissolved the NT writ sua sponte, ignoring Pa.R.C.P. 1024 (verification)
+  and the verified-statement prerequisites of the garnishment chain.
+  Pa.R.C.P. 3145(b) requires the garnishee's answers to be VERIFIED BY OATH
+  (corpus: pa_legal_defs, Pa.R.C.P. 3145 entry) — the same 1024 verification
+  duty the court held the pro-se judgment creditor to, held reciprocally.
+
+  Corpus grounding (honest status):
+  - GROUNDED: Pa.R.C.P. 3145 (garnishee interrogatories, verified answers),
+    3146(b) (default judgment against garnishee for the value of the
+    debtor's property/credits in the garnishee's hands), 3101 (writ of
+    execution — the judgment creditor proceeds against property in the
+    hands of a third person). Source: pa_legal_defs.
+  - WEAKLY GROUNDED: the Pa.R.C.P. 243 SCRA rule text itself did not surface
+    verbatim in the semantic corpus (only adjacent pa_consolidated_statutes
+    references to the Rules of Civil Procedure and 42 Pa.C.S. enforcement
+    provisions). The SCRA requirement is practice-grounded (Pennsylvania
+    judgment-entry practice); treat the 243 text cite as [official:Pa.R.C.P.
+    243] and verify against the current PA Rules before filing.
+
+  Procedure (SCRA as chain prerequisite):
+  (a) Judgment entered against principal debtor ($200,000, 2025-11-07).
+  (b) SCRA affidavit on file/updated: statement of the claim and the relief
+      actually recovered — keeps the judgment record honest.
+  (c) Writ of execution issued against garnishee (Pa.R.C.P. 3101).
+  (d) Garnishee interrogatories served (Pa.R.C.P. 3145); answer must be
+      verified by oath within the response period.
+  (e) Unverified or late answer → garnishee default motion (Pa.R.C.P.
+      3146(b)) — already armed as pa_r_c_p_3146_garnishee_default.
+
+  RECIPROCITY: verification is imposed on the judgment creditor AND on the
+  garnishee. A garnishee (Example Trust Co) whose answer is unverified is in
+  the same defect class as any unverified 1024 filing — default is the
+  mechanical consequence, not a discretionary choice.
+
+required_authorities:
+  - Pa.R.C.P. 243 — Statement of Claim and Relief: verified statement of the claim and relief demanded; judgment-entry prerequisite (verify current rule text before filing).
+  - Pa.R.C.P. 1024 — verification requirement for pleadings/filings.
+  - Pa.R.C.P. 3101 — "The judgment creditor may proceed against property of judgment debtor in hands of a third person by proceeding under this part."
+  - Pa.R.C.P. 3145(b) — garnishee answer must be verified by oath, stating what property/credits of the debtor are in the garnishee's possession.
+  - Pa.R.C.P. 3146(b) — default judgment against garnishee for the value of the debtor's property or credits in the garnishee's hands.
+
+trigger_defects:
+  - JUDGMENT_RECORD_LACKS_SCRA (judgment entered without a current verified statement of claim and relief on file)
+  - GARNISHEE_ANSWER_UNVERIFIED (Pa.R.C.P. 3145(b) — answer not verified by oath; 1024 defect)
+  - GARNISHEE_DEFAULT_DENIED_ON_VERIFICATION (court denied garnishee default citing nothing or ignoring the 1024/3145(b) verification defect — control 26032282 pattern)
+  - WRIT_DISSOLVED_SUA_SPONTE (garnishment writ dissolved without order addressing the verified-answer requirement)
+
+structure:
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: arguments/claim_and_relief_statement
+  - block: arguments/verification_under_oath
+  - block: arguments/judgment_record_conforms
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+
+case_applications:
+  - case_id: "{{CASE_ID}}"
+    caption: "{{USER_LAST}} v. {{OPPOSING_PARTY}}, {{OPPOSING_PARTY}}, MGGT Group LLC"
+    judgment_amount: 200000.00
+    judgment_date: 2025-11-07
+    garnishees:
+      - Example Trust Co (custodian-garnishee — unverified interrogatory response; control 26032282 denied)
+      - State Farm Insurance Company (primary — Coverage E direct claim)
+    use: SCRA affidavit updates the verified judgment record and supplies the
+      verification predicate that the garnishee-default motion (3146(b))
+      demands of the garnishees reciprocally.
+
+resolution_path: obsidian_sync/templates/filing_types/pa_r_c_p_243_scra_affidavit.yaml

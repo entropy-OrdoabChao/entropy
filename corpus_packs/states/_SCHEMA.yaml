@@ -1,0 +1,29 @@
+# Entropy state packs — the PA baseline and each state's equivalents.
+# Schema: one entry per state. Every slot names the state's equivalent of what the Pennsylvania pack provides, with its OFFICIAL
+# source (the installer fetches only from these; anything else fails the vetting gate). "status: verified" means a human checked
+# the source URL and the citation form; "status: draft" means filled from general knowledge and must be verified before release.
+# No downloads happen from this file. The pack builder (entropy ingest state <ST>) reads it.
+schema:
+  slots:
+    constitution:        "state constitution, full text"
+    statutes:            "codified statutes (the state's code), official site + citation form"
+    admin_code:          "administrative regulations (the state's code of regulations)"
+    register:            "the state register / bulletin (proposed and final rulemaking, notices)"
+    civil_rules:         "rules of civil procedure for the trial courts"
+    appellate_rules:     "rules of appellate procedure"
+    court_chain:         "trial court -> intermediate appellate court -> court of last resort (names), and small-claims/limited court"
+    efiling:             "the state's e-filing system(s) and who may use them"
+    consumer_statutes:   "the state consumer-protection / debt-collection / credit statutes (UTPCPL equivalents)"
+    financial_regulator: "the licensing regulator for lenders, collectors, insurers (DOBI equivalent) + insurance regulator + AG consumer unit"
+    judicial_conduct:    "the body that receives complaints about judges (JCB equivalent)"
+    attorney_discipline: "the body that receives complaints about lawyers (ODC equivalent)"
+    reporters:           "official case-law reporters / court opinion sites (state supreme + intermediate)"
+    filing_fees_ifp:     "fee schedule and the in forma pauperis (fee waiver) rule/form"
+    business_registry:   "the state business-entity search (Secretary of State / Dept. of State): exact legal name, entity type, status, registered agent + address, principal office; plus the licensing lookups for lenders/collectors/insurers"
+    # --- FORUM slots (added 2026-10-09): the court-specific layer that bounces filings before the merits. One row per
+    #     court is allowed as a list; each row needs name/source/cite/corpus_family like the other law slots.
+    local_rules_trial:      "local rules of the county / trial court the user files in (e.g. Philadelphia Civil Rules), incl. motion procedure, control numbers, cover sheets"
+    federal_district_rules: "local rules of the federal district court(s) in the state (e.g. E.D. Pa. Local R. Civ. P.), incl. motion practice, ECF, disclosure"
+    judge_procedures:       "individual judges' policies & procedures / standing orders for the courts above"
+    forms_attachments:      "mandatory forms, certificates and attachments per filing type (cover sheet, designation form, certificate of compliance/service, proposed order, verification, IFP)"
+

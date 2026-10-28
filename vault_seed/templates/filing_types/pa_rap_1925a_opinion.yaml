@@ -1,0 +1,80 @@
+---
+id: pa_rap_1925a_opinion
+title: Request for Pa.R.A.P. 1925(a) Opinion in Support of Order
+
+description: |-
+  Filing type for the procedural mechanism compelling a trial court to state
+  reasons for its order under Pa.R.A.P. 1925(a).
+
+  When a trial court enters an order (granting or denying relief) without
+  stating findings of fact or conclusions of law — e.g., orders marked
+  "DENIED IN ITS ENTIRETY", "NO_REASONS_STATED", or one-liners with no
+  stated reasoning — the Pa.R.A.P. 1925(a) mechanism CREATES A RECIPROCAL
+  DUTY on the court to issue an opinion explaining its reasoning.
+
+  KEY DISTINCTION:
+  - Pa.R.A.P. 1925(a): THE COURT's opinion (judge-issued, stating reasons).
+  - Pa.R.A.P. 1925(b): THE APPELLANT's concise statement of errors (appellant-issued).
+
+  The 1925(a) is the FIRST step in the appeal process when the order lacks
+  stated reasons. The appellant files a "Request for Opinion" or notices
+  the court's 1925(a) duty; if the court complies, it issues an opinion
+  explaining its ruling. If the court IGNORES this duty, the failure to
+  state reasons becomes grounds for appellate review and potential sanctions
+  under Pa.R.A.P. 1925(b).
+
+  Procedure (Pa.R.A.P. 1925(a) → 1925(b)):
+  (a) Appellant notices court entered an order without findings/reasons.
+  (b) Appellant files notice of intent to appeal (Pa.R.A.P. 903/341).
+  (c) Court enters 1925(a) order requiring concise statement (1925(b)).
+  (d) If court issues 1925(a) opinion — court states its OWN reasoning.
+  (e) If court FAILS to issue 1925(a) opinion — appellant files 1925(b)
+      noting the court's non-compliance as an error on appeal.
+
+  This is a RECIPROCAL DUTY mechanism: the court CANNOT enter an order
+  without being compelled to explain it. The duty is on THE COURT, not
+  the appellant.
+
+required_authorities:
+  - Pa.R.A.P. 1925(a)
+  - Pa.R.A.P. 1925(b)
+  - Pa.R.A.P. 903(a)
+
+trigger_defects:
+  - ORDER_WITHOUT_FINDINGS (trial court enters order without stated findings of fact or conclusions of law)
+  - ORDER_WITHOUT_REASONS (trial court enters one-liner order with no stated reasoning)
+  - COURT_REFUSES_1925A (court receives notice of 1925(a) duty but fails to issue opinion)
+  - UNEXPLAINED_SUA_SPONTE (court acts sua sponte without stating legal basis)
+
+structure:
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/jurisdictional_basis
+  - block: arguments/identification_unexplained_order
+  - block: arguments/invocation_1925a_duty
+  - block: arguments/court_reciprocal_obligation
+  - block: arguments/consequences_of_noncompliance
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: sections/proposed_order_1925a
+
+case_applications:
+  - case_id: "{{CASE_ID}}"
+    caption: "{{USER_LAST}} v. {{OPPOSING_PARTY}}, {{OPPOSING_PARTY}}, MGGT Group LLC"
+    orders_1925a_triggered:
+      - control: "26032282"
+        disposition: "DENIED IN ITS ENTIRETY"
+        date: "2026-03-30"
+        findings: NONE — unexplained one-liner
+      - control: "26023992"
+        disposition: "DENIED MTC/sanctions"
+        date: "2026-06-08"
+        findings: NONE — unexplained one-liner
+      - control: "26034317"
+        disposition: "GRANTED State Farm Fire strike"
+        date: "2026-06-16"
+        findings: NONE — no reasons stated
+
+resolution_path: obsidian_sync/templates/filing_types/pa_rap_1925a_opinion.yaml

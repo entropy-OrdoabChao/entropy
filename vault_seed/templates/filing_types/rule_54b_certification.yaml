@@ -1,0 +1,53 @@
+id: rule_54b_certification
+title: Plaintiff's Motion for Certification of Final Judgment Under Rule 54(b)
+description: |
+  Motion requesting the district court certify a partial judgment as final under
+  FRCP 54(b) to allow immediate appeal of one or more claims or parties before
+  the entire case is resolved.
+
+  Grounded in FRCP 54(b) + Curtiss-Wright Corp. v. General Electric Co., 446 U.S. 1 (1980).
+
+  Requires express determination of "no just reason for delay" with factor-by-factor analysis.
+  A bare "frivolous" or "unfounded" label without factor analysis is procedurally deficient.
+
+court: federal_district
+required_authorities:
+  - Fed. R. Civ. P. 54(b) (judgment on multiple claims)
+  - Curtiss-Wright Corp. v. General Elec. Co., 446 U.S. 1 (1980)
+  - Sussex Drug Prods. v. Kanasco, Ltd., 920 F.2d 1150 (3d Cir. 1990)
+  - Berkeley Invitational Group, Ltd. v. Colkitt, 455 F.3d 195 (3d Cir. 2006)
+  - Cohen v. Beneficial Industrial Loan Corp., 337 U.S. 541 (1949)
+  - 28 U.S.C. § 1292(b) (interlocutory appeal)
+trigger_defects:
+  - FATAL/JURISDICTION
+  - FATAL/AUTHORITY
+  - partial_dismissal
+  - dismissal
+  - denial_of_54b_certification
+  - failure_to_analyze_curtiss_wright
+  - adverse_final_order
+  - dismissal_with_prejudice
+required_facts:
+  - case_id
+  - caption
+  - defendant_targeted — defendant whose dismissal/judgment is being certified
+  - dismissal_order — ECF number of the dismissal order
+  - claims_certified — description of the claims being certified
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_federal
+  - block: sections/standard_of_review
+  - block: arguments/curtiss_wright_factor_analysis
+    when: defect_categories.JURISDICTION > 0 or defect_categories.AUTHORITY > 0
+  - block: arguments/frivolous_label_without_analysis_error
+    when: defect_categories.JURISDICTION > 0 or defect_categories.AUTHORITY > 0
+  - block: arguments/section_1292b_interlocutory_path
+    when: defect_categories.JURISDICTION > 0 or defect_categories.AUTHORITY > 0
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

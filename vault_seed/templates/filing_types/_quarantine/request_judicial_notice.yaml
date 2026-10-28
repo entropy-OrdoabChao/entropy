@@ -1,0 +1,21 @@
+type: procedure
+title: Request for Judicial Notice
+description: Procedural vehicle to invoke a court's duty to take judicial notice of adjudicative facts that are generally known within the court's territorial jurisdiction or capable of accurate and ready determination from sources whose accuracy cannot be questioned.
+blocks:
+  - Motion or stand-alone Request for Judicial Notice
+  - Citation to governing rule (Pa.R.E. 201 / Fed. R. Evid. 201)
+  - Statement of adjudicative facts to be noticed
+  - Supporting materials / affidavits establishing verifiability
+  - Request for opportunity to be heard on propriety of taking notice
+  - Prayer for relief (entry of judicial notice / order)
+governing_rule: "Pa.R.E. 201"
+federal_equivalent: "Fed. R. Evid. 201"
+state_equivalents:
+  - "Pa.R.E. 201 (PA rules of evidence)"
+  - "Fed. R. Evid. 201 (FRCP/FRE)"
+when_clauses:
+  - "Adjudicative facts are generally known within the trial court's territorial jurisdiction."
+  - "Adjudicative facts can be accurately and readily determined from sources whose accuracy cannot reasonably be questioned."
+  - "Clerk or judge refuses to accept official records, dates, or published documents as facts."
+  - "Opposing party asserts facts not in the record that should be taken judicially noticed."
+reciprocal_duty: "Once a proper request is filed, the court has a duty under Pa.R.E. 201(c)(2) to take judicial notice if supplied with necessary information, and under 201(e) must afford the party an opportunity to be heard on propriety of taking notice."

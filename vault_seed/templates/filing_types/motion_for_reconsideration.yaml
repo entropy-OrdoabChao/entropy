@@ -1,0 +1,62 @@
+id: motion_for_reconsideration
+title: Motion for Reconsideration
+description: |
+  Motion to reconsider a prior order. Properly used when the order rests on
+  misapplication of binding authority, jurisdictional overreach, manifest
+  error of law, newly discovered evidence, or violation of binding procedural
+  rules / IOPs.
+court: any
+
+required_authorities:
+  - FRCP 59(e) (federal alter/amend judgment)
+  - FRCP 60(b) (federal relief from order)
+  - FRCP 60(b)(1) (clear error of law)
+  - 28 U.S.C. 1746 (unsworn declarations under penalty of perjury)
+  - Fed. R. Evid. 201(b)(2) (judicial notice of court records)
+  - E.D. Pa. L.R. 7.1(g) (motion for reconsideration)
+  - 3d Cir. I.O.P. 5.7 (non-precedential dispositions)
+  - Pa.R.C.P. 227.1 (state post-trial motions)
+  - "Max's Seafood Cafe ex rel. Lou-Ann, Inc. v. Quinteros, 176 F.3d 669 (3d Cir. 1999)"
+  - "Harsco Corp. v. Zlotnicki, 779 F.2d 906 (3d Cir. 1985)"
+
+trigger_defects:
+  - manifest_error
+  - new_evidence
+  - change_of_controlling_law
+  - dismissal
+  - service_finding_contradicted_by_docket
+  - non_binding_authority_misapplied
+  - court_rules_violated
+  - iop_violation
+
+structure:
+  - block: boilerplate/caption_appellate_3rd_cir
+    when: is_appellate == true
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/statement_of_facts
+  - block: sections/standard_of_review
+  - block: arguments/court_rules_violation
+    when: defect_categories.PROCEDURAL > 0
+  - block: arguments/non_binding_authority
+    when: defect_categories.AUTHORITY > 0
+  - block: arguments/jurisdiction_attack
+    when: defect_categories.JURISDICTION > 0
+  - block: arguments/procedural_defect
+    when: defect_categories.PROCEDURAL > 0
+  - block: arguments/haines_v_kerner_standard
+    when: defect_categories.DISMISSAL > 0
+  - block: arguments/void_order_misuse
+    when: cross_case_count > 0
+  - block: arguments/candor_violation
+    when: defect_categories.CANDOR > 0
+  - block: arguments/equity_maxims_argument
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

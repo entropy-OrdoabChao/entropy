@@ -1,0 +1,277 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Court Order Extraction Schema (v1)",
+  "description": "Strict schema for extractions of court orders. Stricter than core_schema. An order MUST have rulings; MUST be filed by a court; MUST NOT contain claims, positions, or definitions (those belong to party filings).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "doc_id",
+    "doc_path",
+    "content_hash",
+    "extracted_at",
+    "extractor_model",
+    "extractor_prompt_version",
+    "filer",
+    "filer_role",
+    "filing_type",
+    "filing_date",
+    "ecf_number",
+    "subject_defendants",
+    "subject_claims",
+    "claims",
+    "positions",
+    "definitions",
+    "deadlines",
+    "attachments",
+    "authorities_cited",
+    "rulings",
+    "extraction_notes"
+  ],
+  "properties": {
+    "doc_id": {
+      "type": "string"
+    },
+    "doc_path": {
+      "type": "string"
+    },
+    "content_hash": {
+      "type": "string"
+    },
+    "extracted_at": {
+      "type": "string"
+    },
+    "extractor_model": {
+      "type": "string"
+    },
+    "extractor_prompt_version": {
+      "type": "string"
+    },
+    "filer": {
+      "type": "string"
+    },
+    "filer_role": {
+      "const": "court"
+    },
+    "filing_type": {
+      "const": "order"
+    },
+    "filing_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ecf_number": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "subject_defendants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "subject_claims": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "claims": {
+      "type": "array",
+      "maxItems": 0,
+      "description": "Orders do not make claims. Must be empty array."
+    },
+    "positions": {
+      "type": "array",
+      "maxItems": 0,
+      "description": "Orders do not take party positions. Must be empty array."
+    },
+    "definitions": {
+      "type": "array",
+      "maxItems": 0,
+      "description": "Orders do not introduce definitions. Must be empty array."
+    },
+    "deadlines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rule_basis": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "page": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "description",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "contract",
+              "declaration",
+              "exhibit",
+              "other"
+            ]
+          },
+          "definitions_introduced": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "authorities_cited": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "citation"
+        ],
+        "properties": {
+          "citation": {
+            "type": "string"
+          },
+          "court": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposition": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "page": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "rulings": {
+      "type": "array",
+      "minItems": 1,
+      "description": "An order MUST contain at least one ruling. An 'order' with no rulings is not an order.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "subject",
+          "outcome"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "granted",
+              "denied",
+              "dismissed",
+              "stricken",
+              "continued",
+              "other"
+            ]
+          },
+          "subject_defendants": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "page": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "extraction_notes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "confidence"
+      ],
+      "properties": {
+        "fields_unparseable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

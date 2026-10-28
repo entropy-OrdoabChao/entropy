@@ -1,0 +1,21 @@
+id: frap_40_rehearing_en_banc
+title: Petition for Rehearing En Banc
+description: Petition under Fed. R. App. P. 35 for rehearing en banc, where
+  the proceeding involves a question of exceptional importance or the panel
+  decision conflicts with controlling authority.
+court: federal_appellate
+required_authorities:
+- Fed. R. App. P. 35
+- 3d Cir. L.A.R. 35.1
+trigger_defects:
+- dismissal
+- FATAL/PROCEDURAL
+- FATAL/JURISDICTION
+structure:
+- block: boilerplate/caption_appellate_3rd_cir
+- block: sections/introduction
+- block: sections/factual_statement_federal
+- block: arguments/en_banc_grounds
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

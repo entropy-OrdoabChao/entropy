@@ -1,0 +1,39 @@
+id: ministerial_act_detection
+title: Ministerial/Executive Act Detection
+description: |
+  Detect when a judge performs an act that requires NO discretion — a purely
+  ministerial or executive function — which falls outside immunity coverage.
+  Per Forrester v. White, 484 U.S. 219, 222 (1988): "Immunity is defined by
+  the function performed, not the person." A judge selecting a juror from a
+  randomly generated panel was performing a MINISTERIAL act (mechanical, no
+  judgment required) and lost immunity.
+
+  APPLICATION TO ACTIVE CASES:
+  - Judge {{JUDGE}} ({{CASE_ID}}): Dkt 141 stated Experian was "never
+    served" — this is a ministerial act of recording a factual finding that
+    contradicts the docket (Dkt 54 proof of service). No judicial discretion
+    is involved in whether proof of service was filed; it is a ministerial
+    record-keeping act.
+  - Judge {{JUDGE}} ({{CASE_ID}}): Failure to rule on pending motions
+    for 7+ months — when a judge has a mandatory duty to rule (FRCP 56
+    requires ruling on summary judgment motions), the inaction is not a
+    judicial function; it is an executive/administrative default.
+  - "{{JUDGE}} ({{CASE_ID}}): Default judgment entered without"
+    addressing mandatory judicial notice requests (Pa.R.E. 201(b)(2)) —
+    the duty to take mandatory judicial notice is a ministerial function.
+
+required_authorities:
+  - Forrester v. White, 484 U.S. 219, 222 (1988)
+  - Mireles v. Woltman, 502 U.S. 96, 102 (1991)
+  - Stump v. Sparkman, 435 U.S. 349, 356 (1978)
+
+trigger_defects:
+  - FATAL/MINISTERIAL_ACT
+  - SERIOUS/MINISTERIAL_ACT
+  - FATAL/IMMUNITY_BY_FUNCTION
+
+logic:
+  - IF act_requires_no_discretion THEN ministerial_act
+  - IF judge_records_factual_finding_that_contradicts_docket THEN ministerial_record_error
+  - IF judge_fails_to_rule_on_mandatory_duty THEN executive_default
+  - IF judge_dissolves_writ_sua_sponte_without_motion THEN ministerial_intervention

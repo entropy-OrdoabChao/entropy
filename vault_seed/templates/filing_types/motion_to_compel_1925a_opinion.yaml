@@ -1,0 +1,95 @@
+id: motion_to_compel_1925a_opinion
+title: Motion to Compel Trial Court's Pa.R.A.P. 1925(a) Opinion in Support of Order
+description: >
+  The RECIPROCAL to the appellant's Pa.R.A.P. 1925(b) Concise Statement. When the trial judge
+  enters the order giving rise to the appeal (and the reasons do not already appear of record),
+  the judge S{{JUDGE}}, within the period set by Pa.R.A.P. 1931(a)(1), file of record at least a
+  brief opinion of the reasons for the order, or specify in writing the place in the record where
+  such reasons may be found — and once the appellant's 1925(b) Statement is served, the court's
+  response is the appellate record-maker the Superior Court reviews (Commonwealth v. Young, 456 Pa. 102,
+  317 A.2d 258: the appellate court may consider only facts duly certified in the record).
+  Where the judge enters the appealed order, receives the notice of appeal and/or the timely
+  1925(b) Statement, and then sits silent — no opinion, no written specification of where the
+  reasons may be found — the pro se party holds a standalone, motion-ready lever: COMPEL the
+  1925(a) opinion. This is the reciprocal of every 1925(b) deadline the pro se party is
+  strictly held to: the same rule text that punishes the appellant for waiver punishes the
+  trial judge for silence.
+
+  This is NOT the notice of appeal, NOT the 1925(b) Statement, and NOT an appellate briefing
+  item — it is a trial-level motion directed at the judge's own ministerial/mandatory duty under
+  Pa.R.A.P. 1925(a)(1) as triggered by Pa.R.A.P. 1931(a)(1) and, where the Statement has been
+  served, the opinion duty that runs to each error the appellant preserved.
+
+  Posture: file in the trial court (Office of Judicial Records / prothonotary) after the
+  1931(a)(1) period has lapsed without an opinion of record, OR file in the appellate docket
+  as part of the record-completion argument (Pa.R.A.P. 1935(a) delinquency notice to the trial
+  judge; Pa.R.A.P. 1926 correction of the record). The motion's core ask is small and
+  ministerial: order the judge to file the 1925(a) opinion (or the written specification of
+  the record place) — everything else (waiver, record defect, 1935(a) notice) rides on that.
+
+court: PA_CP_PHILA
+
+required_authorities:
+  - citation: "Pa.R.A.P. 1925(a)(1)"
+    proposition: "Upon receipt of the notice of appeal, the judge who entered the order giving rise to the notice of appeal, if the reasons for the order do not already appear of record, shall within the period set forth in Pa.R.A.P. 1931(a)(1) file of record at least a brief opinion of the reasons for the order, or for the rulings or other errors complained of, or shall specify in writing the place in the record where such reasons may be found."
+  - citation: "Pa.R.A.P. 1931(a)(1)"
+    proposition: "Record on appeal S{{JUDGE}} be transmitted within 60 days after the notice of appeal — the outer clock within which the 1925(a) opinion must be of record; a lapse without the opinion is a record defect the trial court below must cure, not a defect in the appeal itself."
+  - citation: "Pa.R.A.P. 1935(a)"
+    proposition: "The appellate prothonotary must give written delinquency notice to the trial judge within 10 days after the transmission date; further delay reports up the administrative chain — the built-in enforcement machinery for a silent trial court."
+  - citation: "Commonwealth v. Young, 456 Pa. 102, 317 A.2d 258"
+    proposition: "The appellate court may consider only facts duly certified in the record — an incomplete/uncertified record (including an absent 1925(a) opinion) is a defect in the record, not in the appeal; the pro se appellant is not the party that must carry the court's own silence."
+  - citation: "Pa.R.A.P. 1926"
+    proposition: "If anything material is omitted from the record by error, breakdown in processes of the court, or accident, the omission may be corrected by the trial court or the appellate court — the vehicle by which a missing 1925(a) opinion is cured after the 1931(a)(1) window closes."
+  - citation: "Pa.R.A.P. 1925(b)(4)(vii)"
+    proposition: "The waiver rule that binds the appellant for issues not raised in a timely Statement is the SAME RULE the trial judge violates by not responding — reciprocity: the court held the pro se party to the full text of 1925 and must stand to the full text of 1925 itself."
+  - citation: "Pa.R.A.P. 1038"
+    proposition: "The court has the power to act upon its own rules without motion where the record discloses a violation; the motion is filed to put the deficiency on the docket so it is reviewable, not because it is jurisdictionally required."
+
+# Firing conditions: this motion composes only when the record shows the trial court's
+# 1925(a) duty has actually lapsed — do not compose it on a fresh notice of appeal.
+trigger_defects:
+  - opinion_1925a_not_of_record
+  - 1931a1_transmission_window_lapsed
+  - 1925b_statement_served_no_opinion
+  - appeal_pending_trial_court_silent
+  - FATAL/OPINION_NOT_OF_RECORD
+
+structure:
+  - type: caption
+    block: boilerplate/caption_state_pa_ccp
+  - type: section
+    block: motion/intro_compel_1925a_opinion
+    content: >
+      Intro: identify the appealed order (date + control number), the notice of appeal (date +
+      docket), the 1925(b) Statement (date + docket, if served), and the fact that no 1925(a)
+      opinion (nor written specification of where the reasons may be found) has appeared of record
+      within the Pa.R.A.P. 1931(a)(1) period. One paragraph, no argument — this is a record-defect
+      motion, not a merits motion.
+  - type: section
+    block: arguments/reciprocity_1925a_duty
+    content: >
+      The reciprocity argument: the same Pa.R.A.P. 1925 that the court invoked against the
+      pro se appellant (1925(b) Statement, 21-day clock, waiver rule 1925(b)(4)(vii)) contains
+      1925(a)(1) — the judge's own S{{JUDGE}} duty to file a brief opinion or specify in writing where
+      the reasons may be found. The court held the appellant to the full text of the rule; it
+      must stand to the full text. Cite 1925(a)(1) verbatim from the corpus (pa_code_t210_ch19).
+  - type: section
+    block: arguments/record_defect_not_appeal_defect
+    content: >
+      The Young/1931/1926 argument: the absent opinion is a defect in the RECORD (the trial court
+      below's to produce), not a defect in the APPEAL (the pro se party's). Cite Commonwealth v.
+      Young 456 Pa. 102, 317 A.2d 258 (appellate court considers only what is duly certified),
+      Pa.R.A.P. 1931(a)(1) (60-day S{{JUDGE}}-transmission), Pa.R.A.P. 1935(a) (10-day written
+      delinquency notice to the trial judge), Pa.R.A.P. 1926 (correction of the record).
+  - type: section
+    block: arguments/ministerial_ask
+    content: >
+      The ask is ministerial and narrow: order the judge to file of record the 1925(a) opinion
+      (or the written specification of where the reasons may be found) within a stated short
+      period; alternatively, order the 1935(a) written delinquency notice and proceed on the
+      completed record. No merits re-argument, no new evidence — the motion asks the court to do
+      what its own rule text already ordered it to do.
+  - type: boilerplate
+    block: boilerplate/notice_duty_and_acknowledgment
+  - type: boilerplate
+    block: boilerplate/certificate_of_service_1925b

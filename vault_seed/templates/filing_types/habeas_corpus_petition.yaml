@@ -1,0 +1,86 @@
+---
+id: habeas_corpus_petition
+title: Petition for Writ of Habeas Corpus
+description: |
+  A petition for writ of habeas corpus is the universal constitutional remedy for
+  unlawful detention or confinement — federal and state. At the federal level,
+  28 U.S.C. §§ 2241-2255 govern habeas proceedings challenging custody under
+  federal judgments. At the state level, habeas corpus challenges state custody
+  under state law.
+
+  The Suspension Clause of the U.S. Constitution, Art. I, § 9, cl. 2, provides
+  that "The Privilege of the Writ of Habeas Corpus shall not be suspended, unless
+  when in Cases of Rebellion or Invasion the public Safety may require it."
+
+  Federal habeas: 28 U.S.C. § 2241 grants "any justice or circuit judge" authority
+  to issue writs. 28 U.S.C. § 2242 requires a statement of reasons.
+  28 U.S.C. § 2243 requires the court to fix a hearing date.
+  28 U.S.C. § 2253 provides for appeals from orders in habeas proceedings.
+
+  The writ commands the custodian to produce the detainee and justify the legality
+  of confinement. If detention is unlawful, the court must order release.
+
+  This is NOT a motion — it is an original proceeding for restoration of liberty,
+  available as of right when custody is unlawful. The burden shifts to the custodian
+  to justify the detention once prima facie unlawful detention is shown.
+
+  Corpus support: INS v. St. Cyr 533 U.S. 289 (533 U.S. 723, 2008) — habeas
+  privilege entitles detainee to meaningful opportunity to demonstrate unlawful
+  detention. Fay v. Noia 372 U.S. 391 — federal habeas power. Commonwealth
+  ex rel. Dion v. Tees 118 A.2d 756 (Pa. Super. 1956) — state habeas corpus
+  procedure.
+
+court: federal_and_state
+
+required_authorities:
+  - citation: "U.S. Constitution, Art. I, § 9, cl. 2"
+    proposition: "The Privilege of the Writ of Habeas Corpus shall not be suspended, unless when in Cases of Rebellion or Invasion the public Safety may require it."
+  - citation: "28 U.S.C. § 2241"
+    proposition: "Application for writ of habeas corpus may be made to any court that has jurisdiction over the custody of the person."
+  - citation: "28 U.S.C. § 2242"
+    proposition: "Application for writ shall state the reasons and the person detained or their representative shall state facts."
+  - citation: "28 U.S.C. § 2243"
+    proposition: "Court shall appoint counsel, fix hearing date, require return showing causes, order production of the body."
+  - citation: "28 U.S.C. § 2253"
+    proposition: "Appeal from order in habeas proceeding requires certificate of appealability."
+  - citation: "INS v. St. Cyr, 533 U.S. 289 (2001)"
+    proposition: "Habeas privilege entitles detainee to meaningful opportunity to demonstrate detention violates law."
+  - citation: "Fay v. Noia, 372 U.S. 391 (1963)"
+    proposition: "Federal courts have power under habeas statute to grant relief despite state procedural defaults."
+  - citation: "Commonwealth ex rel. Dion v. Tees, 118 A.2d 756 (Pa. Super. 1956)"
+    proposition: "State habeas corpus procedure — relief when confinement is illegal."
+
+trigger_defects:
+  - unlawful_detention
+  - illegal_confinement
+  - suspension_clause_violation
+  - custody_without_authority
+  - detention_exceeds_legality
+  - habeas_eligible
+  - restoration_of_liberty_needed
+
+required_facts:
+  - case_id
+  - caption
+  - respondent_name — custodian/officer having custody
+  - petitioner_name — detained person
+  - detention_location — where detained
+  - detention_date — when detention began
+  - basis_of_detention — legal basis for custody
+  - jurisdiction — federal or state
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/jurisdiction
+  - block: sections/statement_of_material_facts
+  - block: sections/grounds_for_relief
+    when: ground_type == unlawful_detention
+  - block: sections/constitutional_arguments
+  - block: sections/prayer_for_relief
+  - block: certificate_of_service
+  - block: verification_affidavit
+    when: is_state == true

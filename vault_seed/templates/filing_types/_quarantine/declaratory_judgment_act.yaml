@@ -1,0 +1,56 @@
+id: declaratory_judgment_act
+title: Complaint for Declaratory Judgment Under 28 U.S.C. §§ 2201-2202
+
+description: >
+  A Complaint for Declaratory Judgment filed under 28 U.S.C. § 1331 (federal question
+  jurisdiction) + 28 U.S.C. § 2201 (original jurisdiction to declare rights). This is
+  a UNIVERSAL PROCEDURAL VEHICLE — it may be filed to DECLARE the legal status of any
+  disputed obligation, instrument, governmental action, or legal relationship BEFORE
+  it reaches the crisis-of-enforcement stage. Grounded in corpus: 28 U.S.C. §§ 2201-2202,
+  Aetna Life Ins. Co. v. Haworth, 300 U.S. 227 (1937); Brillhart v. Excess Ins. Co.,
+  316 U.S. 491 (1942); Steffel v. Thompson, 457 F.2d 919 (5th Cir. 1972).
+
+  This filing-type establishes the existence (or non-existence) of a legal right, duty,
+  or relationship, thereby freezing the adversary's ability to assert contrary positions
+  at trial or on appeal. It is a PRE-EMPTIVE procedural vehicle, not a post-hoc defense.
+
+  The complaint must allege:
+  - An "actual controversy" within the court's jurisdiction (28 U.S.C. § 2201)
+  - The specific rights or legal relations at issue
+  - The interested party's standing to seek declaration
+  - The injury-in-fact / concrete dispute necessary for Article III case-or-controversy
+
+  Key legal standards:
+  - "Actual controversy" requirement: not advisory; must involve real, concrete dispute
+    (Aetna Life Ins. Co. v. Haworth, 300 U.S. 227 (1937))
+  - Court's discretion: "shall not be stayed" but courts retain discretion to decline
+    (Brillhart v. Excess Ins. Co., 316 U.S. 491 (1942))
+  - Declaratory relief is a procedural remedy — construction is federal, not state
+  - Further relief may be granted under 28 U.S.C. § 2202 (damages, injunction attached)
+
+  When-clauses (when to use this filing type):
+  1. Before enforcement/collection action: Declare that a note was pooled/sold, destroying
+     the opponent's standing to enforce it as an instrument.
+  2. Before court action: Declare that a court lacks subject matter or personal jurisdiction.
+  3. Before administrative action: Declare that a government officer's action exceeds
+     statutory authority or violates procedural requirements.
+  4. To establish precedent: Declare the legal status of a disputed contract term,
+     fee, or obligation to bind the adversary at future litigation.
+  5. As a standalone affirmative claim for monetary relief: Where the declared status
+     directly determines a financial right (28 U.S.C. § 2202).
+
+  Reciprocity angle: Courts and opponents frequently invoke "actual controversy" to
+  DISMISS a party's declaratory claim. This same requirement BINDS the court itself —
+  if the court refuses to declare, it may be circumventing its own jurisdictional
+  mandate. The discretion to DECLINE under Brillhart is a TWO-WAY street: the
+  opposing party can also invoke it to avoid declaration that hurts their position.
+
+  Federal vs. state parallel: State declaratory judgment acts (e.g., Pa. Declaratory
+  Judgments Act, 42 Pa.C.S. §§ 741-747) parallel the federal statute but have different
+  procedural requirements. Use federal DJA for federal question jurisdiction; use state
+  DJA for purely state-law disputes within state courts.
+
+  Dockets / jurisdiction:
+  - Federal: 28 U.S.C. § 1331 + § 2201 + § 2202
+  - Pennsylvania: 42 Pa.C.S. §§ 741-747 (Declaratory Judgments Act)
+  - Third Circuit: Local Appellate Rules apply for appeals from declaratory judgment rulings

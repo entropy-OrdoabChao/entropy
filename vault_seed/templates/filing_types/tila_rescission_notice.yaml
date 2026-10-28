@@ -1,0 +1,74 @@
+id: tila_rescission_notice
+title: Notice of Right of Rescission Under 15 U.S.C. § 1635 — Truth in Lending Act
+description: >
+  Notice filed in federal court to exercise the right of rescission under the Truth in Lending Act,
+  15 U.S.C. § 1635. This is a standalone filing that notifies the creditor/lender that the borrower
+  is exercising the statutory right to rescind the loan transaction.
+
+  Key provisions:
+  - 15 U.S.C. § 1635(a): Borrower may rescind by notifying the creditor — no lawsuit required
+  - 15 U.S.C. § 1635(f): Right expires 3 years after consummation or sale of property
+  - 15 U.S.C. § 1635(d): Creditor must provide clear disclosure of right to rescind
+  - Jesinoski v. Countrywide Home Loans, 574 U.S. 259 (2015): Notification suffices; no lawsuit
+    required within 3-year period
+  - 12 CFR 1026.23: Regulation implementing rescission rights
+
+  This is a DISCOVERY vehicle: it forces the creditor's hand and exposes failure to disclose
+  the right to rescind. Where the creditor failed to provide proper rescission notices as required
+  by §1635(d), the three-year period under §1635(f) is extended and the borrower retains the
+  right to rescind.
+
+court: federal_trial
+required_authorities:
+  - citation: "15 U.S.C. § 1635(a)"
+    proposition: "Right of rescission — in any entitle action or loan subjected to this section, the consumer shall have the right to rescind in accordance with subsections (b) through (i) of this section until midnight of the third business day following the occurrence described in subsection (d) of this section or the date on which the transaction occurs, as specified in subsection (d) of this section. The date of consummation shall be determined in accordance with regulations issued by the Board."
+  - citation: "15 U.S.C. § 1635(d)"
+    proposition: "Notice of right to rescind — the creditor shall deliver two copies of the disclosure described in section 1638 of this title, each containing a statement of the right to rescind. Each disclosure shall contain the form entitled 'Notice of Your Right to Cancel in Connection with the Refinancing, a Home Mortgage Refinance, a Transaction of the nature constituting a line of credit' or similar form prescribed by the Board."
+  - citation: "15 U.S.C. § 1635(f)"
+    proposition: "Expiration of right — the right of rescission shall expire three years after the date of consummation of the transaction or upon the sale of the property, whichever is earlier, notwithstanding the express language of any statute to the contrary."
+  - citation: "15 U.S.C. § 1635(j)"
+    proposition: "Effect of rescission — rescission under this section is effective upon delivery of notice. Jesinoski v. Countrywide Home Loans, 574 U.S. 259 (2015) confirmed that a borrower need not file a lawsuit to exercise the right; notification suffices."
+  - citation: "12 CFR 1026.23"
+    proposition: "Consumer's right to rescind — implementing Regulation Z for rescission rights, procedures, and exceptions for refinancings."
+  - citation: "Jesinoski v. Countrywide Home Loans, Inc., 574 U.S. 259 (2015)"
+    proposition: "A borrower exercises the right of rescission under TILA by notifying the creditor of intent to rescind; no lawsuit or foreclosure action is required within the three-year period."
+
+trigger_defects:
+  - TILA_disclosure_failure
+  - failure_to_disclose_right_to_rescind
+  - unsecured_consumer_credit
+  - principal_dwelling_encumbrance
+  - refinancing_without_proper_notice
+  - creditor_non_compliance_1635d
+
+structure:
+  - type: caption
+    block: boilerplate/caption_federal
+  - type: section
+    block: sections/introduction
+    content: "Identify the transaction, the lender/creditor, the property encumbered, and the consumer's status as borrower."
+  - type: section
+    block: sections/procedural_history
+    content: "Trace the origination of the loan or credit extension: date of consummation, amount, collateral, terms, and whether disclosures were provided."
+  - type: section
+    block: sections/factual_statement_tila
+    content: "Establish: (1) the transaction was a consumer credit transaction secured by the principal dwelling; (2) the creditor failed to deliver proper rescission notices as required by §1635(d); (3) the borrower is exercising the right of rescission within the three-year statutory window."
+  - type: section
+    block: sections/definitions_tila
+    content: "Define 'consumer credit transaction,' 'principal dwelling,' 'right of rescission,' 'consummation' per 15 U.S.C. §§ 1602, 1635, and 12 CFR 1026.23."
+  - type: argument
+    block: arguments/statutory_compliance
+    content: "Argue that the creditor's failure to provide proper rescission notices under §1635(d) extends the three-year period under §1635(f) and that notification alone suffices to exercise rescission per Jesinoski v. Countrywide."
+  - type: argument
+    block: arguments/void_transaction
+    content: "If the creditor did not provide proper notices, the rescission right is not limited to three years and the transaction may be treated as voidable. The creditor cannot enforce the security interest until the rescission period expires or the borrower waives the right."
+  - type: section
+    block: sections/conclusion
+    content: "Request that the court declare the rescission effective and order the creditor to return premiums, fees, and costs, and release the lien on the property, in accordance with 15 U.S.C. § 1635(b)."
+  - type: section
+    block: sections/prayer_for_relief
+    content: "Prayer for: (1) declaration that rescission is effective; (2) return of all fees, premiums, and costs paid by borrower; (3) release of all liens on the property; (4) attorneys' fees and costs per 15 U.S.C. § 1640; (5) such other relief as the court deems just."
+  - type: boilerplate
+    block: boilerplate/certificate_of_service_federal
+  - type: boilerplate
+    block: boilerplate/proposed_order

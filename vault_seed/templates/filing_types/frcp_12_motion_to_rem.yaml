@@ -1,0 +1,41 @@
+id: frcp_12_motion_to_rem
+title: Motion to Remand — 28 U.S.C. §§ 1447(c), 1441(b), 1332
+
+description: >
+  Filing type for federal motion to remand following improper or defective
+  removal. Triggers on failure to satisfy complete diversity (28 U.S.C. § 1332(a)),
+  forum-defendant rule (28 U.S.C. § 1441(b)), removal by non-diverse defendant,
+  or defective removal procedure (28 U.S.C. § 1446). Grounded in Caterpillar Inc. v. Lewis,
+  519 U.S. 61 (1996) and the 30-day removal timing window at 28 U.S.C. § 1447(c).
+
+required_authorities:
+  - 28 U.S.C. § 1332 (diversity jurisdiction)
+  - 28 U.S.C. § 1441 (removal jurisdiction — general)
+  - 28 U.S.C. § 1446 (removal procedure — notice of removal)
+  - 28 U.S.C. § 1447(c) (motion to remand — 30 day window; grounds)
+  - 28 U.S.C. § 1447(d) (remand orders not reviewable)
+  - 28 U.S.C. § 1453 (class action removal — if applicable)
+  - Caterpillar Inc. v. Lewis, 519 U.S. 61 (1996)
+
+trigger_defects:
+  - LACK_OF_COMPLETE_DIVERSITY (co-citizen defendant in forum state)
+  - FORUM_DEFENDANT_RULE (28 USC 1441(b)(2) — properly joined forum-state defendant not removed)
+  - DEFECTIVE_REMOVAL_NOTICE (failure to comply with 28 USC 1446 procedural requirements)
+  - LATE_REMOVAL (removal after 30 days from first removable filing)
+  - NON_DIVerse_DEFENDANT_REMOVAL (only non-diverse defendants may remove)
+
+structure:
+  - block: boilerplate/caption_federal
+  - block: sections/introduction
+  - block: sections/jurisdictional_basis
+  - block: arguments/removal_defect_complete_diversity
+  - block: arguments/removal_defect_forum_defendant_rule
+  - block: arguments/removal_procedure_defective
+  - block: arguments/jurisdiction_lacks_at_time_of_removal
+  - block: arguments/caterpillar_v_lewis_statutory_violation
+  - block: sections/remand_request
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+
+resolution_path: obsidian_sync/templates/filing_types/frcp_12_motion_to_rem.yaml

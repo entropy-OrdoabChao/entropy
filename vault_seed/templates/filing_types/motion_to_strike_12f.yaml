@@ -1,0 +1,54 @@
+---
+id: motion_to_strike_12f
+title: Motion to Strike Under FRCP 12(f)
+description: >
+  Motion to strike immaterial, impertinent, or scandalous matter from pleadings.
+  The court may also strike insufficient legal arguments. This is a pre-answer
+  motion available to any party and may be filed by the court sua sponte.
+  
+  FRCP 12(f) grants the court broad discretion to strike from the pleadings
+  "immaterial, impertinent, or scandalous matter." Circuit courts have
+  uniformly expanded this to include striking "insufficient legal arguments."
+  The standard is abuse of discretion.
+
+  Reciprocity angle: courts routinely strike pro se pleadings under 12(f)
+  for "scandalous" or "impertinent" matter — the same standard must apply
+  equally when the pro se party seeks to strike opponent filings that contain
+  scandalous, immaterial, or unsupported content. Corpus supports equal
+  application.
+
+court: federal_district
+required_authorities:
+  - Fed. R. Civ. P. 12(f) — Motion to strike
+  - Franks v. Bowman Transp. Co., 424 U.S. 747 (1976) — Broad discretion under 12(f)
+  - Peazant v. Current Bus. Co., 545 F.2d 70 (5th Cir. 1976) — Abuse discretion standard
+  - 3d Cir. L.A.R. 12.2 — Striking insufficient legal arguments
+  - Fed. R. App. P. 38 — Sanctions for frivolous appeals (companion)
+trigger_defects:
+  - insufficient_legal_arguments
+  - scandalous_content
+  - immaterial_pleadings
+  - impertinent_matter
+  - court_failed_to_strike
+  - sua_sponte_strike
+required_facts:
+  - case_id
+  - caption
+  - offending_filing_number
+  - grounds_for_strike — specific grounds: scandalous/impertinent/insufficient_argument
+  - request_stripped_portion — what portion is being asked to be stricken
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_enforcement
+  - block: sections/standard_of_review
+  - block: arguments/grounds_for_strike
+  - block: arguments/reciprocal_application
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

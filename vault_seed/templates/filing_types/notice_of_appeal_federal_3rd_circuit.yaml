@@ -1,0 +1,113 @@
+id: notice_of_appeal_federal_3rd_circuit
+title: Notice of Appeal — U.S. Court of Appeals for the Third Circuit
+description: |
+  A Notice of Appeal filed under FRAP 3 and FRAP 4(a)(1) to the U.S. Court of Appeals for the
+  Third Circuit from a final judgment of the Eastern District of Pennsylvania. This is the FIRST
+  document in the federal appellate process — it is NOT a brief. It starts the appeal clock.
+
+  This filing-type uses the 3rd Circuit caption format with the 28 U.S.C. § 1291 appeal basis.
+  The notice must identify:
+  - The district court (EDPA)
+  - The docket number of the judgment being appealed
+  - The parties to the appeal
+  - The specific order or judgment from which the appeal is taken
+
+  Key deadlines:
+  - FRAP 4(a)(1)(A): Notice of appeal must be filed within 30 days of the judgment being appealed
+  - FRAP 3: Commencing the appeal — must name the appellant and identify the judgment
+  - FRAP 5(a): Designation of the record and transcript — must be filed with the notice or within 14 days
+  - FRAP 31(b): Appellant's brief — within 40 days after record is filed
+  - FRAP 31(c): Extension of time for briefs — requires consent or motion for good cause
+
+  For pro se litigants: the 3rd Circuit requires liberal construction of pro se filings.
+  See Haines v. Kerner, 404 U.S. 519 (1972) and Erickson v. Pardus, 551 U.S. 89 (2007).
+
+  3rd Circuit Local Appellate Rules (L.A.R.) apply:
+  - L.A.R. 3.1: Notice to trial judge; opinion in support of order
+  - L.A.R. 24.1: Designation of record and transcript
+  - L.A.R. 28.1: Briefs and appendix
+  - L.A.R. 31.1: Oral argument
+
+  Extension for excusable neglect: FRAP 4(a)(3) allows the district court to extend the time
+  for excusable neglect or good cause, but the extension may not exceed 30 days past the time
+  for which an extension might have been granted. FRAP 4(a)(5) allows a motion for extension
+  within 30 days after the time for which an extension might have been granted under FRAP 4(a)(3).
+
+  FRAP 4(a)(4) tolls the appeal clock if a party files a motion under FRCP 50, 52, or 59 — but
+  NOT FRCP 59(e). A FRCP 59(e) motion does NOT toll the FRAP 4(a)(1) deadline.
+
+  FRAP 4(a)(6) allows reopening for failure to timely file within 21 days of notice of judgment.
+
+  28 U.S.C. § 1291 provides jurisdiction: "The courts of appeals shall have jurisdiction of appeals
+  from all final decisions of the district courts of the United States."
+court: federal_appellate_3rd_cir
+
+required_authorities:
+  - citation: "Fed. R. App. P. 3"
+    proposition: "Commencing appeal — must name the appellant and identify the judgment or order being appealed."
+  - citation: "Fed. R. App. P. 4(a)(1)(A)"
+    proposition: "30-day deadline for filing a notice of appeal in a civil case."
+  - citation: "Fed. R. App. P. 4(a)(3)"
+    proposition: "Extension for excusable neglect or good cause — district court may extend up to 30 days past the time for which an extension might have been granted."
+  - citation: "Fed. R. App. P. 4(a)(4)"
+    proposition: "Tolling of the appeal clock if a party files a motion under FRCP 50, 52, or 59 — but NOT FRCP 59(e)."
+  - citation: "Fed. R. App. P. 4(a)(5)"
+    proposition: "Extension for mistake, inadvertence, excusable neglect, or justifiable excuse — motion within 30 days after the time for which an extension might have been granted."
+  - citation: "Fed. R. App. P. 4(a)(6)"
+    proposition: "Reopening for failure to timely file — court may reopen if party did not receive notice of judgment within 21 days and files within 21 days of notice."
+  - citation: "Fed. R. App. P. 5(a)(1)"
+    proposition: "Designation of the record and transcript — must be filed with the notice or within 14 days."
+  - citation: "Fed. R. App. P. 28(a)(1)"
+    proposition: "Briefs — appellant's brief on the merits."
+  - citation: "Fed. R. App. P. 31(b)"
+    proposition: "Appellant's brief must be filed within 40 days after the record is filed."
+  - citation: "28 U.S.C. § 1291"
+    proposition: "Jurisdiction of appeals from all final decisions of the district courts of the United States."
+  - citation: "3rd Cir. L.A.R. 3.1"
+    proposition: "Notice to trial judge; opinion in support of order — no later than 30 days after docketing of the notice of appeal."
+  - citation: "3rd Cir. L.A.R. 24.1"
+    proposition: "Designation of record and transcript."
+  - citation: "3rd Cir. L.A.R. 28.1"
+    proposition: "Briefs and appendix."
+  - citation: "3rd Cir. L.A.R. 31.1"
+    proposition: "Oral argument."
+  - citation: "Haines v. Kerner, 404 U.S. 519 (1972)"
+    proposition: "Pro se liberal construction — pro se filings must be held to less stringent standards than those drafted by trained lawyers."
+  - citation: "Erickson v. Pardus, 551 U.S. 89 (2007)"
+    proposition: "Liberal construction of pro se filings — pro se complaints are to be held to less stringent standards than formal pleadings."
+
+trigger_defects:
+  - final_judgment_entered
+  - dismissal_with_prejudice
+  - adverse_final_order
+  - FATAL/PROCEDURAL
+  - FATAL/JURISDICTION
+  - FATAL/APPEAL
+  - FATAL/OPERATIVE_TEXT
+  - FATAL/NO_WORD_ADDED_OR_SUBTRACTED
+  - SERIOUS/OPERATIVE_TEXT
+  - SERIOUS/NO_WORD_ADDED_OR_SUBTRACTED
+  - judge_inaction
+  - failure_to_act
+
+required_facts:
+  - case_id
+  - caption
+  - judgment_appealed
+  - judgment_date
+  - parties_appealed
+  - claims_appealed
+  - is_pro_se
+
+structure:
+  - block: boilerplate/caption_appellate_3rd_cir
+  - block: sections/notice_of_appeal_header
+  - block: sections/judgment_appealed
+  - block: sections/parties_appealed
+  - block: sections/relief_sought
+  - block: boilerplate/signature_block_pro_se
+    when: is_pro_se == true
+  - block: boilerplate/signature_block_counsel
+    when: is_pro_se == false
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

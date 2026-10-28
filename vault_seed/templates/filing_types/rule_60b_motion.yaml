@@ -1,0 +1,69 @@
+id: rule_60b_motion
+title: Plaintiff's Motion for Relief from Judgment Under FRCP 60(b)
+description: |
+  Motion for relief from a final judgment under FRCP 60(b)(2), (b)(3), or
+  (b)(6). This motion is a substitute for a direct appeal when no appeal
+  was taken.
+
+  Grounds:
+  - FRCP 60(b)(2): Newly discovered evidence that could not have been found
+    with due diligence at trial.
+  - FRCP 60(b)(3): Fraud, misrepresentation, or misconduct by an opposing party.
+  - FRCP 60(b)(6): Any other reason that justifies relief — the catch-all.
+
+  One-year clock for (b)(2) and (b)(3) — must be filed within one year of
+  the judgment or order. (b)(6) has no fixed time limit but requires
+  extraordinary circumstances.
+
+  Unlike FRCP 60(b)(4) (voidness), this targets errors that occurred within
+  the court's jurisdiction — the court had power but made a mistake.
+
+court: federal_district
+required_authorities:
+  - FRCP 60(b)(2) — Newly discovered evidence; one-year limit
+  - FRCP 60(b)(3) — Fraud, misrepresentation, or misconduct; one-year limit
+  - FRCP 60(b)(6) — Catch-all; extraordinary circumstances
+  - FRCP 60(c)(1) — One-year time limit for (b)(1)-(3) motions
+  - Hazel-Atlas Glass Co. v. Hartford-Empire Co., 322 U.S. 238 (1944) — Fraud standard
+  - United States v. A & P Trucking Co., 338 U.S. 121 (1949) — Fraud standard
+  - Fed. R. Civ. P. 4(l) — Proof of service establishes service of record
+  - Fed. R. Evid. 201(b)(2) — Judicial notice of court record
+trigger_defects:
+  - FRCP_60B_eligible
+  - SERIOUS/FRAUD_ON_COURT
+  - judgment_contradicts_docket
+  - court_relied_on_fraud
+  - FATAL/JURISDICTION
+  - void_order
+  - service_finding_contradicted_by_docket
+  - misapplied_authority
+  - ignored_precedent
+required_facts:
+  - case_id
+  - caption
+  - defendant_targeted — defendant whose judgment/order is being challenged
+  - rule_60b_ground — "b2" (newly discovered evidence) or "b3" (fraud/misrepresentation) or "b6" (catch-all)
+  - judgment_or_order_targeted — ECF number of the judgment/order
+  - evidence — evidence supporting the relief (e.g., newly discovered evidence, fraud evidence)
+  - one_year_clock_expired — boolean, whether the one-year clock has expired (for b2/b3)
+  - extraordinary_circumstances — for b6, describe why extraordinary circumstances exist
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_federal
+  - block: sections/standard_of_review
+  - block: arguments/60b2_newly_discovered_evidence
+    when: rule_60b_ground == "b2"
+  - block: arguments/60b3_fraud_misrepresentation
+    when: rule_60b_ground == "b3"
+  - block: arguments/60b6_catchall
+    when: rule_60b_ground == "b6"
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

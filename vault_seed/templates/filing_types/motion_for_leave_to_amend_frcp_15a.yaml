@@ -1,0 +1,82 @@
+id: motion_for_leave_to_amend_frcp_15a
+title: Plaintiff's Motion for Leave to Amend the Complaint (FRCP 15(a))
+description: |
+  Motion for leave to amend the complaint to cure an element-deficiency
+  dismissal (e.g., FRCP 12(b)(6)/12(c) "failure to allege facts supporting
+  the elements of the claim") — the procedural vehicle that converts a
+  with-prejudice 12(c) judgment on the pleadings back into a live case
+  BEFORE the court's element-specific findings go unchallenged.
+
+  FRCP 15(a)(2) standard (corpus-verbatim, pa_legal_defs): "The court shall
+  freely give leave to amend when justice so requires." The gate is narrow:
+  leave is DENIED only where the proposed amendment would be FUTILE (i.e.,
+  no set of facts consistent with the amendment could state a claim), or
+  would cause undue delay, surprise, or prejudice. A court may not deny leave
+  on speculative or conclusory grounds; it must engage with the SPECIFIC
+  amendment the moving party proposes.
+
+  RELEVANT TO {{CASE_ID}}: Dkt 180 (07/31/2026) granted TransUnion's
+  and GreenSky's 12(c) motions and dismissed all counts WITH PREJUDICE, on
+  the ground that the complaint "failed to allege facts" supporting three
+  elements of §1681s-2(b) — (1) inaccurate information, (2) a dispute filed
+  with the CRA, (3) CRA notice to the furnisher. This is the classic
+  element-deficiency 12(c) dismissal. The cleanest pre-59/60 attack on it is
+  FRCP 15(a) leave to amend: propose a complaint that DOES allege the
+  missing elements (the record already shows admissions by conduct at ECF 112,
+  updated/removed tradeline data, 1099-C evidence) and force the court to
+  confront whether the amendment is truly futile — which it cannot be, given
+  the record already contains the facts the court said were missing.
+
+  RECIPROCITY: the same court that later (06/01/2026, ECF 67) denied
+  Avant's and Equifax's motions for leave to amend on the futility
+  standard (ECF 58/62) has already applied FRCP 15(a) in this case — so the
+  "futility" gate is live, the standard is known to this court, and a
+  plaintiff-side motion that specifically identifies the amendment
+  (not a bare "I want to amend") is the vehicle that forces the court to
+  show the amendment is futile rather than simply concluding it is.
+
+court: any
+
+required_authorities:
+  - Fed. R. Civ. P. 15(a)(1) (one amendment as of right within 21 days)
+  - Fed. R. Civ. P. 15(a)(2) (leave to amend; "freely given when justice so requires")
+  - Fed. R. Civ. P. 15(b) (amendments after judgment / by operation of law)
+  - Haines v. Kerner, 404 U.S. 519 (1972) (pro se liberal construction)
+  - Celotex Corp. v. Catrett, 477 U.S. 317 (1986) (12(c) standard)
+  - 15 U.S.C. §1681s-2(b) (furnisher reinvestigation duty — the element the 12(c) found deficient)
+  - 15 U.S.C. §1681e(b) (reasonable procedures)
+  - 15 U.S.C. §1681i(a) (CRA 30-day reinvestigation duty)
+
+trigger_defects:
+  - SERIOUS/DISMISSAL
+  - FATAL/DISMISSAL
+  - SERIOUS/CLAIM_DEFECT
+  - FATAL/CLAIM_DEFECT
+  - with_prejudice
+  - element_deficiency
+  - 12b6_dismissal
+  - 12c_dismissal
+  - failure_to_state_a_claim
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/standard_for_leave_to_amend
+  - block: arguments/freely_given_when_justice_so_requires
+    when: defect_categories.CLAIM_DEFECT > 0
+  - block: arguments/amendment_not_futile
+    when: defect_categories.CLAIM_DEFECT > 0
+  - block: arguments/record_already_contains_missing_elements
+    when: defect_categories.CLAIM_DEFECT > 0
+  - block: arguments/reciprocity_futility_gate_already_applied
+    when: prior_15a_rulings_in_case > 0
+  - block: sections/proposed_amendment_identification
+    when: has_proposed_amendment == true
+  - block: sections/prayer_for_relief_amend
+  - block: sections/conclusion_amend
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

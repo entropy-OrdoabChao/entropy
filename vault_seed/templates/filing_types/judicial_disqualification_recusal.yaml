@@ -1,0 +1,48 @@
+id: judicial_disqualification_recusal
+title: Judicial Disqualification / Recusal - Affidavit of Bias
+description: |
+  Filing type for requiring a judge's recusal/disqualification via
+  sworn affidavit of bias or conflict of interest. This is a mandatory
+  procedural mechanism - not discretionary. Available under federal
+  statutes (28 U.S.C. 455, 144), state rules (Pa.R.C.P. 25),
+  and appellate rules (Fed. R. App. P. 13).
+  This filing type addresses the JUDGE'S FITNESS to preside, not the
+  merits of the underlying claim.
+
+required_authorities:
+  - 28 U.S.C. 455(a) - "whenever [the judge's] impartiality might reasonably be questioned"
+  - 28 U.S.C. 455(b) - specific conflicts of interest, financial interest, personal bias
+  - 28 U.S.C. 455(c) - extra-judicial bias from personal friendship
+  - 28 U.S.C. 455(d) - judge's spouse or minor child financial interest
+  - 28 U.S.C. 455(e) - ex parte communications prohibition
+  - 28 U.S.C. 144 - affidavit of personal bias or prejudice against district judge
+  - Pa.R.C.P. 25 - recusal upon affidavit of bias or prejudice
+  - Fed. R. App. P. 13 - recusal of appellate judges
+
+trigger_defects:
+  - FATAL/JUDICIAL_BIAS
+  - FATAL/CONFLICT_OF_INTEREST
+  - FATAL/PERSONAL_BIAS
+  - FATAL/EX_PATE_COMMUNICATION
+  - FATAL/SPOUSE_FINANCIAL_INTEREST
+  - PRO SE/JUDICIAL_HARASSMENT
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/recusal_grounds
+  - block: arguments/personal_bias_or_prejudice
+  - block: arguments/conflict_of_interest
+  - block: arguments/impartiality_might_reasonably_be_questioned
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: sections/affidavit_of_bias
+  - block: sections/certificate_of_good_faith
+  - block: boilerplate/proposed_order
+
+resolution_path: obsidian_sync/templates/filing_types/judicial_disqualification_recusal.yaml

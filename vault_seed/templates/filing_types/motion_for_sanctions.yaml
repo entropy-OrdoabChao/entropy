@@ -1,0 +1,48 @@
+id: motion_for_sanctions
+title: Plaintiff's Motion for Sanctions Under FRCP 11 and 28 U.S.C. § 1927
+description: |
+  Motion for sanctions under FRCP 11(b) and FRCP 11(c) for defective legal
+  contentions — non-binding authority, false representation, improper purpose.
+  Also includes 28 U.S.C. § 1927 sanctions against counsel for multiplying
+  proceedings unreasonably and vexatiously.
+
+court: federal_district
+required_authorities:
+  - FRCP 11(b) — Representations to the court
+  - FRCP 11(c) — Sanctions (including safe harbor)
+  - FRCP 11(d) — Certifying a motion under FRCP 11
+  - FRCP 11(e) — Inherent power
+  - 28 U.S.C. § 1927 — Counsel liability for excessive costs
+  - Chambers v. NASCO, Inc., 501 U.S. 32 (1991) — Inherent power standard
+  - In re Prudential Ins. Co. America Sales Practice Litig., 278 F.3d 175 (3d Cir. 2002) — 3d Cir sanctions standard
+  - 3d Cir. L.A.R. 8.1 — Sanctions practice in 3d Cir
+court_rules:
+  - FRCP 11(c)(2) — 21-day safe harbor notice before filing
+trigger_defects:
+  - FATAL/CROSS_CASE_AUTHORITY
+  - FATAL/CANDOR
+  - SERIOUS/AUTHORITY
+  - FATAL/CONSTRUCTION
+  - SERIOUS/CONSTRUCTION
+  - FATAL/SERVICE
+required_facts:
+  - case_id
+  - caption
+  - defendant_targeted — defendant whose counsel is being sanctioned
+  - counsel_name — name of opposing counsel
+  - counsel_firm — opposing counsel's firm
+  - defect_total — total defects supporting sanctions
+  - safe_harbor_notice_filed — boolean, whether 21-day safe harbor notice was filed
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_federal
+  - block: sections/standard_of_review
+  - block: arguments/fr11_sanctions
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

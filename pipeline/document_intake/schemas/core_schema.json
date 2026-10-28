@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Core Document Extraction Schema",
+  "description": "Master schema for all extracted court documents in Phase 3F.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "doc_id",
+    "doc_path",
+    "content_hash",
+    "extracted_at",
+    "extractor_model",
+    "extractor_prompt_version",
+    "filer",
+    "filer_role",
+    "filing_type",
+    "claims",
+    "positions",
+    "definitions",
+    "deadlines",
+    "attachments",
+    "authorities_cited",
+    "rulings",
+    "extraction_notes"
+  ],
+  "properties": {
+    "doc_id":                    {"type": "string"},
+    "doc_path":                  {"type": "string"},
+    "content_hash":              {"type": "string"},
+    "extracted_at":              {"type": "string"},
+    "extractor_model":           {"type": "string"},
+    "extractor_prompt_version":  {"type": "string"},
+
+    "filer":       {"type": "string"},
+    "filer_role":  {"type": "string", "enum": ["plaintiff", "defendant", "court", "non_party"]},
+    "filing_type": {"type": "string", "enum": ["motion", "motion_to_dismiss", "motion_for_summary_judgment", "motion_for_judgment_on_the_pleadings", "opposition", "reply", "response", "order", "judgment", "exhibit", "praecipe", "answer", "complaint", "brief", "notice", "nef", "affidavit", "declaration", "stipulation", "letter", "correspondence", "petition", "memorandum", "other"]},
+    "filing_date": {"type": ["string", "null"]},
+    "ecf_number":  {"type": ["string", "null"]},
+
+    "subject_defendants": {"type": "array", "items": {"type": "string"}},
+    "subject_claims":     {"type": "array", "items": {"type": "string"}},
+
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "text", "type"],
+        "properties": {
+          "id":   {"type": "string"},
+          "text": {"type": "string"},
+          "page": {"type": ["integer", "null"]},
+          "type": {"type": "string", "enum": ["assertion", "denial", "conclusion", "request"]}
+        }
+      }
+    },
+
+    "positions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "topic", "stance", "supporting_text"],
+        "properties": {
+          "id":              {"type": "string"},
+          "topic":           {"type": "string"},
+          "stance":          {"type": "string", "enum": ["affirmative", "negative", "neutral"]},
+          "supporting_text": {"type": "string"},
+          "page":            {"type": ["integer", "null"]}
+        }
+      }
+    },
+
+    "definitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "term", "definition", "source"],
+        "properties": {
+          "id":         {"type": "string"},
+          "term":       {"type": "string"},
+          "definition": {"type": "string"},
+          "source":     {"type": "string"},
+          "page":       {"type": ["integer", "null"]}
+        }
+      }
+    },
+
+    "deadlines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description"],
+        "properties": {
+          "id":          {"type": "string"},
+          "description": {"type": "string"},
+          "date":        {"type": ["string", "null"]},
+          "rule_basis":  {"type": ["string", "null"]}
+        }
+      }
+    },
+
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "type"],
+        "properties": {
+          "id":                       {"type": "string"},
+          "description":              {"type": "string"},
+          "type":                     {"type": "string", "enum": ["contract", "declaration", "exhibit", "affidavit", "motion", "order", "brief", "pleading", "notice", "letter", "correspondence", "stipulation", "memorandum", "report", "statement", "other"]},
+          "definitions_introduced":   {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+
+    "authorities_cited": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["citation"],
+        "properties": {
+          "citation":    {"type": "string"},
+          "court":       {"type": ["string", "null"]},
+          "proposition": {"type": ["string", "null"]},
+          "page":        {"type": ["integer", "null"]}
+        }
+      }
+    },
+
+    "rulings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "subject", "outcome"],
+        "properties": {
+          "id":                 {"type": "string"},
+          "subject":            {"type": "string"},
+          "outcome":            {"type": "string", "enum": ["granted", "denied", "dismissed", "stricken", "continued", "other"]},
+          "subject_defendants": {"type": "array", "items": {"type": "string"}},
+          "page":               {"type": ["integer", "null"]}
+        }
+      }
+    },
+
+    "extraction_notes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["confidence"],
+      "properties": {
+        "fields_unparseable": {"type": "array", "items": {"type": "string"}},
+        "confidence":         {"type": "string", "enum": ["high", "medium", "low"]},
+        "warnings":           {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

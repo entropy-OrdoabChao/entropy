@@ -1,0 +1,37 @@
+---
+id: motion_to_compel_54b_analysis
+title: Motion to Compel Rule 54(b) Factor Analysis
+description: 'Motion demanding the district court apply the Curtiss-Wright factors
+  for FRCP 54(b) certification when it has dismissed a party with prejudice but
+  refused to certify. This is the active demand filing — not a reconsideration,
+  not a catch-22 response. It compels the court to either certify or show cause
+  why it will not apply the controlling rule.'
+court: federal_district
+required_authorities:
+- Fed. R. Civ. P. 54(b)
+- Curtiss-Wright Corp. v. General Elec. Co., 446 U.S. 1 (1980)
+- Berckeley Inv. Group v. Colkitt, 455 F.3d 195 (3d Cir. 2006)
+- Sussex Drug Prods. v. Kanasco, Ltd., 920 F.2d 1150 (3d Cir. 1990)
+trigger_defects:
+- denial_of_54b_certification
+- DENIAL_OF_54B_CERTIFICATION_WITHOUT_CURTISS_WRIGHT_ANALYSIS
+- conclusory_denial
+- failure_to_analyze_curtiss_wright
+structure:
+- block: boilerplate/caption_federal
+  when: is_federal == true
+- block: sections/introduction
+- block: sections/procedural_history
+- block: sections/factual_statement_federal
+- block: sections/standard_of_review
+- block: arguments/curtiss_wright_factor_analysis
+  when: defendant_dismissed == true
+- block: arguments/frivolous_label_without_analysis_error
+  when: conclusory_denial == true
+- block: arguments/jurisdiction_attack
+  when: defect_categories.JURISDICTION > 0
+- block: sections/prayer_for_relief
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service
+- block: boilerplate/proposed_order

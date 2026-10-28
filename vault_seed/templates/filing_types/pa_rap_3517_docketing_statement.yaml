@@ -1,0 +1,102 @@
+id: pa_rap_3517_docketing_statement
+title: Pennsylvania Superior Court Docketing Statement (Pa.R.A.P. 3517)
+description: >
+  The Civil Docketing Statement (AOPC 3020CIV form) completed and returned to the
+  Superior Court Prothonotary AFTER a Notice of Appeal has been filed. It is a
+  FORM, not a brief — it lets the court schedule argument/submission of the appeal.
+  Filing it arms the pro se appellant against the most common procedural trap that
+  kills an appeal that was otherwise properly noticed.
+
+  Key deadlines and consequence:
+  - Pa.R.A.P. 3517: whenever a notice of appeal to the Superior Court is filed, the
+    Prothonotary sends the docketing statement form; it must be COMPLETED AND
+    RETURNED within TEN (10) DAYS.
+  - CONSEQUENCE (verbatim, corpus pa_code_t210_ch35): "Failure to file a docketing
+    statement may result in DISMISSAL of the appeal." This is the filing's spine.
+  - The 10-day clock runs from the Prothonotary's sending of the form (i.e., after
+    the notice of appeal is docketed), NOT from the order appealed from.
+
+  What the form captures (the four sections + attachments):
+  - A. Case identification — caption, Superior Court docket number (e.g. 1934 EDA
+    2026), party(ies) filing the appeal and whether appearing personally (sui juris).
+  - B. Timeliness — date of the order appealed from, date of any Pa.R.C.P. 236
+    notice, date the notice of appeal was filed, whether reconsideration was requested.
+  - C. Appeal from the trial court — whether the order is final and appealable as of
+    right, the governing finality rule (Pa.R.A.P. 311(a)(4) dissolution of an
+    injunction/writ; or Pa.R.A.P. 341 final order), and how issues were preserved
+    (Pa.R.A.P. 1925(b) concise statement of errors, Pa.R.A.P. 1925(a) opinion).
+  - D. Related cases — any related/cross-appeal docket numbers across the appellant's
+    portfolio.
+  - E. Description of appeal — brief description of the action and result below, and
+    the issues to be raised on appeal.
+  - Attachments checklist: the trial court order(s) appealed from, the notice of
+    appeal, an up-to-date trial court docket, and the trial court's Pa.R.A.P. 1925(a)
+    opinion (or a note that it is pending).
+
+  RECIPROCITY / LEVER angle: the 10-day form is a DUTY the Prothonotary triggers and
+  the appellant must meet — but it also exposes the record on the trial court's
+  finality and the preservation chain (1925(a)/(b)). When the trial court sua sponte
+  acted beyond the parties' requests (dissolving a writ, striking a praecipe), the
+  docketing statement's Section C is where the appellant states the finality rule the
+  court relied on and how the error was preserved — the same rules the trial court
+  invoked bind the record it hands up.
+
+  This filing-type uses the PA Superior Court caption format. It is filed and served
+  on each appellee AFTER the notice of appeal, and is the prerequisite to the court
+  scheduling briefing and argument.
+
+court: PA_SUPERIOR
+required_authorities:
+  - citation: "Pa.R.A.P. 3517"
+    proposition: "Docketing Statement Form. Whenever a notice of appeal to the Superior Court is filed, the Prothonotary shall send a docketing statement form which shall be completed and returned within ten (10) days in order that the Court shall be able to more efficiently and expeditiously administer the scheduling of argument and submission of cases on appeal. Failure to file a docketing statement may result in dismissal of the appeal. [corpus: pa_code_t210_ch35]"
+  - citation: "Pa.R.A.P. 907"
+    proposition: "Docketing of Appeal — upon receipt of the papers, the Prothonotary enters the appeal on the docket and gives written notice of the docket number to the trial court clerk, the appellant, and persons in the proof of service. [corpus: pa_code_t210_ch9]"
+  - citation: "Pa.R.A.P. 311(a)(4)"
+    proposition: "Interlocutory appeals as of right — an appeal may be taken as of right from an order that dissolves, modifies, or refuses an injunction (operative for a sua sponte dissolution of a writ of execution/attachment). [corpus: pa_code_t210_ch35]"
+  - citation: "Pa.R.A.P. 341"
+    proposition: "Final orders; generally — an appeal may be taken as of right from any final order of a trial court that disposes of all claims and of all parties. [corpus: pa_code_t210_ch35]"
+  - citation: "Pa.R.A.P. 1925(a)"
+    proposition: "Opinion in support of order — the trial judge's obligation to state reasons for the order; the docketing statement's Section C and attachments track whether this opinion was filed. [corpus: pa_code_t210_ch19]"
+  - citation: "Pa.R.A.P. 1925(b)"
+    proposition: "Concise Statement of Errors Complained of on Appeal — filed within 21 days of the order directing it; the docketing statement's Section C cites it as the preservation vehicle. [corpus: pa_code_t210_ch19]"
+
+trigger_defects:
+  - notice_of_appeal_filed
+  - docketing_statement_due
+  - superior_court_docketed
+  - FATAL/APPEAL
+  - FATAL/PROCEDURAL
+  - procedural_form_due
+  - Pa_RAP_3517
+  - Pa_RAP_907
+  - Pa_RAP_311_a_4
+
+structure:
+  - type: caption
+    block: boilerplate/caption_pa_superior
+  - type: section
+    block: sections/introduction
+    content: "State that this is the Civil Docketing Statement (AOPC 3020CIV) completed and returned to the Prothonotary of the Superior Court pursuant to Pa.R.A.P. 3517, for the identified appeal, and that a copy is served on each appellee. State the 10-day deadline and the dismissal consequence."
+  - type: section
+    block: appellate/statement_of_issues
+    content: "SECTION A — CASE IDENTIFICATION. Give the case caption, the Superior Court docket number (e.g. 0000 EDA 2026), and the party or parties filing the appeal, noting whether the appellant appears personally (sui juris) without an attorney."
+  - type: section
+    block: sections/procedural_history
+    content: "SECTION B — TIMELINESS OF APPEAL. Record the date of the order appealed from (with Control No.), the date of any Pa.R.C.P. 236 notice, the date the notice of appeal was filed and docketed, and whether reconsideration was requested in the lower court. List the related orders (all adverse orders in the same appeal) so none is omitted."
+  - type: section
+    block: appellate/jurisdictional_statement
+    content: "SECTION C — APPEAL FROM THE TRIAL COURT. State whether the order appealed from is final and appealable as of right, and the governing finality rule (Pa.R.A.P. 311(a)(4) dissolution of an injunction/writ; alternatively Pa.R.A.P. 341 final order). State how the issues were preserved (the Pa.R.A.P. 1925(b) concise statement of errors filed of record and served, and the pending Pa.R.A.P. 1925(a) opinion)."
+  - type: section
+    block: sections/procedural_history
+    content: "SECTION D — RELATED CASES. Tabulate every related and cross-appeal docket number across the appellant's portfolio (trial court and appellate), or state 'none' for a cross-appeal."
+  - type: section
+    block: sections/conclusion
+    content: "SECTION E — DESCRIPTION OF APPEAL. Give a brief description of the action and the result below (e.g., a civil execution/garnishment matter in which the trial court sua sponte dissolved the writ and struck the praecipe without findings of fact or conclusions of law), and enumerate the specific issues to be raised on appeal with their governing rules (Pa.R.C.P. 1024 verification; Pa.R.C.P. 3146(a) garnishee default; Pa.R.C.P. 3111(b) attachment by operation of rule; Pa.R.E. 201(b)(2) mandatory judicial notice)."
+  - type: section
+    block: boilerplate/attachments_checklist
+    content: "ATTACHMENTS (check all attached): (1) the trial court's order(s) appealed from; (2) the notice of appeal; (3) an up-to-date trial court docket; (4) the trial court's Pa.R.A.P. 1925(a) opinion, or a note that it is pending with the 1925(b) statement already filed."
+  - type: section
+    block: sections/prayer_for_relief
+    content: "Prayer for: acceptance of the docketing statement; that the appeal be scheduled for briefing and argument; and such other relief as the court deems just."
+  - type: boilerplate
+    block: boilerplate/certificate_of_service

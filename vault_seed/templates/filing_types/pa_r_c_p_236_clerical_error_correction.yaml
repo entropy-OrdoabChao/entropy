@@ -1,0 +1,93 @@
+# Pa.R.C.P. 236 — Correction of Clerical Errors in a Judgment
+# Created 2026-08-30 by DISCOVER-VEHICLE (kanban t_8aa45bbd).
+# Copied from the closest baseline: motion_for_post_judgment_interest.yaml
+# (same forum state_pa_ccp, same post-judgment posture, same block inventory).
+# Grounding: pa_legal_defs (Pa.R.C.P. 236 rule text, corpus score 0.802);
+# pa_code_t210_ch65 § 65.2 (prothonotary's ministerial duty); frb_chicago_fractional
+# (Black's definition: scrivener's error / vitium clerici, correctable at any time).
+# arsenal_critic will compose-check this on its next run and quarantine if broken.
+
+id: pa_r_c_p_236_clerical_error_correction
+title: Motion to Correct Clerical Error in Judgment (Pa.R.C.P. 236)
+description: >
+  Motion filed in PA state court to correct a clerical error in a recorded
+  judgment under Pa.R.C.P. 236. The rule provides that the court may correct a
+  clerical error in a judgment at any time, upon motion of a party or on its
+  own initiative. A clerical error is a mistake in recording the judgment that
+  does not affect the substantive rights of the parties, and the court may
+  correct it without requiring a post-trial motion under Pa.R.C.P. 227.1.
+
+  Key provisions of Pa.R.C.P. 236:
+  - No deadline: clerical corrections may be made at any time before the
+    judgment is satisfied
+  - Court initiative: the court may correct clerical errors on its own
+  - Not post-trial: no Pa.R.C.P. 227.1 (post-trial motion) filing required
+  - Definition (Black's, corpus): a mistake in recording the judgment that does
+    not affect the substantive rights of the parties; also termed scrivener's
+    error / vitium clerici; correctable at any time even after judgment
+  - Reciprocal duty: the prothonotary is charged with the clerical duty of
+    entering judgments and orders AT THE DIRECTION OF THE COURT (42 Pa.C.S.
+    § 65.2(2); Pa.R.A.P. 2521(a)). If the record contradicts what the court
+    actually ordered, the entry is a clerical error — the recording officer
+    bound by the court's order must conform the entry to that order.
+
+  This is NOT a motion to open or vacate the judgment (Pa.R.C.P. 237.1 / 227.1)
+  and NOT relief from judgment — it is a ministerial correction that makes the
+  recorded judgment conform to the judgment the court actually directed. It
+  matters where post-judgment interest under 42 Pa.C.S. § 8101 accrues from
+  the recorded principal: an uncorrected recording error compounds the wrong
+  base amount for the entire life of the judgment.
+
+court: state_pa_ccp
+required_authorities:
+  - citation: "Pa.R.C.P. 236"
+    proposition: "The court may correct a clerical error in a judgment at any time, upon motion of a party or on its own initiative. A clerical error is a mistake in recording the judgment that does not affect the substantive rights of the parties. Corrections may be made at any time before the judgment is satisfied, without a Pa.R.C.P. 227.1 post-trial motion."
+  - citation: "42 Pa.C.S. § 65.2(2)"
+    proposition: "The prothonotary is charged with the clerical duties of the Court, including issuing, processing, and entering judgments and orders at the direction of the Court — a ministerial recording duty, not a substantive one."
+  - citation: "Pa.R.A.P. 2521(a)"
+    proposition: "Entry of judgment is ministerial: the prothonotary shall prepare, sign and enter the judgment following the court's opinion/order — the recorded entry must conform to what the court directed."
+  - citation: "Black's Law Dictionary (corpus: frb_chicago_fractional)"
+    proposition: "Clerical error: a mistake in recording the judgment that does not affect the substantive rights of the parties (scrivener's error; vitium clerici). A court can correct a clerical error at any time, even after judgment has been entered. See Fed. R. Civ. P. 60(a)."
+  - citation: "42 Pa.C.S. § 8101"
+    proposition: "Post-judgment interest at 6% per annum accrues from entry of judgment until satisfied — so a misrecorded principal corrupts the interest base for the entire life of the judgment."
+
+trigger_defects:
+  - judgment_entered
+  - post_judgment
+  - recording_mismatch
+  - amount_discrepancy
+  - entry_contradicts_order
+  - SERIOUS/RECORDING
+  - FATAL/RECORDING
+
+structure:
+  - type: caption
+    block: boilerplate/caption_state_pa_ccp
+  - type: section
+    block: sections/introduction
+    content: "State that this is a Motion to Correct a Clerical Error in the recorded judgment under Pa.R.C.P. 236 — ministerial, no deadline, no post-trial-motion requirement. Identify the judgment, its entry date, and the specific recording discrepancy."
+  - type: section
+    block: sections/procedural_history
+    content: "Trace the judgment entry, the written order or praecipe/affidavit documenting the amount the court directed, and the exact discrepancy between the recorded entry and the court-directed amount (e.g., recorded principal vs. documented principal)."
+  - type: section
+    block: sections/factual_statement_enforcement
+    content: "Show the two figures side by side: what the record actually directed (order / praecipe / affidavit of damages) and what the prothonotary entered. State the difference precisely and note that no party's substantive right changed — only the recording diverged from the court's own direction."
+  - type: section
+    block: sections/definitions_schedule_canons
+    content: "Define 'clerical error' per Black's (mistake in recording that does not affect the substantive rights of the parties; scrivener's error; vitium clerici) and 'prothonotary' per 42 Pa.C.S. § 65.2 (officer charged with clerical duties, entering judgments and orders at the direction of the Court). Contrast with substantive error (which would require Pa.R.C.P. 227.1/237.1)."
+  - type: argument
+    block: arguments/procedural_defect
+    content: "Argue that Pa.R.C.P. 236 is permissive for the court but available to the party: correction may be made at any time before satisfaction, upon motion of a party. The recorded judgment contradicts the written direction of the Court; the recording officer's duty (42 Pa.C.S. § 65.2(2); Pa.R.A.P. 2521(a)) is to enter the judgment AS DIRECTED — the entry must conform to the order, not the reverse."
+  - type: argument
+    block: arguments/void_order_misuse
+    content: "Argue this is clerical, not substantive: the court already decided the amount; the entry merely fails to reflect it. Correcting it does not reopen the judgment, does not require Pa.R.C.P. 227.1 post-trial procedure, and is ministerial. Flag that under 42 Pa.C.S. § 8101 the interest base has been running on the wrong principal since entry — the correction restores the correct base prospectively and cures the compounding error."
+  - type: section
+    block: sections/conclusion
+    content: "Request entry of an order correcting the recorded judgment to conform to the amount the Court directed, with post-judgment interest computed from the corrected principal per 42 Pa.C.S. § 8101."
+  - type: section
+    block: sections/prayer_for_relief
+    content: "Prayer for: (1) correction of the clerical error in the recorded judgment per Pa.R.C.P. 236; (2) post-judgment interest from entry of judgment at 6% per annum on the corrected principal; (3) costs; (4) such other relief as the court deems just."
+  - type: boilerplate
+    block: boilerplate/certificate_of_service
+  - type: boilerplate
+    block: boilerplate/proposed_order

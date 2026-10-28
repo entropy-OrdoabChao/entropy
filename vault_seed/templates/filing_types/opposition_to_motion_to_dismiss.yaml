@@ -1,0 +1,44 @@
+﻿id: opposition_to_motion_to_dismiss
+title: Plaintiff's Opposition to Motion to Dismiss
+description: |
+  Opposition brief responding to defendant's 12(b)(1) or 12(b)(6)
+  motion to dismiss.
+court: any
+required_authorities:
+  - Fed. R. Civ. P. 12(b)(1)
+  - Fed. R. Civ. P. 12(b)(6)
+  - Ashcroft v. Iqbal, 556 U.S. 662 (2009)
+  - Bell Atl. Corp. v. Twombly, 550 U.S. 544 (2007)
+  - Haines v. Kerner, 404 U.S. 519 (1972)
+trigger_defects:
+  - SERIOUS/AUTHORITY
+  - FATAL/AUTHORITY
+  - SERIOUS/DISMISSAL
+  - FATAL/DISMISSAL
+  - FATAL/JURISDICTION
+  - dismissal
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/factual_statement_federal
+    when: posture != 'post-judgment'
+  - block: sections/factual_statement_enforcement
+    when: posture == 'post-judgment'
+  - block: sections/statement_of_facts
+  - block: sections/procedural_history
+  - block: sections/standard_of_review
+  - block: arguments/failure_to_state_claim
+    when: defect_categories.CLAIM_DEFECT > 0
+  - block: arguments/jurisdiction_attack
+    when: defect_categories.JURISDICTION > 0
+  - block: arguments/haines_v_kerner_standard
+    when: defect_categories.DISMISSAL > 0
+  - block: arguments/non_binding_authority
+    when: defect_categories.AUTHORITY > 0
+  - block: sections/prayer_for_relief_opposition
+  - block: sections/conclusion_opposition
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

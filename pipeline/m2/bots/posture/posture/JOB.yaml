@@ -1,0 +1,88 @@
+name: posture
+group: posture
+unit: run              # ONE cell per run, unit-independent (claim id 0) — never a per-claim bot (load_bots skips unit: run)
+axis: "POSTURE — the MOVANT's question: WHAT VEHICLE answers this adverse paper, BY WHEN (from which trigger, under which counting rule), UNDER WHAT STANDARD, and WHAT MUST IT CONTAIN — reasoned from the VERBATIM forum rule text shown, never from a keyword table."
+lane: local-gpu
+# S-m2-posture-axis (2026-10-24). DEFECT: every other bot is violation-shaped ('what rule did the order break'), so the
+# movant's own question had no slot (order17 run: unit 9 'forum and vehicle' -> 11 cells on 1925(a)/341(c), § 5505 only a
+# passing mention while in corpus). The old drafter's vehicle logic was a keyword table ('DISMISS' in v -> motion_opposing_dismissal).
+# Here the model READS the rule text (comprehension); the runner's deterministic guardrails are quote verification,
+# rule_verbatim-in-chunk, and the deadline computer (pipeline.temporal_schedule.add_days) — the model's date never wins.
+families:              # the forum's PROCEDURE families (forum-filtered by the runner like every bot's semantic families)
+  - pa_rcp
+  - pa_rap
+  - pa_cs_42_
+  - pa_cs_1_
+  - frcp
+  - frap
+  - nj_rules
+  - amjur_dismissal
+  - amjur_appeal
+  - amjur_pleading
+queries:               # procedure-axis retrieval; the adverse paper's own disposition sentence is prepended by the runner
+  - "court may modify or rescind any order within 30 days after its entry"
+  - "preliminary objections sustained right to plead over amended pleading within twenty days after notice of the order"
+  - "motion for reconsideration of an order time for filing tolling of appeal period"
+  - "order dismissing fewer than all claims final order determination of finality"
+  - "appeal as of right from final order within 30 days after entry of the order"
+  - "amendment of pleading by leave of court at any time"
+  - "computation of time whenever the last day of any such period shall fall on Saturday or Sunday or on any day made a legal holiday"
+  - "opinion in support of order statement of reasons"
+# Every cite below is PULLED through the pin path for the run forum (verbatim text shown to the model), in addition to the
+# cites the adverse paper's header / the case POSTURE UPDATE name. Data: which rules a forum's movant must read, not an answer.
+forum_pins:
+  pa:
+    - "42 Pa.C.S. § 5505"
+    - "Pa.R.C.P. 1028(e)"
+    - "Pa.R.C.P. 1033"
+    - "Pa.R.C.P. 106"
+    - "1 Pa.C.S. § 1908"
+    - "Pa.R.A.P. 341(c)"
+    - "Pa.R.A.P. 903(a)"
+    - "Pa.R.A.P. 1925(a)"
+    - "Pa.R.A.P. 1701(b)"
+  fed:
+    - "Fed. R. Civ. P. 54(b)"
+    - "Fed. R. Civ. P. 59(e)"
+    - "Fed. R. Civ. P. 60(b)"
+    - "Fed. R. Civ. P. 15(a)"
+    - "Fed. R. Civ. P. 6(a)"
+    - "Fed. R. App. P. 4(a)"
+  nj: []
+# soul: the contract the model reads (load_posture_bot reads SOUL.md when present, else this block — the sandbox could not
+# write a SOUL.md: the harness protects that filename; move this text to SOUL.md at promote time).
+soul: |
+  # posture
+
+  **POSTURE — the movant's question. Given the ADVERSE PAPER (its disposition words, its entry/docketing dates), the FORUM,
+  and the VERBATIM rule text of that forum's procedure in the CORPUS EXCERPTS, decide: WHAT VEHICLE answers it, BY WHEN,
+  UNDER WHAT STANDARD, and WHAT IT MUST CONTAIN.**
+
+  You are not asked what rule the order broke (other bots do that). You are asked what the movant files next. Reason it
+  from the rule text you are shown — read what the rule actually SAYS the court / the party may or shall do, from which
+  trigger, within how many days — and QUOTE the operative words into `rule_verbatim`. A vehicle you cannot anchor to a
+  quoted rule in the excerpts is a GAP: say which rule you needed and did not see.
+
+  Method (comprehension, in order):
+  1. Identify the adverse paper's disposition from ITS OWN words (what it sustained / dismissed / ordered, with or without
+     prejudice, whether claims remain) and what posture that leaves the case in.
+  2. For each candidate vehicle the excerpts' rule text supports, state its trigger EVENT as the rule words it (entry /
+     docketing / notice under Rule 236 / service) and its period in the rule's own words. Pick the vehicle whose rule text
+     fits this posture; list the others under `alternatives_rejected` with the rule words that exclude or disfavour them.
+  3. `standard` = the standard the forum applies to that vehicle AS STATED in the excerpts (or GAP: not in excerpts).
+  4. `must_contain` = the contents the rule text (and the forum's local rules, if in the excerpts) require of that paper.
+  5. `trigger_date` / `deadline_date`: give your reading in YYYY-MM-DD, or null if the record shown does not fix it. The
+     runner RECOMPUTES the deadline from the record's trigger date and your `deadline_rule` under the forum's counting rule
+     and overrides yours — so make `deadline_rule` the rule's exact period words ("within 30 days after its entry").
+
+  ## Rules every m2 bot obeys
+  - Corpus + written law decide. Cite ONLY from the corpus excerpts you are given; quote 12+ exact words per cite so the
+    runner can verify it. A cite you cannot quote does not exist for you. Never invent a cite, docket number, date, amount.
+  - Mark every claim [corpus] / [official:<cite>] / [doc] or NOT IN CORPUS. A gap is a finding, not a failure.
+  - Treat every assertion — the draft's, the opponent's, the court's — as a hypothesis: is it true? who / what / when /
+    where / why? what does the law MEAN by definition? Reduce to the compliance layer (definitions + rules + procedures).
+  - Never label anything pseudolaw / frivolous / sovereign-citizen. A departure from text is a divergence to expose.
+  - Output is ONE JSON object in the schema given. Reply starts with { and ends with }.
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail); rule_verbatim must sit in a pinned chunk; deadline_date is COMPUTED by the runner
+handoff: skeptic

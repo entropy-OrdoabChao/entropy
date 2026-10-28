@@ -1,0 +1,45 @@
+id: frcp_56_summary_judgment
+title: Summary Judgment — Fed. R. Civ. P. 56
+
+description: >
+  Filing type for federal summary judgment under FRCP 56. A party may move for
+  summary judgment when there is no genuine dispute as to any material fact and
+  the movant is entitled to judgment as a matter of law. Applies to all claims,
+  defenses, counterclaims, crossclaims, and third-party claims.
+
+required_authorities:
+  - Fed. R. Civ. P. 56(a)
+  - Fed. R. Civ. P. 56(c)
+  - Celotex Corp. v. Catrett, 477 U.S. 317 (1986)
+  - Anderson v. Liberty Lobby, 477 U.S. 242 (1986)
+  - Matsushita Elec. Indus. Co. v. Zenith Radio Corp., 475 U.S. 574 (1986)
+  - Celotex burden-shifting framework
+
+trigger_defects:
+  - NO_GENUINE_DISPUTE_MATERIAL_FACT
+  - MOVANT_ENTITLED_JUDGMENT_AS_LAW
+  - NON_MOVANT_FAIL_COMING_FORWARD
+  - COURT_IGNORE_SUMMARY_JUDGMENT_RECORD
+  - FAILURE_SHIFT_BURDEN_CATRETT
+  - COURT_WEIGH_EVIDENCE_SUMMARY_JUDGMENT
+  - GENUINE_DISPUTE_FALSE_CONFECTION
+
+structure:
+  - block: boilerplate/caption_federal
+  - block: sections/introduction
+  - block: sections/jurisdictional_basis
+  - block: arguments/summary_judgment_standard_56
+  - block: arguments/celotex_initial_burden_movant
+  - block: arguments/shift_nonmovant_genuine_dispute
+  - block: arguments/anderson_garcetti_no_ambiguity
+  - block: arguments/matsushita_ambiguous_facts_no_genuine_dispute
+  - block: arguments/no_material_fact_in_dispute
+  - block: arguments/entitled_judgment_matter_law
+  - block: arguments/record_viewed_nonmovant_favor
+  - block: arguments/court_no_weigh_evidence
+  - block: sections/case_specific_summary
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+
+resolution_path: obsidian_sync/templates/filing_types/frcp_56_summary_judgment.yaml

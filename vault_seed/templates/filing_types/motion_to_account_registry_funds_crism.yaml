@@ -1,0 +1,110 @@
+id: motion_to_account_registry_funds_crism
+title: Motion to Account for and Return Court Registry Funds (CRIS) with Interest
+description: >
+  Vehicle for compelling the Clerk/Administrative Office to account for, invest,
+  and return registry funds deposited with the court, plus accrued interest.
+  Corpus-locked mechanics: (1) 28 U.S.C. 2041 — moneys paid into any court shall
+  be "forthwith deposited with the Treasurer, an assistant treasurer, or a
+  designated depositary of the United States, in the name and to the credit of
+  such court" (corpus: verbatim 28 U.S.C. 2041 text, chunk_text); (2) 28 U.S.C.
+  2042 — withdrawal of registry funds: "the clerk shall pay the money to the
+  person entitled to receive it" and "shall be paid into the Treasury" if
+  unclaimed (corpus: 28 U.S.C. 2042 reference in chunk_text); (3) 28 U.S.C.
+  2045 — investment of court registry funds: "The Director of the Administrative
+  Office of the United States Courts, or the Director's designee, may request
+  the Secretary of the Treasury to invest funds received" (corpus: verbatim
+  28 U.S.C. 2045 text, chunk_text); (4) CRIS — the Court Registry Investment
+  System, established 1988, managed by the AO since 2011, operates for 166
+  district and bankruptcy courts, audited annually by independent CPA firm
+  (corpus: "The Court Registry Investment System (CRIS) was established by a
+  district court in 1988... transferred to the AO in 2011... manages registry
+  funds for 166 district and bankruptcy courts. Financial statements for CRIS
+  are audited annually by an independent CPA firm"). The court therefore OWES
+  an accounting: funds deposited are held in the court's name, invested via
+  CRIS, and must be returned WITH INTEREST to the entitled party. Non-accounting
+  or delayed return is the defect this filing exposes.
+court: federal_district
+required_authorities:
+- citation: "28 U.S.C. 2041"
+  proposition: "All moneys paid into any court of the United States shall be
+    forthwith deposited with the Treasurer, an assistant treasurer, or a
+    designated depositary of the United States, in the name and to the credit
+    of such court. [corpus: verbatim 28 U.S.C. 2041 text, chunk_text]"
+- citation: "28 U.S.C. 2042"
+  proposition: "Withdrawal of registry funds: the clerk shall pay the money to
+    the person entitled to receive it; unclaimed funds are paid into the
+    Treasury. [corpus: 28 U.S.C. 2042 reference, chunk_text]"
+- citation: "28 U.S.C. 2045"
+  proposition: "Investment of court registry funds: the AO Director may request
+    the Secretary of the Treasury to invest funds received by the court. [corpus:
+    verbatim 28 U.S.C. 2045 text, chunk_text]"
+- citation: "CRIS Program (AO)"
+  proposition: "The Court Registry Investment System manages registry funds for
+    166 courts, audited annually by independent CPA firm. [corpus: CRIS
+    description, chunk_text]"
+trigger_defects:
+- registry_funds_deposited_not_returned
+- registry_funds_not_invested_or_accounted
+- interest_accrued_not_paid_on_registry
+- clerk_failed_to_deposit_forthwith
+- FATAL/OPERATIVE_TEXT
+- SERIOUS/OPERATIVE_TEXT
+structure:
+- block: boilerplate/caption_federal
+  when: is_federal == true
+- block: sections/introduction
+- block: sections/procedural_history
+- block: sections/factual_statement_federal
+- block: arguments/registry_deposit_is_mandatory
+  content: >
+    On [date], $___ was deposited with the Clerk of this Court (Dkt ___). Under
+    28 U.S.C. 2041 [corpus: verbatim text], all moneys paid into any court "shall
+    be forthwith deposited with the Treasurer, an assistant treasurer, or a
+    designated depositary of the United States, in the name and to the credit of
+    such court." The operative word is "forthwith" — the deposit is mandatory and
+    immediate, not discretionary. The Court is asked to confirm the deposit was
+    made and direct the Clerk to produce the deposit record.
+- block: arguments/investment_via_cris
+  content: >
+    Once deposited, the funds are subject to investment under 28 U.S.C. 2045
+    [corpus: verbatim text]: the AO Director "may request the Secretary of the
+    Treasury to invest funds received." The Court Registry Investment System
+    (CRIS) [corpus: "established by a district court in 1988... transferred to
+    the AO in 2011... manages registry funds for 166 district and bankruptcy
+    courts"] is the mechanism. The Court should order the Clerk to produce the
+    CRIS account statement showing the investment and accrued interest on the
+    deposited funds from the date of deposit through the date of return.
+- block: arguments/return_with_interest
+  content: >
+    Under 28 U.S.C. 2042 [corpus: reference], the clerk "shall pay the money to
+    the person entitled to receive it." The entitlement includes the principal
+    PLUS accrued interest earned through CRIS investment. The Court should order
+    the Clerk to compute and pay the full amount — principal plus interest — to
+    the entitled party, and to produce the CRIS accounting as the basis for the
+    computation. Delay in return deprives the entitled party of interest that
+    the statute and CRIS program generate.
+- block: arguments/operative_text_discipline
+  content: >
+    QUOTE THE OPERATIVE WORDS. 28 U.S.C. 2041 says moneys "shall be forthwith
+    deposited" — not "may be deposited" or "should be deposited." 28 U.S.C.
+    2042 says the clerk "shall pay the money to the person entitled to receive
+    it" — not "may pay" or "shall attempt to pay." Any rendering that softens
+    "shall" into "may," omits "forthwith," or substitutes a common-word synonym
+    is a silent alteration of the operative text. The NO-WORD-ADDED-OR-SUBTRACTED
+    canon applies: "forthwith," "deposited," "person entitled," and "receive it"
+    carry the meanings given in the statute.
+- block: sections/prayer_for_relief
+  content: >
+    (1) An order confirming that the $___ deposited on [date] was deposited
+    forthwith under 28 U.S.C. 2041 and producing the deposit record; (2) an
+    order directing the Clerk to produce the CRIS account statement showing
+    investment and accrued interest from [deposit date] through [return date];
+    (3) an order that the Clerk pay the entitled party the full amount —
+    principal plus accrued interest — under 28 U.S.C. 2042; (4) an order that
+    interest continue to accrue under 28 U.S.C. 2045 until actual payment;
+    (5) costs.
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service
+- block: boilerplate/proposed_order
+resolution_path: obsidian_sync/templates/filing_types/motion_to_account_registry_funds_crism.yaml

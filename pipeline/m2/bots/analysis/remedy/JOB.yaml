@@ -1,0 +1,21 @@
+name: remedy
+group: analysis
+unit: count            # claim | term | cite | count | document | case | draft
+axis: "Axis 7 — REMEDY: what the court MUST grant once proved; fees, interest, treble, injunction, 706(2)."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - usc_
+  - pa_cs_
+  - pa_73ps_
+  - plaw_
+  - amjur_22
+  - amjur_25
+  - cfr_
+queries:
+  - "{claim} damages shall recover"
+  - "attorney fees costs {claim}"
+  - "treble damages {claim}"
+  - "set aside 706(2)"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

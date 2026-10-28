@@ -1,0 +1,115 @@
+id: motion_for_leave_to_file_late_notice_of_appeal
+title: Motion for Leave to File a Late Notice of Appeal (FRAP 4(a)(5)(C) / 28 U.S.C. § 2107(a))
+description: >
+  The filing vehicle to RESCUE a late notice of appeal — the motion filed in the
+  DISTRICT COURT (not the court of appeals) asking the judge to extend the 30-day
+  civil-appeal clock on a showing of excusable neglect. This is the ONLY pre-judgment
+  lever that preserves the AS-OF-RIGHT appeal after the 30-day FRAP 4(a)(1) / 28 U.S.C.
+  § 2107(a) period has lapsed without a notice of appeal on the docket — short of the
+  FRCP 60(b)(4) void-judgment motion.
+
+  Why it fires (the gap this vehicle fills): the 30-day clock is a PROCEDURAL,
+  non-jurisdictional deadline. It is the deadline the pro-se party is held to, and the
+  SAME deadline binds the court and clerk. Where the party shows excusable neglect — a
+  failure NOT in consequence of its own carelessness or willful disregard, but in
+  consequence of an unexpected or unavoidable hindrance — the district court MAY extend
+  the time to file the notice of appeal. The armed arsenal had the timely notice-of-appeal
+  templates (notice_of_appeal_federal.yaml, _3rd_circuit.yaml) and the appeal-reinstatement
+  template (motion_to_reinstate_appeal.yaml, which operates at the APPELLATE level), but NO
+  motion for the DISTRICT COURT to grant leave to file a LATE notice of appeal. That was
+  the un-armed 1925(b)-class gap: the vehicle existed in the corpus (28 U.S.C. § 2107(a)
+  verbatim + FRAP 4(a)(3) "By leave" + excusable-neglect standard) but had no template.
+
+  Live application ({{CASE_ID}} / Reyes-Pellegrino): Dkt 180 judgment for
+  defendants entered 2026-07-31; the 30-day clock EXPIRED 2026-08-30 with no notice of
+  appeal in the district docket index (tops at seq 506). The prior 3d Cir. appeal 25-02960
+  was dismissed 2026-04-24 (no Rule 54(b) certification). This motion is the timely-appeal
+  rescue before pivoting to the 60(b)(4) void-judgment motion.
+
+court: FEDERAL_DISTRICT (filed in the district court, not the court of appeals)
+
+required_authorities:
+  - citation: "Fed. R. App. P. 4(a)(1)"
+    proposition: "In a civil case, an appeal is taken by filing a notice of appeal with the district clerk within 30 days after entry of the judgment or order appealed from. (30-day clock; procedural, not jurisdictional.)"
+  - citation: "28 U.S.C. § 2107(a)"
+    proposition: "No appeal shall bring any judgment, order, or decree of a civil nature before a court of appeals unless notice of appeal is filed within thirty days after entry of the judgment, order, or decree. [corpus: usc_t28_s2107 verbatim]"
+  - citation: "Fed. R. App. P. 4(a)(3)"
+    proposition: "'By leave' — if a party files a notice of appeal after the time allowed, the district court may extend the time if the party shows excusable neglect (or the applicable ground); the extension is a discretionary, non-jurisdictional act."
+  - citation: "Fed. R. App. P. 4(a)(5)(C)"
+    proposition: "The excusable-neglect extension: on a showing of excusable neglect the district court may extend the time to file a notice of appeal. [NOT IN CORPUS: verbatim standalone 4(a)(5)(C) text — threaded; grounded by 4(a)(3) 'By leave' clause + Wright & Miller treatise + the excusable-neglect definition in corpus]"
+  - citation: "excusable neglect (standard)"
+    proposition: "The standard for extending the time: 'not mere inadvertence'; a failure 'not in consequence of the party's own carelessness, inattention, or willful disregard of the process of the court, but in consequence of some unexpected or unavoidable hindrance' (Eads v. Marks, 39 C.2d 807, 249 P.2d 257). [corpus: pa_legal_defs + frb_chicago_fractional]"
+  - citation: "28 U.S.C. § 1291"
+    proposition: "The right to appeal a final civil judgment; the 4(a)(5)(C) extension preserves the as-of-right appeal that § 1291 entitles the party to take within 30 days."
+
+trigger_defects:
+  - appeal_clock_expired_no_notice_of_appeal
+  - late_notice_of_appeal_needed
+  - 30_day_civil_appeal_period_lapsed
+  - no_notice_of_appeal_on_docket_index
+  - FATAL/OPERATIVE_TEXT
+  - SERIOUS/OPERATIVE_TEXT
+
+structure:
+  - type: caption
+    block: boilerplate/caption_federal_district
+  - type: section
+    block: motion/relief_requested
+    content: >
+      RELIEF REQUESTED: The court is asked to (1) find that Plaintiff's failure to file
+      a timely notice of appeal within 30 days of entry of the judgment at [Dkt ___]
+      resulted from excusable neglect, and (2) extend the time to file a notice of appeal
+      under Fed. R. App. P. 4(a)(5)(C) / 28 U.S.C. § 2107(a), and (3) set a specific
+      deadline (e.g., 14 days from the order) by which the notice of appeal must be filed.
+  - type: section
+    block: motion/facts_and_deadline_math
+    content: >
+      STATE THE CLOCKS: (1) date of entry of the judgment appealed from; (2) the 30-day
+      deadline under FRAP 4(a)(1)/28 U.S.C. § 2107(a); (3) the actual date this motion is
+      filed and the number of days past the deadline; (4) why the lapse is excusable
+      neglect, not mere inadvertence or the party's own carelessness. Do NOT over-argue —
+      the extension is a narrow, well-defined motion; cite the exact day count.
+  - type: section
+    block: motion/excusable_neglect_showing
+    content: >
+      THE EXCUSABLE-NEGLECT SHOWING: explain the specific, identifiable, external reason
+      the notice of appeal was not filed in time (e.g., the court's order directed the
+      case be marked CLOSED which is a procedural docket action that does not end the
+      claims as to any party; a service/notice gap; a defect in the clerk's docket entry;
+      a finality question created by the court's own Rule 12(c) grant without Rule 54(b)
+      certification). Tie the showing to the record — name the docket entry, the date, the
+      rule. Do NOT invent facts. If the ground is the court's own closure while a
+      defaulting defendant sat un-adjudicated with no 55(b)(1) judgment, that IS the
+      excusable-neglect showing: the party was held to a deadline that the court's own
+      closure order made ambiguous.
+  - type: section
+    block: arguments/non_jurisdictional_deadline
+    content: >
+      ARGUMENT — NON-JURISDICTIONAL: the 30-day appeal period is a claim-processing rule,
+      not a jurisdictional requirement. An appeal filed after the period, with a showing of
+      excusable neglect, is one the district court MAY accept; the court is not barred
+      from extending its own deadline. Where the party is diligent and the lapse is not
+      its own fault, the court should not convert a procedural docket action into a
+      merits-level dismissal of the appeal right.
+  - type: section
+    block: arguments/reciprocity_and_notice
+    content: >
+      ARGUMENT — RECIPROCITY / NOTICE: the 30-day clock binds the court and clerk as much
+      as the party. Where the court's own order (e.g., marking the case CLOSED on a 12(c)
+      grant while a defendant sat in default with no 55(b)(1) judgment) created the
+      ambiguity that made the party miss the clock, the extension corrects the asymmetry —
+      the party is held to the deadline, and the court is held to the duty to make the
+      judgment final and clearly appealable. This is the same exposure frame as Pa.R.A.P.
+      1925(a) (court must explain its orders) and Pa.R.C.P. 236 (clerk must conform the
+      entry to the court's direction): the record's own defects are the court's to cure,
+      not the pro-se party's.
+  - type: boilerplate
+    block: boilerplate/certificate_of_service
+  - type: section
+    block: motion/proposed_order
+    content: >
+      PROPOSED ORDER: IT IS ORDERED that (1) Plaintiff's motion for leave to file a late
+      notice of appeal is GRANTED; (2) the time to file a notice of appeal under Fed. R.
+      App. P. 4(a)(5)(C) is extended until [DATE]; (3) the district clerk shall enter the
+      extension on the docket and send notice of docket activity to all parties. SO ORDERED.
+    when: true

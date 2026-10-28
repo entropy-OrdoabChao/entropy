@@ -1,0 +1,54 @@
+id: motion_for_relief_from_judgment_60b3_fraud
+title: Motion for Relief from Judgment — Fraud/Misrepresentation Under FRCP 60(b)(3)
+description: |
+  Motion for relief from a final judgment obtained by FRAUD, MISREPRESENTATION, or
+  MISCONDUCT by an opposing party under FRCP 60(b)(3).
+
+  This subdivision has a ONE-YEAR LIMIT — the motion must be filed within one year
+  of the judgment or order (FRCP 60(c)(1)). Unlike (b)(4), this targets fraud by
+  an opposing party, not voidness of the judgment itself.
+
+  The standard is: (1) fraud/misrepresentation/misconduct by an opposing party,
+  (2) that prevented the movant from fully presenting the case, and (3) the fraud
+  was not discovered before judgment even with due diligence.
+
+  This is NOT fraud on the court (which is FRCP 60(d)(3)). (b)(3) targets fraud
+  directed at an opposing party or the court's fact-finding process, not the judicial
+  system itself.
+
+court: any
+required_authorities:
+  - FRCP 60(b)(3) — Fraud, misrepresentation, or misconduct by opposing party; one-year limit
+  - FRCP 60(c)(1) — One-year time limit for (b)(1)-(3) motions
+  - Hazel-Atlas Glass Co. v. Hartford-Empire Co., 322 U.S. 238 (1944) — Fraud standard
+  - United States v. A & P Trucking Co., 338 U.S. 121 (1949) — "Fraud on the court" vs. (b)(3) fraud distinction
+  - Fed. R. Civ. P. 4(l) — Proof of service establishes service of record
+  - Fed. R. Evid. 201(b)(2) — Judicial notice of court record
+trigger_defects:
+  - SERIOUS/FRAUD_ON_COURT
+  - judgment_contradicts_docket
+  - court_relied_on_fraud
+  - FATAL/JURISDICTION
+  - void_order
+  - FRCP_60B_eligible
+  - service_finding_contradicted_by_docket
+required_facts:
+  - case_id
+  - caption
+  - judgment_date
+  - fraud_description — specific description of the opposing party's fraud
+  - judgment_or_order_targeted
+  - one_year_clock_expired — boolean, whether the one-year clock has expired
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/60b3_fraud_misrepresentation
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

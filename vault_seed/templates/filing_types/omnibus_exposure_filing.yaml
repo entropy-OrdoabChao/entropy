@@ -1,0 +1,66 @@
+id: omnibus_exposure_filing
+title: Omnibus Exposure Filing — Cross-Defendant Systemic Noncompliance
+description: |
+  Cross-defendant omnibus filing exposing systemic willful noncompliance across multiple
+  defendants. This filing aggregates defects, violations, and procedural failures
+  across all defendants into a single comprehensive filing.
+  
+  Use when:
+  - Multiple defendants have committed the same or related violations
+  - A cross-defendant pattern of willful noncompliance exists
+  - Individual motions would be duplicative and inefficient
+  - The court's pattern of ignoring binding precedent across defendants
+  
+  This is NOT a motion — it is an omnibus filing that exposes the systemic
+  nature of the violations and forces the court to address them collectively.
+  
+  Key authorities:
+  - FRCP 8(a) — Short and plain statement of the claim
+  - FRCP 8(b) — General and specific denials; requirements for a response
+  - FRCP 12(f) — Striking insufficient defenses
+  - FRCP 12(g) — Joinder of motions; when to join
+  - FRCP 12(h) — Waiver of defenses; when a defense is waived
+  - 28 U.S.C. § 1927 — Vexatious multiplication of proceedings
+  - FRCP 11(c)(1) — Sanctions for defective contentions
+  - Chambers v. NASCO, 501 U.S. 32 (1991) — Court's inherent authority to sanction
+  - Haines v. Kerner, 404 U.S. 419 (1972) — Liberal construction for pro se litigants
+court: any
+required_authorities:
+  - FRCP 8(a) — Claim for relief; short and plain statement
+  - FRCP 12(g) — Joinder of motions; when to join
+  - FRCP 12(h) — Waiver of defenses
+  - 28 U.S.C. § 1927 — Vexatious multiplication of proceedings
+  - Chambers v. NASCO, 501 U.S. 32 (1991) — Inherent sanction authority
+  - Haines v. Kerner, 404 U.S. 419 (1972) — Pro se liberal construction
+trigger_defects:
+  - FATAL/CROSS_CASE_AUTHORITY
+  - SERIOUS/AUTHORITY
+  - FATAL/CONSTRUCTION
+  - SERIOUS/CONSTRUCTION
+  - FATAL/SERVICE
+  - SERIOUS/SERVICE
+  - FATAL/DEFAULT
+  - SERIOUS/DEFAULT
+  - FATAL/JURISDICTION
+  - FRAUD_ON_COURT_JUDICIAL
+  - SERIOUS/FRAUD_ON_COURT
+required_facts:
+  - case_id
+  - caption
+  - defendant_names — list of defendants being addressed
+  - defect_categories — aggregated defect categories across defendants
+  - cross_defendant_pattern — description of the systemic pattern
+  - defendant_specific_defects — per-defendant defect breakdown
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/statement_of_facts
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

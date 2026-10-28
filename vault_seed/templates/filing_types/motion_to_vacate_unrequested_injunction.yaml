@@ -1,0 +1,60 @@
+id: motion_to_vacate_unrequested_injunction
+title: Motion to Vacate Unrequested Injunction (Relief Beyond What Was Noticed)
+description: |
+  PA CCP motion to vacate an injunction the court entered sua sponte or by
+  wholesale adoption of a party's proposed order, where no party moved for
+  injunctive relief, the opposing party was given no notice and no hearing,
+  no bond was posted, and the injunction exceeds the relief noticed in the
+  pending motion. Targets the textbook void-relief pattern: permanent
+  "cease and refrain" relief of unlimited duration with no findings, no
+  irreparable-harm showing, and no bond. CORE vehicle for the 0000 EDA 2026
+  Superior Court appeal (violation 45 in the 2026-09-08 addendum to the
+  BINDING_VIOLATIONS_MASTER).
+court: state_pa_ccp
+
+required_authorities:
+  # CONTROLLING STATE RULE (flagged: operative text NOT IN CORPUS — ingest open)
+  - Pa.R.C.P. 1531 (Injunctions) [NOT-IN-CORPUS operative text; rule-index heading confirmed in pa_legal_defs]
+  - Pa.R.C.P. 3121 (stay / set aside of execution) [NOT-IN-CORPUS exact text; 3146(b) Petition-to-Intervene fragment confirmed]
+  # DUE-PROCESS FLOOR (corpus-grounded load-bearing authorities)
+  - Grannis v. Harris, 221 U.S. 626 (1911) — notice and opportunity before deprivation
+  - Mathews v. Eldridge, 424 U.S. 319 (1976) — due-process balancing floor
+  - Kelly v. RRB, 625 F.2d 486 (3d Cir. 1980) [corpus:ca3_f25_486_kelly_rrb] — disregard the 'evidence' a party had no opportunity to rebut; non-compliance with the tribunal's own rules renders the act null
+  - Haines v. Kerner, 404 U.S. 519 (1972) [corpus:scotus_haines_v_kerner_404us519] — pro se party entitled to an opportunity to offer proof
+  - Pa.R.A.P. 903(a) [corpus:pa_code_t210_ch9] — 30-day appeal clock from entry of the injunction order
+
+trigger_defects:
+  # Operative-text canon discipline (all four)
+  - FATAL/OPERATIVE_TEXT
+  - SERIOUS/OPERATIVE_TEXT
+  - FATAL/NO_WORD_ADDED_OR_SUBTRACTED
+  - SERIOUS/NO_WORD_ADDED_OR_SUBTRACTED
+  # The specific void-relief pattern
+  - FATAL/SUA_SPONTE_RELIEF
+  - FATAL/VOID_RELIEF
+  - FATAL/INJUNCTION_NO_BOND
+  - FATAL/NO_NOTICE_HEARING
+  - FATAL/NO_REASONS_STATED
+  - SERIOUS/RELIEF_EXCEEDS_MOTION
+  - FATAL/DUPLICATIVE_RELIEF
+  - FATAL/FACTUAL_FABRICATION
+
+structure:
+  - block: boilerplate/caption_state_pa_ccp
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_enforcement
+  - block: sections/standard_of_review
+  # --- operative-text + void-relief argument blocks (unconditional: must fire for this filing type) ---
+  - block: arguments/void_order_misuse
+  - block: arguments/court_rules_violation
+  - block: arguments/fr65_injunction
+  - block: arguments/duty_to_state_reasons
+  - block: arguments/haines_v_kerner_standard
+  - block: arguments/operative_text_discipline
+  - block: arguments/no_word_added_or_subtracted
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

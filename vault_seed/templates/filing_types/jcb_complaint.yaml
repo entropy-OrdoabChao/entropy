@@ -1,0 +1,46 @@
+id: jcb_complaint
+title: JCB Complaint — PA Judicial Conduct Board
+description: >
+  Formal complaint to the Pennsylvania Judicial Conduct Board (Harrisburg)
+  against a judge for violations of the Pennsylvania Code of Judicial Conduct
+  (Pa. C.J.C.R.), particularly Canon 2 (impartiality), Canon 3 (performing
+  duties impartially and diligently), and Canon 1 (supporting the integrity
+  and independence of the judiciary). This is NOT a court filing — it is an
+  accountability referral sent to the JCB. Grounded in 42 Pa.C.S. §§ 2101-2106
+  and Pa. Const. Art. V, § 18.
+court: external
+required_authorities:
+  - Pa. Const. Art. V, § 18 — Judicial Discipline
+  - 42 Pa.C.S. §§ 2101-2106 — Judicial Conduct Board
+  - Pa. C.J.C.R. Canon 2 — Impartiality and fairness
+  - Pa. C.J.C.R. Canon 3 — Performing duties impartially and diligently
+  - Pa. C.J.C.R. Canon 1 — Supporting integrity and independence
+  - Pa. C.J.C.R. Rule 2.11 — Disqualification (economic interest)
+  - Caperton v. A.T. Massey Coal Co., 556 U.S. 868 (2009) — Probability of bias
+trigger_defects:
+  - judicial_oath_breach
+  - bias_indicator
+  - NO_REASONS_STATED
+  - VOID_JUDGMENT_RULE_60B4
+  - ACCESS_TO_COURTS_DENIAL
+  - pattern_of_conclusive_denials
+  - record_contradiction
+  - sua_sponte_unnoticed
+required_facts:
+  - case_id
+  - caption
+  - judge_name
+  - defect_total
+  - specific_violations
+  - bias_indicators
+structure:
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_enforcement
+  - block: arguments/liteky_bias_pattern
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

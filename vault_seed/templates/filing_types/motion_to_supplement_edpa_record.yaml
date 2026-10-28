@@ -1,0 +1,35 @@
+id: motion_to_supplement_edpa_record
+title: Motion to Supplement the EDPA Record Under FRE 201(b)(2) + FRCP 60(a)
+description: 'Motion to supplement the EDPA trial court record with exhibits
+  referenced in the plaintiff''s Rule 60 filings (dkt 56-60) that are not
+  yet on the docket — e.g., GreenSky letters, correction docket, 1099-C forms.
+
+  Grounded in FRE 201(b)(2) (judicial notice of official records) and
+  FRCP 60(a) (correction of clerical errors in the record). The Rule 60
+  proceedings depend on a complete record; an incomplete record is itself
+  a defect that can render orders void.
+
+  Key provisions:
+  - FRE 201(b)(2): Court may take judicial notice of official records
+  - FRCP 60(a): Court may correct clerical errors in any order or record
+  - Pro se litigants get liberal construction (Haines v. Kerner, 404 U.S. 519)
+  '
+court: federal_district
+required_authorities:
+- Fed. R. Evid. 201(b)(2) — Judicial Notice of Official Records
+- Fed. R. Civ. P. 60(a) — Correction of Clerical Errors
+- Haines v. Kerner, 404 U.S. 519 (1972) — Pro se liberal construction
+- 28 U.S.C. § 2077 — Inherent authority of federal courts
+trigger_defects:
+- dismissal
+- FATAL/PROCEDURAL
+- material_omission
+- FATAL/JURISDICTION
+structure:
+- block: boilerplate/caption_federal_district
+- block: sections/introduction
+- block: sections/factual_statement_federal
+- block: arguments/supplement_edpa_record
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

@@ -1,0 +1,131 @@
+version: 1
+entity_type: constitutional
+description: >
+  Constitutional violations — PROCEDURAL DUE PROCESS ONLY. This duty_map
+  is intentionally narrow to prevent overreach. Substantive constitutional
+  arguments (Equal Protection, etc.) are NOT included unless the engine
+  is explicitly extended.
+
+  Constitutional duties fire ONLY when fact text contains one of these
+  trigger phrases (enforced by violations_matrix._has_constitutional_triggers):
+    - "no proper service"
+    - "lack of jurisdiction"
+    - "no notice"
+    - "due process violation"
+    - "defective service"
+
+  These are the canonical Mathews v. Eldridge / Mullane v. Central Hanover
+  due process triggers — notice and opportunity to be heard.
+
+  CRIMINAL STATUTES (Title 18) ARE NOT IN THIS MAP. They will live in
+  a future Criminal Exposure Engine (Block X) for DOJ/regulator referral
+  packages, NOT for civil filing.
+
+duties:
+
+  - id: const_001
+    name: Procedural Due Process — Notice
+    class: constitutional
+    source: U.S. Const. amend. XIV § 1
+    source_title: Fourteenth Amendment Procedural Due Process — Notice
+    jurisdiction: federal_and_state
+    applies_to_domains:
+      - constitutional
+      - procedural
+    description: >
+      No State shall deprive any person of life, liberty, or property,
+      without due process of law. Procedural due process requires notice
+      reasonably calculated, under all the circumstances, to apprise
+      interested parties of the pendency of the action and afford them
+      an opportunity to present their objections.
+    triggering_actions:
+      - no_proper_service
+      - defective_service
+      - no_notice
+      - notice_inadequate
+    burden_flip_questions:
+      - "Produce all evidence of notice provided to plaintiff before entry of the challenged order."
+      - "Identify the date, method, and form of every notice given."
+      - "Produce all internal records discussing notice procedures applied."
+    evidence_demanded:
+      - service of process records
+      - mailings of notice
+      - communications evidencing actual or constructive notice
+    # BLOCK_6_12_DUEPROCESS_POSTURE — enforcement-anchored relief
+    violation_remedy:
+      - Any enforcement action taken without procedurally compliant notice is void and cannot defeat Plaintiff's judgment
+      - Strike all enforcement-phase filings (including garnishee answers and objections) made without compliant notice to Plaintiff
+      - Compel defendants to provide complete, verified, and procedurally compliant notice and response before any further enforcement-phase relief is considered
+    canonical_authority:
+      - Mullane v. Central Hanover Bank & Trust Co., 339 U.S. 306 (1950)
+      - Mathews v. Eldridge, 424 U.S. 319 (1976)
+
+  - id: const_002
+    name: Procedural Due Process — Opportunity to Be Heard
+    class: constitutional
+    source: U.S. Const. amend. XIV § 1
+    source_title: Fourteenth Amendment Procedural Due Process — Hearing
+    jurisdiction: federal_and_state
+    applies_to_domains:
+      - constitutional
+      - procedural
+    description: >
+      Due process requires a meaningful opportunity to be heard at a
+      meaningful time and in a meaningful manner before any deprivation
+      of property by state action. Default judgment entered without
+      proper service of process violates this requirement.
+    triggering_actions:
+      - no_proper_service
+      - defective_service
+      - no_notice
+      - due_process_violation
+      - no_opportunity_to_be_heard
+    burden_flip_questions:
+      - "Produce the docket entries showing every opportunity to respond afforded plaintiff."
+      - "Identify each pre-deprivation hearing held and the notice given."
+    evidence_demanded:
+      - docket entries
+      - hearing transcripts
+      - pre-deprivation notice records
+    # BLOCK_6_12_DUEPROCESS_POSTURE — enforcement-anchored relief
+    violation_remedy:
+      - Any deprivation of Plaintiff's judgment proceeds taken without a meaningful opportunity to be heard is void
+      - Defendants and garnishees must afford Plaintiff a meaningful opportunity to be heard on every enforcement-phase objection before relief adverse to Plaintiff issues
+      - Restore to Plaintiff any property or funds withheld during enforcement without due process
+    canonical_authority:
+      - Fuentes v. Shevin, 407 U.S. 67 (1972)
+      - Mathews v. Eldridge, 424 U.S. 319 (1976)
+
+  - id: const_003
+    name: Personal Jurisdiction Requirement
+    class: constitutional
+    source: U.S. Const. amend. XIV § 1
+    source_title: Fourteenth Amendment — Personal Jurisdiction (Due Process)
+    jurisdiction: federal_and_state
+    applies_to_domains:
+      - constitutional
+      - procedural
+    description: >
+      A court's exercise of personal jurisdiction over a non-resident
+      defendant must comport with traditional notions of fair play and
+      substantial justice. A judgment entered without personal jurisdiction
+      violates due process and is void.
+    triggering_actions:
+      - lack_of_jurisdiction
+      - lack_of_personal_jurisdiction
+      - improper_service
+    burden_flip_questions:
+      - "Produce evidence of minimum contacts with the forum supporting personal jurisdiction."
+      - "Produce service records demonstrating proper service within the forum."
+    evidence_demanded:
+      - contacts evidence
+      - service records
+      - long-arm jurisdiction analysis
+    # BLOCK_6_12_DUEPROCESS_POSTURE — enforcement-anchored relief
+    violation_remedy:
+      - Any enforcement-phase order entered without statutory or rule-based authority is void as against Plaintiff
+      - Defendants and garnishees must establish their authority to act in the enforcement proceeding before any relief adverse to Plaintiff issues
+      - Strike enforcement filings made by parties unable to demonstrate authority under Pa.R.C.P. 3145 / 3146
+    canonical_authority:
+      - Int'l Shoe Co. v. Washington, 326 U.S. 310 (1945)
+      - Burger King Corp. v. Rudzewicz, 471 U.S. 462 (1985)

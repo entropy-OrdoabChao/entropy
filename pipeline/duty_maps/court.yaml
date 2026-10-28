@@ -1,0 +1,104 @@
+version: 1
+entity_type: court
+fiduciary: true
+fiduciary_basis: >
+  The court, as an institution, owes the parties a fiduciary duty of even-handed
+  administration of justice: to construe a pro se litigant's filings liberally,
+  to accept well-pleaded facts as true, to address the record evidence before it,
+  and to rule on the merits of pending matters. These are trust obligations of the
+  judicial process, not discretionary courtesies.
+description: >
+  Institutional fiduciary / due-process duties of the court (distinct from the
+  presiding judge's personal impartiality in judge.yaml). Authorities verified
+  present in the corpus (:8100); retriever resolves citation keys to full text.
+
+duties:
+  - id: crt_fid_001
+    name: Duty to Construe Pro Se Pleadings Liberally
+    class: fiduciary
+    source: Haines v. Kerner
+    source_title: Haines v. Kerner, 404 U.S. 519 (1972); Erickson v. Pardus, 551 U.S. 89 (2007)
+    jurisdiction: federal
+    description: >
+      A pro se litigant's pleadings are held to less stringent standards than
+      those drafted by counsel and must be construed liberally; inartful pleading
+      does not warrant dismissal where a claim is otherwise discernible.
+    triggering_actions:
+      - BIAS_PRO_SE_GATEKEEPING
+      - LEAVE_TO_AMEND_CONCLUSORY
+      - CONCLUSORY_DISMISSAL
+      - TWOMBLY_IQBAL_MISAPPLICATION
+      - improper_pro_se_gatekeeping
+      - twombly_iqbal_misapplied
+      - conclusory_dismissal_without_required_analysis
+      - sovereign_citizen_label
+    violation_remedy:
+      - Reconsideration under the correct pro se standard
+      - Reinstatement with leave to amend
+
+  - id: crt_fid_002
+    name: Duty to Accept Well-Pleaded Facts as True (12(b)(6))
+    class: fiduciary
+    source: Bell Atlantic Corp. v. Twombly
+    source_title: Bell Atlantic Corp. v. Twombly, 550 U.S. 544 (2007); Ashcroft v. Iqbal, 556 U.S. 662 (2009)
+    jurisdiction: federal
+    description: >
+      On a motion to dismiss the court must accept all well-pleaded factual
+      allegations as true and draw reasonable inferences for the plaintiff;
+      applying a heightened standard or weighing facts breaches that duty.
+    triggering_actions:
+      - TWOMBLY_IQBAL_MISAPPLICATION
+      - CONCLUSORY_DISMISSAL
+      - MTD_GRANTED_AGAINST_PLAINTIFF
+      - CLAIMS_DISMISSED
+      - twombly_iqbal_misapplied
+      - conclusory_dismissal_without_required_analysis
+      - mtd_granted_against_plaintiff
+    violation_remedy:
+      - Reconsideration under the correct plausibility standard
+
+  - id: crt_fid_003
+    name: Duty to Address the Record Evidence
+    class: fiduciary
+    source: In re Murchison
+    source_title: In re Murchison, 349 U.S. 133 (1955)
+    jurisdiction: federal
+    description: >
+      A fair tribunal must engage the evidence of record. Ignoring filed proof
+      (e.g., proof of service, a verification defect squarely raised) and ruling
+      as though it does not exist breaches the duty of a fair tribunal.
+    triggering_actions:
+      - VERIFICATION_MISSING
+      - SERVICE_DEFECTIVE
+      - PRIMA_FACIE_EVIDENCE_IGNORED
+      - failure_to_address_record_evidence
+      - verification_requirement
+      - defective_service
+      - record_evidence_ignored
+    violation_remedy:
+      - Reconsideration addressing the ignored evidence
+      - Vacatur
+
+  - id: crt_fid_004
+    name: Duty to Rule on the Merits of Pending Matters
+    class: fiduciary
+    source: In re Murchison
+    source_title: In re Murchison, 349 U.S. 133 (1955); Mathews v. Eldridge, 424 U.S. 319 (1976)
+    jurisdiction: federal
+    description: >
+      Due process includes a meaningful opportunity to be heard, which is denied
+      where the court refuses to address a properly presented motion, denies it
+      "in its entirety" without analysis, or dissolves relief sua sponte without
+      notice or briefing.
+    triggering_actions:
+      - NOTICE_INADEQUATE
+      - CONCLUSORY_DISMISSAL
+      - VOID_JUDGMENT_RULE_60B4
+      - SUBJECT_MATTER_JURISDICTION_DEFECT
+      - denied_without_briefing
+      - dissolved_writ_without_notice
+      - conclusory_dismissal_without_required_analysis
+      - motion_denied_in_its_entirety_without_analysis
+    violation_remedy:
+      - Reconsideration
+      - Reinstatement of relief improperly dissolved

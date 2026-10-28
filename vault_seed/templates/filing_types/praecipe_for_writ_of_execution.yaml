@@ -1,0 +1,73 @@
+id: praecipe_for_writ_of_execution
+title: Praecipe for Writ of Execution
+description: >
+  Praecipe filed in PA state court to obtain a writ of execution against the
+  judgment debtor's property. This is NOT a motion — it is a praecipe.
+  The plaintiff files the praecipe with the prothonotary, and the prothonotary
+  issues the writ of execution commanding the sheriff to levy on the judgment
+  debtor's property, credits, or effects.
+  
+  Key provisions of Pa.R.C.P. 3101 et seq.:
+  - A judgment must be entered against the judgment debtor (trigger)
+  - The judgment creditor files a praecipe for writ of execution
+  - The prothonotary issues the writ of execution
+  - The writ commands the sheriff to levy on the judgment debtor's property,
+    credits, or effects
+  - The writ must be served on the judgment debtor (Pa.R.C.P. 3101)
+  - The sheriff levies execution on the property identified in the writ
+  - Post-judgment interest accrues from the date of judgment entry at 6%
+    per annum per 42 Pa.C.S. § 8101
+  - If the judgment debtor claims exemptions, the burden is on the debtor to
+    establish what property is exempt
+
+court: state_pa_ccp
+required_authorities:
+  - citation: "Pa.R.C.P. 3101 et seq."
+    proposition: "Writ of execution — post-judgment enforcement procedure. The writ commands the sheriff to levy on the judgment debtor's property, credits, or effects."
+  - citation: "Pa.R.C.P. 3101"
+    proposition: "Requirements for writ of execution — a judgment must be entered, a praecipe filed, and the prothonotary must issue the writ. The writ must be served on the judgment debtor."
+  - citation: "42 Pa.C.S. § 8101"
+    proposition: "Post-judgment interest — a judgment for a specific sum of money shall bear interest at the lawful rate from the date of the verdict or entry of judgment until satisfied."
+
+trigger_defects:
+  - judgment_entered
+  - post_judgment
+  - writ_of_execution
+  - enforcement
+  - SERIOUS/SERVICE
+  - FATAL/SERVICE
+  - garnishee_in_default
+  - unverified_response
+
+structure:
+  - type: caption
+    block: boilerplate/caption_state_pa_ccp
+  - type: section
+    block: sections/introduction
+    content: "State the nature of the praecipe, the underlying judgment, and the request for a writ of execution."
+  - type: section
+    block: sections/procedural_history
+    content: "Trace the entry of judgment, the filing of the praecipe, and the issuance of the writ of execution by the prothonotary."
+  - type: section
+    block: sections/factual_statement_enforcement
+    content: "Identify the judgment debtor's property, credits, or effects that the writ will command the sheriff to levy on."
+  - type: section
+    block: sections/definitions_schedule_canons
+    content: "Define 'writ of execution,' 'praecipe,' 'prothonotary,' 'levy,' and 'judgment debtor' per Pa.R.C.P. 3101 et seq."
+  - type: argument
+    block: arguments/procedural_defect
+    content: "Argue that the writ of execution is the proper post-judgment enforcement mechanism. The rule is mandatory — 'shall' issue the writ upon praecipe. The prothonotary has no discretion."
+  - type: argument
+    block: arguments/void_order_misuse
+    content: "If the judgment debtor claims exemptions, argue that the burden is on the debtor to establish what property is exempt. The writ may not be stayed without proper showing."
+  - type: section
+    block: sections/conclusion
+    content: "Request issuance of the writ of execution commanding the sheriff to levy on the judgment debtor's property, credits, or effects, plus post-judgment interest per 42 Pa.C.S. § 8101."
+  - type: section
+    block: sections/prayer_for_relief
+    content: "Prayer for: (1) issuance of writ of execution; (2) post-judgment interest at 6% per annum; (3) costs; (4) such other relief as the court deems just."
+  - type: boilerplate
+    block: boilerplate/certificate_of_service
+  - type: boilerplate
+    block: boilerplate/proposed_order
+

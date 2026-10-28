@@ -1,0 +1,19 @@
+name: element_proof
+group: analysis
+unit: count            # claim | term | cite | count | document | case | draft
+axis: "Axis 3 — ELEMENT / PROOF: every element of every count + the record page that proves it."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - amjur_
+  - pa_jury
+  - pa_cs_
+  - usc_
+  - restatement
+  - cjs_
+queries:
+  - "elements of {claim}"
+  - "prima facie {claim} must show"
+  - "burden of proof {claim}"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

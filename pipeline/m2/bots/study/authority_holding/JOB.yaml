@@ -1,0 +1,17 @@
+name: authority_holding
+group: study
+unit: cite            # claim | term | cite | count | document | case | draft
+axis: "Axis 5b — AUTHORITY (what it held): the holding vs what the opponent says it held."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - usreports
+  - cap_us_
+  - ca3_
+  - pa_
+  - courtlistener_
+queries:
+  - "{claim} held"
+  - "{claim} we hold"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

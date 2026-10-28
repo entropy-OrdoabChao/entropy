@@ -1,0 +1,33 @@
+id: notice_of_supplemental_authority
+title: Notice of Supplemental Authority
+description: |
+  Brief notice filed in district court (or appellate court) advising of
+  newly-relevant authority — typically used when controlling case law
+  emerges after primary briefing is complete.
+court: any
+
+required_authorities:
+  - FRAP 28(j) (citation of supplemental authorities — appellate)
+  - L.R. Civ. P. 7.1 (motion practice — district)
+
+trigger_defects:
+  - SERIOUS/AUTHORITY
+  - cross_case
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/factual_statement_federal
+    when: posture != 'post-judgment'
+  - block: sections/factual_statement_enforcement
+    when: posture == 'post-judgment'
+  - block: arguments/non_binding_authority
+    when: defect_categories.AUTHORITY > 0
+  - block: arguments/void_order_misuse
+    when: cross_case_count > 0
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

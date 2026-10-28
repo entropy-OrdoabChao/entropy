@@ -1,0 +1,56 @@
+id: frcp_50_jmrl_jnrv
+title: Motion for Judgment as a Matter of Law (JMOL) / Judgment Notwithstanding the Verdict (JNOV) — FRCP 50
+
+description: |
+  Filing type for Motion for Judgment as a Matter of Law (JMOL) under
+  Federal Rule of Civil Procedure 50. Available in jury trials when a
+  reasonable jury could not legally sustain a verdict for the opposing
+  party on a claim or defense.
+
+  This vehicle operates on TWO timelines:
+    (a) PRE-VERDICT: Made before the case is submitted to the jury.
+        The moving party argues the evidence is legally insufficient.
+    (b) POST-VERDICT (JNOV): Made after the jury returns an adverse
+        verdict, within 28 days of entry of judgment. The court may
+        set aside the verdict and enter JMOL.
+
+  Rule 50(c) creates a CONDITIONAL RULING mechanism: the court may
+  deny the post-verdict JMOL motion while simultaneously conditionally
+  ruling on a companion Rule 59 new-trial motion — preserving the
+  appellate record even if the JMOL is ultimately reversed.
+
+  This is NOT a general dissatisfaction filing. It requires:
+    (a) Complete presentation of evidence on the dispositive issue; AND
+    (b) A showing that no reasonable jury could find for the opposing
+        party on that issue under the controlling law; AND
+    (c) Proper timeliness: Rule 50(a) = before jury submission;
+        Rule 50(b) = within 28 days of entry of judgment.
+
+trigger_defects:
+  - EVIDENTIAR_INSUFFICIENCY_NO_REASONABLE_JURY (insufficient evidence on a dispositive element)
+  - POST_VERDICT_JNOV (jury returns verdict despite legally insufficient evidence)
+  - CONDITIONAL_REVERSAL_PREP (preserving appellate record via Rule 50(c) conditional ruling)
+  - PRE_VERDICT_CUTOFF (premature cutting off jury before full hearing — improper use)
+
+required_authorities:
+  - FRCP 50(a)(1) — "If a party has been fully heard on an issue during a jury trial and the court finds that a reasonable jury would not have a legally sufficient evidentiary basis to find for that party on that issue, the court may: (A) resolve the issue against the party; and (B) grant a motion for judgment as a matter of law"
+  - FRCP 50(a)(2) — "A motion for judgment as a matter of law may be made at any time before the case is submitted to the jury. The motion must specify the judgment sought and the law and facts that entitle the movant to the judgment."
+  - FRCP 50(b) — "If the court does not grant a motion for judgment as a matter of law made under Rule 50(a), the court is considered to have submitted the action to the jury subject to the court's later deciding the legal questions raised by the motion. No later than 28 days after the entry of judgment — or if the motion addresses a jury issue not decided by a verdict, no later than 28 days after the court was instructed to enter a new judgment — the moving party may file a renewed motion for judgment as a matter of law"
+  - FRCP 50(c) — "If the court grants a motion for judgment as a matter of law post-verdict, the court must also conditionally rule on any motion for a new trial under Rule 59 — determining whether a new trial should be granted if the judgment is later vacated"
+  - LII / Legal Information Institute: Federal Rules of Civil Procedure Rule 50, Judgment as a Matter of Law in a Jury Trial; Related Motion for a New Trial; Conditional Ruling
+
+structure:
+  - block: boilerplate/caption_federal
+  - block: sections/introduction
+  - block: sections/statement_of_issues
+  - block: sections/chronological_facts
+  - block: arguments/jmrl_standard_defining
+  - block: arguments/evidentiary_analysis_by_element
+  - block: arguments/post_verdicit_jnrv
+  - block: arguments/conditional_appeal_preservation_50c
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: sections/proposed_order_jmrl
+
+resolution_path: obsidian_sync/templates/filing_types/frcp_50_jmrl_jnrv.yaml

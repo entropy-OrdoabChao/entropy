@@ -1,0 +1,47 @@
+id: immunity_by_function
+title: Immunity-by-Function (WHICH-HAT TEST)
+description: |
+  Apply the WHICH-HAT test before assuming immunity blocks accountability.
+  Immunity is defined by the FUNCTION performed, not the person performing it.
+  This is a FATAL/IMMUNITY detection — if the act is non-judicial by function
+  OR in clear absence of jurisdiction, judicial immunity does NOT bar the
+  accountability filing (JCB/351/1983).
+
+  TWO-STEP TEST:
+  STEP 1 (NATURE OF THE ACT): Is it a function normally performed by a judge
+  in resolving a dispute the parties invoked (Mireles/Stump), or is it an
+  ADMINISTRATIVE/MINISTERIAL/EXECUTIVE/LEGISLATIVE act (Forrester v. White)?
+
+  STEP 2 (JURISDICTION): Was the act in the CLEAR ABSENCE OF ALL JURISDICTION
+  over the subject matter (Bradley v. Fisher)?
+
+  If either step is satisfied, immunity does NOT apply.
+
+required_authorities:
+  - Forrester v. White, 484 U.S. 219, 222 (1988) — "Immunity is defined by the function performed, not the person."
+  - Stump v. Sparkman, 435 U.S. 349, 356 (1978) — Two-prong test: (1) was it a judicial function? (2) in clear absence of jurisdiction?
+  - Mireles v. Woltman, 502 U.S. 96, 102 (1991) — Ministerial acts (no discretion) are NOT protected by immunity
+  - Bradley v. Fisher, 80 U.S. 335, 351 (1872) — Immunity only for acts within jurisdiction; acts in clear absence of jurisdiction are void
+  - 28 U.S.C. § 351(a) — Any person may file complaint alleging judge engaged in conduct prejudicial to effective administration of courts
+  - 28 U.S.C. § 455(a) — Disqualification when impartiality might reasonably be questioned
+
+trigger_defects:
+  - FATAL/IMMUNITY_BY_FUNCTION
+  - SERIOUS/IMMUNITY_BY_FUNCTION
+  - FATAL/ACTOR_SCOPE
+  - FATAL/MINISTERIAL_ACT
+  - FATAL/JUDICIAL_FACT_ERROR
+  - record_contradiction
+  - sua_sponte_intervention
+
+logic:
+  - IF act_is_administrative_or_ministerial THEN immunity_does_not_apply
+  - IF act_in_clear_absence_of_subject_matter_jurisdiction THEN immunity_does_not_apply
+  - IF judge_dissolved_writ_sua_sponte_without_motion_or_notice THEN immunity_piercing_candidate
+  - IF judge_contradicted_docket_without_citing_opposing_evidence THEN record_contradiction_immunity_piercing
+
+notes:
+  - NEVER rely on the expatriation/foreign-national theory
+  - Detect sua-sponte administrative/ministerial interventions (e.g. dissolving a ministerial writ with no motion/notice) as immunity-piercing candidates
+  - Cite Forrester+Stump+Mireles verbatim when immunity is asserted as a defense
+  - Log all immunity-by-function findings to m0_gaps.jsonl; critic validates

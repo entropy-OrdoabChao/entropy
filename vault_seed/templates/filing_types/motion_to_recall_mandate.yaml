@@ -1,0 +1,40 @@
+id: motion_to_recall_mandate
+title: Motion to Recall the Mandate Under FRAP 41(d)
+description: 'Motion under Fed. R. App. P. 41(d) and the Court''s inherent authority
+  to recall a mandate (or certified order in lieu of mandate) where exceptional
+  circumstances justify reopening.
+
+  This is the SECOND vehicle in the appellate-reinstatement sequence, to be filed
+  INSTEAD of the motion to reinstate if the mandate has already issued. The
+  distinction matters: if the mandate has NOT issued, use L.A.R. 107.2
+  reinstatement; if it HAS issued, use FRAP 41(d) recall.
+
+  Key provisions:
+  - FRAP 41(d): The mandate may be recalled by the court at any time
+  - Calderon v. Thompson, 523 U.S. 538 (1998): Recall is warranted where
+    exceptional circumstances justify reopening
+  - Pro se litigants get liberal construction (Haines v. Kerner, 404 U.S. 519)
+  - The court retains authority to recall its mandate where the record
+    contradicts the basis for the underlying order
+  '
+court: federal_appellate
+required_authorities:
+- Fed. R. App. P. 41(d) — Recall of the Mandate
+- Calderon v. Thompson, 523 U.S. 538 (1998) — Recall standard
+- Fed. R. App. P. 41(a) — Mandate timing (for determining whether mandate issued)
+- Haines v. Kerner, 404 U.S. 519 (1972) — Pro se liberal construction
+- 3d Cir. L.A.R. 107.2(b) — Certified order in lieu of mandate
+trigger_defects:
+- dismissal
+- FATAL/PROCEDURAL
+- FATAL/JURISDICTION
+- mandate_issued
+structure:
+- block: boilerplate/caption_appellate_3rd_cir
+- block: sections/introduction
+- block: sections/factual_statement_federal
+- block: arguments/recall_mandate_grounds
+- block: arguments/recall_mandate_exceptional_circumstances
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

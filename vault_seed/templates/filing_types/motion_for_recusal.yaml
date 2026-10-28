@@ -1,0 +1,36 @@
+id: motion_for_recusal
+title: Motion for Recusal
+description: |
+  Motion for judicial recusal under 28 U.S.C. § 455(a) (federal) or
+  Pa. Code of Judicial Conduct, Canon 2 (state). Filed when bias
+  indicators are detected in the record.
+court: any
+
+required_authorities:
+  - 28 U.S.C. § 455(a)
+  - 28 U.S.C. § 144
+  - Pa. Code of Judicial Conduct, Canon 2
+  - Caperton v. A.T. Massey Coal Co., 556 U.S. 868 (2009)
+
+trigger_defects:
+  - FATAL/JURISDICTION
+  - bias_indicator
+  - frivolous_labeling
+  - premature_labeling
+  - conclusory_denial
+  - pattern_of_conclusive_denials
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/standard_of_review
+  - block: arguments/recusal_bias
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

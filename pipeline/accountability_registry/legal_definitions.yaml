@@ -1,0 +1,697 @@
+# legal_definitions.yaml — canonical legal definitions for signal_reasoner
+#
+# CRITICAL: Each entry is the GROUND TRUTH the LLM uses. LLM is forbidden from
+# inventing definitions, citations, or elements. Every reasoner output must
+# contain a citation_token from one of these entries.
+#
+# Schema (each entry):
+#   id: <slug>
+#   term: <display name>
+#   definition: <one paragraph, factual, no creative language>
+#   source_authority: <controlling statute/rule citation>
+#   controlling_case: <case name + reporter cite, optional>
+#   jurisdiction: <federal | pa_state | both>
+#   elements_to_prove: [<atomic, prove-or-fail elements>]
+#   inapplicable_when: [<negative scope conditions>]
+#   common_misconceptions: [<what LLM must NOT confuse this with>]
+#   citation_tokens: [<strings that must appear in any output citing this>]
+#   verified: <YYYY-MM-DD>
+
+version: "0.1"
+
+definitions:
+  # ════════════════════════════════════════════════════════════════════════════
+  # TAX — 1099-C, COD income, § 7434, § 6722
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: form_1099_c
+    term: "IRS Form 1099-C (Cancellation of Debt)"
+    definition: |
+      Form 1099-C is an information return that creditors file with the IRS and
+      furnish to debtors when $600 or more of indebtedness is discharged. Filing
+      the form reports cancellation of debt (COD) income to the debtor, which is
+      generally includible in gross income under 26 U.S.C. § 61(a)(11) unless
+      excluded under 26 U.S.C. § 108 (insolvency, bankruptcy, qualified principal
+      residence indebtedness, qualified real property business indebtedness).
+    source_authority: "26 U.S.C. § 6050P; 26 C.F.R. § 1.6050P-1"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Creditor is one of the entities required to file under 26 U.S.C. § 6050P(c) (applicable financial entity, executive agency, or organization with significant trade or business of lending money)"
+      - "Indebtedness of $600 or more was discharged"
+      - "Identifiable event occurred (26 C.F.R. § 1.6050P-1(b)(2)) — e.g., bankruptcy discharge, statute of limitations, expiration of nonpayment testing period"
+    inapplicable_when:
+      - "Amount discharged is less than $600"
+      - "Debt is contested in good faith (26 C.F.R. § 1.6050P-1(d) — disputed debt exception)"
+      - "Creditor is not within § 6050P(c) definition"
+    common_misconceptions:
+      - "1099-C filing alone does NOT extinguish the underlying debt; the debt may remain legally enforceable if the cancellation was erroneous"
+      - "1099-C does NOT trigger TIGTA jurisdiction — TIGTA oversees IRS misconduct, not private creditor reporting"
+      - "1099-C is filed BY the creditor, not the IRS — receipt of a 1099-C is not an IRS determination"
+    citation_tokens:
+      - "26 U.S.C. § 6050P"
+      - "Form 1099-C"
+      - "§ 108"
+    verified: "2026-05-30"
+
+  - id: section_7434
+    term: "26 U.S.C. § 7434 — Civil Damages for Fraudulent Filing of Information Returns"
+    definition: |
+      26 U.S.C. § 7434 creates a private right of action for a taxpayer against
+      any person who WILLFULLY files a FRAUDULENT information return with
+      respect to payments purportedly made to that taxpayer. Damages are the
+      greater of $5,000 OR the sum of actual damages, costs of the action, and
+      reasonable attorney fees. Section 7434(f) provides a 6-year statute of
+      limitations from the later of filing of the fraudulent return or the date
+      it could reasonably have been discovered.
+    source_authority: "26 U.S.C. § 7434"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Defendant filed an 'information return' as defined in 26 U.S.C. § 6724(d)(1) (includes Form 1099-C, 1099-MISC, W-2, etc.)"
+      - "Filing was WILLFUL (defendant knew or had reason to know the return was fraudulent)"
+      - "Filing was FRAUDULENT (return reported a payment or discharge that did not in fact occur, OR reported a materially incorrect amount)"
+      - "Filing was 'with respect to payments purportedly made to' plaintiff"
+    inapplicable_when:
+      - "Defendant filed an accurate return (even if plaintiff disputes the underlying obligation)"
+      - "Filing was negligent but not willful (Czerw v. Lafayette Storage & Moving Co., No. 16-CV-6701, W.D.N.Y. 2017)"
+      - "Information return was filed by a federal agency or its employees (separate immunity analysis)"
+      - "Plaintiff is not the named payee on the return"
+    common_misconceptions:
+      - "§ 7434 is NOT a remedy for ordinary tax disputes — it requires PROVABLE willful falsity"
+      - "Inaccurate amount alone is insufficient — must show willful knowledge of falsity"
+      - "Filing a 1099-C the debtor believes is wrong is NOT automatically § 7434 — burden is on plaintiff to prove willfulness"
+    citation_tokens:
+      - "26 U.S.C. § 7434"
+      - "willfully filed"
+      - "fraudulent information return"
+    verified: "2026-05-30"
+
+  - id: section_6722
+    term: "26 U.S.C. § 6722 — Failure to Furnish Correct Payee Statements"
+    definition: |
+      26 U.S.C. § 6722 imposes an administrative penalty on any person required
+      to furnish a payee statement under 26 U.S.C. § 6724(d)(2) who fails to do
+      so or who furnishes an incorrect statement. Penalty is $50-$310 per failure
+      depending on when corrected. This is an IRS-administered penalty, NOT a
+      private right of action.
+    source_authority: "26 U.S.C. § 6722"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Failure to furnish correct payee statement under § 6724(d)(2)"
+    inapplicable_when:
+      - "Person seeking recovery is the taxpayer (this is an IRS-administered penalty, not a private cause of action)"
+    common_misconceptions:
+      - "§ 6722 does NOT create a private right of action — only the IRS may assess; pro se referral via Form 3949-A or whistleblower process under § 7623"
+    citation_tokens:
+      - "26 U.S.C. § 6722"
+      - "payee statement"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # JUDICIAL ACCOUNTABILITY — Judicial Conduct, Bivens, FTCA, § 1983
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: judicial_immunity
+    term: "Absolute Judicial Immunity"
+    definition: |
+      A judge is absolutely immune from suit for damages for ALL judicial acts
+      taken in the judge's judicial capacity, even if those acts are erroneous,
+      malicious, or in excess of jurisdiction. Immunity is overcome ONLY where
+      the judge acted in the clear absence of all jurisdiction. Judicial
+      immunity does not bar (a) prospective injunctive relief in narrow
+      circumstances, (b) judicial council complaint under 28 U.S.C. § 351, or
+      (c) impeachment under U.S. Const. Art. II § 4.
+    source_authority: "Bradley v. Fisher, 80 U.S. 335 (1871); Stump v. Sparkman, 435 U.S. 349 (1978); Mireles v. Waco, 502 U.S. 9 (1991)"
+    controlling_case: "Stump v. Sparkman, 435 U.S. 349 (1978)"
+    jurisdiction: both
+    elements_to_prove:
+      - "Act was JUDICIAL in nature (function normally performed by a judge)"
+      - "Act was taken in judge's JUDICIAL capacity"
+    inapplicable_when:
+      - "Judge acted in CLEAR ABSENCE of all jurisdiction (not merely 'in excess of jurisdiction')"
+      - "Conduct was administrative, executive, or legislative rather than judicial"
+      - "Plaintiff seeks PROSPECTIVE injunctive relief in narrow circumstances (Pulliam v. Allen, 466 U.S. 522 (1984) — partially abrogated by 42 U.S.C. § 1983 amendment as to § 1983 claims)"
+      - "Plaintiff pursues judicial conduct complaint (28 U.S.C. § 351) — not a damages remedy"
+      - "Plaintiff pursues impeachment referral — political remedy"
+    common_misconceptions:
+      - "§ 1983 damages against a judge are NOT available — immunity applies and 1996 amendment to § 1983 explicitly bars injunctive relief against judicial acts unless declaratory decree was violated or declaratory relief unavailable"
+      - "FTCA does NOT reach federal judges as individual defendants — the US substitutes itself (28 U.S.C. § 2679); judicial-function FTCA suits face discretionary function exception (28 U.S.C. § 2680(a))"
+      - "Bivens does NOT extend to judicial misconduct claims after Egbert v. Boule, 596 U.S. 482 (2022)"
+    citation_tokens:
+      - "Bradley v. Fisher"
+      - "Stump v. Sparkman"
+      - "judicial immunity"
+    verified: "2026-05-30"
+
+  - id: judicial_conduct_complaint_28_351
+    term: "Judicial Conduct and Disability Act Complaint (28 U.S.C. § 351)"
+    definition: |
+      Any person alleging that a federal judge has engaged in "conduct
+      prejudicial to the effective and expeditious administration of the
+      business of the courts" or is "unable to discharge all the duties of
+      office by reason of mental or physical disability" may file a written
+      complaint with the clerk of the relevant court of appeals. The complaint
+      is reviewed by the chief judge, who may dismiss, conclude after
+      corrective action, or refer to a special committee. Remedies are
+      DISCIPLINARY (private or public censure, request for voluntary
+      retirement, certification for impeachment) — NOT monetary.
+    source_authority: "28 U.S.C. §§ 351-364 (Judicial Conduct and Disability Act of 1980)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Subject is a federal judge (Article III judge, magistrate judge, or bankruptcy judge)"
+      - "Allegation is of (a) conduct prejudicial to effective administration of court business, or (b) inability to discharge duties due to disability"
+      - "Allegation is NOT 'merits-related' (cannot be a complaint about the correctness of a ruling — Rule 3(h)(3)(A) of Rules for Judicial-Conduct Proceedings)"
+    inapplicable_when:
+      - "Complaint is directed at a state-court judge (use state judicial conduct commission instead)"
+      - "Complaint is directed at a SCOTUS Justice (no statutory complaint forum; impeachment only)"
+      - "Allegation is solely that the judge ruled incorrectly (merits-related complaints are dismissed under Rule 11(c)(1)(B))"
+    common_misconceptions:
+      - "This is NOT a damages remedy — no monetary relief is available"
+      - "This does NOT vacate the judge's rulings — separate appellate review required"
+      - "Filing is FREE and does not require legal representation"
+    citation_tokens:
+      - "28 U.S.C. § 351"
+      - "Judicial Conduct and Disability Act"
+      - "third_circuit_judicial_council"
+    verified: "2026-05-30"
+
+  - id: bivens_action
+    term: "Bivens Action (Federal Constitutional Tort)"
+    definition: |
+      A Bivens action is an implied damages remedy against a federal officer
+      for violation of certain constitutional rights, recognized in Bivens v.
+      Six Unknown Named Agents, 403 U.S. 388 (1971). The Supreme Court has
+      NARROWED Bivens significantly: it remains available only in three
+      contexts originally recognized (Fourth Amendment unreasonable search,
+      Fifth Amendment due process gender discrimination, Eighth Amendment
+      deliberate indifference). Egbert v. Boule, 596 U.S. 482 (2022), and
+      Hernandez v. Mesa, 589 U.S. 93 (2020), foreclose extension to "new
+      contexts" where Congress has provided alternative remedies or where
+      special factors counsel hesitation.
+    source_authority: "Bivens v. Six Unknown Named Agents, 403 U.S. 388 (1971)"
+    controlling_case: "Egbert v. Boule, 596 U.S. 482 (2022)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Defendant is a federal officer (not state or municipal)"
+      - "Defendant acted under color of federal authority"
+      - "Conduct violated one of the THREE recognized Bivens contexts (4A search, 5A gender discrimination, 8A medical indifference)"
+      - "No 'new context' problem under Egbert / Ziglar v. Abbasi test"
+    inapplicable_when:
+      - "Defendant is a state actor (use § 1983 instead)"
+      - "Defendant is a federal judge (no Bivens for judicial misconduct)"
+      - "Defendant is a federal prosecutor for acts within prosecutorial function (absolute immunity per Imbler v. Pachtman, 424 U.S. 409 (1976))"
+      - "Claim falls outside the three recognized contexts (Egbert forecloses extension)"
+      - "Alternative remedial scheme exists (e.g., FTCA, agency complaint process)"
+    common_misconceptions:
+      - "Bivens is NOT a general federal § 1983 — it is narrow and shrinking post-Egbert"
+      - "Bivens does NOT reach private contractors (Minneci v. Pollard, 565 U.S. 118 (2012))"
+      - "Bivens does NOT reach federal judges (no court has extended it to judicial acts)"
+    citation_tokens:
+      - "Bivens"
+      - "Egbert v. Boule"
+      - "596 U.S. 482"
+    verified: "2026-05-30"
+
+  - id: ftca_action
+    term: "Federal Tort Claims Act (FTCA)"
+    definition: |
+      The FTCA waives federal sovereign immunity for certain tort claims
+      against the United States, making the US liable in tort to the same
+      extent as a private individual under the law of the place where the
+      act or omission occurred. The federal employee is NOT personally
+      liable; the US substitutes as defendant (28 U.S.C. § 2679(d)). An
+      administrative claim must be presented to the responsible agency on
+      Standard Form 95 within TWO YEARS of accrual; suit must be filed
+      within SIX MONTHS after final administrative denial.
+    source_authority: "28 U.S.C. §§ 1346(b), 2671-2680"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Tort committed by federal employee acting WITHIN SCOPE OF EMPLOYMENT"
+      - "Claim sounds in tort under the law of the state where act occurred"
+      - "Administrative claim filed within 2 years of accrual (28 U.S.C. § 2401(b)) — JURISDICTIONAL"
+      - "Suit filed within 6 months after final agency denial (or after 6 months without response, claimant may deem denied)"
+    inapplicable_when:
+      - "Claim falls within discretionary function exception (28 U.S.C. § 2680(a))"
+      - "Claim arises from intentional tort by non-law-enforcement employee (28 U.S.C. § 2680(h))"
+      - "Defendant is not a federal employee or is independent contractor"
+      - "Administrative exhaustion not completed (jurisdictional)"
+    common_misconceptions:
+      - "FTCA does NOT permit suit against individual federal employees — only against the United States"
+      - "FTCA does NOT reach intentional torts by ordinary federal employees (only law enforcement, per § 2680(h))"
+      - "FTCA does NOT reach judicial acts (discretionary function exception typically applies)"
+    citation_tokens:
+      - "FTCA"
+      - "28 U.S.C. § 1346(b)"
+      - "Standard Form 95"
+    verified: "2026-05-30"
+
+  - id: section_1983
+    term: "42 U.S.C. § 1983 — Civil Action for Deprivation of Rights"
+    definition: |
+      Section 1983 creates a private right of action against any person who,
+      acting under color of STATE LAW, deprives another of rights, privileges,
+      or immunities secured by the Constitution or laws of the United States.
+      It does NOT reach federal officers acting under federal authority. The
+      1996 amendment to § 1983 bars injunctive relief against a judicial
+      officer for acts taken in judicial capacity UNLESS a declaratory decree
+      was violated or declaratory relief was unavailable.
+    source_authority: "42 U.S.C. § 1983; Pub. L. 104-317 (1996 amendment limiting judicial injunctive relief)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Defendant acted under color of STATE (or municipal) law"
+      - "Defendant deprived plaintiff of a federal constitutional or statutory right"
+      - "Causation between defendant's conduct and the deprivation"
+    inapplicable_when:
+      - "Defendant is a federal officer acting under federal authority (use Bivens or FTCA)"
+      - "Defendant is a state judge sued for damages for judicial acts (Bradley v. Fisher immunity)"
+      - "Defendant is a state prosecutor sued for damages for prosecutorial function (Imbler v. Pachtman immunity)"
+      - "Injunctive relief sought against judicial officer without prior declaratory violation (1996 amendment)"
+    common_misconceptions:
+      - "§ 1983 does NOT reach private parties unless they engaged in 'joint action' with state actors (Adickes v. S.H. Kress, 398 U.S. 144 (1970))"
+      - "§ 1983 does NOT reach federal employees — use Bivens or FTCA"
+      - "Attorney fees under 42 U.S.C. § 1988 are SEPARATELY recoverable to prevailing party (not as part of § 1983 itself)"
+    citation_tokens:
+      - "42 U.S.C. § 1983"
+      - "under color of state law"
+      - "1996 amendment"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # ATTORNEY MALPRACTICE — Pa.R.P.C. 1.4(c), Bailey v. Tucker, Kituskie
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: attorney_malpractice_pa
+    term: "Pennsylvania Legal Malpractice"
+    definition: |
+      In Pennsylvania, a legal malpractice action requires plaintiff to
+      establish: (1) employment of the attorney or other basis for the
+      attorney's duty; (2) failure of the attorney to exercise ordinary skill
+      and knowledge; and (3) that such negligence was the proximate cause of
+      damage to the plaintiff. For trial malpractice claims, plaintiff must
+      satisfy the 'case within a case' doctrine — proving the underlying case
+      would have been won but for the attorney's negligence. Statute of
+      limitations is 2 years for tort (42 Pa.C.S. § 5524) or 4 years for
+      contract (42 Pa.C.S. § 5525), with the discovery rule available.
+    source_authority: "Bailey v. Tucker, 533 Pa. 237 (1993); 42 Pa.C.S. §§ 5524, 5525"
+    controlling_case: "Kituskie v. Corbman, 552 Pa. 275 (1998) (case-within-a-case)"
+    jurisdiction: pa_state
+    elements_to_prove:
+      - "Existence of attorney-client relationship (or other basis of duty)"
+      - "Attorney's conduct fell below applicable standard of care"
+      - "Proximate causation between negligence and damages"
+      - "Damages (for trial malpractice: 'case within a case' demonstrating underlying case would have prevailed)"
+    inapplicable_when:
+      - "No attorney-client relationship existed and no special duty arose"
+      - "Negligence claim against an attorney by a non-client (typically barred by privity, with narrow exceptions for intended third-party beneficiaries)"
+      - "Statute of limitations expired and discovery rule does not apply"
+    common_misconceptions:
+      - "Malpractice claim is DISTINCT from disciplinary complaint to Pa. Disciplinary Board — file both separately"
+      - "Pa.R.P.C. 1.4(c) requires ATTORNEY TO DISCLOSE lack of $100k/$300k coverage to client; it does NOT MANDATE coverage"
+      - "Disciplinary Board 'Look Up an Attorney' tool shows coverage status (YES/NO threshold) but NOT carrier identity"
+    citation_tokens:
+      - "Bailey v. Tucker"
+      - "533 Pa. 237"
+      - "Kituskie"
+      - "case within a case"
+    verified: "2026-05-30"
+
+  - id: pa_rpc_1_4_c
+    term: "Pennsylvania Rule of Professional Conduct 1.4(c) — Insurance Disclosure"
+    definition: |
+      Pa.R.P.C. 1.4(c) requires every Pennsylvania attorney in private
+      practice to disclose to a client in writing if the attorney does not
+      maintain professional liability insurance in an amount equal to or
+      greater than $100,000 per occurrence and $300,000 in the aggregate per
+      year. The disclosure must be made at the time of engagement. Pa.R.D.E.
+      219(d) requires each attorney to indicate insurance status on the
+      annual fee form, which the Disciplinary Board publishes via the public
+      "Look Up an Attorney" tool.
+    source_authority: "Pa.R.P.C. 1.4(c); Pa.R.D.E. 219"
+    jurisdiction: pa_state
+    elements_to_prove:
+      - "Attorney was in PRIVATE practice in Pennsylvania during relevant period"
+      - "Attorney did not carry insurance at or above $100k per occurrence / $300k aggregate"
+      - "Attorney failed to provide written disclosure to client of that fact"
+    inapplicable_when:
+      - "Attorney was employed by government or non-profit (rule applies only to private practice)"
+      - "Attorney did carry insurance at the threshold"
+      - "Disclosure was provided in writing at engagement"
+    common_misconceptions:
+      - "Pa does NOT MANDATE attorneys to carry malpractice insurance — only requires disclosure if below threshold"
+      - "Disciplinary Board lookup reveals YES/NO on threshold but NOT the carrier name"
+      - "Violation of 1.4(c) is a DISCIPLINARY matter, not by itself a malpractice claim"
+    citation_tokens:
+      - "Pa.R.P.C. 1.4(c)"
+      - "$100,000 per occurrence"
+      - "$300,000 aggregate"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # INSURANCE — PA Bad Faith § 8371, UIPA
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: pa_bad_faith_8371
+    term: "42 Pa.C.S. § 8371 — Insurance Bad Faith"
+    definition: |
+      42 Pa.C.S. § 8371 provides that if an insurer acted in BAD FAITH toward
+      the insured in handling a claim arising under an insurance policy, the
+      court may award (1) interest at the prime rate plus 3% from the date
+      the claim was made, (2) punitive damages, and (3) court costs and
+      attorney fees. The Pennsylvania Supreme Court has adopted a TWO-PART
+      test (Terletsky): plaintiff must prove by CLEAR AND CONVINCING evidence
+      that (a) the insurer did not have a reasonable basis to deny benefits
+      and (b) the insurer knew or recklessly disregarded its lack of
+      reasonable basis. The statute of limitations is 4 years.
+    source_authority: "42 Pa.C.S. § 8371"
+    controlling_case: "Terletsky v. Prudential Property & Cas. Ins., 437 Pa.Super. 108 (1994); Ash v. Continental Ins. Co., 932 A.2d 877 (Pa. 2007) (4-year SOL)"
+    jurisdiction: pa_state
+    elements_to_prove:
+      - "Plaintiff is an INSURED under the policy (direct standing — third parties generally lack direct § 8371 standing absent assignment or judgment garnishment)"
+      - "Insurer's conduct in handling the claim was in bad faith"
+      - "Plaintiff proves both prongs by CLEAR AND CONVINCING evidence"
+      - "Insurer (a) did not have a reasonable basis to deny benefits AND (b) knew or recklessly disregarded its lack of reasonable basis"
+    inapplicable_when:
+      - "Plaintiff is a third-party claimant or judgment creditor without assignment (D'Ambrosio v. Pennsylvania National 1981 narrowed third-party rights)"
+      - "Statute of limitations expired (4 years from accrual)"
+      - "Insurer had a reasonable basis even if denial later proven wrong (preponderance is insufficient — clear and convincing required)"
+    common_misconceptions:
+      - "§ 8371 is DISTINCT from UIPA — UIPA has no private right of action (D'Ambrosio); § 8371 fills the gap"
+      - "§ 8371 does NOT require an underlying breach of contract claim to succeed"
+      - "The burden is CLEAR AND CONVINCING — higher than preponderance, lower than beyond reasonable doubt"
+    citation_tokens:
+      - "42 Pa.C.S. § 8371"
+      - "Terletsky"
+      - "clear and convincing"
+    verified: "2026-05-30"
+
+  - id: pa_uipa
+    term: "Pennsylvania Unfair Insurance Practices Act (40 P.S. § 1171 et seq.)"
+    definition: |
+      The PA UIPA enumerates unfair insurance practices including misrepresenting
+      facts or policy provisions, failing to acknowledge claim communications
+      promptly, failing to adopt reasonable standards for prompt investigation,
+      refusing to pay claims without reasonable investigation, and compelling
+      litigation by offering substantially less than the amounts ultimately
+      recovered. The Pennsylvania Supreme Court held in D'Ambrosio v.
+      Pennsylvania National Mutual Casualty Insurance Co., 494 Pa. 501 (1981),
+      that UIPA does NOT create a private right of action; only the PA
+      Insurance Department may enforce.
+    source_authority: "40 P.S. §§ 1171.1-1171.15; 31 Pa. Code Ch. 146"
+    controlling_case: "D'Ambrosio v. Pennsylvania National Mutual, 494 Pa. 501 (1981)"
+    jurisdiction: pa_state
+    elements_to_prove:
+      - "(For Department complaint:) specific UIPA § 1171.5 unfair practice"
+      - "(For Department complaint:) practice occurred with such frequency to indicate a general business practice"
+    inapplicable_when:
+      - "Plaintiff seeks private damages directly under UIPA — barred by D'Ambrosio; use § 8371 for private bad-faith claim"
+    common_misconceptions:
+      - "UIPA findings can be EVIDENTIARY in a § 8371 case but are not preclusive"
+      - "PA Insurance Department complaint is FREE but cannot award damages"
+    citation_tokens:
+      - "40 P.S. § 1171"
+      - "D'Ambrosio"
+      - "no private right of action"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # FCRA — § 1681i, § 1681s-2
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: fcra_1681i
+    term: "Fair Credit Reporting Act — Reinvestigation Duty (15 U.S.C. § 1681i)"
+    definition: |
+      15 U.S.C. § 1681i imposes a duty on consumer reporting agencies (CRAs)
+      to conduct a REASONABLE REINVESTIGATION when a consumer disputes the
+      accuracy of information in their credit file. The CRA must complete
+      the reinvestigation within 30 days (45 days if additional information
+      received during the period), notify the consumer of results, and
+      delete or modify inaccurate or unverifiable information. Willful
+      violation supports statutory damages of $100-$1,000 plus actual,
+      punitive damages, costs, and attorney fees (15 U.S.C. § 1681n). Negligent
+      violation supports actual damages plus costs and fees (15 U.S.C. § 1681o).
+    source_authority: "15 U.S.C. § 1681i; 15 U.S.C. §§ 1681n, 1681o"
+    controlling_case: "Safeco Ins. Co. v. Burr, 551 U.S. 47 (2007) (willfulness standard)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Defendant is a 'consumer reporting agency' as defined in § 1681a(f)"
+      - "Consumer submitted a dispute communication"
+      - "CRA failed to conduct a REASONABLE reinvestigation"
+      - "Inaccurate or unverifiable information remained on consumer's report or was reinserted without compliance with § 1681i(a)(5)(B)"
+      - "Damages (statutory available on willfulness; actual otherwise)"
+    inapplicable_when:
+      - "Defendant is a furnisher of information rather than CRA (use § 1681s-2 with private right limited to subsection (b) for furnisher reinvestigation duties)"
+      - "Dispute was not communicated to the CRA (direct disputes to furnisher under § 1681s-2(a) generally lack private right of action — Nelson v. Chase Manhattan Mortgage, 282 F.3d 1057 (9th Cir. 2002))"
+    common_misconceptions:
+      - "Direct disputes to FURNISHER under § 1681s-2(a) do NOT support private suit (only § 1681s-2(b) reinvestigation duties — triggered when CRA forwards dispute)"
+      - "Willfulness under Safeco requires showing of RECKLESS DISREGARD, not merely negligence"
+    citation_tokens:
+      - "15 U.S.C. § 1681i"
+      - "reasonable reinvestigation"
+      - "30 days"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # PROCEDURAL — FRCP 26, SCOTUS Cert, Mandamus
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: frcp_26_initial_disclosures
+    term: "FRCP 26(a)(1)(A)(iv) — Mandatory Insurance Disclosure"
+    definition: |
+      Federal Rule of Civil Procedure 26(a)(1)(A)(iv) requires a party, without
+      awaiting a discovery request, to disclose for inspection and copying
+      "any insurance agreement under which an insurance business may be liable
+      to satisfy all or part of a possible judgment in the action or to
+      indemnify or reimburse for payments made to satisfy the judgment." This
+      includes primary, excess, and umbrella policies; D&O; E&O; cyber; and
+      fidelity bonds. Disclosure obligation is AUTOMATIC and runs in all
+      civil cases except those exempted under Rule 26(a)(1)(B). Initial
+      disclosures are typically due 14 days after the Rule 26(f) conference.
+      Failure to disclose supports sanctions under Rule 37(c)(1).
+    source_authority: "Fed. R. Civ. P. 26(a)(1)(A)(iv); Fed. R. Civ. P. 37(c)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Action is in federal court and not exempted under Rule 26(a)(1)(B)"
+      - "Defendant failed to disclose, or disclosed incomplete, insurance agreements responsive to the rule"
+    inapplicable_when:
+      - "Case exempted under Rule 26(a)(1)(B) (e.g., habeas, action by US to recover benefits, certain pro se prisoner cases)"
+      - "Defendant produced all responsive insurance agreements timely"
+    common_misconceptions:
+      - "Rule 26(a)(1)(A)(iv) is AUTOMATIC — no discovery request required to trigger duty"
+      - "Reinsurance disclosure is contested in some circuits; primary/excess/umbrella always required"
+      - "Rule 26 does not require disclosure of self-insured retentions in all circuits — check local Rule"
+    citation_tokens:
+      - "Fed. R. Civ. P. 26(a)(1)(A)(iv)"
+      - "insurance agreement"
+      - "automatic"
+    verified: "2026-05-30"
+
+  - id: scotus_cert_petition
+    term: "Petition for Writ of Certiorari (Sup. Ct. R. 13)"
+    definition: |
+      A petition for a writ of certiorari is the discretionary process by
+      which the Supreme Court of the United States reviews lower court
+      decisions. Filing deadline is NINETY (90) DAYS from entry of the
+      judgment below or from denial of timely rehearing, whichever is later
+      (Sup. Ct. R. 13.1, 13.3). This deadline is JURISDICTIONAL and cannot
+      be waived. The petition must be in booklet format unless filed under
+      Rule 39 in forma pauperis. Word limit is 9,000 words (Sup. Ct. R. 33.1).
+      Filing fee is $300, waivable under Rule 39 IFP. Rule 10 sets out the
+      considerations governing review (circuit splits, important question of
+      federal law, departure from accepted course of judicial proceedings).
+    source_authority: "28 U.S.C. § 2101(c); Sup. Ct. R. 10, 13, 14, 33, 39"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Petitioner has standing as party in court below"
+      - "Petition filed within 90 days of entry of judgment OR denial of rehearing (JURISDICTIONAL)"
+      - "Question presented falls within Rule 10 factors"
+      - "All formal requirements satisfied (booklet format unless IFP, word count, sections per Rule 14)"
+    inapplicable_when:
+      - "More than 90 days elapsed since judgment or rehearing denial (jurisdictional bar)"
+      - "Petitioner did not exhaust below"
+      - "Question is not one of FEDERAL law (state-law-only questions not reviewable)"
+    common_misconceptions:
+      - "The 90-day deadline is JURISDICTIONAL — no extensions absent very limited Rule 13.5 extension granted BEFORE expiration"
+      - "Cert is DISCRETIONARY — fewer than 1% of petitions are granted; thousands of merit petitions filed annually"
+    citation_tokens:
+      - "Sup. Ct. R. 13"
+      - "90 days"
+      - "28 U.S.C. § 2101(c)"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # MORTGAGE / SERVICING — Reg X Force-Placed Insurance, REMIC
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: reg_x_force_placed_insurance
+    term: "Regulation X — Force-Placed Insurance Restrictions (12 C.F.R. § 1024.37)"
+    definition: |
+      12 C.F.R. § 1024.37 restricts when a servicer may purchase force-placed
+      (lender-placed) hazard insurance and charge the borrower. Servicer must
+      have a REASONABLE BASIS to believe the borrower has failed to maintain
+      hazard insurance, provide ADVANCE WRITTEN NOTICE (at least 45 days before
+      charging premium), allow opportunity to demonstrate continuous coverage,
+      and may not assess force-placed charges if the servicer is escrowing for
+      hazard insurance. RESPA 12 U.S.C. § 2605(f) provides civil action for
+      pattern of noncompliance: actual damages plus $2,000 statutory damages
+      for each occurrence (capped at $2,000,000 in a class action), plus
+      attorney fees.
+    source_authority: "12 C.F.R. § 1024.37; 12 U.S.C. §§ 2605(m), 2605(f)"
+    controlling_case: "Wilson v. Bank of America, N.A. (class action settlements common in this area)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Defendant is a 'servicer' as defined in 12 C.F.R. § 1024.2"
+      - "Servicer purchased force-placed hazard insurance"
+      - "Servicer failed to comply with one of: (a) reasonable basis to believe lapse, (b) 45-day advance notice, (c) opportunity to demonstrate coverage, (d) prohibition where escrow being maintained"
+      - "(For RESPA private action:) pattern of noncompliance OR actual damages"
+    inapplicable_when:
+      - "Borrower's hazard insurance had actually lapsed and servicer complied with all notice requirements"
+      - "Loan is not a 'federally related mortgage loan' under § 2605"
+    common_misconceptions:
+      - "Force-placed insurance typically costs 4-10x market rate; inflated premium and servicer kickbacks ('tracking fees') are heavily litigated"
+      - "CFPB consumer complaint creates public record AND state AG referral; does NOT preclude private RESPA action"
+    citation_tokens:
+      - "12 C.F.R. § 1024.37"
+      - "12 U.S.C. § 2605"
+      - "force-placed"
+    verified: "2026-05-30"
+
+  - id: remic_section_860
+    term: "REMIC (Real Estate Mortgage Investment Conduit) — 26 U.S.C. § 860A-G"
+    definition: |
+      A REMIC is a tax election under 26 U.S.C. §§ 860A-860G that allows a
+      pool of mortgage assets to pass through income to investors without
+      entity-level tax, provided strict requirements are met. Key requirements:
+      substantially all assets must be 'qualified mortgages' (§ 860G(a)(3));
+      assets must be contributed at or near the startup day (§ 860G(a)(9));
+      and the REMIC must not engage in 'prohibited transactions'
+      (§ 860F(a)(2)), which trigger a 100% tax on net income from such
+      transactions. A late assignment of a mortgage into the REMIC after the
+      startup day can disqualify the mortgage as a 'qualified mortgage' and,
+      depending on facts, trigger prohibited transaction tax or REMIC
+      disqualification.
+    source_authority: "26 U.S.C. §§ 860A-860G; 26 C.F.R. § 1.860A-1 et seq."
+    jurisdiction: federal
+    elements_to_prove:
+      - "Entity claims REMIC tax status"
+      - "Asset(s) at issue did not qualify under § 860G(a)(3) at startup day"
+      - "Or: transaction was 'prohibited' under § 860F(a)(2)"
+    inapplicable_when:
+      - "Plaintiff is a borrower attempting to use REMIC violations as defense to foreclosure: most courts hold borrowers lack STANDING to enforce REMIC tax rules (Bank of America v. Bassman FBT, 2012 IL App (2d) 110729); REMIC violation is a TAX issue between REMIC and IRS, not a borrower defense"
+      - "Statute of limitations on IRS enforcement expired"
+    common_misconceptions:
+      - "Borrowers GENERALLY CANNOT enforce REMIC rules in foreclosure defense — standing barrier"
+      - "Late assignment may matter for STATE chain-of-title analysis (separate from REMIC tax issue)"
+      - "REMIC violation referral is to IRS via Form 3949-A; not a private right of action"
+    citation_tokens:
+      - "26 U.S.C. § 860"
+      - "prohibited transaction"
+      - "qualified mortgage"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # AGENCY REFERRAL — How to Sue / Complain to Agencies
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: tigta_jurisdiction
+    term: "Treasury Inspector General for Tax Administration (TIGTA)"
+    definition: |
+      TIGTA was established by the IRS Restructuring and Reform Act of 1998
+      and operates under 5 U.S.C. App. 3 (Inspector General Act) and
+      Treasury Department Order 115-01. TIGTA's jurisdiction is to investigate
+      misconduct by IRS employees, fraud and abuse in IRS programs, and
+      threats against IRS personnel. TIGTA does NOT have jurisdiction over
+      private-party tax reporting (e.g., creditors filing 1099-C), private
+      tax preparers (referred to IRS Office of Professional Responsibility),
+      or general tax disputes.
+    source_authority: "IRS Restructuring and Reform Act of 1998, Pub. L. 105-206; 5 U.S.C. App. 3"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Allegation involves misconduct by IRS EMPLOYEES OR CONTRACTORS"
+      - "OR allegation involves fraud/abuse in IRS PROGRAMS"
+      - "OR allegation involves threats against IRS personnel"
+    inapplicable_when:
+      - "Complaint is about a PRIVATE creditor's 1099-C filing (refer to IRS Form 3949-A or § 7434 civil action)"
+      - "Complaint is about a federal judge's conduct in a tax-related matter (use 28 U.S.C. § 351 judicial conduct complaint)"
+      - "Complaint is a general tax dispute (use IRS appeal process, Tax Court, or refund suit)"
+    common_misconceptions:
+      - "TIGTA does NOT investigate private creditors who filed inaccurate 1099-Cs"
+      - "TIGTA does NOT review or vacate federal court judgments"
+      - "TIGTA jurisdiction is LIMITED to IRS misconduct, not tax disputes generally"
+    citation_tokens:
+      - "TIGTA"
+      - "IRS Restructuring and Reform Act"
+      - "IRS employees"
+    verified: "2026-05-30"
+
+  - id: irs_form_3949a
+    term: "IRS Form 3949-A — Information Referral"
+    definition: |
+      IRS Form 3949-A is the form used by individuals to report SUSPECTED
+      TAX LAW VIOLATIONS by an individual or business. It is processed by
+      the IRS Whistleblower Office and Examination Division. Form 3949-A is
+      NOT a private right of action; it is a referral that initiates IRS
+      review at IRS's discretion. The referrer has no enforceable claim and
+      no notification right beyond initial acknowledgment.
+    source_authority: "26 U.S.C. § 7623 (whistleblower awards if criteria met); IRS internal procedures"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Plausible allegation of tax law violation"
+      - "Identifying information about subject of referral"
+    inapplicable_when:
+      - "Allegation is about IRS employee misconduct (refer to TIGTA instead)"
+      - "Matter is in active Tax Court litigation"
+    common_misconceptions:
+      - "Form 3949-A does NOT create any private rights or remedies for the referrer"
+      - "Whistleblower award under § 7623(b) requires SUBSTANTIAL collected proceeds threshold ($2M+) and is a separate Form 211 process"
+    citation_tokens:
+      - "Form 3949-A"
+      - "26 U.S.C. § 7623"
+      - "IRS Whistleblower Office"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # NEGATIVE / LIMITATION DEFINITIONS — for false-positive rejection
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: prosecutorial_immunity
+    term: "Absolute Prosecutorial Immunity"
+    definition: |
+      A prosecutor is absolutely immune from suit for damages for conduct
+      intimately associated with the judicial phase of the criminal process,
+      including initiating prosecution, presenting the state's case, and
+      conduct in the courtroom. Immunity does NOT extend to investigative or
+      administrative functions (Burns v. Reed, 500 U.S. 478 (1991)) — for
+      those, qualified immunity applies.
+    source_authority: "Imbler v. Pachtman, 424 U.S. 409 (1976)"
+    controlling_case: "Imbler v. Pachtman, 424 U.S. 409 (1976); Burns v. Reed, 500 U.S. 478 (1991)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Act was intimately associated with judicial phase of criminal process"
+    inapplicable_when:
+      - "Act was investigative (qualified immunity only)"
+      - "Act was administrative (qualified immunity only)"
+      - "Act was as a complaining witness rather than advocate"
+    common_misconceptions:
+      - "Prosecutorial immunity is narrower than judicial immunity — investigative acts NOT covered"
+    citation_tokens:
+      - "Imbler v. Pachtman"
+      - "424 U.S. 409"
+      - "prosecutorial immunity"
+    verified: "2026-05-30"
+
+  - id: discretionary_function_exception
+    term: "FTCA Discretionary Function Exception (28 U.S.C. § 2680(a))"
+    definition: |
+      The FTCA's discretionary function exception bars claims based on the
+      exercise or performance of a discretionary function or duty by a
+      federal agency or employee, whether or not the discretion is abused.
+      The Berkovitz/Gaubert test asks (1) whether the action involves an
+      element of judgment or choice, and (2) whether that judgment is of the
+      kind the exception was designed to shield (i.e., grounded in
+      policy-related considerations).
+    source_authority: "28 U.S.C. § 2680(a)"
+    controlling_case: "United States v. Gaubert, 499 U.S. 315 (1991); Berkovitz v. United States, 486 U.S. 531 (1988)"
+    jurisdiction: federal
+    elements_to_prove:
+      - "Action involves element of judgment or choice"
+      - "Judgment is grounded in policy-related considerations"
+    inapplicable_when:
+      - "A specific federal statute, regulation, or policy prescribes a SPECIFIC course of action (no choice = no discretion)"
+    common_misconceptions:
+      - "Negligent driving by federal employees does NOT qualify as discretionary function — operational acts often outside"
+      - "Judicial acts are typically barred — discretionary function applies even to operational decisions if grounded in policy"
+    citation_tokens:
+      - "28 U.S.C. § 2680(a)"
+      - "Gaubert"
+      - "discretionary function"
+    verified: "2026-05-30"

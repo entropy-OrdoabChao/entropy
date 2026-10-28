@@ -1,0 +1,848 @@
+# order_doctrines.yaml
+# =====================
+# Library of void/voidable order doctrines used by order_engine.py.
+#
+# Each doctrine specifies:
+#   id, display_name, classification (void / voidable / sanctionable)
+#   role_applicable: [plaintiff, defendant, either]  — who can invoke
+#   attack_vector: how to attack/defend
+#   triggers: facts that suggest doctrine applies
+#   elements: legal elements that must be proven
+#   sources: statutes/rules/cases anchoring the doctrine
+#   procedural_vehicle: motion type
+#   timing: deadlines / "no time limit" for void
+#   remedy: what the court must do
+#   risk_to_invoker: what bad outcomes can come from invoking it
+
+version: v2
+last_updated: "2026-04-22"
+
+doctrines:
+
+  # ──────────────────────────────────────────────────────────────
+  # 1. RULE 60(b)(4) — VOID JUDGMENT (FRCP)
+  # ──────────────────────────────────────────────────────────────
+  rule_60b4_void_judgment:
+    display_name: "FRCP 60(b)(4) — Void Judgment"
+    classification: void
+    role_applicable: [plaintiff, defendant]  # whoever was harmed
+    attack_vector: "Motion under Rule 60(b)(4) — judgment is void, not merely erroneous; relief mandatory if shown"
+    triggers:
+      - "void"
+      - "no jurisdiction"
+      - "lack of jurisdiction"
+      - "no subject matter jurisdiction"
+      - "no personal jurisdiction"
+      - "not properly served"
+      - "service was defective"
+      - "no notice"
+      - "due process"
+      - "judgment entered without notice"
+      - "default judgment"
+    elements:
+      - "judgment exists"
+      - "court lacked subject-matter jurisdiction OR personal jurisdiction OR judgment violated due process"
+    sources:
+      - rule: "FRCP-60-b-4"
+      - case: "United Student Aid Funds, Inc. v. Espinosa, 559 U.S. 260 (2010)"
+      - case: "Insurance Corp. of Ireland v. Compagnie des Bauxites de Guinee, 456 U.S. 694 (1982)"
+    procedural_vehicle: "Motion to Vacate under FRCP 60(b)(4)"
+    timing: "No time limit — a void judgment can be attacked at any time"
+    remedy: "Court MUST vacate; no discretion when judgment is truly void"
+    risk_to_invoker: "Low; if denied may signal court treated defect as merely voidable"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 2. PA RULE 60(b)(4) ANALOG — Pa.R.C.P. 3051 / 1037
+  # ──────────────────────────────────────────────────────────────
+  pa_void_judgment:
+    display_name: "PA Void Judgment — Petition to Strike / Open"
+    classification: void
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Petition to Strike (defect on face of record) OR Petition to Open (matters dehors record)"
+    triggers:
+      - "judgment by confession"
+      - "default judgment in PA"
+      - "praecipe"
+      - "judgment entered improperly"
+      - "no service of process"
+      - "irregular judgment"
+    elements:
+      - "judgment entered in PA court"
+      - "fatal defect on the face of the record (strike) OR meritorious defense + prompt action + reasonable explanation (open)"
+    sources:
+      - rule: "Pa.R.C.P. 2959 (judgments by confession)"
+      - rule: "Pa.R.C.P. 237.3 (default judgments)"
+      - case: "Cintas Corp. v. Lee's Cleaning Servs., 549 Pa. 84 (1997)"
+    procedural_vehicle: "Petition to Strike or Open Judgment"
+    timing: "Strike: any time. Open: prompt — typically 30 days"
+    remedy: "Strike vacates; Open allows responsive pleading"
+    risk_to_invoker: "Low for strike; Open requires admitting service & meritorious defense"
+    forum: state_pa
+
+  # ──────────────────────────────────────────────────────────────
+  # 3. JUDICIAL ESTOPPEL
+  # ──────────────────────────────────────────────────────────────
+  judicial_estoppel:
+    display_name: "Judicial Estoppel — Inconsistent Position"
+    classification: voidable
+    role_applicable: [plaintiff, defendant]  # invoke against opponent
+    attack_vector: "Motion in limine OR opposition citing opponent's prior inconsistent position adopted by a court"
+    triggers:
+      - "took different position"
+      - "previously argued"
+      - "prior pleading"
+      - "prior representation"
+      - "contradicts earlier"
+      - "now claims"
+      - "different bankruptcy schedule"
+      - "omitted from prior"
+    elements:
+      - "party took position in prior proceeding"
+      - "court adopted/accepted that position"
+      - "party now takes clearly inconsistent position"
+      - "would derive unfair advantage if not estopped"
+    sources:
+      - case: "New Hampshire v. Maine, 532 U.S. 742 (2001)"
+      - case: "Krystal Cadillac-Oldsmobile GMC Truck v. GMC, 337 F.3d 314 (3d Cir. 2003)"
+      - case: "Ryan Operations G.P. v. Santiam-Midwest Lumber, 81 F.3d 355 (3d Cir. 1996)"
+    procedural_vehicle: "Motion in Limine / Opposition / Motion to Dismiss"
+    timing: "Whenever the inconsistency arises; raise at first opportunity"
+    remedy: "Court bars opponent from new position; may dismiss claim"
+    risk_to_invoker: "Low; opponent may argue positions are not truly inconsistent"
+    forum: either
+
+  # ──────────────────────────────────────────────────────────────
+  # 4. FORUM SHOPPING DEFEAT
+  # ──────────────────────────────────────────────────────────────
+  forum_shopping_defeat:
+    display_name: "Forum Shopping — Improper Refile / Venue Manipulation"
+    classification: voidable
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Motion to Dismiss / Transfer / Sanctions for vexatious refiling, claim splitting, anti-suit"
+    triggers:
+      - "refiled in different court"
+      - "voluntarily dismissed and refiled"
+      - "filed parallel action"
+      - "split claims"
+      - "different venue"
+      - "removed and remanded"
+      - "first to file"
+      - "anti-suit injunction"
+    elements:
+      - "same parties OR privies"
+      - "same operative facts OR claim splitting"
+      - "filing motivated by tactical advantage"
+      - "prior court had jurisdiction"
+    sources:
+      - case: "Colorado River Water Conservation Dist. v. United States, 424 U.S. 800 (1976)"
+      - case: "EEOC v. Univ. of Pennsylvania, 850 F.2d 969 (3d Cir. 1988) (first-filed rule)"
+      - statute: "28-USC-1404"
+      - statute: "28-USC-1406"
+    procedural_vehicle: "Motion to Dismiss / Transfer / Stay / Sanctions"
+    timing: "At first appearance; before substantive litigation"
+    remedy: "Dismiss, transfer, stay, OR sanctions under FRCP 11 / 28 USC 1927"
+    risk_to_invoker: "Medium; courts give plaintiff strong forum-choice deference"
+    forum: either
+
+  # ──────────────────────────────────────────────────────────────
+  # 5. DUE PROCESS VOIDNESS
+  # ──────────────────────────────────────────────────────────────
+  due_process_voidness:
+    display_name: "Due Process Voidness — No Notice / No Opportunity to Be Heard"
+    classification: void
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Constitutional challenge under 5th/14th Amendment — judgment is void ab initio"
+    triggers:
+      - "no notice"
+      - "did not know about hearing"
+      - "no opportunity to respond"
+      - "default without service"
+      - "ex parte"
+      - "denied hearing"
+      - "no chance to oppose"
+      - "filed under seal"
+    elements:
+      - "judgment / order entered against party"
+      - "party did not receive constitutionally adequate notice"
+      - "party was not given meaningful opportunity to be heard"
+    sources:
+      - case: "Mullane v. Central Hanover Bank & Trust Co., 339 U.S. 306 (1950)"
+      - case: "Fuentes v. Shevin, 407 U.S. 67 (1972)"
+      - case: "Mathews v. Eldridge, 424 U.S. 319 (1976)"
+      - constitutional: "U.S. Const. amend. V, XIV"
+    procedural_vehicle: "Motion to Vacate (FRCP 60(b)(4) or Pa.R.C.P. equivalent) / Habeas / 1983 action"
+    timing: "No time limit"
+    remedy: "Judgment vacated as void"
+    risk_to_invoker: "Low; constitutional violation if proven"
+    forum: either
+
+  # ──────────────────────────────────────────────────────────────
+  # 6. COLLATERAL ATTACK
+  # ──────────────────────────────────────────────────────────────
+  collateral_attack:
+    display_name: "Collateral Attack on Foreign / Prior Judgment"
+    classification: void
+    role_applicable: [plaintiff, defendant]  # whoever the prior judgment is being used against
+    attack_vector: "Resist enforcement / preclusion by attacking prior judgment in current proceeding"
+    triggers:
+      - "prior judgment from another court"
+      - "full faith and credit"
+      - "res judicata"
+      - "collateral estoppel asserted"
+      - "judgment from other state"
+      - "foreign judgment"
+      - "registered judgment"
+      - "domesticated judgment"
+    elements:
+      - "prior judgment exists"
+      - "currently being used to bind / preclude / collect"
+      - "prior court lacked jurisdiction OR judgment is void on its face"
+    sources:
+      - case: "Underwriters Nat'l Assurance Co. v. North Carolina Life & Accident & Health Ins. Guar. Ass'n, 455 U.S. 691 (1982)"
+      - case: "Kalb v. Feuerstein, 308 U.S. 433 (1940)"
+      - constitutional: "U.S. Const. art. IV § 1 (Full Faith and Credit)"
+    procedural_vehicle: "Defense in current action / Motion to Dismiss enforcement"
+    timing: "When prior judgment is asserted against you"
+    remedy: "Court refuses to give effect to void prior judgment"
+    risk_to_invoker: "Medium; full faith and credit creates strong presumption of validity"
+    forum: either
+
+  # ──────────────────────────────────────────────────────────────
+  # 7. FRAUD ON THE COURT
+  # ──────────────────────────────────────────────────────────────
+  fraud_on_court:
+    display_name: "Fraud on the Court (FRCP 60(d)(3))"
+    classification: void
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Independent action OR motion under 60(d)(3) — extraordinary remedy, no time bar"
+    triggers:
+      - "fabricated evidence"
+      - "perjury by party"
+      - "perjury by attorney"
+      - "concealed evidence"
+      - "withheld documents"
+      - "falsified document"
+      - "officer of court lied"
+      - "attorney misrepresentation"
+      - "bribery"
+    elements:
+      - "intentional fraud"
+      - "by an officer of the court (party, attorney, or judge)"
+      - "directed at the judicial machinery itself"
+      - "successfully deceived the court"
+      - "affected the outcome"
+    sources:
+      - rule: "FRCP-60-d-3"
+      - case: "Hazel-Atlas Glass Co. v. Hartford-Empire Co., 322 U.S. 238 (1944)"
+      - case: "Herring v. United States, 424 F.3d 384 (3d Cir. 2005)"
+    procedural_vehicle: "Independent Action OR Motion under FRCP 60(d)(3)"
+    timing: "No time limit"
+    remedy: "Vacate judgment; sanctions"
+    risk_to_invoker: "High burden — clear and convincing evidence required; sanctions if frivolous"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 8. LACK OF SUBJECT-MATTER JURISDICTION
+  # ──────────────────────────────────────────────────────────────
+  smj_defect:
+    display_name: "Lack of Subject-Matter Jurisdiction"
+    classification: void
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Motion to Dismiss / Vacate — court must dismiss sua sponte if SMJ absent"
+    triggers:
+      - "no diversity"
+      - "no federal question"
+      - "amount in controversy"
+      - "state law claim only"
+      - "no statutory basis"
+      - "agency had no jurisdiction"
+      - "court below had no jurisdiction"
+      - "exclusive jurisdiction elsewhere"
+    elements:
+      - "court issued judgment / order"
+      - "court lacked statutory or constitutional authority over the claim"
+    sources:
+      - rule: "FRCP-12-b-1"
+      - rule: "FRCP-12-h-3"
+      - case: "Steel Co. v. Citizens for a Better Environment, 523 U.S. 83 (1998)"
+      - case: "Arbaugh v. Y&H Corp., 546 U.S. 500 (2006)"
+    procedural_vehicle: "Motion to Dismiss FRCP 12(b)(1) / Motion to Vacate / Suggestion of Lack of SMJ"
+    timing: "Any time, including on appeal; cannot be waived"
+    remedy: "Dismissal / vacatur"
+    risk_to_invoker: "Low; but losing party may end up in less favorable forum"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 9. PA SPOLIATION SANCTIONS — Pa.R.C.P. 4019
+  # ──────────────────────────────────────────────────────────────
+  pa_spoliation_sanctions:
+    display_name: "PA Spoliation / Discovery Sanctions (Pa.R.C.P. 4019)"
+    classification: sanctionable
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Motion for Sanctions including adverse inference, claim/defense preclusion, default"
+    triggers:
+      - "destroyed evidence"
+      - "lost evidence"
+      - "failed to preserve"
+      - "deleted emails"
+      - "shredded documents"
+      - "did not produce"
+      - "withheld discovery"
+      - "violated discovery order"
+      - "litigation hold"
+    elements:
+      - "duty to preserve existed"
+      - "evidence was destroyed/altered/withheld"
+      - "destruction caused by party's culpability (negligence to bad faith)"
+      - "prejudice to opposing party"
+    sources:
+      - rule: "Pa.R.C.P. 4019"
+      - case: "Schroeder v. Commonwealth Dep't of Transp., 551 Pa. 243 (1998) (Schroeder factors)"
+      - case: "Pyeritz v. Commonwealth, 613 Pa. 80 (2011)"
+    procedural_vehicle: "Motion for Sanctions under Pa.R.C.P. 4019"
+    timing: "When spoliation discovered; before trial"
+    remedy: "Adverse inference, preclusion, default judgment, fees, dismissal"
+    risk_to_invoker: "Low; sanctions are graduated based on culpability"
+    forum: state_pa
+
+  # ──────────────────────────────────────────────────────────────
+  # 10. CORAM NOBIS / DEFAULT JUDGMENT VACATUR
+  # ──────────────────────────────────────────────────────────────
+  coram_nobis_default_vacatur:
+    display_name: "Coram Nobis / Default Judgment Vacatur"
+    classification: voidable
+    role_applicable: [defendant]  # only the party against whom default was entered
+    attack_vector: "Motion to Set Aside Default (FRCP 55(c)) / Vacate Default Judgment (FRCP 60(b)) / PA Petition to Open"
+    triggers:
+      - "default judgment entered"
+      - "default entered"
+      - "missed deadline"
+      - "failed to answer"
+      - "failed to appear"
+      - "newly discovered evidence"
+      - "manifest injustice"
+      - "did not receive complaint"
+    elements:
+      - "default OR default judgment exists"
+      - "good cause OR meritorious defense"
+      - "prompt action upon learning of default"
+      - "reasonable explanation for default"
+      - "no prejudice to opposing party (or curable)"
+    sources:
+      - rule: "FRCP-55-c"
+      - rule: "FRCP-60-b-1"
+      - rule: "Pa.R.C.P. 237.3"
+      - case: "Budget Blinds, Inc. v. White, 536 F.3d 244 (3d Cir. 2008)"
+      - case: "$55,518.05 in U.S. Currency (United States v.), 728 F.2d 192 (3d Cir. 1984)"
+    procedural_vehicle: "Motion to Set Aside Default / Petition to Open Default Judgment"
+    timing: "FRCP 60(b)(1): within 1 year. PA: prompt — typically 30 days"
+    remedy: "Set aside default; allow responsive pleading"
+    risk_to_invoker: "Medium; admitting receipt may estop later notice arguments"
+    forum: either
+
+
+# Role-detection keyword library used by order_engine.py
+
+  # ──────────────────────────────────────────────────────────────
+  # 6. PRIOR RESTRAINT — FILING INJUNCTION
+  # ──────────────────────────────────────────────────────────────
+  prior_restraint_filing:
+    display_name: "Prior Restraint — Filing Injunction Without Due Process"
+    classification: void
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Motion to Vacate filing injunction — prior restraint on First Amendment right to petition"
+    triggers:
+      - "do not file"
+      - "prohibited from filing"
+      - "barred from filing"
+      - "filing injunction"
+      - "enjoined from filing"
+      - "no further filings"
+      - "restricted from filing"
+      - "vexatious litigant"
+      - "leave of court required"
+    elements:
+      - "court issued filing restriction"
+      - "restriction imposed without Safir/Chipps factors analysis"
+      - "no narrowly tailored finding"
+    sources:
+      - constitutional: "U.S. Const. amend. I (Petition Clause)"
+      - case: "Bill Johnson's Restaurants v. NLRB, 461 U.S. 731 (1983)"
+      - case: "In re Chipps, 6 F.3d 1447 (10th Cir. 1993)"
+      - case: "Safir v. U.S. Lines, 792 F.2d 19 (2d Cir. 1986)"
+      - case: "Abdul-Akbar v. McKelvie, 239 F.3d 307 (3d Cir. 2001)"
+    procedural_vehicle: "Motion to Vacate under 60(b)(4) OR Mandamus"
+    timing: "No time limit — void order (constitutional violation)"
+    remedy: "Court MUST vacate unconstitutional prior restraint"
+    risk_to_invoker: "Low — constitutional right cannot be waived by court order"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 7. ACCESS TO COURTS DENIAL
+  # ──────────────────────────────────────────────────────────────
+  access_to_courts:
+    display_name: "Denial of Access to Courts"
+    classification: void
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Motion citing fundamental right of access — Bounds v. Smith"
+    triggers:
+      - "denied access"
+      - "cannot file"
+      - "restricted access"
+      - "court refused to accept"
+      - "clerk refused"
+      - "docket closed"
+    elements:
+      - "party attempted to file legitimate pleading"
+      - "court or clerk prevented filing"
+      - "no lawful basis for restriction"
+    sources:
+      - constitutional: "U.S. Const. amend. I, XIV"
+      - case: "Bounds v. Smith, 430 U.S. 817 (1977)"
+      - case: "Christopher v. Harbury, 536 U.S. 403 (2002)"
+      - case: "Lewis v. Casey, 518 U.S. 343 (1996)"
+    procedural_vehicle: "Motion to Reopen / Mandamus / § 1983 Action"
+    timing: "No time limit — constitutional violation"
+    remedy: "Restore access; potential § 1983 damages"
+    risk_to_invoker: "Low"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 8. JUDICIAL BIAS — RECUSAL REQUIRED
+  # ──────────────────────────────────────────────────────────────
+  judicial_bias:
+    display_name: "Judicial Bias — Mandatory Recusal"
+    classification: sanctionable
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Motion for Recusal under 28 U.S.C. § 455(a) — objective appearance of bias"
+    triggers:
+      - "you people"
+      - "these types of cases"
+      - "waste of court"
+      - "wasting the court"
+      - "frivolous"
+      - "harassing"
+      - "vexatious"
+      - "not a real lawyer"
+      - "pro se litigants like you"
+      - "bias"
+      - "prejudice"
+      - "predetermined"
+    elements:
+      - "judge's conduct or language demonstrates bias"
+      - "reasonable person would question impartiality"
+    sources:
+      - statute: "28 U.S.C. § 455(a)"
+      - rule: "Canon 2.2, Code of Judicial Conduct"
+      - case: "Liteky v. United States, 510 U.S. 540 (1994)"
+      - case: "Caperton v. A.T. Massey Coal Co., 556 U.S. 868 (2009)"
+    procedural_vehicle: "Motion for Recusal / Disqualification"
+    timing: "Promptly after discovering grounds"
+    remedy: "Case reassigned to different judge"
+    risk_to_invoker: "Moderate — must show objective basis, not mere disagreement"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 9. SANCTIONS WITHOUT SAFE HARBOR
+  # ──────────────────────────────────────────────────────────────
+  sanctions_no_safe_harbor:
+    display_name: "Sanctions Imposed Without Rule 11 Safe Harbor"
+    classification: voidable
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Motion to Vacate sanctions — mandatory 21-day safe harbor not provided"
+    triggers:
+      - "sanctions"
+      - "Rule 11"
+      - "frivolous filing"
+      - "28 U.S.C. 1927"
+      - "inherent power"
+      - "monetary penalty"
+    elements:
+      - "sanctions imposed on a party"
+      - "opposing party did not serve Rule 11 motion 21 days before filing"
+      - "no opportunity to withdraw the challenged filing"
+    sources:
+      - rule: "FRCP 11(c)(2)"
+      - case: "Simmerman v. Corino, 27 F.3d 58 (3d Cir. 1994)"
+      - case: "Hadges v. Yonkers Racing Corp., 48 F.3d 1320 (2d Cir. 1995)"
+    procedural_vehicle: "Motion to Vacate Sanctions / Appeal"
+    timing: "Within 28 days of sanctions order (FRCP 59(e))"
+    remedy: "Vacate sanctions; require proper safe-harbor procedure"
+    risk_to_invoker: "Low if safe harbor was indeed skipped"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 10. SUA SPONTE DISMISSAL WITHOUT LEAVE TO AMEND
+  # ──────────────────────────────────────────────────────────────
+  sua_sponte_no_leave:
+    display_name: "Sua Sponte Dismissal Without Leave to Amend"
+    classification: voidable
+    role_applicable: [plaintiff]
+    attack_vector: "Motion for Reconsideration — court must grant leave to amend before dismissal with prejudice"
+    triggers:
+      - "dismissed with prejudice"
+      - "sua sponte"
+      - "on its own motion"
+      - "without leave to amend"
+      - "denied leave"
+      - "no opportunity to amend"
+    elements:
+      - "court dismissed complaint with prejudice"
+      - "plaintiff not given opportunity to amend"
+      - "amendment would not be futile"
+    sources:
+      - case: "Grayson v. Mayview State Hospital, 293 F.3d 103 (3d Cir. 2002)"
+      - case: "Fletcher-Harlee Corp. v. Pote Concrete, 482 F.3d 247 (3d Cir. 2007)"
+      - case: "Alston v. Parker, 363 F.3d 229 (3d Cir. 2004)"
+      - rule: "FRCP 15(a)(2)"
+    procedural_vehicle: "Motion for Reconsideration (FRCP 59(e)) / Appeal"
+    timing: "28 days from dismissal order"
+    remedy: "Vacate dismissal; grant leave to file amended complaint"
+    risk_to_invoker: "Low in Third Circuit — strong presumption favoring leave to amend"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 11. FRAUD ON THE COURT
+  # ──────────────────────────────────────────────────────────────
+  fraud_on_court:
+    display_name: "Fraud on the Court — Rule 60(d)(3)"
+    classification: void
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Independent action for fraud on the court — no time limit"
+    triggers:
+      - "fraud"
+      - "fabricated"
+      - "forged"
+      - "perjury"
+      - "falsified"
+      - "misrepresent"
+      - "concealed evidence"
+      - "destroyed evidence"
+      - "robosigning"
+      - "fabricated assignment"
+      - "backdated"
+    elements:
+      - "intentional fraud directed at the court itself"
+      - "fraud by officer of the court or party"
+      - "fraud prevented fair adjudication"
+    sources:
+      - rule: "FRCP 60(d)(3)"
+      - case: "Hazel-Atlas Glass Co. v. Hartford-Empire Co., 322 U.S. 238 (1944)"
+      - case: "Chambers v. NASCO, Inc., 501 U.S. 32 (1991)"
+    procedural_vehicle: "Independent Action / Motion under 60(d)(3)"
+    timing: "No time limit"
+    remedy: "Vacate any judgment procured by fraud; sanctions"
+    risk_to_invoker: "Must prove fraud was on the court, not merely on opposing party"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 12. STARE DECISIS VIOLATION — NON-BINDING CITED AS BINDING
+  # ──────────────────────────────────────────────────────────────
+  stare_decisis_violation:
+    display_name: "Stare Decisis — Non-Binding Authority Cited as Binding"
+    classification: voidable
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Motion for Reconsideration identifying non-binding citations relied upon"
+    triggers:
+      - "non-binding"
+      - "persuasive only"
+      - "out of circuit"
+      - "different jurisdiction"
+      - "sister court"
+      - "district court opinion"
+      - "unpublished"
+      - "not precedential"
+      - "fatal violation"
+      - "stare decisis"
+    elements:
+      - "court or opposing party cited authority from non-binding jurisdiction"
+      - "cited authority presented as if binding on this court"
+      - "binding authority on point exists and was ignored"
+    sources:
+      - case: "Hicks v. Feeney, 850 F.2d 152 (3d Cir. 1988)"
+      - case: "In re Cont'l Airlines, 91 F.3d 553 (3d Cir. 1996)"
+    procedural_vehicle: "Motion for Reconsideration / Reply Brief"
+    timing: "14-28 days from order"
+    remedy: "Court must apply binding precedent"
+    risk_to_invoker: "Low"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 13. IMPROPER STANDARD — 12(b)(6) HEIGHTENED PLEADING
+  # ──────────────────────────────────────────────────────────────
+  improper_pleading_standard:
+    display_name: "Improper Heightened Pleading Standard Applied"
+    classification: voidable
+    role_applicable: [plaintiff]
+    attack_vector: "Motion for Reconsideration — court applied standard beyond Twombly/Iqbal"
+    triggers:
+      - "conclusory"
+      - "threadbare"
+      - "bare recital"
+      - "merely labels"
+      - "formulaic recitation"
+      - "heightened pleading"
+      - "specificity required"
+      - "fail to state"
+    elements:
+      - "court dismissed under 12(b)(6)"
+      - "court required more than plausible factual allegations"
+      - "well-pleaded facts not accepted as true"
+    sources:
+      - case: "Bell Atlantic Corp. v. Twombly, 550 U.S. 544 (2007)"
+      - case: "Ashcroft v. Iqbal, 556 U.S. 662 (2009)"
+      - case: "Fowler v. UPMC Shadyside, 578 F.3d 203 (3d Cir. 2009)"
+    procedural_vehicle: "Motion for Reconsideration (59(e)) / Appeal"
+    timing: "28 days"
+    remedy: "Vacate dismissal; apply correct standard"
+    risk_to_invoker: "Low"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 14. PRO SE LIBERAL CONSTRUCTION DENIED
+  # ──────────────────────────────────────────────────────────────
+  pro_se_construction:
+    display_name: "Pro Se Liberal Construction Denied"
+    classification: voidable
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Motion for Reconsideration — court failed to liberally construe pro se pleading"
+    triggers:
+      - "pro se"
+      - "self-represented"
+      - "not a lawyer"
+      - "same standard"
+      - "held to same"
+      - "must still comply"
+      - "despite pro se status"
+    elements:
+      - "party is pro se"
+      - "court held pro se party to attorney standard"
+      - "court did not identify strongest arguments from pleading"
+    sources:
+      - case: "Haines v. Kerner, 404 U.S. 519 (1972)"
+      - case: "Erickson v. Pardus, 551 U.S. 89 (2007)"
+      - case: "Mala v. Crown Bay Marina, 704 F.3d 239 (3d Cir. 2013)"
+    procedural_vehicle: "Motion for Reconsideration / Appeal"
+    timing: "28 days"
+    remedy: "Vacate; re-evaluate under liberal construction standard"
+    risk_to_invoker: "Low"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 15. STANDING — NO INJURY OR WRONG PARTY
+  # ──────────────────────────────────────────────────────────────
+  standing_defect:
+    display_name: "Standing — No Standing to Sue / Foreclose / Collect"
+    classification: void
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Motion to Dismiss for Lack of Standing — party lacks injury-in-fact or is not real party in interest"
+    triggers:
+      - "no standing"
+      - "lack of standing"
+      - "not the real party"
+      - "no injury"
+      - "no insurable interest"
+      - "not the holder"
+      - "not the owner"
+      - "no authority to collect"
+      - "MERS"
+      - "assignment invalid"
+    elements:
+      - "party claims right to relief"
+      - "party cannot show injury-in-fact or ownership"
+      - "assignment chain broken or invalid"
+    sources:
+      - case: "Lujan v. Defenders of Wildlife, 504 U.S. 555 (1992)"
+      - case: "Spokeo v. Robins, 578 U.S. 330 (2016)"
+      - rule: "FRCP 17(a)"
+    procedural_vehicle: "Motion to Dismiss / Preliminary Objections"
+    timing: "Any time — jurisdictional"
+    remedy: "Dismiss for lack of standing"
+    risk_to_invoker: "Low"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 16. IMPROPER REMOVAL
+  # ──────────────────────────────────────────────────────────────
+  improper_removal:
+    display_name: "Improper Removal — Remand Required"
+    classification: voidable
+    role_applicable: [plaintiff]
+    attack_vector: "Motion to Remand — removal defective"
+    triggers:
+      - "removed"
+      - "removal"
+      - "remand"
+      - "state court"
+      - "improperly removed"
+      - "forum defendant"
+    elements:
+      - "case originally filed in state court"
+      - "defendant removed to federal court"
+      - "removal procedurally defective or no federal jurisdiction"
+    sources:
+      - statute: "28 U.S.C. § 1447(c)"
+      - case: "Shamrock Oil & Gas Co. v. Sheets, 313 U.S. 100 (1941)"
+    procedural_vehicle: "Motion to Remand"
+    timing: "30 days from removal notice"
+    remedy: "Remand to state court; attorney fees if improper"
+    risk_to_invoker: "Low"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 17. DISCOVERY ABUSE / SPOLIATION
+  # ──────────────────────────────────────────────────────────────
+  discovery_spoliation:
+    display_name: "Discovery Abuse — Spoliation of Evidence"
+    classification: sanctionable
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Motion for Sanctions / Adverse Inference under Rule 37(e)"
+    triggers:
+      - "destroyed"
+      - "spoliation"
+      - "failed to preserve"
+      - "deleted"
+      - "withheld"
+      - "discovery abuse"
+      - "refused to produce"
+      - "stonewalling"
+    elements:
+      - "party had duty to preserve evidence"
+      - "evidence was destroyed or not produced"
+      - "prejudice to opposing party"
+    sources:
+      - rule: "FRCP 37(e)"
+      - case: "Zubulake v. UBS Warburg, 220 F.R.D. 212 (S.D.N.Y. 2003)"
+    procedural_vehicle: "Motion for Sanctions / Adverse Inference"
+    timing: "During discovery or at trial"
+    remedy: "Adverse inference; striking pleadings; default judgment in extreme cases"
+    risk_to_invoker: "Must show prejudice"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 18. IMPROPER CONVERSION 12(b)(6) TO SUMMARY JUDGMENT
+  # ──────────────────────────────────────────────────────────────
+  improper_conversion:
+    display_name: "Improper Conversion 12(b)(6) to Rule 56 Without Notice"
+    classification: voidable
+    role_applicable: [plaintiff]
+    attack_vector: "Motion for Reconsideration — court converted without required notice"
+    triggers:
+      - "matters outside"
+      - "outside the pleadings"
+      - "converted to summary"
+      - "treated as summary judgment"
+      - "considered extrinsic"
+    elements:
+      - "court considered matters outside the pleadings on 12(b)(6)"
+      - "court did not give notice of conversion to Rule 56"
+      - "party not given opportunity for discovery"
+    sources:
+      - rule: "FRCP 12(d)"
+      - case: "Rose v. Bartle, 871 F.2d 331 (3d Cir. 1989)"
+    procedural_vehicle: "Motion for Reconsideration"
+    timing: "28 days"
+    remedy: "Vacate; allow discovery before summary judgment"
+    risk_to_invoker: "Low"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 19. REGULATORY NON-COMPLIANCE — AGENCY FAILURE TO ACT
+  # ──────────────────────────────────────────────────────────────
+  agency_failure_to_act:
+    display_name: "Agency Failure to Act — Mandamus / APA"
+    classification: sanctionable
+    role_applicable: [plaintiff]
+    attack_vector: "Mandamus action or APA § 706(1) — compel agency action unlawfully withheld"
+    triggers:
+      - "agency failed"
+      - "no response"
+      - "constructive denial"
+      - "FOIA"
+      - "ignored request"
+      - "failed to investigate"
+      - "complaint ignored"
+      - "regulator"
+      - "did not act"
+    elements:
+      - "agency had mandatory duty to act"
+      - "agency failed to act within statutory timeframe"
+      - "no adequate alternative remedy"
+    sources:
+      - statute: "5 U.S.C. § 706(1)"
+      - statute: "28 U.S.C. § 1361 (mandamus)"
+      - case: "Norton v. Southern Utah Wilderness Alliance, 542 U.S. 55 (2004)"
+    procedural_vehicle: "Mandamus / APA Complaint"
+    timing: "After exhaustion of administrative remedies"
+    remedy: "Court orders agency to act; attorney fees under EAJA"
+    risk_to_invoker: "Low if duty is clear and nondiscretionary"
+    forum: federal
+
+  # ──────────────────────────────────────────────────────────────
+  # 20. EQUITABLE TOLLING — DEADLINE OVERRIDE
+  # ──────────────────────────────────────────────────────────────
+  equitable_tolling:
+    display_name: "Equitable Tolling — Extraordinary Circumstances"
+    classification: voidable
+    role_applicable: [plaintiff, defendant]
+    attack_vector: "Motion asserting equitable tolling of missed deadline"
+    triggers:
+      - "untimely"
+      - "late filing"
+      - "missed deadline"
+      - "time barred"
+      - "statute of limitations"
+      - "extraordinary circumstances"
+      - "clerk error"
+      - "prevented from filing"
+    elements:
+      - "party pursued rights diligently"
+      - "extraordinary circumstances prevented timely filing"
+      - "party was not at fault for delay"
+    sources:
+      - case: "Holland v. Florida, 560 U.S. 631 (2010)"
+      - case: "Pace v. DiGuglielmo, 544 U.S. 408 (2005)"
+    procedural_vehicle: "Motion with supporting declaration"
+    timing: "Filed promptly after circumstances resolve"
+    remedy: "Court accepts late filing as timely"
+    risk_to_invoker: "Must prove diligence + extraordinary circumstances"
+    forum: federal
+
+role_keywords:
+  plaintiff:
+    - "i filed"
+    - "i sued"
+    - "i brought"
+    - "i'm the plaintiff"
+    - "as plaintiff"
+    - "my complaint"
+    - "my claim"
+    - "i'm suing"
+    - "we filed"
+  defendant:
+    - "they sued me"
+    - "i was sued"
+    - "i'm the defendant"
+    - "as defendant"
+    - "default against me"
+    - "judgment against me"
+    - "complaint filed against"
+    - "i was served"
+    - "they filed"
+    - "summoned"
+
+# Fact-pattern signals that indicate an order/judgment is at issue
+order_indicators:
+  - "order"
+  - "judgment"
+  - "ruling"
+  - "decree"
+  - "decision"
+  - "default"
+  - "dismissed"
+  - "granted"
+  - "denied"
+  - "entered against"
+  - "court found"
+  - "court ordered"

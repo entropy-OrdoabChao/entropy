@@ -1,0 +1,250 @@
+version: 1
+entity_type: debt_collector
+description: >
+  Duties owed by third-party debt collectors under FDCPA, FCRA, state UDAP
+  statutes, CFPB regulations, and common law. Covers collectors operating in
+  PA/EDPA jurisdiction.
+
+duties:
+  # ═══════════════ STATUTORY ═══════════════
+
+  - id: dc_stat_001
+    name: Validation Notice Within 5 Days (FDCPA)
+    class: statutory
+    source: 15-USC-1692g
+    source_title: FDCPA § 809 - Validation of Debts
+    jurisdiction: federal
+    description: >
+      Within 5 days after initial communication with consumer, debt collector
+      must send written notice containing amount of debt, name of creditor,
+      and statement of consumer's right to dispute within 30 days.
+    triggering_actions:
+      - initial_communication
+      - demanding_payment
+      - sending_collection_letter
+      - collecting_debt
+    burden_flip_questions:
+      - "Produce the validation notice sent to plaintiff and proof of service within 5 days of initial communication."
+      - "Produce all communications between collector and original creditor establishing the amount owed."
+    evidence_demanded:
+      - validation notice sent to plaintiff
+      - proof of mailing/delivery
+      - original creditor identification records
+      - amount owed calculation worksheet
+    violation_remedy:
+      - Statutory damages $1000
+      - Actual damages
+      - Attorney fees
+    regulator: CFPB
+
+  - id: dc_stat_002
+    name: No False or Misleading Representations (FDCPA)
+    class: statutory
+    source: 15-USC-1692e
+    source_title: FDCPA § 807 - False or Misleading Representations
+    jurisdiction: federal
+    description: >
+      Debt collector may not use false, deceptive, or misleading representation
+      in collection, including false representation of amount or legal status
+      of debt, or threat to take unlawful action.
+    triggering_actions:
+      - demanding_payment
+      - misrepresenting_amount
+      - claiming_debt_owed
+      - threatening_legal_action
+      - disputed_debt_collection
+    burden_flip_questions:
+      - "Identify the specific creditor, account number, and legal basis for the debt amount claimed."
+      - "Produce every communication to plaintiff and identify any statement about amount, legal status, or consequences of nonpayment."
+    evidence_demanded:
+      - chain of title for the debt
+      - assignment documents
+      - statements of account
+      - all dunning letters and scripts
+    violation_remedy:
+      - Statutory damages $1000
+      - Actual damages
+      - Attorney fees
+    regulator: CFPB
+
+  - id: dc_stat_003
+    name: No Unfair Practices (FDCPA)
+    class: statutory
+    source: 15-USC-1692f
+    source_title: FDCPA § 808 - Unfair Practices
+    jurisdiction: federal
+    description: >
+      Debt collector may not use unfair or unconscionable means, including
+      collection of any amount unless authorized by agreement creating the
+      debt or permitted by law.
+    triggering_actions:
+      - collecting_amount_not_owed
+      - adding_unauthorized_fees
+      - collecting_disputed_amount
+      - demanding_payment
+    burden_flip_questions:
+      - "Produce the agreement or statute authorizing each fee, charge, and interest component included in the amount claimed."
+    evidence_demanded:
+      - underlying contract
+      - fee authorization
+      - interest calculation worksheets
+    violation_remedy:
+      - Statutory damages $1000
+      - Actual damages
+      - Attorney fees
+    regulator: CFPB
+
+  - id: dc_stat_004
+    name: Cease Collection on Dispute Until Verified (FDCPA)
+    class: statutory
+    source: 15-USC-1692g-b
+    source_title: FDCPA § 809(b) - Dispute Response Requirement
+    jurisdiction: federal
+    description: >
+      If consumer disputes debt in writing within 30 days, collector must cease
+      collection until verification is obtained and mailed to consumer.
+    triggering_actions:
+      - continuing_collection_after_dispute
+      - failing_to_verify
+      - disputed_debt_collection
+    burden_flip_questions:
+      - "Produce the verification mailed to plaintiff after dispute and the underlying documentation from creditor."
+      - "Produce all collection activity between date of dispute and date of verification."
+    evidence_demanded:
+      - dispute letters received
+      - verification sent
+      - collection activity log
+    violation_remedy:
+      - Statutory damages $1000
+      - Actual damages
+    regulator: CFPB
+
+  - id: dc_stat_005
+    name: Furnisher Accuracy (FCRA § 1681s-2)
+    class: statutory
+    source: 15-USC-1681s-2
+    source_title: FCRA - Duties of Furnishers of Information
+    jurisdiction: federal
+    description: >
+      Furnishers of information to consumer reporting agencies may not furnish
+      information the furnisher knows or has reasonable cause to believe is
+      inaccurate, and must investigate disputes.
+    triggering_actions:
+      - reporting_to_credit_bureau
+      - responding_to_cra_dispute
+      - furnishing_information
+    burden_flip_questions:
+      - "Produce all data furnished to any CRA regarding plaintiff and the source documents supporting each data point."
+      - "Produce the investigation conducted upon receipt of CRA dispute notice."
+    evidence_demanded:
+      - data furnished to CRAs
+      - dispute investigation records
+      - source documentation
+    violation_remedy:
+      - Actual damages
+      - Statutory damages ($100-$1000 willful)
+      - Punitive damages
+      - Attorney fees
+    regulator: CFPB
+
+  # ═══════════════ REGULATORY ═══════════════
+
+  - id: dc_reg_001
+    name: CFPB Regulation F Compliance
+    class: regulatory
+    source: 12-CFR-1006
+    source_title: Regulation F - Fair Debt Collection Practices Act
+    jurisdiction: federal
+    description: >
+      CFPB Regulation F implements FDCPA and imposes additional requirements
+      including call frequency limits, electronic communication rules, and
+      required disclosures on initial notices.
+    triggering_actions:
+      - demanding_payment
+      - sending_collection_letter
+      - making_collection_call
+      - electronic_communication
+    burden_flip_questions:
+      - "Produce call frequency logs demonstrating compliance with 7-in-7 rule."
+      - "Produce the model validation notice used in initial communications."
+    evidence_demanded:
+      - call logs
+      - validation notice templates
+      - opt-out/unsubscribe records
+    regulator: CFPB
+
+  - id: dc_reg_002
+    name: State Collector Licensing (PA)
+    class: regulatory
+    source: 37-P-S-2401
+    source_title: PA Debt Collection Practices Act / Licensing
+    jurisdiction: pa
+    description: >
+      Debt collectors operating in Pennsylvania must comply with state licensing
+      and conduct requirements. Unlicensed collection is void.
+    triggering_actions: []  # universal
+    burden_flip_questions:
+      - "Produce current PA debt collector license and any license suspensions."
+      - "Identify the state of principal place of business and all states in which the collector is licensed."
+    evidence_demanded:
+      - collector license
+      - licensing history
+    regulator: PA_attorney_general
+
+  # ═══════════════ INDUSTRY STANDARD ═══════════════
+
+  - id: dc_ind_001
+    name: ACA International Code of Ethics
+    class: industry_standard
+    source: ACA-Code-of-Ethics
+    source_title: ACA International Collectors' Code of Ethics
+    jurisdiction: industry
+    description: >
+      Industry trade association code requires fair dealing, accurate reporting,
+      and respectful communication with consumers.
+    triggering_actions: []
+    burden_flip_questions:
+      - "Admit membership in ACA International and produce any compliance audits."
+    evidence_demanded:
+      - ACA membership records
+      - compliance audits
+
+  # ═══════════════ FIDUCIARY ═══════════════
+  # (Debt collectors are not typically fiduciaries, but see dc_fid_001 for narrow case)
+
+  - id: dc_fid_001
+    name: Fiduciary Duty re Funds Collected for Creditor
+    class: fiduciary
+    source: Collection-Trust-Doctrine
+    source_title: Common law trust duty re funds held pending remittance to creditor
+    jurisdiction: common_law
+    description: >
+      Where debt collector receives funds from consumer pending remittance to
+      creditor, those funds are held in trust and collector owes fiduciary duty
+      of segregation and accounting.
+    triggering_actions:
+      - receiving_payment
+      - holding_funds
+    burden_flip_questions:
+      - "Produce accounting of all funds received from plaintiff and date remitted to creditor."
+    evidence_demanded:
+      - trust account records
+      - remittance logs
+
+  # ═══════════════ COMMON LAW ═══════════════
+
+  - id: dc_cl_001
+    name: Good Faith and Fair Dealing
+    class: common_law
+    source: Implied-Covenant-Doctrine
+    source_title: Common law good faith doctrine
+    jurisdiction: common_law
+    description: >
+      Implied duty of good faith and fair dealing applies to the collection
+      relationship, prohibiting conduct that would frustrate the reasonable
+      expectations of a consumer dealing with a collector.
+    triggering_actions: []
+    burden_flip_questions:
+      - "Produce all training materials on treatment of disputed debts."
+    evidence_demanded:
+      - training records

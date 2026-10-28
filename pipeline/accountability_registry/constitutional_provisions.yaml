@@ -1,0 +1,505 @@
+# constitutional_provisions.yaml — US and PA Constitution + challenge doctrines
+#
+# Ground truth for constitutional_engine.py. Each provision lists:
+#   - text (verbatim or paraphrased)
+#   - protected_interest (what the provision shields)
+#   - challenges_supported (facial / as-applied / vagueness / overbreadth / preemption)
+#   - elements_to_plead (per challenge type)
+#   - leading_cases (controlling precedent)
+#   - applicability_conditions (when the provision is in play)
+#   - inapplicable_when (negative scope)
+#   - citation_tokens (anti-hallucination)
+#
+# PSEUDOLAW section at bottom enumerates sovereign-citizen-style framings that
+# courts UNIVERSALLY reject, with citation to the rejection cases. The engine
+# refuses to encode arguments matching these patterns.
+
+version: "0.1"
+
+provisions:
+  # ════════════════════════════════════════════════════════════════════════════
+  # FIRST AMENDMENT — Speech, Press, Petition, Assembly
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: first_amendment_petition
+    source: "U.S. Const. amend. I"
+    protected_interest: "Right to petition government for redress of grievances; right of access to courts"
+    text: |
+      Congress shall make no law... abridging... the right of the people peaceably
+      to assemble, and to petition the Government for a redress of grievances.
+    challenges_supported:
+      - facial
+      - as_applied
+      - overbreadth
+    elements_to_plead:
+      - "Government action restricts plaintiff's ability to seek judicial redress"
+      - "Restriction is not narrowly tailored to a compelling government interest"
+      - "Restriction lacks adequate procedural safeguards (notice, opportunity to be heard, written findings)"
+    leading_cases:
+      - "Christopher v. Harbury, 536 U.S. 403 (2002) — backward-looking access claim requires lost remedy"
+      - "BE&K Construction Co. v. NLRB, 536 U.S. 516 (2002) — petition right reaches even non-meritorious filings absent sham"
+      - "In re Powell, 851 F.2d 427 (D.C. Cir. 1988) — filing restrictions require notice + opportunity to oppose"
+      - "Cromer v. Kraft Foods, 390 F.3d 812 (4th Cir. 2004) — pre-filing injunctions require narrow tailoring"
+    applicability_conditions:
+      - "Government (federal or state via 14A incorporation) imposes restriction on filing/petitioning"
+      - "Examples: pre-filing injunction, filing fee waiver denial without findings, ban on certain claims"
+    inapplicable_when:
+      - "Private party limits another private party's speech (no state action)"
+      - "Restriction is content-neutral, narrowly tailored, with adequate alternative channels"
+    citation_tokens:
+      - "U.S. Const. amend. I"
+      - "right to petition"
+      - "Christopher v. Harbury"
+      - "In re Powell"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # FOURTH AMENDMENT — Search and Seizure
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: fourth_amendment_search
+    source: "U.S. Const. amend. IV"
+    protected_interest: "Right to be secure in person, house, papers, and effects against unreasonable searches and seizures"
+    text: |
+      The right of the people to be secure in their persons, houses, papers, and
+      effects, against unreasonable searches and seizures, shall not be violated,
+      and no Warrants shall issue, but upon probable cause, supported by Oath or
+      affirmation, and particularly describing the place to be searched, and the
+      persons or things to be seized.
+    challenges_supported:
+      - facial
+      - as_applied
+    elements_to_plead:
+      - "Government action constituted a SEARCH or SEIZURE (reasonable expectation of privacy per Katz)"
+      - "Action was unreasonable (no warrant + no exception, OR warrant invalid)"
+    leading_cases:
+      - "Katz v. United States, 389 U.S. 347 (1967) — reasonable expectation of privacy"
+      - "Mapp v. Ohio, 367 U.S. 643 (1961) — exclusionary rule applied to states"
+      - "Bivens v. Six Unknown Named Agents, 403 U.S. 388 (1971) — implied damages remedy for 4A violation"
+    citation_tokens:
+      - "U.S. Const. amend. IV"
+      - "Katz v. United States"
+      - "probable cause"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # FIFTH AMENDMENT — Due Process, Takings, Self-Incrimination
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: fifth_amendment_due_process_procedural
+    source: "U.S. Const. amend. V"
+    protected_interest: "Procedural due process: notice and opportunity to be heard before deprivation of life, liberty, or property"
+    text: |
+      No person shall... be deprived of life, liberty, or property, without due
+      process of law...
+    challenges_supported:
+      - facial
+      - as_applied
+    elements_to_plead:
+      - "Government deprived plaintiff of life, liberty, or property interest"
+      - "Process provided was constitutionally inadequate (notice insufficient OR no opportunity to be heard OR no neutral decisionmaker)"
+    leading_cases:
+      - "Mullane v. Central Hanover Bank & Trust Co., 339 U.S. 306 (1950) — notice 'reasonably calculated' to inform"
+      - "Mathews v. Eldridge, 424 U.S. 319 (1976) — three-factor balancing test for what process is due"
+      - "Goldberg v. Kelly, 397 U.S. 254 (1970) — pre-deprivation hearing required for welfare termination"
+    applicability_conditions:
+      - "Federal government action (5A applies to federal; 14A incorporates similar protection against states)"
+      - "Examples: filing bans without hearing, fee waiver denials without explanation, default judgments without notice"
+    inapplicable_when:
+      - "No protected interest at stake (mere expectations, no entitlement)"
+      - "Plaintiff received adequate process by Mathews v. Eldridge standard"
+    citation_tokens:
+      - "U.S. Const. amend. V"
+      - "Mullane"
+      - "Mathews v. Eldridge"
+      - "due process"
+    verified: "2026-05-30"
+
+  - id: fifth_amendment_due_process_substantive
+    source: "U.S. Const. amend. V"
+    protected_interest: "Substantive due process: protection against arbitrary government action that 'shocks the conscience'"
+    text: |
+      No person shall... be deprived of life, liberty, or property, without due
+      process of law...
+    challenges_supported:
+      - facial
+      - as_applied
+      - vagueness
+    elements_to_plead:
+      - "Government conduct shocks the conscience (Rochin v. California) OR infringes fundamental right"
+      - "No legitimate state interest furthered, OR conduct is not narrowly tailored to it"
+    leading_cases:
+      - "County of Sacramento v. Lewis, 523 U.S. 833 (1998) — shocks the conscience standard"
+      - "Washington v. Glucksberg, 521 U.S. 702 (1997) — fundamental rights analysis"
+    citation_tokens:
+      - "U.S. Const. amend. V"
+      - "substantive due process"
+      - "shocks the conscience"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # SIXTH AMENDMENT — applies to criminal only
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: sixth_amendment_limitation
+    source: "U.S. Const. amend. VI"
+    protected_interest: "Criminal trial protections only"
+    text: "In all CRIMINAL prosecutions, the accused shall enjoy..."
+    challenges_supported: []
+    leading_cases:
+      - "Hannah v. Larche, 363 U.S. 420 (1960) — Sixth Amendment limited to criminal proceedings"
+    applicability_conditions:
+      - "Criminal prosecution (state or federal)"
+    inapplicable_when:
+      - "Civil action — even quasi-criminal civil contempt is not covered"
+    citation_tokens:
+      - "U.S. Const. amend. VI"
+      - "criminal prosecutions"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # SEVENTH AMENDMENT — Civil Jury Trial
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: seventh_amendment_civil_jury
+    source: "U.S. Const. amend. VII"
+    protected_interest: "Right to jury trial in suits at common law where value exceeds $20"
+    text: |
+      In Suits at common law, where the value in controversy shall exceed twenty
+      dollars, the right of trial by jury shall be preserved...
+    challenges_supported:
+      - as_applied
+    elements_to_plead:
+      - "Suit is at COMMON LAW (or analog) rather than purely equitable"
+      - "Value in controversy exceeds $20"
+      - "Jury demand made timely under Fed. R. Civ. P. 38"
+    leading_cases:
+      - "Curtis v. Loether, 415 U.S. 189 (1974) — 7A applies to statutory causes of action analogous to common-law actions"
+      - "Tull v. United States, 481 U.S. 412 (1987) — historic test for common-law analog"
+    applicability_conditions:
+      - "Federal court civil case"
+      - "Cause of action is legal (damages) rather than purely equitable"
+    inapplicable_when:
+      - "Action is purely equitable (injunctive only)"
+      - "State court proceeding (7A not incorporated against states)"
+      - "Administrative adjudication of public rights"
+    citation_tokens:
+      - "U.S. Const. amend. VII"
+      - "Curtis v. Loether"
+      - "right of trial by jury"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # TENTH AMENDMENT — Anti-Commandeering
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: tenth_amendment_anticommandeering
+    source: "U.S. Const. amend. X"
+    protected_interest: "Limits on federal power to commandeer state legislative or executive processes"
+    text: |
+      The powers not delegated to the United States by the Constitution, nor
+      prohibited by it to the States, are reserved to the States respectively,
+      or to the people.
+    challenges_supported:
+      - facial
+      - as_applied
+    elements_to_plead:
+      - "Federal statute compels state legislatures to enact, OR state executives to enforce, federal regulatory program"
+    leading_cases:
+      - "New York v. United States, 505 U.S. 144 (1992) — Congress cannot compel state legislatures"
+      - "Printz v. United States, 521 U.S. 898 (1997) — Congress cannot commandeer state executive officers"
+      - "Murphy v. NCAA, 138 S. Ct. 1461 (2018) — recent reaffirmation of anti-commandeering"
+    applicability_conditions:
+      - "Federal statute that directly imposes obligations on STATE GOVERNMENT actors"
+    inapplicable_when:
+      - "Federal regulation of private parties (does not commandeer state government)"
+      - "Federal funding conditions that are constitutional under spending clause"
+    citation_tokens:
+      - "U.S. Const. amend. X"
+      - "Printz v. United States"
+      - "anti-commandeering"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # FOURTEENTH AMENDMENT — State Due Process, Equal Protection
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: fourteenth_amendment_due_process
+    source: "U.S. Const. amend. XIV § 1"
+    protected_interest: "Procedural and substantive due process against STATE action"
+    text: |
+      ... nor shall any State deprive any person of life, liberty, or property,
+      without due process of law; nor deny to any person within its jurisdiction
+      the equal protection of the laws.
+    challenges_supported:
+      - facial
+      - as_applied
+      - vagueness
+    elements_to_plead:
+      - "STATE action (or local government / state actor)"
+      - "Deprivation of life, liberty, or property"
+      - "Process inadequate under Mathews v. Eldridge"
+    leading_cases:
+      - "Mathews v. Eldridge, 424 U.S. 319 (1976)"
+      - "Goldberg v. Kelly, 397 U.S. 254 (1970)"
+    citation_tokens:
+      - "U.S. Const. amend. XIV"
+      - "state action"
+      - "Mathews v. Eldridge"
+    verified: "2026-05-30"
+
+  - id: fourteenth_amendment_equal_protection
+    source: "U.S. Const. amend. XIV § 1"
+    protected_interest: "Equal protection of the laws"
+    text: "... nor deny to any person within its jurisdiction the equal protection of the laws."
+    challenges_supported:
+      - facial
+      - as_applied
+    elements_to_plead:
+      - "Government classification treats similarly situated persons differently"
+      - "Classification fails applicable scrutiny (strict / intermediate / rational basis)"
+    leading_cases:
+      - "Village of Willowbrook v. Olech, 528 U.S. 562 (2000) — class-of-one equal protection"
+      - "City of Cleburne v. Cleburne Living Center, 473 U.S. 432 (1985) — rational basis with bite"
+    citation_tokens:
+      - "U.S. Const. amend. XIV"
+      - "equal protection"
+      - "Olech"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # SUPREMACY CLAUSE — Federal Preemption
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: supremacy_clause
+    source: "U.S. Const. art. VI cl. 2"
+    protected_interest: "Federal law supremacy over conflicting state law"
+    text: |
+      This Constitution, and the Laws of the United States which shall be made
+      in Pursuance thereof... shall be the supreme Law of the Land; and the
+      Judges in every State shall be bound thereby, any Thing in the
+      Constitution or Laws of any State to the Contrary notwithstanding.
+    challenges_supported:
+      - facial   # preemption challenges to state law
+      - as_applied
+    elements_to_plead:
+      - "Federal law (statute, regulation, or treaty) preempts state law"
+      - "Preemption type: express, field, OR conflict (impossibility OR obstacle)"
+    leading_cases:
+      - "Hines v. Davidowitz, 312 U.S. 52 (1941) — obstacle preemption"
+      - "Wyeth v. Levine, 555 U.S. 555 (2009) — presumption against preemption"
+      - "Arizona v. United States, 567 U.S. 387 (2012) — modern preemption framework"
+    applicability_conditions:
+      - "State law conflicts with federal statute, regulation, or treaty"
+    citation_tokens:
+      - "U.S. Const. art. VI"
+      - "Supremacy Clause"
+      - "preemption"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # COMMERCE CLAUSE — Limits on Federal Power
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: commerce_clause_limits
+    source: "U.S. Const. art. I § 8 cl. 3"
+    protected_interest: "Limits on federal regulation of non-economic intrastate activity"
+    text: "Congress shall have Power... To regulate Commerce... among the several States..."
+    challenges_supported:
+      - facial
+      - as_applied
+    elements_to_plead:
+      - "Federal statute regulates activity that is NOT (a) channels of interstate commerce, (b) instrumentalities or persons/things in interstate commerce, (c) activity substantially affecting interstate commerce"
+      - "Conduct is non-economic intrastate activity"
+    leading_cases:
+      - "United States v. Lopez, 514 U.S. 549 (1995) — Gun-Free School Zones Act exceeded commerce power"
+      - "United States v. Morrison, 529 U.S. 598 (2000) — VAWA civil remedy exceeded commerce power"
+      - "Gonzales v. Raich, 545 U.S. 1 (2005) — aggregation principle"
+    citation_tokens:
+      - "U.S. Const. art. I § 8"
+      - "Lopez"
+      - "Morrison"
+      - "Commerce Clause"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # ARTICLE III — Standing
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: article_iii_standing
+    source: "U.S. Const. art. III § 2"
+    protected_interest: "Federal court jurisdiction limited to actual cases or controversies"
+    text: "The judicial Power shall extend to all Cases... [and] Controversies..."
+    challenges_supported:
+      - as_applied
+    elements_to_plead:
+      - "Plaintiff has INJURY IN FACT (concrete, particularized, actual or imminent)"
+      - "CAUSATION traceable to defendant's conduct"
+      - "REDRESSABILITY by favorable decision"
+    leading_cases:
+      - "Lujan v. Defenders of Wildlife, 504 U.S. 555 (1992) — three-element standing test"
+      - "Spokeo, Inc. v. Robins, 578 U.S. 330 (2016) — concreteness for statutory injuries"
+      - "TransUnion LLC v. Ramirez, 594 U.S. 413 (2021) — concrete injury from statutory violation"
+    applicability_conditions:
+      - "Used DEFENSIVELY: defendant challenging plaintiff's standing"
+      - "Used OFFENSIVELY: plaintiff establishing standing to invoke federal jurisdiction"
+    citation_tokens:
+      - "U.S. Const. art. III"
+      - "Lujan"
+      - "standing"
+      - "TransUnion v. Ramirez"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # VAGUENESS DOCTRINE
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: vagueness_doctrine
+    source: "U.S. Const. amend. V; U.S. Const. amend. XIV"
+    protected_interest: "Fair notice + non-arbitrary enforcement — statute or order must give person of ordinary intelligence fair notice and contain minimal guidelines for enforcement"
+    text: "(Derived from 5A/14A due process)"
+    challenges_supported:
+      - facial
+      - as_applied
+      - vagueness
+    elements_to_plead:
+      - "Statute/order fails to give person of ordinary intelligence fair notice of prohibited conduct"
+      - "OR permits arbitrary/discriminatory enforcement"
+    leading_cases:
+      - "Grayned v. City of Rockford, 408 U.S. 104 (1972) — two-prong vagueness test"
+      - "Kolender v. Lawson, 461 U.S. 352 (1983) — minimal guidelines requirement"
+      - "Johnson v. United States, 576 U.S. 591 (2015) — residual clause vagueness"
+    citation_tokens:
+      - "Grayned v. City of Rockford"
+      - "void for vagueness"
+      - "fair notice"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # OVERBREADTH DOCTRINE
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: overbreadth_doctrine
+    source: "U.S. Const. amend. I"
+    protected_interest: "Speech regulation must not sweep too broadly to reach substantial amount of protected speech"
+    text: "(Derived from 1A protections)"
+    challenges_supported:
+      - facial
+      - overbreadth
+    elements_to_plead:
+      - "Statute/order reaches substantial amount of protected First Amendment activity"
+      - "Substantial overbreadth, judged in relation to plainly legitimate sweep"
+    leading_cases:
+      - "Broadrick v. Oklahoma, 413 U.S. 601 (1973) — substantial overbreadth test"
+      - "United States v. Stevens, 559 U.S. 460 (2010) — animal-cruelty depiction statute overbroad"
+    citation_tokens:
+      - "Broadrick v. Oklahoma"
+      - "overbreadth"
+      - "substantial overbreadth"
+    verified: "2026-05-30"
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # PA CONST. ART. I — Declaration of Rights (often broader than US Const)
+  # ════════════════════════════════════════════════════════════════════════════
+  - id: pa_const_art_i_open_courts
+    source: "Pa. Const. art. I § 11"
+    protected_interest: "Open courts: every person, for an injury done him in his lands, goods, person or reputation, shall have remedy by due course of law"
+    text: |
+      All courts shall be open; and every man for an injury done him in his
+      lands, goods, person or reputation shall have remedy by due course of law,
+      and right and justice administered without sale, denial or delay.
+    challenges_supported:
+      - facial
+      - as_applied
+    elements_to_plead:
+      - "PA statute or court action denies plaintiff a remedy by due course of law"
+    leading_cases:
+      - "Smith v. Brown, 283 Pa. 397 (1925) — early open courts interpretation"
+      - "Lance v. Wyeth, 624 Pa. 231 (2014) — modern application"
+    applicability_conditions:
+      - "Pennsylvania state action"
+    citation_tokens:
+      - "Pa. Const. art. I § 11"
+      - "open courts"
+    verified: "2026-05-30"
+
+
+# ════════════════════════════════════════════════════════════════════════════════
+# CONSTITUTIONAL CHALLENGE TYPES
+# ════════════════════════════════════════════════════════════════════════════════
+challenge_types:
+  facial:
+    description: "Statute is unconstitutional in ALL applications. Very high bar."
+    standard: "No set of circumstances exists under which the statute would be valid (Salerno test) OR substantial overbreadth (for 1A)"
+    leading_case: "United States v. Salerno, 481 U.S. 739 (1987)"
+    notes: "Facial challenges are disfavored — Salerno standard rarely met."
+  as_applied:
+    description: "Statute is unconstitutional as applied to plaintiff's SPECIFIC situation. Lower bar than facial."
+    standard: "Statute's application to plaintiff's particular conduct violates constitutional provision"
+    notes: "Preferred form of challenge; preserves statute for other applications."
+  vagueness:
+    description: "Statute fails fair notice or invites arbitrary enforcement."
+    standard: "Grayned two-prong test: (1) fair notice to person of ordinary intelligence, (2) minimal guidelines to govern enforcement"
+    leading_case: "Grayned v. City of Rockford, 408 U.S. 104 (1972)"
+  overbreadth:
+    description: "Statute reaches substantial amount of protected First Amendment activity."
+    standard: "Substantial overbreadth judged in relation to legitimate sweep (Broadrick)"
+    leading_case: "Broadrick v. Oklahoma, 413 U.S. 601 (1973)"
+    notes: "Only available for 1A claims; allows third-party standing exception."
+  preemption:
+    description: "State law conflicts with federal law and must yield under Supremacy Clause."
+    standard: "Express, field, or conflict (impossibility or obstacle) preemption"
+    leading_case: "Hines v. Davidowitz, 312 U.S. 52 (1941)"
+
+
+# ════════════════════════════════════════════════════════════════════════════════
+# PSEUDOLAW — sovereign citizen framings the engine MUST REJECT
+# ════════════════════════════════════════════════════════════════════════════════
+#
+# Courts have universally rejected these as frivolous. Filing them in federal
+# court invites Rule 11 sanctions and destroys pro se credibility across all
+# active dockets. The applicability_engine flags any argument matching these
+# patterns and refuses to support them.
+#
+pseudolaw_rejected:
+  - id: natural_person_vs_corporate_fiction
+    framing: |
+      "I am a 'natural person' and not the 'corporate fiction' or 'strawman'
+      identified by capitalized name; therefore the statute/court has no
+      jurisdiction over me."
+    courts_reject_because: "There is no legal distinction between a 'natural person' and a 'corporate fiction' under US or PA law. Capitalization conventions in case captions do not change a party's legal identity."
+    rejection_cases:
+      - "United States v. Mitchell, 405 F. Supp. 602 (D. Md. 1975)"
+      - "Bey v. State, 847 F.3d 559 (7th Cir. 2017)"
+      - "Numerous unpublished orders dismissing/sanctioning sovereign citizen filings"
+    consequences: "Filing this argument in federal court risks Rule 11 sanctions, dismissal, and loss of credibility across all active dockets."
+
+  - id: sovereign_citizen_jurisdiction_denial
+    framing: |
+      "I am a sovereign citizen / citizen of the Republic, not a 'United States
+      citizen' as defined in 14A § 1; therefore federal law does not apply to me."
+    courts_reject_because: "The 14A defines US citizenship; there is no separate 'Republic citizenship.' All persons born or naturalized in the US are subject to federal jurisdiction."
+    rejection_cases:
+      - "United States v. Schneider, 910 F.2d 1569 (7th Cir. 1990)"
+      - "United States v. Hilgeford, 7 F.3d 1340 (7th Cir. 1993)"
+      - "Lonsdale v. United States, 919 F.2d 1440 (10th Cir. 1990)"
+    consequences: "Frivolous; sanctionable; may invoke vexatious litigant findings."
+
+  - id: lack_of_consent
+    framing: |
+      "I did not consent to be governed by Statute X, therefore the statute does
+      not bind me."
+    courts_reject_because: "Consent is not required for statutes enacted by representative legislatures pursuant to constitutional authority."
+    rejection_cases:
+      - "United States v. Schneider, 910 F.2d 1569 (7th Cir. 1990)"
+    consequences: "Frivolous."
+
+  - id: ucc_redemption
+    framing: |
+      "My birth certificate is a financial instrument; I can access a Treasury
+      account associated with it under UCC redemption theory."
+    courts_reject_because: "Birth certificates are not financial instruments. There is no Treasury account. UCC governs commercial transactions, not births."
+    rejection_cases:
+      - "Bryant v. Washington Mutual Bank, 524 F. Supp. 2d 753 (W.D. Va. 2007)"
+      - "Marsh v. United States, 2009 WL 1956454 (D. Or. 2009)"
+    consequences: "Frivolous; may be referred for criminal investigation if filed against IRS."
+
+  - id: common_law_supremacy
+    framing: |
+      "Common law is supreme over statutory law; statutes only apply where common
+      law is silent."
+    courts_reject_because: "Statutes enacted by legislatures pursuant to constitutional authority displace common law where they conflict (subject to constitutional limits)."
+    consequences: "Frivolous."
+
+# IMPORTANT: This list is non-exhaustive. The pseudolaw_filter pattern-matches
+# arguments using these framings AND any with similar markers (sovereign citizen
+# vocabulary like "flesh and blood man", "private American national", "Article III
+# court vs. statutory court", etc.). When detected, engine refuses to support.

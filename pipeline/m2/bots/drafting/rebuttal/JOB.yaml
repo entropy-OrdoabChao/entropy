@@ -1,0 +1,27 @@
+name: rebuttal
+group: drafting
+unit: claim            # claim | term | cite | count | document | case | draft
+axis: "DRAFTING — per opponent move: waiver-symmetry, substantial-evidence, enacted-authority, binding-order, misstatement. + per opponent move: estoppel against THEM (silence with a duty to speak, judicial estoppel on inconsistent positions, deemed admissions), every presumption they lean on named and rebutted with its burden."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - amjur_pleading
+  - doctrine
+  - pa_rcp
+  - frcp
+  - usreports
+  - ca3_
+  - pa_
+  - amjur_estoppel
+  - amjur_malicious
+  - amjur_discovery
+  - amjur_dismissal
+queries:
+  - "{claim}"
+  - "estoppel by silence where there is a duty to speak"
+  - "judicial estoppel party may not assume a position inconsistent with one taken in a prior proceeding"
+  - "presumption rebutted by evidence burden of producing evidence shifts"
+  - "requests for admission not answered within the time are deemed admitted"
+  - "acceptance of benefits creates no estoppel without full knowledge of the facts"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

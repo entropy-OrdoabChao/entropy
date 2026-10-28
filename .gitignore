@@ -1,0 +1,14 @@
+data/
+logs/
+__pycache__/
+*.pyc
+*.bak*
+.env
+corpus/
+*.db
+*.sqlite
+*.parquet
+chunk_text*
+models/
+*.gguf
+*.safetensors

@@ -1,0 +1,84 @@
+version: 1
+entity_type: opposing_counsel
+fiduciary: true
+fiduciary_basis: >
+  Opposing counsel is an officer of the court who owes the tribunal fiduciary
+  duties of candor and good faith that override the duty to the client. Filing
+  defective or misleading papers, citing non-binding authority as controlling, or
+  advancing positions without evidentiary support breaches those duties and
+  exposes counsel to Rule 11 sanctions and disciplinary referral.
+description: >
+  Officer-of-the-court / candor duties owed by opposing counsel. Authorities
+  verified present in the corpus (:8100); retriever resolves citation keys.
+
+duties:
+  - id: opp_fid_001
+    name: Candor Toward the Tribunal
+    class: fiduciary
+    source: Model Rule 3.3
+    source_title: ABA Model Rule of Professional Conduct 3.3; Pa.R.P.C. 3.3
+    jurisdiction: federal
+    description: >
+      A lawyer shall not knowingly make a false statement of fact or law to a
+      tribunal, fail to correct one, or fail to disclose controlling adverse
+      authority. Presenting non-binding authority as controlling, or misstating
+      the record, breaches the duty of candor.
+    triggering_actions:
+      - NON_BINDING_AS_CONTROLLING
+      - TRIAL_COURT_AS_APPELLATE_AUTHORITY
+      - non_binding_authority_presented_as_controlling
+      - trial_court_authority_misused_as_binding_precedent
+      - misstatement_of_record
+      - false_statement_to_tribunal
+    violation_remedy:
+      - Strike the offending filing
+      - Rule 11 sanctions
+      - Disciplinary referral (ODC / state bar)
+
+  - id: opp_fid_002
+    name: Duty Against Attorney Misconduct / Dishonesty
+    class: fiduciary
+    source: Model Rule 8.4
+    source_title: ABA Model Rule of Professional Conduct 8.4; Pa.R.P.C. 8.4
+    jurisdiction: federal
+    description: >
+      It is professional misconduct to engage in conduct involving dishonesty,
+      fraud, deceit, or misrepresentation, or conduct prejudicial to the
+      administration of justice.
+    triggering_actions:
+      - FRAUD_ON_THE_COURT
+      - BIAS_PUNITIVE_APPEAL
+      - BIAS_EMOTIONAL_LANGUAGE
+      - dishonesty_fraud_deceit
+      - improper_argumentative_prejudicial_language
+      - punitive_improper_appeals_to_the_court
+      - conduct_prejudicial_to_administration_of_justice
+    violation_remedy:
+      - Disciplinary referral
+      - Sanctions
+
+  - id: opp_fid_003
+    name: Rule 11 Duty — Representations to the Court
+    class: fiduciary
+    source: Fed. R. Civ. P. 11
+    source_title: Fed. R. Civ. P. 11(b); Pa.R.C.P. 1023.1
+    jurisdiction: federal
+    description: >
+      By presenting a paper, counsel certifies that its claims and factual
+      contentions have evidentiary and legal support and are not presented for an
+      improper purpose. Verification and service defects and unsupported filings
+      breach this certification.
+    triggering_actions:
+      - VERIFICATION_MISSING
+      - SERVICE_DEFECTIVE
+      - FILING_DEADLINE_VIOLATION
+      - STANDING_DEFECT
+      - REMOVAL_DEFECTIVE
+      - SUBJECT_MATTER_JURISDICTION_DEFECT
+      - verification_requirement
+      - defective_service
+      - improper_argumentative_prejudicial_language
+      - unsupported_filing
+    violation_remedy:
+      - Strike under Rule 12(f) / Pa.R.C.P. 1028(a)(2)
+      - Rule 11 / Rule 1023.1 sanctions

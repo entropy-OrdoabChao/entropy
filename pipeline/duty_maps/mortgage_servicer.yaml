@@ -1,0 +1,193 @@
+version: 1
+entity_type: mortgage_servicer
+description: >
+  Duties owed by mortgage servicers under RESPA, TILA, CFPB Regulation X and Z,
+  FNMA/FHLMC servicing guides, and common law. Covers loans in PA/EDPA.
+
+duties:
+  - id: ms_stat_001
+    name: Qualified Written Request Response (RESPA § 2605)
+    class: statutory
+    source: 12-USC-2605
+    source_title: RESPA - Servicing of Mortgage Loans
+    jurisdiction: federal
+    description: >
+      Servicer must acknowledge QWR within 5 business days and provide
+      substantive response within 30 business days including action taken or
+      reasons for not taking action.
+    triggering_actions:
+      - receiving_qwr
+      - failing_to_respond_qwr
+      - servicing_dispute
+    burden_flip_questions:
+      - "Produce the QWR acknowledgement sent within 5 business days."
+      - "Produce the substantive QWR response and all supporting documents referenced."
+    evidence_demanded:
+      - QWR acknowledgement
+      - QWR substantive response
+      - loan servicing history
+      - payment application records
+    violation_remedy:
+      - Actual damages
+      - Statutory damages $2000 (pattern of noncompliance)
+      - Attorney fees
+    regulator: CFPB
+
+  - id: ms_stat_002
+    name: Notice of Error / Information Request (Reg X § 1024.35/36)
+    class: statutory
+    source: 12-CFR-1024.35
+    source_title: Regulation X - Error Resolution and Information Requests
+    jurisdiction: federal
+    description: >
+      Servicer must acknowledge NOE/IR within 5 days and correct error or
+      respond within 30-45 days. Includes duty to investigate and not merely
+      defer.
+    triggering_actions:
+      - receiving_notice_of_error
+      - receiving_information_request
+      - servicing_dispute
+    burden_flip_questions:
+      - "Produce the acknowledgement letter sent within 5 days of receipt of NOE."
+      - "Produce the complete investigation file including all documents reviewed."
+    evidence_demanded:
+      - NOE acknowledgement
+      - investigation file
+      - error resolution response
+    violation_remedy:
+      - Actual damages
+      - Statutory damages $2000
+      - Attorney fees
+    regulator: CFPB
+
+  - id: ms_stat_003
+    name: Escrow Account Administration (RESPA § 2609)
+    class: statutory
+    source: 12-USC-2609
+    source_title: RESPA - Limitation on Requirement of Advance Deposits
+    jurisdiction: federal
+    description: >
+      Servicer must conduct annual escrow analysis, provide initial and annual
+      escrow statements, and limit cushion to 1/6 of annual disbursements.
+    triggering_actions:
+      - escrow_administration
+      - annual_escrow_analysis
+      - escrow_shortage_notice
+    burden_flip_questions:
+      - "Produce every annual escrow analysis statement and supporting calculations."
+    evidence_demanded:
+      - annual escrow statements
+      - cushion calculations
+      - tax and insurance disbursements
+    regulator: CFPB
+
+  - id: ms_stat_004
+    name: Early Intervention and Loss Mitigation (Reg X § 1024.39/41)
+    class: statutory
+    source: 12-CFR-1024.41
+    source_title: Regulation X - Loss Mitigation Procedures
+    jurisdiction: federal
+    description: >
+      Servicer must review loss mitigation applications, exercise reasonable
+      diligence in obtaining documents, and comply with dual-tracking
+      prohibitions before referral to foreclosure.
+    triggering_actions:
+      - foreclosure_referral
+      - loss_mitigation_review
+      - delinquency_contact
+    burden_flip_questions:
+      - "Produce the complete loss mitigation file including every document received and request made."
+      - "Produce the foreclosure referral date and compare to loss mitigation application date."
+    evidence_demanded:
+      - loss mitigation file
+      - foreclosure referral timeline
+      - dual-tracking compliance records
+    violation_remedy:
+      - Injunction against foreclosure
+      - Damages
+      - Attorney fees
+    regulator: CFPB
+
+  - id: ms_reg_001
+    name: CFPB Mortgage Servicing Rules (Reg X)
+    class: regulatory
+    source: 12-CFR-1024
+    source_title: Regulation X - Real Estate Settlement Procedures
+    jurisdiction: federal
+    description: >
+      Comprehensive servicing rules including force-placed insurance limits,
+      periodic billing statements, payoff statements, and transfer notices.
+    triggering_actions: []
+    burden_flip_questions:
+      - "Produce periodic billing statements sent to plaintiff for the past 24 months."
+      - "Produce all force-placed insurance notices and renewal records."
+    evidence_demanded:
+      - billing statements
+      - force-placed insurance records
+    regulator: CFPB
+
+  - id: ms_reg_002
+    name: TILA Periodic Statement Requirements (Reg Z)
+    class: regulatory
+    source: 12-CFR-1026.41
+    source_title: Regulation Z - Periodic Statements for Residential Mortgages
+    jurisdiction: federal
+    description: >
+      Servicer must provide periodic statements with specific content including
+      payment breakdown, past payment breakdown, and contact information.
+    triggering_actions: []
+    burden_flip_questions:
+      - "Produce Reg Z compliant periodic statements for the period at issue."
+    evidence_demanded:
+      - periodic statements
+    regulator: CFPB
+
+  - id: ms_ind_001
+    name: FNMA Servicing Guide Compliance
+    class: industry_standard
+    source: FNMA-Servicing-Guide
+    source_title: Fannie Mae Single-Family Servicing Guide
+    jurisdiction: industry
+    description: >
+      Industry standard for servicing conventional conforming loans. Servicers
+      must comply with FNMA timelines, documentation, and loss mitigation
+      protocols when servicing FNMA-owned loans.
+    triggering_actions: []
+    burden_flip_questions:
+      - "Identify loan investor and produce FNMA Servicing Guide compliance records if applicable."
+    evidence_demanded:
+      - investor identification
+      - FNMA compliance records
+
+  - id: ms_fid_001
+    name: Fiduciary Duty re Escrow Funds
+    class: fiduciary
+    source: Escrow-Trust-Doctrine
+    source_title: Common law fiduciary duty over escrow funds
+    jurisdiction: common_law
+    description: >
+      Escrow funds held for payment of taxes and insurance are held in trust
+      for borrower's benefit. Servicer owes fiduciary duty of prudent
+      administration, accounting, and use solely for designated purposes.
+    triggering_actions:
+      - escrow_administration
+      - holding_escrow_funds
+    burden_flip_questions:
+      - "Produce complete escrow account history including deposits, disbursements, and interest credits."
+    evidence_demanded:
+      - escrow account history
+      - bank statements
+
+  - id: ms_cl_001
+    name: Good Faith in Loan Administration
+    class: common_law
+    source: Implied-Covenant-Doctrine
+    source_title: Common law good faith and fair dealing
+    jurisdiction: common_law
+    description: >
+      Implied covenant of good faith and fair dealing applies to loan servicing.
+    triggering_actions: []
+    burden_flip_questions:
+      - "Produce all internal guidance regarding good faith servicing of disputed accounts."
+    evidence_demanded:
+      - servicing guidance documents

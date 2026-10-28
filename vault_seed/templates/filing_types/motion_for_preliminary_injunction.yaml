@@ -1,0 +1,36 @@
+id: motion_for_preliminary_injunction
+title: Motion for Preliminary Injunction and Temporary Restraining Order
+description:
+  Motion for preliminary injunction and TRO under FRCP 65 — standard
+  for irreparable harm, likelihood of success, balance of equities,
+  and public interest.
+court: any
+required_authorities:
+  - FRCP 65(a) — Preliminary injunction standard
+  - FRCP 65(b) — Temporary restraining order — ex parte, 14-day limit
+  - FRCP 65(c) — Security requirement for injunction
+  - 28 U.S.C. 1651 — Writ of mandamus (alternative for extraordinary relief)
+trigger_defects:
+  - irreparable_harm
+  - motion_for_tro
+  - motion_for_preliminary_injunction
+  - constructive_denial
+  - void_order_misuse
+required_facts:
+  - case_id
+  - caption
+  - defect_total
+  - irreparable_harm
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/fr65_injunction
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

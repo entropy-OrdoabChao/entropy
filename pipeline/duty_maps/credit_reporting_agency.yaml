@@ -1,0 +1,127 @@
+version: 1
+entity_type: credit_reporting_agency
+description: >
+  Duties owed by consumer reporting agencies under FCRA, CFPB regulations,
+  and common law.
+
+duties:
+  - id: cra_stat_001
+    name: Maximum Accuracy (FCRA § 1681e)
+    class: statutory
+    source: 15-USC-1681e
+    source_title: FCRA - Compliance Procedures
+    jurisdiction: federal
+    description: >
+      CRA must follow reasonable procedures to assure maximum possible accuracy
+      of information concerning the individual to whom the report relates.
+    triggering_actions:
+      - issuing_credit_report
+      - reporting_disputed_info
+      - reporting_inaccurate_info
+    burden_flip_questions:
+      - "Produce the written procedures in effect to assure maximum possible accuracy."
+      - "Produce the quality assurance and audit records for the period at issue."
+    evidence_demanded:
+      - accuracy procedures
+      - QA audit records
+      - dispute handling procedures
+    violation_remedy:
+      - Actual damages
+      - Statutory damages $100-$1000 (willful)
+      - Punitive damages
+      - Attorney fees
+    regulator: CFPB
+
+  - id: cra_stat_002
+    name: Reinvestigation of Disputes (FCRA § 1681i)
+    class: statutory
+    source: 15-USC-1681i
+    source_title: FCRA - Procedure for Disputed Accuracy
+    jurisdiction: federal
+    description: >
+      CRA must conduct a reasonable reinvestigation of disputed information
+      within 30 days (45 in limited cases) and delete or modify inaccurate or
+      unverifiable information.
+    triggering_actions:
+      - receiving_dispute
+      - reinvestigation
+      - reporting_disputed_info
+    burden_flip_questions:
+      - "Produce complete records of the reinvestigation including all communications with furnishers."
+      - "Identify every employee who reviewed the dispute and time spent."
+    evidence_demanded:
+      - dispute investigation file
+      - furnisher communications
+      - reinvestigation timeline
+    violation_remedy:
+      - Actual damages
+      - Statutory damages $100-$1000 (willful)
+      - Attorney fees
+    regulator: CFPB
+
+  - id: cra_stat_003
+    name: Notice to Furnishers of Dispute (FCRA § 1681i-a-2)
+    class: statutory
+    source: 15-USC-1681i-a-2
+    source_title: FCRA - Prompt Notice to Furnisher
+    jurisdiction: federal
+    description: >
+      CRA must provide notice of dispute to furnisher within 5 business days
+      of receiving dispute and include all relevant information.
+    triggering_actions:
+      - receiving_dispute
+      - reinvestigation
+    burden_flip_questions:
+      - "Produce the notice of dispute sent to each furnisher and timestamp of delivery."
+    evidence_demanded:
+      - furnisher notice records
+      - delivery timestamps
+    regulator: CFPB
+
+  - id: cra_reg_001
+    name: CFPB Regulation V Compliance
+    class: regulatory
+    source: 12-CFR-1022
+    source_title: Regulation V - Fair Credit Reporting
+    jurisdiction: federal
+    description: >
+      CFPB Reg V implements FCRA and imposes additional requirements on CRAs
+      including risk-based pricing notices and identity theft procedures.
+    triggering_actions: []
+    burden_flip_questions:
+      - "Produce Regulation V compliance audit results."
+    evidence_demanded:
+      - compliance audit records
+    regulator: CFPB
+
+  - id: cra_ind_001
+    name: METRO 2 Format Reporting Standard
+    class: industry_standard
+    source: METRO-2-Format
+    source_title: CDIA METRO 2 Credit Reporting Format
+    jurisdiction: industry
+    description: >
+      Industry standard format for consumer credit data reporting maintained by
+      Consumer Data Industry Association.
+    triggering_actions:
+      - reporting_disputed_info
+      - issuing_credit_report
+    burden_flip_questions:
+      - "Produce the METRO 2 reporting fields for the disputed tradeline."
+    evidence_demanded:
+      - METRO 2 records
+
+  - id: cra_cl_001
+    name: Reasonable Care in Data Handling
+    class: common_law
+    source: Reasonable-Care-Doctrine
+    source_title: Common law duty of reasonable care
+    jurisdiction: common_law
+    description: >
+      Common law duty to exercise reasonable care when handling and reporting
+      information that can cause harm if inaccurate.
+    triggering_actions: []
+    burden_flip_questions:
+      - "Produce training records for employees handling consumer disputes."
+    evidence_demanded:
+      - training records

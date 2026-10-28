@@ -1,0 +1,99 @@
+id: concise_statement_of_errors_1925b
+title: Concise Statement of Errors Complained of on Appeal (Pa.R.A.P. 1925(b))
+description: >
+  The MANDATORY responsive filing when a Pennsylvania trial court, after a notice of appeal is filed,
+  orders the appellant to file a Concise Statement of Errors Complained of on Appeal under
+  Pa.R.A.P. 1925(b). It is NOT a brief and NOT the notice of appeal — the notice (Pa.R.A.P. 904)
+  only identifies the order appealed; this document is where the specific errors are PRESERVED.
+
+  This is a waiver trap, and it cuts both ways:
+  - Pa.R.A.P. 1925(b)(4)(vii): any issue NOT raised in a timely, properly served Statement is WAIVED.
+  - Pa.R.A.P. 1925(b)(4)(ii): each error must be stated CONCISELY with sufficient detail to identify
+    all pertinent issues for the judge; and (iv) the Statement "should not be redundant or provide
+    lengthy explanations." An overbroad, vague, or bloated Statement can ITSELF waive issues.
+  Therefore this filing must be COMPREHENSIVE (every appealed error listed — the appellant waives
+  nothing) yet CONCISE (one tight numbered paragraph per error, no argument, no definitions dump).
+
+  Deadline: the trial court's order sets the period (Pa.R.A.P. 1925(b)(2) — ordinarily 21 days;
+  the order controls). File with the office designated in the order (Office of Judicial Records) AND
+  concurrently SERVE the trial judge, or the Statement is treated as not filed (waiver).
+
+  Jurisdiction posture (use against any attempt by the trial court to "proceed further"):
+  Pa.R.A.P. 1701(a) — after the appeal is taken the trial court may no longer proceed in the matter
+  EXCEPT as provided in 1701(b); Pa.R.A.P. 1925 is that carve-out. The 1925(b) order is record-making
+  for the appellate court (the judge must then file a 1925(a) opinion), NOT a reclaiming of the merits.
+
+court: PA_CP_PHILA
+
+required_authorities:
+  - citation: "Pa.R.A.P. 1925(b)"
+    proposition: "After a notice of appeal is filed, the trial judge may order the appellant to file of record and serve on the judge a concise statement of the errors complained of on appeal."
+  - citation: "Pa.R.A.P. 1925(b)(4)(ii)"
+    proposition: "The Statement shall concisely identify each error the appellant intends to assert, with sufficient detail to identify all pertinent issues for the judge."
+  - citation: "Pa.R.A.P. 1925(b)(4)(iv)"
+    proposition: "The Statement should not be redundant or provide lengthy explanations as to any error; where non-redundant, non-frivolous issues are set forth in an appropriately concise manner, the number of errors raised will not alone be grounds for finding waiver."
+  - citation: "Pa.R.A.P. 1925(b)(4)(vii)"
+    proposition: "Issues not included in the Statement and/or not raised in accordance with this rule are waived."
+  - citation: "Pa.R.A.P. 1925(a)"
+    proposition: "Upon receipt of the Statement, the trial judge shall file of record a brief opinion of the reasons for the order; the failure to do so is itself reviewable — the appellant is entitled to the court's reasoning."
+  - citation: "Pa.R.A.P. 1701(a)"
+    proposition: "After an appeal is taken the trial court may no longer proceed further in the matter, except as provided in Pa.R.A.P. 1701(b) — the 1925 opinion process is that exception, not a reclaiming of merits jurisdiction."
+  - citation: "Pa.R.A.P. 311(a)(4)"
+    proposition: "An appeal may be taken as of right from an order that grants, continues, modifies, refuses, or dissolves an injunction — the basis for the underlying appeal this Statement supports."
+
+# The errors this Statement must preserve are NOT hardcoded — they are drawn from the case's
+# audit JSON and the CASE_FACTS 'ADVERSE-FILING DEFECTS & LEVERS' comprehension for the order(s)
+# actually appealed. Each error is tied to the specific order and the rule/statute the court broke.
+trigger_defects:
+  - order_1925b_statement_required
+  - concise_statement_required
+  - appeal_pending_trial_court
+  - FATAL/OPERATIVE_TEXT
+  - SERIOUS/OPERATIVE_TEXT
+  - FATAL/NO_WORD_ADDED_OR_SUBTRACTED
+  - SERIOUS/NO_WORD_ADDED_OR_SUBTRACTED
+
+structure:
+  # NO generic "introduction" block -- a Concise Statement is not a motion; the statement_of_errors_1925b
+  # block carries its own 1925(b) preamble + reservation. Keeping the motion intro would add argument/
+  # "relief requested" boilerplate that violates the concise mandate (1925(b)(4)(iv)).
+  - type: caption
+    block: boilerplate/caption_state_pa_ccp
+  - type: section
+    block: appellate/statement_of_errors_1925b
+    content: >
+      The numbered Statement of Errors. One concise numbered paragraph per error. Each paragraph:
+      (1) names the specific order (date + control number); (2) states the error concisely and
+      specifically; (3) cites the rule or statute the court broke (e.g. Pa.R.C.P. 3146(a) garnishee
+      default, Pa.R.C.P. 1531 injunction prerequisites, Pa.R.C.P. 3142 execution). No argument, no
+      block quotes, no definitions dump — sufficient detail to identify the issue, nothing more.
+      Comprehensive (every appealed error) yet concise. Grounded in the audit + CASE_FACTS; no fact
+      not in the record.
+  # Appearance-of-partiality section renders ONLY when the record evidences a pattern (partiality_detected).
+  # If the judge followed the rules and equity, this block is skipped entirely -- never manufacture bias.
+  - type: section
+    block: appellate/appearance_of_partiality_1925b
+    when: partiality_detected == true
+  - type: section
+    block: appellate/preservation_and_reservation_1925b
+  - type: boilerplate
+    block: boilerplate/notice_duty_and_acknowledgment
+  - type: boilerplate
+    block: boilerplate/certificate_of_service_1925b
+
+# When the trial judge files a deficient 1925(a) opinion, m0 can compose an OPPOSITION
+# to that opinion using these argument blocks. They fire when the 1925(a) opinion
+# is found deficient (e.g., fails to address all preserved errors, adds facts not in
+# the record, or relies on authority not cited by appellant).
+  - type: argument
+    block: arguments/1925a_opinion_deficient
+    when: filing_type == concise_statement_of_errors_1925b AND opinion_deficient == true
+  - type: argument
+    block: arguments/operative_text_discipline
+    when: filing_type == concise_statement_of_errors_1925b AND operative_text_violation == true
+  - type: argument
+    block: arguments/no_word_added_or_subtracted
+    when: filing_type == concise_statement_of_errors_1925b AND operative_text_violation == true
+  - type: argument
+    block: arguments/judge_inaction_1038
+    when: filing_type == concise_statement_of_errors_1925b AND judge_inaction == true

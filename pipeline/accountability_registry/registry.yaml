@@ -1,0 +1,2992 @@
+version: '0.5'
+last_updated: '20260531_154854'
+forums:
+- id: third_circuit_judicial_council
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - federal_district_judge
+  - federal_circuit_judge
+  - federal_magistrate_judge
+  - federal_bankruptcy_judge
+  - federal_senior_judge
+  - federal_judge
+  geography:
+  - DE
+  - NJ
+  - PA
+  - VI
+  statutory_basis: 28 U.S.C. §§ 351-364 (Judicial Conduct and Disability Act)
+  governing_rules: Rules for Judicial-Conduct and Judicial-Disability Proceedings
+    (RJCP); Local Rules Misconduct Proceedings
+  filing:
+    method: written_complaint
+    form: AO 310 (Rev. 03/16) — Complaint of Judicial Misconduct or Disability
+    form_url: https://www.ca3.uscourts.gov/sites/ca3/files/FormalComplaint.Appendix3.pdf
+    mailing_address: 'Circuit Executive, United States Third Circuit
+
+      22409 U.S. Courthouse
+
+      601 Market Street
+
+      Philadelphia, Pennsylvania 19106-1790
+
+      '
+    envelope_marking: COMPLAINT OF MISCONDUCT or COMPLAINT OF DISABILITY (do NOT name
+      judge on envelope)
+    fee: 0
+    copies: original only; Circuit Executive may request copies of voluminous documents
+    signature_required: true
+    verification_required: true
+    electronic_filing: false
+    fax: false
+  timing:
+    deadline: reasonable time after misconduct
+    sol_statutory: null
+    typical_review_period_months: 6
+  remedies_available:
+  - private_admonishment
+  - public_reprimand
+  - certification_for_impeachment_referral
+  - request_voluntary_retirement
+  - referral_to_attorney_disciplinary_board
+  remedies_NOT_available:
+  - monetary_damages
+  - vacatur_of_order
+  - case_reopening
+  escalation:
+    next_forum: judicial_conference_committee_on_judicial_conduct
+    mechanism: Petition for review to Judicial Council (Rule 18); then Committee on
+      Judicial Conduct and Disability of the Judicial Conference (Rule 21)
+    petition_review_address: Circuit Executive, United States Third Circuit, 22409
+      U.S. Courthouse, 601 Market Street, Philadelphia, PA 19106-1790
+  elements_to_plead:
+  - 'Specific facts: what happened, when, where'
+  - Identify subject judge(s) by name and court
+  - Identify any related lawsuits with court + case + appeal docket
+  - Signed and verified
+  common_pitfalls:
+  - Cannot challenge merits of a ruling — that's an appeal, not misconduct (28 U.S.C.
+    § 352(b)(1)(A)(ii))
+  - Frivolous/repetitive complaints can trigger Rule 10 filing restrictions
+  - Confidential per § 360 — does NOT toll deadlines in underlying case
+  notes: 'Covers all Article III and Article I federal judges sitting in 3d Cir geography.
+
+    SCOTUS Justices are NOT covered (impeachment only — see scotus_no_forum entry).
+
+    '
+  sources:
+  - https://www.ca3.uscourts.gov/judicial-conduct-and-disability
+  - https://www.ca3.uscourts.gov/sites/ca3/files/info_sheet_misconduct_CE_2015_amend.pdf
+  - https://www.ca3.uscourts.gov/sites/ca3/files/FormalComplaint.Appendix3.pdf
+  - https://www.law.cornell.edu/uscode/text/28/351
+  confidence: high
+  last_verified: '2026-05-30'
+- id: judicial_conference_committee_on_judicial_conduct
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - federal_district_judge
+  - federal_circuit_judge
+  - federal_magistrate_judge
+  - federal_bankruptcy_judge
+  - federal_senior_judge
+  - federal_judge
+  geography: []
+  statutory_basis: 28 U.S.C. § 357; RJCP Rule 21
+  governing_rules: Rules for Judicial-Conduct and Judicial-Disability Proceedings
+  filing:
+    method: written_complaint
+    mailing_address: 'Committee on Judicial Conduct and Disability
+
+      Administrative Office of the United States Courts
+
+      One Columbus Circle, N.E.
+
+      Washington, DC 20544
+
+      '
+    fee: 0
+    page_limit: 30 pages typical for petition for review
+  timing:
+    deadline: 63 days from Judicial Council decision (Rule 21(b)(2))
+  remedies_available:
+  - public_reprimand
+  - certification_for_impeachment_referral
+  - request_voluntary_retirement
+  remedies_NOT_available:
+  - monetary_damages
+  - case_reopening
+  escalation:
+    next_forum: house_judiciary_committee_impeachment
+    mechanism: Certification under 28 U.S.C. § 355(b) for impeachment consideration
+  notes: Appellate body. Reviews Judicial Council decisions. Cannot be initial forum.
+  sources:
+  - https://www.uscourts.gov/administration-policies/judicial-conduct-disability
+  - https://www.law.cornell.edu/uscode/text/28/357
+  confidence: high
+  last_verified: '2026-05-30'
+- id: scotus_no_forum_limitation
+  jurisdiction: federal
+  category: limitation_note
+  scope:
+  - scotus_justice
+  statutory_basis: U.S. Const. Art. II § 4; Art. I § 2 cl. 5; Art. I § 3 cl. 6-7
+  limitation_note: "SCOTUS Justices are NOT subject to the Judicial Conduct and Disability\
+    \ Act\n(28 U.S.C. §§ 351-364). The Act covers only Article III \"judges of the\
+    \ United\nStates\" as defined in § 451, which excludes SCOTUS Justices, AND Article\
+    \ I\nmagistrate/bankruptcy judges. The Justices have adopted a non-binding\n\"\
+    Code of Conduct for Justices\" (Nov. 2023) but it provides NO complaint\nforum\
+    \ and NO enforcement mechanism.\n\nONLY constitutional mechanisms against a sitting\
+    \ Justice:\n  1. Impeachment by the House (Art. II § 4)\n  2. Trial and conviction\
+    \ by the Senate (Art. I § 3 cl. 6-7)\n  3. Voluntary recusal under 28 U.S.C. §\
+    \ 455 (no review mechanism)\n\nHistorical: 1 Justice impeached (Samuel Chase,\
+    \ 1804); acquitted by Senate.\nNo Justice has ever been removed.\n"
+  filing: {}
+  remedies_available:
+  - impeachment_resolution
+  remedies_NOT_available:
+  - private_admonishment
+  - public_reprimand
+  - censure
+  - suspension
+  - removal_from_office
+  escalation:
+    next_forum: house_judiciary_committee_impeachment
+    mechanism: Citizen petition to House Member; House Judiciary Committee initiates
+      inquiry
+  notes: Documented as a hard limitation, NOT a forum. Useful for setting realistic
+    expectations in cert-track strategy.
+  sources:
+  - https://www.supremecourt.gov/about/code-of-conduct-for-justices_november_13_2023.pdf
+  - https://www.law.cornell.edu/uscode/text/28/451
+  - https://constitution.congress.gov/browse/article-2/section-4/
+  confidence: high
+  last_verified: '2026-05-30'
+- id: house_judiciary_committee_impeachment
+  jurisdiction: federal
+  category: impeachment
+  scope:
+  - federal_district_judge
+  - federal_circuit_judge
+  - federal_senior_judge
+  - scotus_justice
+  - federal_judge
+  statutory_basis: U.S. Const. Art. II § 4 (good behavior; impeachment); Art. I §
+    2 cl. 5 (House power); Art. I § 3 cl. 6 (Senate trial)
+  filing:
+    method: house_judiciary_intake
+    mailing_address: 'Committee on the Judiciary
+
+      U.S. House of Representatives
+
+      2138 Rayburn House Office Building
+
+      Washington, DC 20515
+
+      '
+    online: https://judiciary.house.gov/
+    fee: 0
+    notes: Citizens cannot directly initiate impeachment; must petition through a
+      House Member who introduces a resolution
+  remedies_available:
+  - impeachment_resolution
+  - removal_from_office
+  notes: 'Impeachment is the ONLY mechanism to remove Article III judges. Threshold:
+
+    "treason, bribery, or other high crimes and misdemeanors" (Art. II § 4).
+
+    Historical removals: 8 federal judges removed (most recent: G. Thomas Porteous,
+    2010).
+
+    '
+  sources:
+  - https://judiciary.house.gov/
+  - https://constitution.congress.gov/browse/article-2/section-4/
+  confidence: high
+  last_verified: '2026-05-30'
+- id: doj_office_of_professional_responsibility
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - federal_prosecutor
+  - ausa
+  - doj_attorney
+  - fbi_agent
+  - dea_agent
+  statutory_basis: 28 C.F.R. Part 0 Subpart G-2; Order No. 2835-2006
+  governing_rules: OPR Procedures (internal); reports findings to Professional Misconduct
+    Review Unit (PMRU); termination requires Deputy Attorney General approval
+  filing:
+    method: written_complaint
+    online_form: https://justice.gov/opr/submit-professional-misconduct-complaint
+    mailing_address: 'Counsel
+
+      Office of Professional Responsibility
+
+      U.S. Department of Justice
+
+      950 Pennsylvania Avenue, N.W., Suite 3266
+
+      Washington, DC 20530-0001
+
+      '
+    phone: (202) 514-3365
+    fee: 0
+    include_in_complaint:
+    - Your full name, address, telephone, email
+    - Name and title of accused individual
+    - Allegation details including court case name and jurisdiction
+    - Supporting documents
+  remedies_available:
+  - private_admonishment
+  - public_reprimand
+  - suspension
+  - removal_from_office
+  - referral_to_attorney_disciplinary_board
+  - criminal_referral
+  remedies_NOT_available:
+  - monetary_damages
+  - case_reopening
+  - vacatur_of_order
+  escalation:
+    next_forum: doj_pmru_dag
+    mechanism: Professional Misconduct Review Unit decides discipline; Deputy Attorney
+      General final authority
+  elements_to_plead:
+  - Misconduct must relate to DOJ attorney's authority to investigate, litigate, or
+    provide legal advice
+  - 'Common allegations: Brady/Giglio violations, discovery failures, lack of candor,
+    conflict of interest, grand jury abuse'
+  common_pitfalls:
+  - OPR will NOT investigate while related litigation is pending (policy of restraint)
+  - Does NOT cover non-DOJ attorneys (state/local prosecutors, private attorneys)
+  - Does NOT cover other federal agencies (DHS, IRS, HHS, etc.) — those go to respective
+    OIG
+  - Administrative violations (time/attendance) → DOJ OIG, not OPR
+  notes: 'FY2023: OPR completed 19 investigations; found professional misconduct in
+    68% of matters.
+
+    Annual report: https://www.justice.gov/opr/media/1341446/dl
+
+    '
+  sources:
+  - https://www.justice.gov/opr/submit-professional-misconduct-complaint
+  - https://www.justice.gov/opr/contact-office.html
+  - https://www.justice.gov/opr/webform/how-file-complaint-office-professional-responsibility
+  - https://www.ecfr.gov/current/title-28/chapter-I/part-0/subpart-G-2
+  confidence: high
+  last_verified: '2026-05-30'
+- id: doj_oig_hotline
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - federal_law_clerk
+  - fbi_agent
+  - dea_agent
+  - us_marshal
+  statutory_basis: Inspector General Act of 1978, 5 U.S.C. App. 3
+  filing:
+    method: online_form
+    online_form: https://oig.justice.gov/hotline
+    mailing_address: 'Office of the Inspector General
+
+      U.S. Department of Justice
+
+      950 Pennsylvania Ave., NW, Room 4706
+
+      Washington, DC 20530-0001
+
+      '
+    fee: 0
+  remedies_available:
+  - public_reprimand
+  - removal_from_office
+  - criminal_referral
+  notes: Catches DOJ non-attorney misconduct that OPR doesn't cover.
+  sources:
+  - https://oig.justice.gov/hotline
+  confidence: high
+  last_verified: '2026-05-30'
+- id: tigta_investigations
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - irs_employee
+  - tax_court_personnel
+  statutory_basis: Treasury Inspector General Act of 1998; IRS Restructuring and Reform
+    Act § 1203 (10 enumerated misconduct categories)
+  filing:
+    method: online_form
+    online_form: https://www.tigta.gov/reportcrime-misconduct
+    phone: 1-800-366-4484
+    fee: 0
+  remedies_available:
+  - private_admonishment
+  - public_reprimand
+  - suspension
+  - removal_from_office
+  - criminal_referral
+  remedies_NOT_available:
+  - monetary_damages
+  common_pitfalls:
+  - FTCA discretionary-function exception bars most damages suits against IRS/TIGTA
+    (Daviscourt v. IRS dismissal)
+  - Tax Court JUDGES (not personnel) go through judicial conduct route, NOT TIGTA
+  notes: 'Section 1203 covers: false statements under oath, due process violations,
+
+    civil rights violations, document falsification, assault, retaliation,
+
+    § 6103 misuse, willful failure to file/pay, threats to audit for personal gain.
+
+    '
+  sources:
+  - https://www.tigta.gov/tigtas-investigative-mission
+  - https://www.gao.gov/assets/a237303.html
+  confidence: high
+  last_verified: '2026-05-30'
+- id: federal_recusal_motion_in_case
+  jurisdiction: federal
+  category: recusal_in_case
+  scope:
+  - federal_district_judge
+  - federal_circuit_judge
+  - federal_magistrate_judge
+  - federal_bankruptcy_judge
+  - federal_senior_judge
+  - federal_judge
+  statutory_basis: 28 U.S.C. § 144 (bias affidavit); 28 U.S.C. § 455 (disqualification)
+  filing:
+    method: efile_pacer
+    where: File in the underlying case docket
+    fee: 0
+    form: Motion + affidavit (§ 144 requires affidavit and certificate of counsel)
+  timing:
+    deadline: as soon as practicable after grounds for recusal are known; failure
+      to act promptly is waiver
+  remedies_available:
+  - vacatur_of_order
+  - case_reopening
+  escalation:
+    next_forum: writ_of_mandamus_3d_cir
+    mechanism: If denied, petition for writ of mandamus to Court of Appeals (FRAP
+      21)
+  elements_to_plead:
+  - '§ 144: timely affidavit stating facts and reasons for personal bias or prejudice;
+    certificate of counsel that affidavit is in good faith'
+  - '§ 455(a): impartiality might reasonably be questioned'
+  - '§ 455(b): specific grounds (personal bias, financial interest, prior involvement,
+    family connection)'
+  common_pitfalls:
+  - Judge rules on own recusal motion (Liljeberg v. Health Servs., 486 U.S. 847)
+  - Adverse rulings alone are not grounds (Liteky v. United States, 510 U.S. 540)
+  notes: Standard in-case mechanism. Mandamus is the escalation path when denied.
+  sources:
+  - https://www.law.cornell.edu/uscode/text/28/144
+  - https://www.law.cornell.edu/uscode/text/28/455
+  confidence: high
+  last_verified: '2026-05-30'
+- id: doj_civil_rights_division_criminal_section
+  jurisdiction: federal
+  category: criminal_referral
+  scope:
+  - federal_district_judge
+  - federal_circuit_judge
+  - state_judge
+  - color_of_law_actor
+  - state_prosecutor
+  - sheriff
+  - deputy_sheriff
+  statutory_basis: 18 U.S.C. § 241 (conspiracy against rights); 18 U.S.C. § 242 (deprivation
+    of rights under color of law)
+  filing:
+    method: written_complaint
+    mailing_address: 'Criminal Section, Civil Rights Division
+
+      U.S. Department of Justice
+
+      950 Pennsylvania Avenue, N.W.
+
+      Washington, DC 20530
+
+      '
+    online: https://civilrights.justice.gov/report/
+    fee: 0
+  remedies_available:
+  - criminal_referral
+  notes: '§§ 241/242 are criminal statutes — only DOJ can prosecute. Citizens can
+    REPORT
+
+    and refer evidence. Investigation discretion lies with DOJ Civil Rights Division
+
+    and U.S. Attorney''s Office. Judicial immunity does NOT bar criminal prosecution.
+
+    '
+  sources:
+  - https://www.justice.gov/crt/criminal-section
+  - https://civilrights.justice.gov/report/
+  - https://www.law.cornell.edu/uscode/text/18/242
+  confidence: high
+  last_verified: '2026-05-30'
+- id: doj_public_integrity_section
+  jurisdiction: federal
+  category: criminal_referral
+  scope:
+  - federal_district_judge
+  - federal_circuit_judge
+  - federal_prosecutor
+  - state_judge
+  - color_of_law_actor
+  statutory_basis: 28 C.F.R. § 0.55(o); covers federal bribery, obstruction, election
+    crimes by public officials
+  filing:
+    method: written_complaint
+    mailing_address: 'Public Integrity Section
+
+      Criminal Division, U.S. Department of Justice
+
+      1331 F Street NW, Suite 600
+
+      Washington, DC 20530
+
+      '
+    phone: (202) 514-1412
+    fee: 0
+  remedies_available:
+  - criminal_referral
+  notes: Handles federal bribery, obstruction, election fraud by public officials
+    including judges.
+  sources:
+  - https://www.justice.gov/criminal/criminal-pin
+  confidence: med
+  last_verified: '2026-05-30'
+- id: fbi_public_corruption_unit
+  jurisdiction: federal
+  category: criminal_referral
+  scope:
+  - federal_district_judge
+  - federal_circuit_judge
+  - state_judge
+  - color_of_law_actor
+  - state_prosecutor
+  statutory_basis: 18 U.S.C. § 201 (bribery); 18 U.S.C. §§ 241/242; 18 U.S.C. § 1346
+    (honest services fraud)
+  filing:
+    method: online_form
+    online_form: https://tips.fbi.gov/
+    phone: 1-800-CALL-FBI (225-5324)
+    local_office: FBI Philadelphia Field Office, 600 Arch Street, 8th Floor, Philadelphia,
+      PA 19106; (215) 418-4000
+    fee: 0
+  remedies_available:
+  - criminal_referral
+  sources:
+  - https://www.fbi.gov/investigate/public-corruption
+  - https://www.fbi.gov/contact-us/field-offices/philadelphia
+  confidence: med
+  last_verified: '2026-05-30'
+- id: judicial_conference_financial_disclosure
+  jurisdiction: federal
+  category: financial_disclosure
+  scope:
+  - federal_district_judge
+  - federal_circuit_judge
+  - federal_magistrate_judge
+  - federal_bankruptcy_judge
+  - federal_senior_judge
+  - scotus_justice
+  - federal_judge
+  statutory_basis: Ethics in Government Act of 1978, 5 U.S.C. App. §§ 101 et seq.
+  filing:
+    method: written_complaint
+    mailing_address: 'Committee on Financial Disclosure
+
+      Administrative Office of the United States Courts
+
+      One Columbus Circle, N.E.
+
+      Washington, DC 20544
+
+      '
+    fee: 0
+  remedies_available:
+  - public_report
+  - fines
+  - criminal_referral
+  notes: Disclosures are public records. Public can request copies and report omissions.
+  sources:
+  - https://www.uscourts.gov/administration-policies/administrative-oversight-and-accountability
+  confidence: med
+  last_verified: '2026-05-30'
+- id: pa_judicial_conduct_board
+  jurisdiction: pa_state
+  category: statutory
+  scope:
+  - pa_state_judge
+  - state_supreme_justice
+  - state_appellate_judge
+  - magisterial_district_judge
+  - state_judge
+  geography:
+  - PA
+  statutory_basis: Pa. Const. Art. V § 18; 42 Pa.C.S. §§ 2101 et seq.
+  governing_rules: Judicial Conduct Board Rules of Procedure (207 Pa. Code Chapter
+    101)
+  filing:
+    method: written_complaint
+    mailing_address: 'Judicial Conduct Board
+
+      Commonwealth of Pennsylvania
+
+      Pennsylvania Judicial Center
+
+      601 Commonwealth Avenue, Suite 3500
+
+      P.O. Box 62525
+
+      Harrisburg, PA 17106-2525
+
+      '
+    phone: (717) 234-7911
+    form_url: https://judicialconductboardofpa.org/filing-a-complaint/
+    fee: 0
+    signature_required: true
+    electronic_filing: false
+    anonymous_accepted: true
+  timing:
+    deadline: no statutory SOL but stale claims disfavored
+  remedies_available:
+  - private_admonishment
+  - public_reprimand
+  - censure
+  - suspension
+  - removal_from_office
+  - referral_to_attorney_disciplinary_board
+  remedies_NOT_available:
+  - monetary_damages
+  - vacatur_of_order
+  - case_reopening
+  escalation:
+    next_forum: pa_court_of_judicial_discipline
+    mechanism: If JCB finds clear and convincing evidence, files formal charges in
+      Court of Judicial Discipline
+  elements_to_plead:
+  - Identify the judge by name and court
+  - Specific conduct alleged
+  - Pa. Const. Art. V § 18(d)(1) violations OR Pa. Const. Art. V § 17 prohibited conduct
+  - Clear and convincing evidence standard
+  common_pitfalls:
+  - Knowingly false complaint = criminal charges
+  - JCB makes 'clear and convincing' determination — high bar
+  - Board consists of 3 judges, 3 lawyers, 6 non-lawyers; half appointed by Governor,
+    half by PA Supreme Court
+  notes: 'Board operates in two stages: preliminary inquiry → full Board review.
+
+    If charges filed: Court of Judicial Discipline holds trial. Appeal to PA
+
+    Supreme Court (or Special Tribunal if Justice is the subject).
+
+    '
+  sources:
+  - https://judicialconductboardofpa.org/
+  - https://judicialconductboardofpa.org/filing-a-complaint/
+  - https://judicialconductboardofpa.org/frequently-asked-questions/
+  - https://judicialconductboardofpa.org/how-the-board-operates/
+  - https://www.pacodeandbulletin.gov/secure/pacode/data/207/chapter101/207_0101.pdf
+  confidence: high
+  last_verified: '2026-05-30'
+- id: pa_court_of_judicial_discipline
+  jurisdiction: pa_state
+  category: statutory
+  scope:
+  - pa_state_judge
+  - state_supreme_justice
+  - state_appellate_judge
+  - magisterial_district_judge
+  - state_judge
+  geography:
+  - PA
+  statutory_basis: Pa. Const. Art. V § 18(b)(4)
+  filing:
+    method: written_complaint
+    mailing_address: 'Court of Judicial Discipline
+
+      Clerk of Court
+
+      Pennsylvania Judicial Center
+
+      601 Commonwealth Avenue, Suite 5500
+
+      Harrisburg, PA 17106
+
+      '
+    notes: Citizens CANNOT file directly here — JCB files formal charges after probable
+      cause finding
+  remedies_available:
+  - public_reprimand
+  - censure
+  - suspension
+  - removal_from_office
+  escalation:
+    next_forum: pa_supreme_court_or_special_tribunal
+    mechanism: Appeal to PA Supreme Court (or Special Tribunal if Justice is subject)
+  notes: Trial-level adjudicative body. Not an intake forum for citizens.
+  sources:
+  - https://www.pacourts.us/courts/court-of-judicial-discipline
+  confidence: high
+  last_verified: '2026-05-30'
+- id: pa_office_of_disciplinary_counsel_district_I
+  jurisdiction: pa_state
+  category: statutory
+  scope:
+  - attorney_state_bar
+  - state_prosecutor
+  - state_da
+  geography:
+  - PA
+  statutory_basis: Pa. Const. (Supreme Court exclusive jurisdiction over attorneys);
+    204 Pa. Code § 85.5; Pa. Rules of Disciplinary Enforcement
+  filing:
+    method: written_complaint
+    online_form: https://www.padisciplinaryboard.org/for-the-public/file-complaint
+    mailing_address_district_I: 'Office of Disciplinary Counsel
+
+      The Disciplinary Board of the Supreme Court of Pennsylvania
+
+      District I Office (Philadelphia)
+
+      1601 Market Street, Suite 3320
+
+      Philadelphia, PA 19103-2337
+
+      '
+    phone_district_I: (215) 560-6296
+    fax_district_I: (215) 560-4528
+    headquarters: 'Office of Disciplinary Counsel
+
+      Pennsylvania Judicial Center
+
+      601 Commonwealth Avenue, Suite 2700
+
+      P.O. Box 62485
+
+      Harrisburg, PA 17106-2485
+
+      '
+    headquarters_phone: (717) 783-0990
+    fee: 0
+  remedies_available:
+  - private_admonishment
+  - public_reprimand
+  - suspension
+  - disbarment
+  - referral_to_attorney_disciplinary_board
+  remedies_NOT_available:
+  - monetary_damages
+  - case_reopening
+  - vacatur_of_order
+  common_pitfalls:
+  - Fee disputes go to county bar association, NOT ODC
+  - ODC does NOT represent the complainant
+  - 'Financial loss from dishonest conduct: separate claim with PA Lawyers Fund for
+    Client Security (palawfund.com)'
+  notes: District I covers Philadelphia; other districts cover other PA regions.
+  sources:
+  - https://www.padisciplinaryboard.org/for-the-public/file-complaint
+  - https://www.padisciplinaryboard.org/Storage/media/pdfs/20240411/160714-complaintpackage2024.04.11.pdf
+  - https://www.pacodeandbulletin.gov/Display/pacode?file=%2Fsecure%2Fpacode%2Fdata%2F204%2Fchapter85%2Fs85.5.html
+  confidence: high
+  last_verified: '2026-05-30'
+- id: pa_lawyers_fund_for_client_security
+  jurisdiction: pa_state
+  category: statutory
+  scope:
+  - attorney_state_bar
+  geography:
+  - PA
+  statutory_basis: Pa. Rules of Disciplinary Enforcement 503
+  filing:
+    method: online_form
+    website: https://www.palawfund.com
+    fee: 0
+  remedies_available:
+  - compensatory_damages
+  notes: Separate from disciplinary complaint. For financial loss from attorney's
+    dishonest conduct only.
+  sources:
+  - https://www.palawfund.com
+  confidence: med
+  last_verified: '2026-05-30'
+- id: pa_attorney_general_public_protection
+  jurisdiction: pa_state
+  category: statutory
+  scope:
+  - state_prosecutor
+  - state_da
+  - state_ag_attorney
+  - color_of_law_actor
+  geography:
+  - PA
+  statutory_basis: 71 P.S. § 732-101 et seq. (Commonwealth Attorneys Act)
+  filing:
+    method: online_form
+    online_form: https://www.attorneygeneral.gov/submit-a-complaint/
+    mailing_address: 'Office of Attorney General
+
+      Strawberry Square, 16th Floor
+
+      Harrisburg, PA 17120
+
+      '
+    phone: (717) 787-3391
+    fee: 0
+  remedies_available:
+  - criminal_referral
+  - civil_referral
+  - public_report
+  notes: Limited intake; complaints against PA prosecutors usually require parallel
+    filing with ODC.
+  sources:
+  - https://www.attorneygeneral.gov/submit-a-complaint/
+  confidence: med
+  last_verified: '2026-05-30'
+- id: fix_the_court
+  jurisdiction: federal
+  category: public_pressure
+  scope:
+  - federal_district_judge
+  - federal_circuit_judge
+  - scotus_justice
+  - federal_judge
+  statutory_basis: ''
+  filing:
+    method: email
+    email: info@fixthecourt.com
+    website: https://fixthecourt.com
+    tip_form: https://fixthecourt.com/contact/
+    fee: 0
+    notes: '501(c)(3) advocacy org. Tax ID EIN 861840317. ED: Gabe Roth.'
+  remedies_available:
+  - public_report
+  - media_exposure
+  - criminal_referral
+  notes: 'Compiles and publishes potential conflicts of interest, financial-disclosure
+
+    omissions, recusal failures. Has filed actual misconduct complaints (e.g.
+
+    6th Circuit Ludington case 2026-02). Useful for public-pressure track when
+
+    statutory forum drags or for SCOTUS where no forum exists.
+
+    '
+  sources:
+  - https://fixthecourt.com
+  - https://en.wikipedia.org/wiki/Fix_the_Court
+  - https://www.detroitnews.com/story/news/local/michigan/2026/05/13/federal-judge-tom-ludington-sentenced-in-super-drunk-driving-case/89975593007/
+  confidence: high
+  last_verified: '2026-05-30'
+- id: project_on_government_oversight_pogo
+  jurisdiction: federal
+  category: public_pressure
+  scope:
+  - federal_district_judge
+  - federal_circuit_judge
+  - federal_prosecutor
+  - color_of_law_actor
+  statutory_basis: ''
+  filing:
+    method: email
+    website: https://www.pogo.org
+    tip_form: https://www.pogo.org/about/contact-us
+    fee: 0
+  remedies_available:
+  - public_report
+  - media_exposure
+  notes: Investigative nonprofit; tracks federal misconduct broadly, not judge-specific.
+  sources:
+  - https://www.pogo.org
+  confidence: med
+  last_verified: '2026-05-30'
+- id: court_accountability_project
+  jurisdiction: federal
+  category: public_pressure
+  scope:
+  - scotus_justice
+  - federal_circuit_judge
+  - federal_district_judge
+  statutory_basis: ''
+  filing:
+    method: email
+    website: https://courtaccountability.org
+    fee: 0
+  remedies_available:
+  - public_report
+  - media_exposure
+  notes: Demand Justice spin-off. SCOTUS-focused.
+  sources:
+  - https://courtaccountability.org
+  confidence: low
+  last_verified: '2026-05-30'
+- id: irs_form_3949a_referral
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - irs_employee
+  - third_party_information_return_filer
+  - color_of_law_actor
+  statutory_basis: 26 U.S.C. § 7623 (whistleblower); IRS Form 3949-A (Information
+    Referral)
+  governing_rules: Treasury Reg. 26 CFR § 301.7623; IRM 25.27.1 (Whistleblower Program)
+  filing:
+    method: written_complaint
+    form: IRS Form 3949-A (Information Referral)
+    form_url: https://www.irs.gov/pub/irs-pdf/f3949a.pdf
+    mailing_address: 'Internal Revenue Service
+
+      Fresno, CA 93888
+
+      '
+    online: https://www.irs.gov/individuals/how-do-you-report-suspected-tax-fraud-activity
+    whistleblower_form: IRS Form 211 (claim for award, if seeking percentage of recovery)
+    fee: 0
+    anonymous_accepted: true
+    what_to_include:
+    - Name, address, TIN of person/entity reported
+    - Description of alleged violation (with dates, amounts)
+    - Form 1099-C copies if challenging fraudulent cancellation reporting
+    - Documentation showing debt was NOT actually cancelled or that filer lacked basis
+  remedies_available:
+  - criminal_referral
+  - fines
+  - restitution
+  - public_report
+  remedies_NOT_available:
+  - monetary_damages
+  - case_reopening
+  elements_to_plead:
+  - Identify the filer of the fraudulent return
+  - Specify which information return (1099-C, 1099-MISC, W-2, etc.)
+  - Show why the return was false (e.g., debt was disputed/never cancelled)
+  - Provide copies of the actual filed form (Copy B) if available
+  common_pitfalls:
+  - Award percentage under § 7623 only triggers if recovered amount > $2M; use Form
+    211 for awards
+  - Does NOT toll your own tax filing obligations — report whatever IRS already has
+  - Cannot directly request return correction; IRS acts at its discretion
+  notes: 'Best paired with 26 U.S.C. § 7434 civil action (see writs section): file
+    3949-A with
+
+    IRS for criminal/administrative path AND § 7434 civil suit for $5,000+ statutory
+    damages
+
+    plus actual damages, costs, and (discretionary) attorney''s fees.
+
+
+    For 1099-C abuse specifically: a creditor who files 1099-C reporting cancellation
+    of
+
+    debt when no cancellation actually occurred (e.g., debt is disputed in pending
+
+    litigation, debt was sold to a third party, debt is void/voidable) commits a fraudulent
+
+    information return under § 7434 if the filing was willful.
+
+    '
+  sources:
+  - https://www.irs.gov/individuals/how-do-you-report-suspected-tax-fraud-activity
+  - https://www.irs.gov/pub/irs-pdf/f3949a.pdf
+  - https://www.law.cornell.edu/uscode/text/26/7623
+  confidence: high
+  last_verified: '2026-05-30'
+- id: section_1983_civil_action
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - state_judge
+  - state_prosecutor
+  - sheriff
+  - deputy_sheriff
+  - constable
+  - color_of_law_actor
+  statutory_basis: 42 U.S.C. § 1983
+  governing_rules: FRCP; Monroe v. Pape, 365 U.S. 167 (1961); Monell v. Dep't of Soc.
+    Servs., 436 U.S. 658 (1978)
+  filing:
+    method: efile_pacer
+    where: U.S. District Court (any federal venue with personal jurisdiction)
+    fee: $405 (waivable via IFP)
+  timing:
+    deadline: borrowed from forum state's personal injury SOL — 2 years in PA (42
+      Pa.C.S. § 5524)
+    deadline_trigger: accrual when injury knew or should have known
+  remedies_available:
+  - compensatory_damages
+  - punitive_damages
+  - injunctive_relief
+  - attorney_fees
+  remedies_NOT_available:
+  - monetary_damages
+  - monetary_damages
+  elements_to_plead:
+  - Defendant acted under color of state law
+  - Conduct deprived plaintiff of right secured by Constitution or federal law
+  - Causation between conduct and deprivation
+  common_pitfalls:
+  - Absolute judicial immunity bars damages for judicial acts within jurisdiction
+    (Bradley v. Fisher, 80 U.S. 335; Stump v. Sparkman, 435 U.S. 349)
+  - Absolute prosecutorial immunity for advocacy (Imbler v. Pachtman, 424 U.S. 409);
+    only qualified for investigative functions
+  - Qualified immunity for executive officials (Harlow v. Fitzgerald, 457 U.S. 800)
+  - 11th Amendment bars suit against state in its own name; must sue officials in
+    personal capacity for damages
+  limitation_note: "§ 1983 is a powerful federal civil rights litigation tool but\
+    \ it is HEAVILY immunity-\ngated against judges, prosecutors, and state itself.\
+    \ Useful against:\n  - Clerks of court (ministerial duties, no judicial immunity\
+    \ — Antoine v. Byers & Anderson, 508 U.S. 429)\n  - Sheriffs / deputies / constables\
+    \ (qualified immunity only)\n  - State court personnel acting administratively\n\
+    NOT useful against the judge themselves for rulings made in the case.\n"
+  notes: 'For federal officers, the analog is a Bivens action (narrow post-Egbert
+    v. Boule,
+
+    596 U.S. 482 (2022)) or FTCA (for federal employee torts).
+
+
+
+    NOTE: § 1983 does not reach federal officers — use Bivens (post-Egbert v. Boule
+    596 U.S. 482) or FTCA.
+
+
+    NOTE: § 1983 does not reach federal officers — use Bivens (post-Egbert v. Boule
+    596 U.S. 482) or FTCA.'
+  sources:
+  - https://www.law.cornell.edu/uscode/text/42/1983
+  - https://www.law.cornell.edu/uscode/text/42/1988
+  confidence: high
+  last_verified: '2026-05-30'
+- id: remic_violation_referral
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - remic_trustee
+  - mortgage_servicer
+  - securitizer
+  - third_party_information_return_filer
+  statutory_basis: 26 U.S.C. §§ 860A-860G (REMIC provisions); 26 U.S.C. § 860F (100%
+    prohibited transaction tax); Treas. Reg. § 1.860G-2
+  governing_rules: Pooling and Servicing Agreement; Trust Indenture; Reg AB (17 CFR
+    229.1100)
+  filing:
+    method: written_complaint
+    form: IRS Form 3949-A (Information Referral); supplement with PSA + assignment
+      documents
+    mailing_address: 'Internal Revenue Service
+
+      Fresno, CA 93888
+
+      '
+    online: https://www.irs.gov/individuals/how-do-you-report-suspected-tax-fraud-activity
+    whistleblower_path: Form 211 if seeking award (recovery threshold $2M for percentage)
+    fee: 0
+  timing:
+    deadline: no statutory deadline for referral; statute of limitations on IRS assessment
+      varies (3-6 years)
+  remedies_available:
+  - criminal_referral
+  - fines
+  - public_report
+  remedies_NOT_available:
+  - monetary_damages
+  - vacatur_of_order
+  - case_reopening
+  elements_to_plead:
+  - Identify the REMIC trust (CUSIP, trust name, year)
+  - 'Identify the violation: late assignment (post-90-day-window mortgages added to
+    trust), prohibited substitution, etc.'
+  - Cite governing PSA section and § 860D/E/F provision
+  - Document chain of title defect with recorded assignments
+  common_pitfalls:
+  - IRS rarely pursues retroactive REMIC disqualification (Treas. Reg. § 1.860D-1(c)
+    — inadvertent termination relief)
+  - Standing in foreclosure to challenge PSA violations is split (see Bank of New
+    York Mellon v. Schichtel, 8 N.Y.S.3d 514; contra Glaski v. Bank of America, 218
+    Cal. App. 4th 1079)
+  - PSA challenges in foreclosure cases require showing borrower has standing as non-party
+    to PSA — narrow
+  notes: "REMIC defenses in foreclosure litigation are technically distinct from administrative\n\
+    IRS referral. The IRS path can result in:\n  - 100% prohibited transaction tax\
+    \ against the REMIC (§ 860F(a))\n  - Loss of REMIC status (rarely applied retroactively)\n\
+    \  - Information sharing with SEC for parallel securities fraud inquiry\n\nPair\
+    \ with:\n  - SEC TCR portal (for ABS-15G or Reg AB violations)\n  - State court\
+    \ PSA-violation defense (subject to standing limits)\n  - § 7434 if servicer filed\
+    \ false 1099-C alongside REMIC chain-of-title defect\n"
+  sources:
+  - https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section860D
+  - https://www.law.cornell.edu/uscode/text/26/860F
+  - https://www.taxnotes.com/research/federal/irs-private-rulings/letter-rulings-technical-advice/irs-rules-on-consequences-of-settlement-involving-remics/hj9t
+  confidence: high
+  last_verified: '2026-05-30'
+- id: sec_tcr_portal
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - securitizer
+  - remic_trustee
+  - municipal_bond_issuer
+  - third_party_information_return_filer
+  - color_of_law_actor
+  statutory_basis: Securities Exchange Act of 1934 § 21A; Dodd-Frank Whistleblower
+    Provisions, 15 U.S.C. § 78u-6
+  filing:
+    method: online_form
+    online_form: https://www.sec.gov/whistleblower/submit-a-tip
+    tcr_portal: https://denebleo.sec.gov/TCRExternal/
+    mailing_address: 'Office of the Whistleblower
+
+      SEC Headquarters
+
+      100 F Street NE
+
+      Washington, DC 20549
+
+      '
+    fee: 0
+    anonymous_accepted: true
+    what_to_include:
+    - Securities-law violation alleged (10b-5, ABS-15G, Reg AB, etc.)
+    - Entity / individual identification (CIK from EDGAR if known)
+    - Time period of alleged conduct
+    - Supporting documents (filings, prospectuses, communications)
+  remedies_available:
+  - criminal_referral
+  - civil_referral
+  - fines
+  - fines
+  remedies_NOT_available:
+  - monetary_damages
+  - case_reopening
+  elements_to_plead:
+  - Specific securities law violation
+  - Materiality (would reasonable investor consider it important?)
+  - Scienter (intent or recklessness)
+  common_pitfalls:
+  - SEC declines most tips; Dodd-Frank awards require SEC to actually bring enforcement
+    action and recover > $1M
+  - Whistleblower retaliation protection under § 21F(h) requires reasonable belief
+    of violation
+  notes: 'For REMIC-related violations: ABS-15G reports (Form ABS-15G, 17 CFR 249.1400)
+
+    are due quarterly/annually with disclosures about repurchase requests and breaches
+
+    of representations and warranties. Failure to file accurately = securities violation.
+
+    '
+  sources:
+  - https://www.sec.gov/whistleblower/submit-a-tip
+  - https://www.sec.gov/submit-tip-or-complaint
+  - https://www.law.cornell.edu/uscode/text/15/78u-6
+  confidence: high
+  last_verified: '2026-05-30'
+- id: sec_oiea_complaint
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - securitizer
+  - attorney_federal_bar
+  - color_of_law_actor
+  statutory_basis: Securities Exchange Act of 1934 § 4; SEC Office of Investor Education
+    and Advocacy
+  filing:
+    method: online_form
+    online_form: https://www.sec.gov/oiea/Complaint.html
+    mailing_address: 'Office of Investor Education and Advocacy
+
+      U.S. Securities and Exchange Commission
+
+      100 F Street, NE
+
+      Washington, DC 20549
+
+      '
+    phone: 1-800-SEC-0330 (1-800-732-0330)
+    fee: 0
+  remedies_available:
+  - public_report
+  - civil_referral
+  notes: Individual-investor complaint portal. Handles broker/dealer/advisor issues.
+    For systemic fraud, use TCR instead.
+  sources:
+  - https://www.investor.gov/introduction-investing/investing-basics/glossary/complaints
+  - https://www.sec.gov/submit-tip-or-complaint/report-problem-investment-account-or-financial-professional
+  confidence: high
+  last_verified: '2026-05-30'
+- id: msrb_emma_disclosure_failure_report
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - municipal_bond_issuer
+  - securitizer
+  statutory_basis: Securities Exchange Act § 15B; SEC Rule 15c2-12 (17 CFR 240.15c2-12);
+    MSRB Rule G-17
+  governing_rules: MSRB Rules G-17 (fair dealing), G-32 (primary offerings), G-37
+    (political contributions)
+  filing:
+    method: online_form
+    online_form: https://msrb.org/contact/contact-us
+    sec_tcr_alternative: https://denebleo.sec.gov/TCRExternal/  (SEC has enforcement
+      authority over MSRB violations)
+    emma_lookup: https://emma.msrb.org/  (search by CUSIP for any bond's continuing
+      disclosure history)
+    mailing_address: 'Municipal Securities Rulemaking Board
+
+      1300 I Street NW, Suite 1000
+
+      Washington, DC 20005
+
+      '
+    phone: (202) 838-1500
+    fee: 0
+  remedies_available:
+  - public_report
+  - civil_referral
+  - fines
+  elements_to_plead:
+  - Identify CUSIP of bond at issue
+  - Identify continuing disclosure agreement (CDA) requirement that was violated
+  - 'Specify failure: missed annual financial filing, missed listed event filing (15c2-12(b)(5)(i)(C)),
+    etc.'
+  - Date(s) of missed disclosure
+  common_pitfalls:
+  - MSRB has no direct enforcement authority over issuers; only over dealers/advisors
+  - Issuer continuing-disclosure violations route through SEC enforcement (Rule 15c2-12
+    is dealer rule applied via contract)
+  - 16 enumerated listed events under 15c2-12(b)(5)(i)(C) — must identify which was
+    missed
+  notes: 'EMMA (emma.msrb.org) is the public repository for all municipal bond continuing
+
+    disclosures. Use it FIRST to verify whether a disclosure was actually missed
+
+    before reporting. If a court bond, sheriff bond, or county officer bond was issued
+
+    as municipal debt with disclosure obligations, this is the path to challenge
+
+    non-compliance.
+
+
+    For PA-specific: PA Local Government Unit Debt Act (53 P.S. §§ 8001-8271) governs
+
+    municipal debt issuance. Failures here are also actionable.
+
+    '
+  sources:
+  - https://www.msrb.org/Continuing-Disclosure
+  - https://www.msrb.org/sites/default/files/SECRule15c2-12.pdf
+  - https://www.investor.gov/introduction-investing/investing-basics/glossary/complaints
+  confidence: high
+  last_verified: '2026-05-30'
+- id: pcaob_tip_submission
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - audit_firm_cpa
+  - accountant_cpa
+  statutory_basis: Sarbanes-Oxley Act of 2002 § 101; Public Company Accounting Oversight
+    Board
+  filing:
+    method: online_form
+    online_form: https://pcaobus.org/contact/report-concerns
+    mailing_address: 'Public Company Accounting Oversight Board
+
+      Office of the General Counsel
+
+      1666 K Street NW
+
+      Washington, DC 20006-2803
+
+      '
+    phone: (202) 207-9100
+    fee: 0
+    anonymous_accepted: true
+  remedies_available:
+  - public_report
+  - fines
+  - license_suspension
+  - license_revocation
+  notes: 'PCAOB oversees audits of SEC-registered companies and broker-dealers. Relevant
+
+    when a REMIC trust''s audit firm certified financial statements that materially
+
+    misrepresented loan-pool composition or chain-of-title status.
+
+
+    State-licensed CPA misconduct (outside SEC-audit context) goes to the state
+
+    board of accountancy. In PA: PA State Board of Accountancy, 717-783-1404.
+
+    '
+  sources:
+  - https://pcaobus.org/contact/report-concerns
+  - https://pcaobus.org/oversight/standards
+  confidence: med
+  last_verified: '2026-05-30'
+- id: cafr_acfr_access
+  jurisdiction: federal
+  category: transparency
+  scope:
+  - state_judge
+  - federal_judge
+  - state_court_clerk
+  - federal_court_clerk
+  - sheriff
+  - color_of_law_actor
+  statutory_basis: Governmental Accounting Standards Board (GASB); state public-records
+    laws (PA Right-to-Know Law, 65 P.S. §§ 67.101 et seq.); federal Freedom of Information
+    Act, 5 U.S.C. § 552
+  governing_rules: GASB Codification of Governmental Accounting and Financial Reporting
+    Standards
+  filing:
+    method: written_complaint
+    what_to_request:
+    - Annual Comprehensive Financial Report (ACFR), formerly Comprehensive Annual
+      Financial Report (CAFR) — renamed in 2021 by GFOA
+    - Court trust fund balances
+    - Bond debt schedule
+    - Investment portfolio composition
+    - Pension obligations and OPEB liabilities
+    - Internal control reports (auditor's report on compliance)
+    pa_rtkl_address: 'Open Records Officer of the agency at issue
+
+      (for PA courts, send to the County Court Administrator''s RTKL officer)
+
+      '
+    federal_foia: https://www.foia.gov/  (federal agencies including U.S. courts)
+    fee: varies; PA RTKL caps at $0.25/page copy fee, no labor fee
+  remedies_available:
+  - public_report
+  - public_report
+  remedies_NOT_available:
+  - monetary_damages
+  - vacatur_of_order
+  notes: 'ACFRs and CAFRs are public records required by GASB standards. They are
+    useful
+
+    to verify court budgets, trust fund balances, and external bond/debt obligations.
+
+    Not directly a complaint mechanism, but a transparency tool to gather facts
+
+    for OTHER complaints (e.g., demonstrating that a court has trust funds despite
+
+    claiming "no funds available").
+
+
+    Some pro se litigants and tax-protester groups have made unsupported claims about
+
+    CAFRs (e.g., that they prove governments have hidden wealth). Use the ACFR for
+
+    its proper purpose: verifying disclosed financial position. Do not rely on
+
+    "secret fund" theories.
+
+
+    PA-specific: Annual reports for the Commonwealth at pa.gov/agencies/budget/publications-and-reports/annual-financial-report
+
+
+
+    NOTE: original right-to-know remedy text preserved here: ''right-to-know appeal
+    to Office of Open Records (PA) or comparable state body''. Implemented via PA
+    OOR appeal (65 P.S. § 67.1101) separate from this entry''s enum-coded remedy.'
+  sources:
+  - https://en.wikipedia.org/wiki/Annual_comprehensive_financial_report
+  - https://www.pa.gov/agencies/budget/publications-and-reports/annual-financial-report
+  - https://www.foia.gov/
+  confidence: high
+  last_verified: '2026-05-30'
+- id: irs_form_14039_identity_theft
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - third_party_information_return_filer
+  statutory_basis: 26 U.S.C. § 6103; Identity Theft and Assumption Deterrence Act
+    of 1998
+  filing:
+    method: written_complaint
+    form: IRS Form 14039 (Identity Theft Affidavit)
+    form_url: https://www.irs.gov/pub/irs-pdf/f14039.pdf
+    mailing_address: 'Internal Revenue Service
+
+      Fresno, CA 93888  (if no specific IRS notice received)
+
+      '
+    online: https://www.irs.gov/identity-theft-fraud-scams/identity-theft-central
+    fee: 0
+  remedies_available:
+  - public_report
+  - criminal_referral
+  - restitution
+  notes: 'Use when someone has used your SSN or TIN to file information returns,
+
+    including 1099-Cs for debts that don''t exist or aren''t yours. Distinct from
+
+    § 7434 civil action — Form 14039 is the IRS administrative track to flag your
+
+    account and stop further damage; § 7434 is the private damages action.
+
+    '
+  sources:
+  - https://www.irs.gov/pub/irs-pdf/f14039.pdf
+  - https://www.irs.gov/identity-theft-fraud-scams/identity-theft-central
+  confidence: high
+  last_verified: '2026-05-30'
+- id: irs_form_211_whistleblower
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - third_party_information_return_filer
+  - irs_employee
+  - color_of_law_actor
+  statutory_basis: 26 U.S.C. § 7623 (b) (whistleblower awards for substantial cases
+    over $2M)
+  filing:
+    method: written_complaint
+    form: IRS Form 211 (Application for Award for Original Information)
+    form_url: https://www.irs.gov/pub/irs-pdf/f211.pdf
+    mailing_address: 'Internal Revenue Service
+
+      Whistleblower Office – ICE
+
+      1973 N Rulon White Blvd
+
+      M/S 4110
+
+      Ogden, UT 84404
+
+      '
+    fee: 0
+    anonymous: limited; the IRS may need to identify you for any award
+  remedies_available:
+  - criminal_referral
+  - fines
+  - fines
+  elements_to_plead:
+  - Identification of taxpayer who violated tax laws
+  - Specific violation
+  - Estimated tax owed by taxpayer
+  - Supporting documents
+  notes: 'For 1099/REMIC abuse, file Form 211 alongside Form 3949-A. Form 211 is
+
+    specifically for the award claim; Form 3949-A is the general fraud referral.
+
+    '
+  sources:
+  - https://www.irs.gov/pub/irs-pdf/f211.pdf
+  - https://www.law.cornell.edu/uscode/text/26/7623
+  confidence: high
+  last_verified: '2026-05-30'
+- id: irs_abusive_tax_scheme_referral
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - third_party_information_return_filer
+  - attorney_federal_bar
+  - color_of_law_actor
+  statutory_basis: 26 U.S.C. § 6700 (promoting abusive tax shelters); 26 U.S.C. §
+    6701 (aiding/abetting understatement); IRC § 7408 (injunctions)
+  filing:
+    method: written_complaint
+    form: IRS Form 14242 (Report Suspected Abusive Tax Promotions)
+    form_url: https://www.irs.gov/pub/irs-pdf/f14242.pdf
+    mailing_address: 'IRS Lead Development Center
+
+      Stop MS5040
+
+      24000 Avila Road
+
+      Laguna Niguel, CA 92677
+
+      '
+    fee: 0
+  remedies_available:
+  - criminal_referral
+  - fines
+  - injunctive_relief
+  notes: 'Use when an entity is systematically promoting tax-evasion schemes (e.g.,
+
+    a creditor systematically filing fraudulent 1099-Cs to extract tax revenue
+
+    from third parties as a profit model). Distinct from individual fraud.
+
+    '
+  sources:
+  - https://www.irs.gov/pub/irs-pdf/f14242.pdf
+  - https://www.law.cornell.edu/uscode/text/26/6700
+  - https://www.law.cornell.edu/uscode/text/26/6701
+  confidence: high
+  last_verified: '2026-05-30'
+- id: pa_insurance_department_complaint
+  jurisdiction: pa_state
+  category: statutory
+  scope:
+  - insurance_company
+  - insurance_producer
+  - mortgage_servicer
+  - color_of_law_actor
+  statutory_basis: 40 P.S. §§ 1-1 et seq. (Insurance Department Act); 40 P.S. §§ 1171.1
+    et seq. (Unfair Insurance Practices Act); 31 Pa. Code Ch. 146 (Unfair Claims Settlement
+    Practices)
+  filing:
+    method: online_form
+    online_form: https://www.insurance.pa.gov/Consumers/FileAComplaint/Pages/default.aspx
+    mailing_address: 'Pennsylvania Insurance Department
+
+      Bureau of Consumer Services
+
+      1209 Strawberry Square
+
+      Harrisburg, PA 17120
+
+      '
+    phone: 1-877-881-6388 (Consumer Hotline)
+    fee: 0
+  timing:
+    deadline: no statutory deadline for complaint; insurer must respond to Department
+      within 15 days under 31 Pa. Code § 146.5(b)
+  remedies_available:
+  - public_report
+  - fines
+  - license_suspension
+  - license_revocation
+  - restitution
+  remedies_NOT_available:
+  - compensatory_damages
+  - punitive_damages
+  - attorney_fees
+  - case_reopening
+  - vacatur_of_order
+  elements_to_plead:
+  - Policy or claim at issue (number, dates)
+  - Insurer / producer involved
+  - Specific UIPA or Unfair Claims Settlement Practices violation
+  - Communications with insurer
+  - Damages or harm caused
+  common_pitfalls:
+  - Department complaint does NOT toll statute of limitations on a § 8371 bad faith
+    action
+  - Department cannot award compensatory damages; pursue § 8371 in court for that
+  - Department mediation is voluntary on both sides
+  notes: 'Primary PA forum for insurance grievances. The Department investigates
+
+    and can fine/suspend/revoke licenses but does not award damages to
+
+    complainants. Pair with court action under 42 Pa.C.S. § 8371 (bad faith)
+
+    or contract claim for compensatory damages.
+
+
+    The Department also maintains a public license-lookup tool
+
+    (insurance.pa.gov/Licensees) useful for carrier discovery before filing
+
+    complaint or suit.
+
+    '
+  sources:
+  - https://www.insurance.pa.gov/Consumers/FileAComplaint/Pages/default.aspx
+  - https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/031/chapter146/chap146toc.html
+  confidence: high
+  last_verified: '2026-05-30'
+- id: pa_unfair_insurance_practices_act_complaint
+  jurisdiction: pa_state
+  category: statutory
+  scope:
+  - insurance_company
+  - insurance_producer
+  statutory_basis: Pennsylvania Unfair Insurance Practices Act, 40 P.S. §§ 1171.1-1171.15;
+    31 Pa. Code Ch. 146 (implementing regulations)
+  filing:
+    method: online_form
+    online_form: https://www.insurance.pa.gov/Consumers/FileAComplaint/Pages/default.aspx
+    fee: 0
+  remedies_available:
+  - public_report
+  - fines
+  - license_suspension
+  - license_revocation
+  remedies_NOT_available:
+  - compensatory_damages
+  - punitive_damages
+  - attorney_fees
+  elements_to_plead:
+  - Specific UIPA § 1171.5 unfair practice
+  - 'Frequency: ''with such frequency to indicate a general business practice'''
+  - Identifiable insurer conduct
+  common_pitfalls:
+  - PA Supreme Court held in D'Ambrosio v. Pennsylvania National (1981) that UIPA
+    does NOT create a private right of action; only Department can enforce
+  - Private bad-faith remedy is 42 Pa.C.S. § 8371 (1990 statute filling that gap)
+  - UIPA findings can be evidentiary in § 8371 action but not preclusive
+  notes: "UIPA is the substantive statute defining \"unfair claims settlement\npractices\"\
+    \ enumerated in § 1171.5(a)(10). Department complaint based\non UIPA is administrative;\
+    \ for damages, use § 8371 civil action.\n\nThe UIPA enumerated practices (§ 1171.5(a)(10))\
+    \ include:\n  (i)  misrepresenting facts or policy provisions\n  (ii) failing\
+    \ to acknowledge promptly\n  (iii) failing to adopt reasonable standards\n  (iv)\
+    \  refusing to pay claims without reasonable investigation\n  (v)   failing to\
+    \ affirm or deny coverage promptly\n  (vi)  not attempting good-faith settlement\n\
+    \  (vii) compelling litigation by offering substantially less\n  (xiv) failing\
+    \ to promptly provide reasonable explanation of denial\n"
+  sources:
+  - https://codes.findlaw.com/pa/title-40-ps-insurance/pa-st-sect-40-1171-5/
+  - https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/031/chapter146/chap146toc.html
+  confidence: high
+  last_verified: '2026-05-30'
+- id: naic_complaint_database
+  jurisdiction: federal
+  category: public_pressure
+  scope:
+  - insurance_company
+  statutory_basis: NAIC Model Acts (state-adopted); McCarran-Ferguson Act, 15 U.S.C.
+    §§ 1011-1015
+  filing:
+    method: online_form
+    online_form: https://eapps.naic.org/cis/  (Consumer Information Source)
+    complaint_routing: NAIC routes individual complaints back to the state insurance
+      department where the consumer resides; file directly at insurance.pa.gov for
+      fastest PA action
+    fee: 0
+  remedies_available:
+  - public_report
+  remedies_NOT_available:
+  - compensatory_damages
+  - punitive_damages
+  - attorney_fees
+  - fines
+  - license_suspension
+  notes: 'NAIC itself is not a regulator — it is a coordination body for state
+
+    regulators. The Consumer Information Source (CIS) database is useful for
+
+    DISCOVERY: it shows complaint ratios, holding-company structure, and
+
+    lines of business for any insurer. Use to identify the correct corporate
+
+    entity to sue within a corporate family.
+
+
+    NAIC complaint ratios are publicly searchable and can be cited as
+
+    pattern evidence in RICO / UDAP claims.
+
+    '
+  sources:
+  - https://content.naic.org/cis
+  - https://www.law.cornell.edu/uscode/text/15/1011
+  confidence: high
+  last_verified: '2026-05-30'
+- id: federal_insurance_office_monitoring
+  jurisdiction: federal
+  category: limitation_note
+  scope:
+  - insurance_company
+  statutory_basis: Dodd-Frank Wall Street Reform and Consumer Protection Act, 31 U.S.C.
+    § 313 (Federal Insurance Office)
+  filing:
+    method: no_complaint_mechanism
+    online_form: https://home.treasury.gov/policy-issues/financial-markets-financial-institutions-and-fiscal-service/federal-insurance-office
+    fee: 0
+  remedies_available:
+  - public_report
+  remedies_NOT_available:
+  - compensatory_damages
+  - punitive_damages
+  - attorney_fees
+  - fines
+  - license_suspension
+  - license_revocation
+  notes: 'LIMITATION NOTE: FIO is a Treasury monitoring body created by Dodd-Frank;
+
+    it has NO enforcement authority and NO individual complaint mechanism.
+
+    McCarran-Ferguson Act (15 U.S.C. §§ 1011-1015) reserves insurance
+
+    regulation to the states except for narrow federal carve-outs.
+
+
+    Document this limitation when explaining why no federal-level complaint
+
+    forum exists for insurance company misconduct (apart from CFPB for
+
+    mortgage-adjacent insurance like force-placed, and SEC/FTC for narrower
+
+    issues).
+
+    '
+  sources:
+  - https://home.treasury.gov/policy-issues/financial-markets-financial-institutions-and-fiscal-service/federal-insurance-office
+  - https://www.law.cornell.edu/uscode/text/31/313
+  confidence: high
+  last_verified: '2026-05-30'
+  limitation_note: FIO has NO enforcement authority and NO individual complaint mechanism.
+    McCarran-Ferguson Act (15 U.S.C. §§ 1011-1015) reserves insurance regulation to
+    states. Use only to document the federal-level gap; no actionable remedy.
+- id: pa_property_casualty_guaranty_association
+  jurisdiction: pa_state
+  category: statutory
+  scope:
+  - insurance_company
+  statutory_basis: Pennsylvania Property and Casualty Insurance Guaranty Association
+    Act, 40 P.S. §§ 991.1801-991.1820
+  filing:
+    method: written_complaint
+    online_form: https://www.papciga.org/Claims/Claims.aspx
+    mailing_address: 'Pennsylvania Property and Casualty Insurance Guaranty Association
+
+      1735 Market Street, Suite 3750
+
+      Philadelphia, PA 19103
+
+      '
+    phone: (215) 568-1007
+    fee: 0
+  timing:
+    deadline: claim must be filed within the time prescribed by the policy or 18 months
+      after the determination of insolvency, whichever is later (40 P.S. § 991.1817)
+  remedies_available:
+  - compensatory_damages
+  - restitution
+  remedies_NOT_available:
+  - punitive_damages
+  - attorney_fees
+  - fines
+  notes: 'Recovery path of LAST RESORT when an insurer becomes insolvent. PA PCIGA
+
+    pays covered claims up to $300,000 per claim (lower for some lines),
+
+    after exhaustion of all other coverage. Not useful for solvent
+
+    defendants; only when carrier itself fails.
+
+
+    Important pattern: if a defendant''s insurer enters rehabilitation or
+
+    liquidation during pending litigation, the case is automatically stayed
+
+    under 40 P.S. § 221.10. PCIGA then steps into the carrier''s shoes.
+
+    '
+  sources:
+  - https://www.papciga.org/
+  - https://codes.findlaw.com/pa/title-40-ps-insurance/
+  confidence: high
+  last_verified: '2026-05-30'
+- id: force_placed_insurance_complaint_path
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - mortgage_servicer
+  - insurance_company
+  - force_placed_insurer
+  statutory_basis: RESPA / Reg X, 12 C.F.R. § 1024.37 (force-placed insurance restrictions);
+    12 U.S.C. § 2605(m) (RESPA notice requirements); CFPB Bulletin 2013-02
+  filing:
+    method: written_complaint
+    online_form: https://www.consumerfinance.gov/complaint/  (CFPB Consumer Complaint
+      Database)
+    pa_insurance_dept_parallel: https://www.insurance.pa.gov/Consumers/FileAComplaint/Pages/default.aspx
+    mailing_address: 'Consumer Financial Protection Bureau
+
+      P.O. Box 27170
+
+      Washington, DC 20038
+
+      '
+    phone: (855) 411-2372
+    fee: 0
+  remedies_available:
+  - public_report
+  - fines
+  - restitution
+  - civil_referral
+  remedies_NOT_available:
+  - vacatur_of_order
+  - case_reopening
+  elements_to_plead:
+  - Identify servicer + force-placed carrier
+  - Show borrower had hazard insurance OR was current on premium escrow
+  - Document servicer's failure to comply with notice requirements (12 C.F.R. § 1024.37(c))
+  - Document inflated premium relative to comparable market rate
+  - Document 'tracking fees' or commissions paid by force-placed carrier to servicer
+  common_pitfalls:
+  - Borrower must demonstrate hazard coverage was in place; gap periods often hard
+    to disprove
+  - Reg X requires advance notice; missing the notice is a per-se violation
+  - Class actions in this space have settled large (Wilson v. Bank of America, Lee
+    v. Ocwen) — discovery proceedings are well-developed
+  notes: 'Force-placed insurance is one of the most heavily litigated mortgage-
+
+    servicing issues. Pattern: servicer demands proof of hazard insurance,
+
+    then "places" lender-placed coverage at 4-10x market rate, back-billed
+
+    to borrower''s escrow. The force-placed carrier kicks back a commission
+
+    to the servicer disguised as "tracking fees."
+
+
+    Pair CFPB complaint (federal) with PA Insurance Department complaint
+
+    (state) and Reg X civil action (12 U.S.C. § 2605(f) — actual damages +
+
+    $2,000 statutory damages for pattern of noncompliance + attorney fees).
+
+
+    For 04767 Amerisave: investigate whether any force-placed insurance was
+
+    added to escrow during the disputed period.
+
+    '
+  sources:
+  - https://www.consumerfinance.gov/rules-policy/regulations/1024/37/
+  - https://www.law.cornell.edu/uscode/text/12/2605
+  confidence: high
+  last_verified: '2026-05-30'
+- id: title_insurance_carrier_complaint
+  jurisdiction: pa_state
+  category: statutory
+  scope:
+  - title_underwriter
+  - title_agent
+  statutory_basis: PA Title Insurance Companies Act, 40 P.S. §§ 910-1 to 910-50; ALTA
+    Title Insurance Best Practices
+  filing:
+    method: written_complaint
+    online_form: https://www.insurance.pa.gov/Consumers/FileAComplaint/Pages/default.aspx
+    title_carrier_direct: Submit demand directly to title underwriter's claims department
+      (named on face of policy)
+    mailing_address: 'Pennsylvania Insurance Department
+
+      Bureau of Consumer Services
+
+      1209 Strawberry Square
+
+      Harrisburg, PA 17120
+
+      '
+    fee: 0
+  timing:
+    deadline: PA title policies typically require written notice within reasonable
+      time of discovery; check policy Conditions section 3
+  remedies_available:
+  - compensatory_damages
+  - restitution
+  - public_report
+  - fines
+  remedies_NOT_available:
+  - punitive_damages
+  - attorney_fees
+  elements_to_plead:
+  - Identify title commitment / policy (Owner's or Loan)
+  - Identify the underwriter (named on face of policy)
+  - Identify the covered title defect (chain of title break, missed lien, undisclosed
+    easement, etc.)
+  - Quantify loss
+  common_pitfalls:
+  - Title policies cover ONLY defects existing at policy date — post-policy events
+    not covered
+  - Standard exceptions (parties in possession, etc.) often defeat claims
+  - Loan policy covers lender only; borrower needs separate Owner's policy for borrower-side
+    recovery
+  notes: 'In a quiet-title case (e.g., 04767), the lender''s Loan Policy underwriter
+
+    may have a duty to defend the lender. If the title was clouded by a
+
+    defective chain-of-title (REMIC PSA late assignment issues),
+
+    the lender''s title carrier is a potential defendant in addition to the
+
+    servicer.
+
+
+    For pro se: pull the closing documents (HUD-1 / Closing Disclosure +
+
+    title commitment + title policy). The underwriter name and policy number
+
+    are on the face of the policy. Send claim tender letter directly.
+
+    '
+  sources:
+  - https://www.insurance.pa.gov/Companies/IndustryActivity/Pages/TitleInsuranceInformation.aspx
+  - https://www.alta.org/forms/
+  confidence: high
+  last_verified: '2026-05-30'
+- id: pa_disciplinary_board_attorney_eo_lookup
+  jurisdiction: pa_state
+  category: transparency
+  scope:
+  - attorney_state_bar
+  - attorney_federal_bar
+  statutory_basis: Pa.R.P.C. 1.4(c) (insurance disclosure rule); Pa.R.D.E. 219 (annual
+    registration)
+  filing:
+    method: online_form
+    online_form: https://www.padisciplinaryboard.org/look-up-an-attorney
+    fee: 0
+  remedies_available:
+  - public_report
+  remedies_NOT_available:
+  - compensatory_damages
+  - punitive_damages
+  - attorney_fees
+  - fines
+  - license_suspension
+  - license_revocation
+  notes: 'Pa.R.P.C. 1.4(c) requires PA attorneys in private practice to disclose
+
+    to clients in writing if they do not carry malpractice insurance of at
+
+    least $100,000 per occurrence / $300,000 aggregate. Pa.R.D.E. 219(d)
+
+    requires attorneys to indicate insurance status on their annual fee
+
+    form. The Disciplinary Board publishes this status via its "Look Up
+
+    an Attorney" tool.
+
+
+    USE: before serving an attorney defendant, check the lookup to confirm
+
+    whether they self-reported coverage. If they reported NO coverage,
+
+    the asset case is harder (no carrier to defend / pay) BUT a Pa.R.P.C.
+
+    1.4(c) disclosure failure is itself a disciplinary violation.
+
+
+    LIMITATION: tool reveals YES/NO on threshold, not the specific carrier.
+
+    For carrier identity, use FRCP 26 initial disclosures (if federal case)
+
+    or Rule 4005 interrogatory (PA state case).
+
+
+    PA does NOT mandate malpractice insurance — this is purely a disclosure
+
+    rule. Alaska, NH, OH, SD have similar disclosure rules. The ABA Model
+
+    Court Rule on Insurance Disclosure mirrors this approach.
+
+    '
+  sources:
+  - https://www.padisciplinaryboard.org/look-up-an-attorney
+  - https://www.padisciplinaryboard.org/news-media/news-article/3/disciplinary-board-makes-it-easy-for-public-to-know-if-lawyers-have-professional-liability-insurance
+  confidence: high
+  last_verified: '2026-05-30'
+- id: cfpb_consumer_complaint
+  jurisdiction: federal
+  category: statutory
+  scope:
+  - mortgage_servicer
+  - force_placed_insurer
+  - debt_collector
+  - credit_reporting_agency
+  statutory_basis: Consumer Financial Protection Act of 2010, 12 U.S.C. §§ 5481-5603;
+    Reg X (12 C.F.R. Part 1024); Reg Z (12 C.F.R. Part 1026); FDCPA (15 U.S.C. § 1692);
+    FCRA (15 U.S.C. § 1681)
+  filing:
+    method: online_form
+    online_form: https://www.consumerfinance.gov/complaint/
+    mailing_address: 'Consumer Financial Protection Bureau
+
+      P.O. Box 27170
+
+      Washington, DC 20038
+
+      '
+    phone: (855) 411-2372
+    fee: 0
+  timing:
+    deadline: company must respond within 15 days; final response within 60 days
+  remedies_available:
+  - public_report
+  - fines
+  - restitution
+  - civil_referral
+  remedies_NOT_available:
+  - compensatory_damages
+  - punitive_damages
+  - attorney_fees
+  - vacatur_of_order
+  - case_reopening
+  notes: 'CFPB complaints become PART OF THE PUBLIC DATABASE (anonymized but
+
+    searchable by company name). This creates pattern evidence for
+
+    subsequent class actions. The CFPB shares complaint data with state
+
+    AGs and state regulators (including PA AG).
+
+
+    For 04767 (Amerisave) and 02822 (TransUnion), CFPB complaint creates
+
+    a regulatory record AND public database entry usable for pattern.
+
+    '
+  sources:
+  - https://www.consumerfinance.gov/complaint/
+  confidence: high
+  last_verified: '2026-05-30'
+- id: doj_pmru_dag
+  category: statutory
+  scope:
+  - federal_prosecutor
+  - ausa
+  - doj_attorney
+  jurisdiction: federal
+  geography: nationwide
+  governing_rules:
+  - 28 C.F.R. § 0.39 (PMRU authority delegated by AG)
+  - DOJ Justice Manual § 1-4.000
+  statutory_basis: 28 U.S.C. § 504a; 28 U.S.C. § 530B (McDade); 28 C.F.R. § 0.39
+  elements_to_plead:
+  - Final DOJ attorney misconduct ruling from OPR/PMRU under review
+  remedies_available:
+  - removal
+  - suspension
+  - reprimand
+  - referral to state bar
+  remedies_NOT_available:
+  - monetary damages to complainant
+  - criminal prosecution direct
+  filing:
+    address: Office of the Deputy Attorney General, U.S. Department of Justice, 950
+      Pennsylvania Avenue NW, Washington, DC 20530
+    method: Internal referral from PMRU; no direct citizen filing
+  timing: PMRU sets internal deadlines; DAG decision typically 6-12 months after referral
+  escalation:
+    next_forum: ''
+    mechanism: Terminal DOJ disciplinary node. External accountability via Senate
+      Judiciary oversight, DOJ Inspector General reports, and FOIA disclosure.
+  notes: Final disciplinary authority for DOJ attorneys. PMRU reviews OPR findings;
+    DAG has final approval.
+  sources:
+  - 28 C.F.R. § 0.39
+  - 28 U.S.C. § 504a
+  - DOJ Justice Manual § 1-4.000
+  last_verified: '2026-05-31'
+  confidence: high
+- id: writ_of_mandamus_3d_cir
+  category: extraordinary_writ
+  scope:
+  - federal_district_judge
+  - federal_magistrate_judge
+  jurisdiction: federal
+  geography: third_circuit
+  governing_rules:
+  - 28 U.S.C. § 1651(a) (All Writs Act)
+  - FRAP 21
+  - 3d Cir. L.A.R. 21
+  statutory_basis: 28 U.S.C. § 1651(a)
+  elements_to_plead:
+  - No other adequate means to obtain relief (Cheney v. U.S. Dist. Ct., 542 U.S. 367,
+    380 (2004))
+  - Clear and indisputable right to relief
+  - Writ appropriate under the circumstances
+  remedies_available:
+  - order compelling district judge to act
+  - order vacating district judge ruling
+  - order requiring recusal
+  - order remanding for proper procedure
+  remedies_NOT_available:
+  - monetary damages
+  - merits review beyond clear abuse of discretion
+  filing:
+    address: Clerk, U.S. Court of Appeals for the Third Circuit, 21400 U.S. Courthouse,
+      601 Market Street, Philadelphia, PA 19106-1790
+    method: Petition for writ of mandamus per FRAP 21
+    fee: $500 docketing fee or IFP application
+  timing: No fixed deadline; reasonable promptness required; 3d Cir. typically rules
+    within 90-180 days
+  escalation:
+    next_forum: ''
+    mechanism: Petition for writ of certiorari to SCOTUS under 28 U.S.C. § 1254(1);
+      90-day deadline JURISDICTIONAL under 28 U.S.C. § 2101(c)
+  notes: Disfavored but real. Use when judge refuses to act, refuses to recuse, or
+    makes clearly erroneous threshold ruling. See In re Sch. Asbestos Litig., 977
+    F.2d 764 (3d Cir. 1992).
+  sources:
+  - 28 U.S.C. § 1651
+  - FRAP 21
+  - 3d Cir. L.A.R. 21
+  - Cheney v. U.S. Dist. Ct., 542 U.S. 367 (2004)
+  - In re Sch. Asbestos Litig., 977 F.2d 764 (3d Cir. 1992)
+  last_verified: '2026-05-31'
+  confidence: high
+- id: pa_supreme_court_special_tribunal
+  category: appellate_review
+  scope:
+  - pa_judge
+  - pa_justice
+  - pa_magisterial_district_judge
+  jurisdiction: state
+  geography: pennsylvania
+  governing_rules:
+  - PA Const. Art. V § 18(c)(2)
+  - 42 Pa.C.S. § 725
+  - PA R.A.P. 3331 (CJD appeals)
+  statutory_basis: PA Const. Art. V § 18(c)(2); 42 Pa.C.S. § 725
+  elements_to_plead:
+  - Final order of PA Court of Judicial Discipline (CJD) being appealed
+  - Specific assignment of error under PA R.A.P. 3331
+  remedies_available:
+  - affirmance
+  - reversal
+  - modification of CJD sanctions
+  - remand to CJD
+  remedies_NOT_available:
+  - de novo factfinding
+  - collateral civil damages
+  filing:
+    address: Prothonotary, Supreme Court of Pennsylvania, 1818 Market Street, Suite
+      3130, Philadelphia, PA 19103 (Eastern District)
+    method: Notice of Appeal per PA R.A.P. 3331
+  timing: 30-day jurisdictional deadline from CJD final order
+  escalation:
+    next_forum: ''
+    mechanism: Petition for writ of certiorari to SCOTUS under 28 U.S.C. § 1257 (final
+      state court judgment); 90-day deadline JURISDICTIONAL under 28 U.S.C. § 2101(c)
+  notes: When a sitting PA Supreme Court justice is the subject, a Special Tribunal
+    of seven PA Superior Court judges sits in lieu of PA SCT per PA Const. Art. V
+    § 18(c)(2).
+  sources:
+  - PA Const. Art. V § 18(c)(2)
+  - 42 Pa.C.S. § 725
+  - PA R.A.P. 3331
+  last_verified: '2026-05-31'
+  confidence: high
+bonds:
+- id: us_marshal_bond_REPEALED
+  jurisdiction: federal
+  bonded_role: us_marshal
+  statutory_basis: Former 28 U.S.C. § 564 (bonds of United States marshals)
+  bond_status: repealed
+  repealed_by: Pub. L. 92-310, title II, § 206(a)(1), June 6, 1972, 86 Stat. 203
+  alternative_recovery:
+  - Federal Tort Claims Act, 28 U.S.C. §§ 1346(b), 2671-2680 (FTCA)
+  - Bivens action (narrow post-Egbert v. Boule, 596 U.S. 482 (2022))
+  - 42 U.S.C. § 1983 (only if joint action with state actors)
+  notes: 'CRITICAL: U.S. Marshals are NO LONGER BONDED. The bond requirement was
+
+    repealed in 1972. Recovery for marshal misconduct = FTCA or (narrow) Bivens.
+
+    This entry exists to document the dead path and redirect to alternatives.
+
+    '
+  sources:
+  - https://statecodesfiles.justia.com/us/2011/title-28/part-ii/chapter-37/section-566/document.pdf
+  - https://statecodesfiles.justia.com/us/2021/title-28/part-ii/chapter-37/sec-566/sec-566.pdf
+  confidence: high
+  last_verified: '2026-05-30'
+- id: us_trustee_bond
+  jurisdiction: federal
+  bonded_role: us_trustee
+  statutory_basis: 28 U.S.C. § 588
+  bond_status: active
+  bond_amount_typical: set by Attorney General
+  surety_lookup: Executive Office for U.S. Trustees, 441 G Street NW, Suite 6150,
+    Washington, DC 20530
+  claim_procedure:
+  - Identify specific breach of bonded duties
+  - Notice to Executive Office for U.S. Trustees
+  - Civil action joining surety
+  statute_of_limitations: varies by underlying claim; FTCA 2-year for related tort
+  notes: U.S. Trustees in bankruptcy administration are bonded under 28 U.S.C. § 588.
+  sources:
+  - https://www.law.cornell.edu/uscode/text/28/588
+  confidence: med
+  last_verified: '2026-05-30'
+- id: bankruptcy_trustee_bond
+  jurisdiction: federal
+  bonded_role: bankruptcy_trustee
+  statutory_basis: 11 U.S.C. § 322(a) (Chapter 7); applies similarly to Ch. 11, 12,
+    13 trustees
+  bond_status: active
+  bond_amount_typical: Set by U.S. Trustee in amount sufficient to protect estate
+  surety_lookup: Bankruptcy court docket lists bond and surety
+  claim_procedure:
+  - Motion in bankruptcy case identifying breach
+  - 'If trustee removed: petition for surrender of bond proceeds'
+  - Civil action against trustee + surety jointly
+  statute_of_limitations: varies; typically 6 years on bond contract
+  notes: Standard practice in every bankruptcy case. Surety identified in case docket.
+  sources:
+  - https://www.law.cornell.edu/uscode/text/11/322
+  confidence: high
+  last_verified: '2026-05-30'
+- id: federal_court_appointed_receiver_bond
+  jurisdiction: federal
+  bonded_role: court_appointed_receiver
+  statutory_basis: FRCP 65.1 (security; surety bond procedure); 28 U.S.C. § 754 (receivers)
+  bond_status: active
+  bond_amount_typical: set by appointing court
+  surety_lookup: Appointing court's docket
+  claim_procedure:
+  - 'FRCP 65.1: motion in appointing court against surety (surety submits to jurisdiction
+    by filing bond)'
+  - Service on surety via clerk of court
+  - Court may enforce liability summarily on motion
+  statute_of_limitations: varies; contract SOL typically applies
+  notes: 'FRCP 65.1 streamlines claims: surety''s bond consents to court''s jurisdiction;
+
+    claim enforceable on motion in same case. No separate suit needed.
+
+    '
+  sources:
+  - https://www.law.cornell.edu/rules/frcp/rule_65.1
+  - https://www.law.cornell.edu/uscode/text/28/754
+  confidence: high
+  last_verified: '2026-05-30'
+- id: pa_constable_bond
+  jurisdiction: pa_state
+  bonded_role: constable
+  statutory_basis: 44 Pa.C.S. § 7158; local rules of judicial district (e.g. 56th
+    Judicial District Local Rule)
+  bond_status: active
+  bond_amount_min: $2,500
+  bond_amount_typical: $2,500 + $250,000/$500,000 professional liability insurance
+  surety_lookup: Clerk of Courts of the county where constable performs judicial duties
+  claim_procedure:
+  - Identify breach (neglect of duty)
+  - File claim with Clerk of Courts where bond posted
+  - Civil action against constable + surety
+  - Also pursue insurer under professional liability policy
+  statute_of_limitations: 6 years (42 Pa.C.S. § 5527, contract); 2 years if tort (§
+    5524)
+  elements_to_plead:
+  - Constable was performing judicial duty at time of breach
+  - Specific neglect of duty
+  - Injury caused by neglect
+  notes: 'PA constables performing judicial duties must post $2,500 bond + maintain
+
+    $250K per-incident / $500K aggregate professional liability insurance.
+
+    Bond held in trust for those injured by constable''s neglect.
+
+    '
+  sources:
+  - https://pacodeandbulletin.gov/Display/pabull?file=/secure/pabulletin/data/vol46/46-13/512.html
+  - https://www.pacodeandbulletin.gov/Display/pabull?file=/secure/pabulletin/data/vol46/46-40/1672.html
+  confidence: high
+  last_verified: '2026-05-30'
+- id: pa_county_officer_bond
+  jurisdiction: pa_state
+  bonded_role: state_court_clerk
+  statutory_basis: 16 P.S. § 1401 (county officer bonds); 16 P.S. §§ 401-404 (sheriffs)
+  bond_status: active
+  bond_amount_min: varies by county; typically $10,000-$50,000
+  surety_lookup: Recorder of Deeds in the county where officer holds office
+  claim_procedure:
+  - Demand letter to officer + surety
+  - Civil action against surety on the bond if denied
+  - Joinder of officer in same action
+  statute_of_limitations: 6 years (42 Pa.C.S. § 5527)
+  notes: 'PA county officers (Clerk of Courts, Recorder of Deeds, Register of Wills,
+
+    Prothonotary, Sheriff, Treasurer) bonded under 16 P.S. Bond amounts and
+
+    sureties vary by county — check Recorder of Deeds.
+
+    '
+  sources:
+  - https://www.legis.state.pa.us/cfdocs/legis/LI/uconsCheck.cfm?txtType=HTM&yr=1955&sessInd=0&smthLwInd=0&act=130&chpt=14
+  confidence: med
+  last_verified: '2026-05-30'
+- id: pa_sheriff_bond
+  jurisdiction: pa_state
+  bonded_role: sheriff
+  statutory_basis: 16 P.S. § 1207 (sheriff bond); varies by class of county
+  bond_status: active
+  bond_amount_typical: $25,000-$50,000 depending on county class
+  surety_lookup: Recorder of Deeds in the county
+  claim_procedure:
+  - Identify breach of sheriff's official duties
+  - Demand on surety
+  - Civil action joining sheriff + surety
+  statute_of_limitations: 6 years (contract); 2 years (tort, 42 Pa.C.S. § 5524)
+  notes: Coverage extends to deputies acting under sheriff's authority.
+  sources:
+  - https://www.legis.state.pa.us/cfdocs/legis/LI/uconsCheck.cfm?txtType=HTM&yr=1955&sessInd=0&smthLwInd=0&act=130
+  confidence: med
+  last_verified: '2026-05-30'
+- id: pa_notary_public_bond
+  jurisdiction: pa_state
+  bonded_role: notary_public
+  statutory_basis: 57 Pa.C.S. § 321 (Revised Uniform Law on Notarial Acts, RULONA)
+  bond_status: active
+  bond_amount_min: $10,000
+  surety_lookup: Pennsylvania Department of State, Bureau of Commissions, Elections
+    and Legislation
+  claim_procedure:
+  - Demand letter to notary + surety
+  - File claim with PA Dept. of State
+  - Civil action against notary + surety jointly
+  statute_of_limitations: 6 years (contract); 2 years (fraud, 42 Pa.C.S. § 5524(7))
+  elements_to_plead:
+  - Notary breached statutory duty (improper acknowledgment, false certificate, etc.)
+  - Reliance on notarized document
+  - Damages flowing from breach
+  notes: $10,000 minimum bond. Useful for challenging fraudulent notarizations attached
+    to court filings.
+  sources:
+  - https://www.legis.state.pa.us/cfdocs/legis/LI/consCheck.cfm?txtType=HTM&ttl=57
+  confidence: med
+  last_verified: '2026-05-30'
+- id: pa_insurance_producer_bond
+  jurisdiction: pa_state
+  statutory_basis: Pennsylvania Producer Licensing Act, 40 P.S. § 310.71
+  bond_status: active
+  claim_procedure:
+    method: written_demand
+    mailing_address: 'Send demand to surety identified on bond filing with PA Insurance
+      Department.
+
+      Bond filings searchable at: https://www.insurance.pa.gov/Licensees/
+
+      '
+    timing: no statutory deadline; common-law principles apply
+    fee: 0
+  notes: 'GOVERNING RULES: 31 Pa. Code Ch. 37 (Licensing)
+
+
+    ROLE COVERED: insurance_producer (PA insurance agents and brokers).
+
+
+    PA insurance producers must post a $5,000 bond OR maintain E&O coverage
+
+    in lieu of bond. The bond runs to the benefit of any person damaged by
+
+    the producer''s misconduct in the conduct of the producer''s insurance
+
+    business.
+
+
+    In practice, most producers carry E&O instead of bond; the alternative
+
+    is disclosed on the Department''s licensee lookup. For force-placed
+
+    insurance cases, the producer placing the force-placed coverage is a
+
+    potential bond/E&O target separate from the carrier itself.
+
+
+
+    --- ADDITIONAL METADATA ---
+
+    BOND AMOUNT: $5,000 minimum'
+  sources:
+  - https://codes.findlaw.com/pa/title-40-ps-insurance/pa-st-sect-40-310-71/
+  - https://www.insurance.pa.gov/Licensees/
+  confidence: high
+  last_verified: '2026-05-30'
+  bonded_role: insurance_producer
+  bond_amount_min: $5,000
+  bond_amount_typical: $5,000 statutory minimum; many producers carry E&O in lieu
+    of bond per 40 P.S. § 310.71
+  forum_for_suit: phila_ccp
+  statute_of_limitations: 4 years per 42 Pa.C.S. § 5525 (action on contract/bond)
+  surety_lookup: https://www.insurance.pa.gov/Licensees/  (PA Insurance Department
+    licensee search)
+  alternative_recovery: E&O policy in lieu of bond is statutorily permitted under
+    40 P.S. § 310.71; status disclosed on licensee lookup
+  elements_to_plead:
+  - Plaintiff damaged by insurance producer's act or omission in the conduct of the
+    producer's insurance business
+  - Producer was licensed and bonded at the time of misconduct
+  - Identification of bond by surety and bond number
+  - Damages caused by producer's conduct
+writs:
+- id: writ_of_certiorari_scotus
+  forum: scotus
+  name: Petition for Writ of Certiorari
+  statutory_basis: 28 U.S.C. § 1254(1); 28 U.S.C. § 2101(c); Sup. Ct. R. 10, 13, 14
+  purpose: Discretionary SCOTUS review of US Court of Appeals judgment or final state-court-of-last-resort
+    judgment
+  deadline_days: 90
+  deadline_trigger: entry of judgment OR denial of timely rehearing in court below
+    (Sup. Ct. R. 13.1, 13.3)
+  deadline_jurisdictional: true
+  page_limit: null
+  word_limit: 9000
+  fee: $300 (waivable via IFP under Sup. Ct. R. 39)
+  required_sections:
+  - Questions Presented (Rule 14.1(a))
+  - List of Parties / Corporate Disclosure (Rule 14.1(b), 29.6)
+  - Table of Contents
+  - Table of Authorities
+  - Opinions Below (Rule 14.1(c))
+  - Jurisdiction (Rule 14.1(e))
+  - Constitutional/Statutory Provisions (Rule 14.1(f))
+  - Statement of the Case (Rule 14.1(g))
+  - Reasons for Granting the Petition (Rule 14.1(h))
+  - Conclusion
+  - Appendix (Rule 14.1(i))
+  granting_factors:
+  - 'Rule 10(a): conflict between US Courts of Appeals on the same matter'
+  - 'Rule 10(a): US Court of Appeals decided important federal question in way that
+    conflicts with another circuit'
+  - 'Rule 10(b): state court of last resort decided important federal question in
+    way that conflicts with another state court of last resort or US Court of Appeals'
+  - 'Rule 10(c): conflict with relevant SCOTUS decision OR important question of federal
+    law not yet settled by SCOTUS'
+  - Departure from accepted course of judicial proceedings or sanctioned such departure
+    by lower court
+  ifp_path: Sup. Ct. R. 39; Form 4 affidavit; if granted, file original + 10 copies
+    (Rule 12.2) instead of 40
+  service_requirements: Service on all other parties; Rule 29 details methods
+  filing_address: 'Clerk
+
+    Supreme Court of the United States
+
+    1 First Street, NE
+
+    Washington, DC 20543
+
+    '
+  copies_required: 40 copies paper (Rule 12); electronic filing required for represented
+    parties (Rule 29.7); original + 10 if IFP
+  notes: 'The 90-day civil deadline is STATUTORY (28 U.S.C. § 2101(c)) and JURISDICTIONAL
+    —
+
+    the Clerk will REFUSE to file out-of-time petitions. ONE 60-day good-cause
+
+    extension possible under Sup. Ct. R. 13.5 if applied for ≥10 days before due date.
+
+    Cert grant rate: ~1% of filed petitions.
+
+    '
+  sources:
+  - https://www.law.cornell.edu/rules/supct/rule_13
+  - https://www.law.cornell.edu/rules/supct/rule_14
+  - https://www.cafc.uscourts.gov/wp-content/uploads/RulesProceduresAndForms/FilingResources/Petition_for_Writ_of_Certiorari_-_Information_Sheet.pdf
+  - https://www.justice.gov/jm/jm-2-4000-time-appeal-or-petition-review-or-certiorari
+  - https://www.scotusblog.com/2020/03/a-note-on-certiorari-deadlines-under-the-courts-new-procedures/
+  confidence: high
+  last_verified: '2026-05-30'
+- id: writ_of_mandamus_3d_cir
+  forum: 3d_circuit
+  name: Petition for Writ of Mandamus
+  statutory_basis: 28 U.S.C. § 1651(a) (All Writs Act); FRAP 21
+  purpose: Compel federal district court (or judge) to perform a non-discretionary
+    duty OR refrain from clear abuse of discretion
+  deadline_days: null
+  deadline_trigger: no statutory deadline; laches applies — file promptly after exhausting
+    alternatives
+  deadline_jurisdictional: false
+  page_limit: 30 pages or 7,800 words (FRAP 21(d))
+  word_limit: 7800
+  fee: $500 docketing fee (FRAP 21(b)(1))
+  required_sections:
+  - Statement of relief sought
+  - Issues presented and statement of facts
+  - Reasons mandamus warranted (Cheney v. U.S. Dist. Ct., 542 U.S. 367 (2004) — 3
+    elements)
+  - Copy of order(s) and other parts of the record
+  granting_factors:
+  - Petitioner has no other adequate means to obtain relief
+  - Right to issuance of writ is clear and indisputable
+  - Issuance of writ is appropriate under the circumstances
+  elements_to_plead:
+  - Non-discretionary duty owed by respondent judge
+  - Clear right to performance
+  - No other adequate remedy at law
+  service_requirements: 'FRAP 21(a)(1): serve respondent judge + all parties to case
+    below'
+  filing_address: 'Clerk of Court
+
+    U.S. Court of Appeals for the Third Circuit
+
+    21400 U.S. Courthouse
+
+    601 Market Street
+
+    Philadelphia, PA 19106
+
+    '
+  copies_required: 4 paper copies + 1 electronic per FRAP 21(b)(2)
+  notes: Extraordinary writ. Highly disfavored. Used for clear abuse + no other remedy.
+    no_deadline by statute (laches applies).
+  sources:
+  - https://www.law.cornell.edu/rules/frap/rule_21
+  - https://www.law.cornell.edu/uscode/text/28/1651
+  confidence: high
+  last_verified: '2026-05-30'
+- id: writ_of_prohibition_3d_cir
+  forum: 3d_circuit
+  name: Petition for Writ of Prohibition
+  statutory_basis: 28 U.S.C. § 1651(a); FRAP 21
+  purpose: Restrain lower court from acting outside its jurisdiction
+  deadline_days: null
+  deadline_trigger: as soon as practicable after jurisdictional defect known
+  deadline_jurisdictional: false
+  word_limit: 7800
+  fee: $500
+  required_sections:
+  - Statement of jurisdictional defect
+  - Identification of pending action lower court lacks power to take
+  - Reasons prohibition appropriate
+  granting_factors:
+  - Lower court acting outside jurisdiction OR threatening to do so
+  - No other adequate remedy
+  notes: Closely related to mandamus; same procedural rules (FRAP 21). no_deadline
+    by statute (laches applies).
+  sources:
+  - https://www.law.cornell.edu/rules/frap/rule_21
+  confidence: high
+  last_verified: '2026-05-30'
+- id: pa_king_bench_jurisdiction
+  forum: pa_supreme
+  name: Petition for Exercise of King's Bench Jurisdiction / Extraordinary Jurisdiction
+  statutory_basis: 42 Pa.C.S. § 726 (extraordinary jurisdiction); Pa.R.A.P. 3309
+  purpose: Direct PA Supreme Court review of any matter pending in any PA court when
+    exceptional circumstances
+  deadline_days: null
+  deadline_trigger: as soon as practicable
+  deadline_jurisdictional: false
+  page_limit: 30 pages text (Pa.R.A.P. 2135)
+  fee: filing fee per Pa.R.A.P. fee schedule
+  required_sections:
+  - Statement of jurisdiction
+  - Order or determination in question
+  - Statement of questions presented
+  - Statement of the case
+  - Argument (why extraordinary jurisdiction warranted)
+  granting_factors:
+  - Issue of immediate public importance
+  - Case pending in PA court system
+  - Exceptional circumstances justifying bypass of normal appellate route
+  filing_address: 'Prothonotary
+
+    Supreme Court of Pennsylvania
+
+    Pennsylvania Judicial Center
+
+    601 Commonwealth Avenue, Suite 4500
+
+    Harrisburg, PA 17106
+
+    '
+  notes: Rarely granted. PA equivalent of mandamus/prohibition combined with discretionary
+    review. no_deadline by statute.
+  sources:
+  - https://www.law.cornell.edu/regulations/pennsylvania/210-Pa-Code-Rule-3309
+  confidence: med
+  last_verified: '2026-05-30'
+- id: pa_mandamus_commonwealth_court
+  forum: pa_commonwealth
+  name: Petition for Writ of Mandamus (PA original jurisdiction)
+  statutory_basis: 42 Pa.C.S. § 761 (Commonwealth Court original jurisdiction); Pa.R.A.P.
+    1502
+  purpose: Compel Commonwealth officer or agency to perform non-discretionary duty
+  deadline_days: null
+  deadline_jurisdictional: false
+  fee: filing fee per Pa.R.A.P.
+  required_sections:
+  - Statement of jurisdiction
+  - Order or duty in question
+  - Statement of questions presented
+  - Argument
+  granting_factors:
+  - Clear legal right to relief
+  - Corresponding duty in respondent
+  - Lack of other adequate remedy
+  filing_address: 'Prothonotary
+
+    Commonwealth Court of Pennsylvania
+
+    Pennsylvania Judicial Center
+
+    601 Commonwealth Avenue, Suite 2100
+
+    P.O. Box 69185
+
+    Harrisburg, PA 17106-9185
+
+    '
+  notes: Commonwealth Court has original jurisdiction over actions against Commonwealth
+    officers. no_deadline by statute.
+  sources:
+  - https://www.law.cornell.edu/regulations/pennsylvania/210-Pa-Code-Rule-1502
+  - https://www.law.cornell.edu/regulations/pennsylvania/42-Pa-CS-761
+  confidence: med
+  last_verified: '2026-05-30'
+- id: section_7434_civil_action
+  forum: edpa
+  name: Civil Action for Fraudulent Filing of Information Returns
+  statutory_basis: 26 U.S.C. § 7434
+  purpose: Recover statutory damages, actual damages, costs, and (discretionary) attorney's
+    fees from a person who willfully filed a fraudulent information return (1099-C,
+    1099-MISC, W-2, etc.) about the plaintiff
+  deadline_days: null
+  deadline_trigger: later of (1) 6 years from filing date of fraudulent return, OR
+    (2) 1 year after fraud would have been discovered with reasonable diligence
+  deadline_jurisdictional: false
+  page_limit: null
+  fee: $405 federal filing fee (waivable via IFP)
+  required_sections:
+  - Caption + parties
+  - Jurisdictional statement (26 U.S.C. § 7434(c) — no amount-in-controversy requirement)
+  - 'Statement of facts: identify the information return, filer, date filed, amounts
+    reported'
+  - 'Element 1: Defendant willfully filed information return'
+  - 'Element 2: Return was fraudulent'
+  - 'Element 3: Return was ''with respect to payments purported to be made to'' plaintiff'
+  - 'Prayer for relief: $5,000 statutory OR actual damages + costs + (discretionary)
+    attorney''s fees'
+  granting_factors:
+  - Willfulness (more than mere negligence; intent to file false info)
+  - Falsity (return reported amount/event that did not occur)
+  - Information return covered by § 6724(d)(1)(A) — includes 1099-C, 1099-MISC, 1099-NEC,
+    W-2, etc.
+  elements_to_plead:
+  - Defendant filed an information return (specify form type)
+  - Return was fraudulent (state specific falsity)
+  - Defendant acted willfully
+  - Return was 'with respect to payments purported to be made to' plaintiff
+  service_requirements: 'Sup. Ct. R. — n/a (district court action).
+
+    Critical: § 7434(d) requires plaintiff to PROVIDE A COPY OF THE COMPLAINT TO THE
+    IRS
+
+    upon filing. Failure may not be jurisdictional but creates statutory non-compliance.
+
+    Mailing address: Internal Revenue Service, Office of Chief Counsel,
+
+    1111 Constitution Ave NW, Washington DC 20224
+
+    '
+  filing_address: 'Clerk of Court
+
+    U.S. District Court for the Eastern District of Pennsylvania
+
+    601 Market Street, Room 2609
+
+    Philadelphia, PA 19106-1797
+
+    '
+  copies_required: n/a (electronic filing via PACER); paper copies for chambers per
+    local rule
+  notes: "no_deadline as a jurisdictional matter, but laches and the 6-year-or-1-year-from-discovery\n\
+    SOL applies under § 7434(c).\n\nDAMAGES (§ 7434(b)): liability = GREATER of $5,000\
+    \ OR sum of:\n  (1) actual damages from filing (including costs to resolve resulting\
+    \ deficiencies)\n  (2) costs of the action\n  (3) reasonable attorney's fees (court's\
+    \ discretion)\n\nCourt must include in damages award a finding of the CORRECT\
+    \ amount that should\nhave been reported (§ 7434(e)).\n\nPractical use cases:\n\
+    \  - Creditor files 1099-C reporting cancellation of debt that was never cancelled\n\
+    \    (e.g., debt is in active litigation, debt was sold not cancelled, debt is\
+    \ void)\n  - Employer files 1099-MISC misclassifying employee (W-2) as contractor\n\
+    \  - Filer reports payments larger than were actually made\n  - Filer reports\
+    \ payments to a person who did not receive them\n\nFor pro se in Beezle cases\
+    \ (04767, 02822, 06077): if any defendant has filed\na 1099-C reporting cancellation\
+    \ of disputed debt, § 7434 is a separate, fee-shifting\nclaim with statutory minimum\
+    \ damages. Pair with reporting to IRS via Form 3949-A\n(administrative track)\
+    \ and to the case-filing court for the underlying dispute.\n"
+  sources:
+  - https://www.law.cornell.edu/uscode/text/26/7434
+  - https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section7434
+  confidence: high
+  last_verified: '2026-05-30'
+- id: section_6722_information_return_penalty
+  forum: edpa
+  name: Referral for § 6722 Penalty (Failure to Furnish Correct Payee Statement)
+  statutory_basis: 26 U.S.C. § 6722 (failure to furnish correct payee statement);
+    26 U.S.C. § 6724 (definitions)
+  purpose: Administrative IRS penalty against filer for incorrect or untimely payee
+    statements (information returns). Companion to § 7434 civil action.
+  deadline_days: null
+  deadline_trigger: no separate statute of limitations for referral; IRS general 3-year
+    SOL applies to assessment
+  deadline_jurisdictional: false
+  fee: 0
+  required_sections:
+  - Form 3949-A or written referral
+  - Identification of payor/filer
+  - Description of incorrect information return
+  - Tax years affected
+  elements_to_plead:
+  - Filer required to furnish payee statement under § 6722(d)(2)
+  - Filer failed to furnish OR furnished incorrect statement
+  - No reasonable cause exception applies
+  notes: 'no_deadline statutory; this is an administrative referral not a citizen-initiated
+
+    proceeding. Penalty: $310 per incorrect statement (tier 1) up to $630 (intentional
+
+    disregard, no cap). Pair with § 7434 civil action for compensable damages.
+
+    '
+  filing_address: 'Internal Revenue Service
+
+    Fresno, CA 93888  (Form 3949-A intake)
+
+    '
+  sources:
+  - https://www.law.cornell.edu/uscode/text/26/6722
+  - https://www.law.cornell.edu/uscode/text/26/6724
+  confidence: high
+  last_verified: '2026-05-30'
+- id: bivens_action_narrow
+  forum: edpa
+  name: Bivens Action (Constitutional Tort Against Federal Officer)
+  statutory_basis: Bivens v. Six Unknown Named Agents, 403 U.S. 388 (1971); narrowed
+    by Egbert v. Boule, 596 U.S. 482 (2022)
+  purpose: Damages against federal officer for constitutional violation. No statutory
+    analog to § 1983 for federal actors.
+  deadline_days: null
+  deadline_trigger: borrowed from forum state personal injury SOL — 2 years in PA
+  deadline_jurisdictional: false
+  fee: $405 (waivable via IFP)
+  required_sections:
+  - Constitutional violation pleaded with specificity
+  - No alternative remedy adequate (special factors counsel hesitation analysis post-Egbert)
+  - Defendant is federal officer acting in personal capacity
+  granting_factors:
+  - Fourth Amendment unreasonable search/seizure (original Bivens context)
+  - Fifth Amendment due process (Davis v. Passman, 442 U.S. 228)
+  - Eighth Amendment cruel/unusual punishment (Carlson v. Green, 446 U.S. 14)
+  elements_to_plead:
+  - Federal officer acting under color of federal law
+  - Violation of constitutional right within established Bivens context
+  - Damages caused by violation
+  notes: 'no_deadline statutorily set. EXTREMELY NARROW POST-EGBERT: SCOTUS has refused
+    to
+
+    extend Bivens to new contexts in every case since Carlson (1980). Currently viable
+
+    only for 4th Amendment search/seizure, 5th Amendment due process (Davis), and
+
+    8th Amendment medical-neglect (Carlson). Outside these three, Bivens is effectively
+
+    foreclosed.
+
+
+    For federal employees'' tortious conduct (non-constitutional): use FTCA instead.
+
+    '
+  filing_address: 'Clerk of Court
+
+    U.S. District Court for the Eastern District of Pennsylvania
+
+    601 Market Street, Philadelphia, PA 19106-1797
+
+    '
+  sources:
+  - https://www.law.cornell.edu/wex/bivens_actions
+  - https://www.supremecourt.gov/opinions/21pdf/21-147_g314.pdf
+  confidence: high
+  last_verified: '2026-05-30'
+- id: ftca_action
+  forum: edpa
+  name: Federal Tort Claims Act Action
+  statutory_basis: 28 U.S.C. §§ 1346(b), 2671-2680
+  purpose: Recover damages from United States for torts committed by federal employees
+    acting within scope of employment
+  deadline_days: null
+  deadline_trigger: MUST file administrative claim (SF-95) within 2 years of accrual;
+    suit within 6 months of agency denial
+  deadline_jurisdictional: true
+  fee: $405 (waivable via IFP)
+  required_sections:
+  - Exhaustion of administrative remedy (SF-95 filed and denied or 6 months elapsed)
+  - Tort committed by federal employee within scope of employment
+  - United States as sole defendant (federal employees individually substituted out)
+  granting_factors:
+  - State law tort that private person would be liable for
+  - Federal employee within scope of employment
+  - Discretionary function exception does NOT apply
+  common_pitfalls:
+  - Discretionary function exception (28 U.S.C. § 2680(a)) bars most claims against
+    regulatory officers
+  - Intentional torts barred except for limited categories in § 2680(h) (assault/battery/false
+    imprisonment/etc. by law enforcement)
+  - Bench trial only, no jury (28 U.S.C. § 2402)
+  - MUST exhaust SF-95 first — jurisdictional
+  notes: 'Two-step process: (1) file Form SF-95 with agency, (2) if denied or 6 months
+
+    pass without action, sue in U.S. district court. Pre-suit notice required.
+
+    No deadline once exhausted, but admin claim is jurisdictional.
+
+
+    Primary path for damages against repealed-bond US Marshals; for IRS damages
+
+    (limited by discretionary function); for federal employee negligence in scope.
+
+
+
+    [no_deadline] — this writ has no fixed deadline; timing controlled by underlying
+    procedure (FTCA 2-year admin claim then 6-month suit window; FRCP 26 motion ripens
+    14 days post-26(f) conference).'
+  filing_address: 'Step 1 (admin claim): The agency employing the wrongdoer (Form
+    SF-95)
+
+    Step 2 (suit, after denial): Clerk of Court, U.S. District Court for the Eastern
+    District of Pennsylvania, 601 Market Street, Philadelphia, PA 19106
+
+    '
+  sources:
+  - https://www.law.cornell.edu/uscode/text/28/1346
+  - https://www.law.cornell.edu/uscode/text/28/2671
+  - https://www.law.cornell.edu/uscode/text/28/2680
+  confidence: high
+  last_verified: '2026-05-30'
+- id: remic_section_860f_prohibited_transaction
+  forum: edpa
+  name: REMIC Prohibited Transaction Claim / Notice
+  statutory_basis: 26 U.S.C. § 860F (100% tax on prohibited transactions); Treas.
+    Reg. § 1.860F-1
+  purpose: Notify IRS that a REMIC engaged in a prohibited transaction (e.g., disposition
+    of qualified mortgage, late substitution) triggering the 100% prohibited transaction
+    tax
+  deadline_days: null
+  deadline_trigger: no statutory citizen-initiated deadline; IRS assessment SOL is
+    generally 3 years from REMIC return filing
+  deadline_jurisdictional: false
+  fee: 0
+  required_sections:
+  - Identification of REMIC trust
+  - Identification of prohibited transaction (date, nature, parties)
+  - Citation to applicable PSA section
+  - Documentary support
+  granting_factors:
+  - Disposition of qualified mortgage (§ 860F(a)(2)(A)(i))
+  - Substitution of mortgage after startup day window (§ 860F(a)(2)(A)(ii))
+  - Net income from foreclosure property exceeding permissible thresholds (§ 860F(a)(2)(B))
+  - Receipt of fees or compensation from prohibited services (§ 860F(a)(2)(C))
+  elements_to_plead:
+  - Entity elected REMIC treatment under § 860D
+  - Specific prohibited transaction within § 860F(a)(2) categories
+  - Date and consideration of transaction
+  common_pitfalls:
+  - Citizens cannot directly impose the § 860F tax; only IRS can assess. This is a
+    NOTIFICATION / REFERRAL path.
+  - Treas. Reg. § 1.860D-1(c) inadvertent termination relief is liberal — IRS rarely
+    strips REMIC status
+  - PSA-based standing challenges in state-court foreclosure are jurisdictionally
+    distinct (Glaski/Schichtel split)
+  notes: "no_deadline as citizen referral. This is essentially an IRS Form 3949-A\n\
+    referral with REMIC-specific supporting documentation. Listed separately as\n\
+    a writ-style entry because the legal architecture (§ 860F + Treas. Regs)\nis materially\
+    \ different from a generic tax-fraud referral.\n\nPair with:\n  - SEC TCR portal\
+    \ for parallel securities-fraud track (ABS-15G violations)\n  - State court PSA\
+    \ challenge (where standing allows)\n  - § 7434 civil action if servicer also\
+    \ filed false 1099-C\n"
+  filing_address: 'Internal Revenue Service
+
+    Fresno, CA 93888
+
+    (Form 3949-A with REMIC supplement)
+
+    '
+  service_requirements: n/a (administrative IRS submission)
+  sources:
+  - https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section860F
+  - https://www.law.cornell.edu/uscode/text/26/860F
+  confidence: high
+  last_verified: '2026-05-30'
+- id: pa_bad_faith_section_8371
+  forum: phila_ccp
+  name: Bad Faith Civil Action under 42 Pa.C.S. § 8371
+  statutory_basis: 42 Pa.C.S. § 8371 (Actions on insurance policies)
+  purpose: Recover statutory damages, interest, attorney fees, and punitive damages
+    from an insurer that acted in bad faith toward the insured in handling a claim
+  deadline_days: 1460
+  deadline_trigger: accrual of claim — typically date of denial or last act of bad
+    faith conduct
+  deadline_jurisdictional: false
+  fee: 0
+  word_limit: null
+  required_sections:
+  - Identification of policy, insurer, claim
+  - Identification of insured (only insured has direct § 8371 standing)
+  - Specific acts of bad faith (failure to investigate, unreasonable denial, lowball
+    offer, delay, etc.)
+  - Knowing or reckless disregard standard
+  - Damages
+  granting_factors:
+  - Insurer denied benefits without reasonable basis
+  - Insurer knew or recklessly disregarded its lack of reasonable basis
+  - Insurer failed to investigate adequately
+  - Insurer used unlawful interpretation to delay or deny
+  elements_to_plead:
+  - Plaintiff is an insured under the policy
+  - Insurer's conduct in handling the claim was in bad faith
+  - Causation between bad faith and harm
+  common_pitfalls:
+  - Claimants who are NOT the insured (e.g., judgment creditors, third-party claimants)
+    generally lack direct § 8371 standing — must proceed via assignment of rights
+    or Pa.R.C.P. 3111 garnishment
+  - Burden of proof is 'clear and convincing evidence' (Terletsky v. Prudential, 437
+    Pa.Super. 108)
+  - Insurer's reasonable basis to deny defeats § 8371 even if denial later proven
+    wrong
+  - Federal courts may apply § 8371 via diversity jurisdiction but Erie analysis can
+    complicate
+  - 'Statute of limitations: 4 years (Ash v. Continental Ins. Co., 932 A.2d 877 (Pa.
+    2007))'
+  notes: "REMEDIES (tracked on phila_ccp forum, NOT on writ dataclass):\n  compensatory_damages,\
+    \ punitive_damages, attorney_fees, restitution.\n\n§ 8371 specific remedies: prime\
+    \ rate + 3% interest from claim accrual;\npunitive damages; court costs; attorney\
+    \ fees.\n\n§ 8371 is PA's signature insurance bad-faith remedy. Independent of\
+    \ any\nbreach-of-contract claim on the policy.\n\nFor State Farm bad faith case\
+    \ (06077): § 8371 is the headline writ.\nStandard is \"clear and convincing evidence\"\
+    \ — high bar but achievable\nwith documented denial timeline + reasonable-basis\
+    \ analysis.\n\nFor 04767 (Amerisave force-placed insurance angle): if force-placed\n\
+    carrier denied a covered loss or refused refund of inflated premiums,\n§ 8371\
+    \ may apply to the force-placed carrier (Assurant, QBE, etc.).\n"
+  filing_address: 'Court of Common Pleas of Philadelphia County (or county of insured''s
+    residence)
+
+    Office of Judicial Records
+
+    Room 296, Philadelphia City Hall
+
+    Anytown, ST 00000
+
+    '
+  service_requirements: Pa.R.C.P. 400 et seq. — service via Sheriff or per court rules
+  service_steps:
+  - Praecipe for writ of summons OR file complaint
+  - Original process to Sheriff for service
+  - Service within 30 days of filing per Pa.R.C.P. 401(a)
+  sources:
+  - https://codes.findlaw.com/pa/title-42-pacsa-judiciary-and-judicial-procedure/pa-cs-sect-42-8371/
+  - https://casetext.com/case/terletsky-v-prudential-property-cas-ins-co
+  confidence: high
+  last_verified: '2026-05-30'
+- id: frcp_26_motion_to_compel_insurance_disclosure
+  forum: edpa
+  name: Motion to Compel Complete FRCP 26(a)(1)(A)(iv) Insurance Disclosure
+  statutory_basis: Fed. R. Civ. P. 26(a)(1)(A)(iv); Fed. R. Civ. P. 37(c)
+  purpose: Compel defendant to produce complete insurance agreements (primary + excess
+    + umbrella + D&O + E&O) when initial disclosures are incomplete, and seek Rule
+    37 sanctions
+  deadline_days: null
+  deadline_trigger: may be filed any time after defendant's Rule 26(a) disclosures
+    are due (typically 14 days post-Rule 26(f) conference)
+  deadline_jurisdictional: false
+  fee: 0
+  word_limit: null
+  required_sections:
+  - Caption
+  - Statement of Rule 26(a)(1)(A)(iv) obligation
+  - Identification of what defendant produced
+  - Identification of what is missing (umbrella, excess, D&O, E&O)
+  - Materiality explanation
+  - Prayer for production + Rule 37 sanctions
+  - Certificate of service
+  granting_factors:
+  - Rule 26(a)(1)(A)(iv) is automatic and mandatory — no discovery request needed
+  - Disclosure required even when insurer contests coverage
+  - Defendant has duty to INVESTIGATE all insurance, not just primary
+  elements_to_plead:
+  - Defendant produced [primary policy / limited declarations] only
+  - Defendant failed to produce [umbrella / excess / D&O / E&O / cyber / fidelity]
+  - Specific reason to believe additional coverage exists (SEC filings, prior litigation
+    disclosures, corporate size)
+  common_pitfalls:
+  - Must show defendant's disclosure is INCOMPLETE, not just unhelpful
+  - Reinsurance disclosure remains contested in some circuits — primary/excess/umbrella
+    safer ground
+  - Movant must conduct Local Rule 7.1 / 26.1 meet-and-confer before filing in many
+    districts
+  notes: "REMEDIES (tracked on edpa forum, NOT on writ dataclass):\n  injunctive_relief\
+    \ (order compelling production); attorney_fees under Rule 37(c).\n\nPowerful procedural\
+    \ motion. Federal defendants frequently produce only\nprimary policy and conceal\
+    \ excess/umbrella layers, especially in cases\nwhere plaintiff's likely recovery\
+    \ would exceed primary limits. Sanctions\nunder Rule 37(c) include reasonable\
+    \ expenses and attorney fees.\n\nPair with discovery into reinsurance for insurance-company\
+    \ defendants\nwhere reinsurance may be relevant under Lambert v. Tesla, 923 F.\
+    \ Supp. 2d\n(D. Mass. 2013) line of cases.\n\nUse the insurance_carrier_discovery.draft_frcp_26_motion()\
+    \ helper for\ntemplate.\n\n\n[no_deadline] — this writ has no fixed deadline;\
+    \ timing controlled by underlying procedure (FTCA 2-year admin claim then 6-month\
+    \ suit window; FRCP 26 motion ripens 14 days post-26(f) conference)."
+  filing_address: 'U.S. District Court for the Eastern District of Pennsylvania
+
+    U.S. Courthouse
+
+    601 Market Street
+
+    Philadelphia, PA 19106
+
+    '
+  service_requirements: CM/ECF service on all counsel of record
+  service_steps:
+  - Meet-and-confer with opposing counsel (Local Civ. R. 26.1(f))
+  - File via CM/ECF
+  - Serve via CM/ECF on all counsel
+  sources:
+  - https://www.federalrulesofcivilprocedure.org/frcp/title-v-disclosures-and-discovery/rule-26-duty-to-disclose-general-provisions-governing-discovery/
+  - https://natlawreview.com/article/sanctions-failing-to-investigate-insurance-under-federal-rule-26
+  confidence: high
+  last_verified: '2026-05-30'
+- id: attorney_malpractice_civil_action
+  forum: phila_ccp
+  name: Legal Malpractice / Professional Negligence Civil Action
+  statutory_basis: Pennsylvania common law (Bailey v. Tucker, 533 Pa. 237 (1993));
+    42 Pa.C.S. § 5524 (2-year SOL for negligence) or § 5525 (4-year for breach of
+    contract)
+  purpose: Recover damages from an attorney whose negligence in the rendering of legal
+    services caused the client harm
+  deadline_days: 730
+  deadline_trigger: discovery rule applies — accrual when client knew or should have
+    known of injury (Knopick v. Connelly)
+  deadline_jurisdictional: false
+  fee: 250
+  word_limit: null
+  required_sections:
+  - Complaint compliant with Pa.R.C.P. 1019
+  - Identification of attorney-client relationship
+  - Identification of specific negligent act
+  - Identification of harm and causation
+  - Damages computation
+  granting_factors:
+  - Attorney-client relationship existed
+  - Attorney's conduct fell below the applicable standard of care
+  - 'Causation: ''case within a case'' for trial malpractice (Kituskie v. Corbman,
+    552 Pa. 275)'
+  - Damages
+  elements_to_plead:
+  - Existence of attorney-client relationship
+  - Negligence or breach by attorney
+  - Damages caused by attorney's conduct
+  - But-for causation under 'case within a case' doctrine
+  common_pitfalls:
+  - Statute of limitations (2 years for tort under Pa.C.S. § 5524) often complicates
+    — discovery rule may toll
+  - '''Case within a case'' doctrine requires proving the underlying case would have
+    been won but for malpractice'
+  - Punitive damages require additional showing of recklessness/intentional misconduct
+  - If attorney had no insurance (per Pa.R.P.C. 1.4(c) disclosure check first), recovery
+    may be limited to attorney's personal assets
+  notes: "REMEDIES (tracked on phila_ccp forum, NOT on writ dataclass):\n  compensatory_damages,\
+    \ punitive_damages, attorney_fees, restitution.\n\nBefore filing, run two checks:\n\
+    \  1. PA Disciplinary Board lookup — does attorney self-report E&O coverage?\n\
+    \  2. Pa.R.P.C. 1.4(c) disclosure — was client informed of no/low coverage?\n\n\
+    If attorney has coverage: tender claim to carrier with demand letter\n(use insurance_carrier_discovery.draft_eo_demand_letter()).\n\
+    \nIf attorney has no coverage but failed to disclose: separate Pa.R.P.C.\n1.4(c)\
+    \ disciplinary violation, file with Disciplinary Board.\n\nFor pro se: legal malpractice\
+    \ claim is technically distinct from\ndisciplinary complaint. File BOTH paths.\n"
+  filing_address: 'Court of Common Pleas, Civil Trial Division
+
+    Philadelphia City Hall, Room 296
+
+    Anytown, ST 00000
+
+    '
+  service_requirements: Pa.R.C.P. 400 et seq. — original process via Sheriff or by
+    certified mail to PA defendant
+  service_steps:
+  - File complaint with Office of Judicial Records
+  - Praecipe for sheriff's service OR Pa.R.C.P. 403 service by mail
+  - Service within 30 days per Pa.R.C.P. 401(a)
+  sources:
+  - https://casetext.com/case/bailey-v-tucker
+  - https://casetext.com/case/kituskie-v-corbman
+  - https://codes.findlaw.com/pa/title-42-pacsa-judiciary-and-judicial-procedure/pa-cs-sect-42-5524/
+  confidence: high
+  last_verified: '2026-05-30'

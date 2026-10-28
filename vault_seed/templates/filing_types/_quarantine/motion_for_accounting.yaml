@@ -1,0 +1,52 @@
+id: motion_for_accounting
+title: Motion for Trust Accounting — GNMA REMIC Trust Collateralized by Borrower's Loan Without Proper Disclosure
+description: |
+  Motion for an accounting of the GNMA REMIC trust and the borrower's loan within the trust.
+
+Under the federal lending statutes and the terms of GNMA REMIC trusts, the borrower has a right to know the status of their loan within the securitization. When the loan is pooled as collateral without proper notice, the borrower is entitled to an accounting of:
+- The pool in which the loan was placed
+- The trust's allocation of the loan's cash flows
+- The identity of the beneficial owner
+- The status of the loan's collateralization
+
+This motion targets cases where:
+- GNMA REMIC trust files exist (FDS, RLY, ANC, SRF, FRR, MTF)
+- The loan appears in the trust's collateral pool
+- The borrower was never provided with notice of the trust's existence
+- The borrower has standing to demand an accounting under RESA and the trust terms
+
+court: any
+required_authorities:
+  - 12 U.S.C. § 2605(b)(1) — Notice by transferor of loan servicing
+  - 12 U.S.C. § 2605(b)(2) — Notice by transferee of loan servicing
+  - 12 U.S.C. § 2605(a) — Prohibition on transfer of servicing
+  - UCC § 3-418 — Payment or dishonor
+  - UCC § 4-402 — Bank's liability for wrongful dishonor
+  - FRCP 65 — Injunction and restraining order (for equitable accounting)
+
+court_rules:
+  - FRCP 60(d)(3) — Fraud on the court; no time limitation
+court_rules:
+  - FRCP 60(b)(3) — Fraud/misrepresentation; one-year limit
+court_rules:
+  - FRCP 54(d)(2) — Attorney's fees
+court_rules:
+  - FRCP 65 — Injunction and restraining order
+court_rules:
+  - FRCP 65.1 — Special masters
+
+court_rules:
+  - FRCP 65.1 — Special masters
+
+court_rules:
+  - FRCP 65.1 — Special masters
+
+trigger_defects:
+  - REMIC_TRUST_EXISTS
+  - 1099C_CANCELLED_DEBT
+
+evidence_classes:
+  - gnma_remic
+  - 1099C
+
+damages: Equitable relief, accounting, declaratory judgment

@@ -1,0 +1,41 @@
+id: odc_complaint
+title: ODC Complaint — PA Office of Disciplinary Counsel, District I
+description: >
+  Formal complaint to the Pennsylvania Office of Disciplinary Counsel (ODC)
+  against opposing counsel for violations of the Pennsylvania Rules of
+  Professional Conduct (Pa.R.P.C.), particularly Rule 3.3 (candor toward
+  tribunal), Rule 4.1 (truthfulness in statements to others), and
+  Rule 8.4 (misconduct). This is NOT a court filing — it is a disciplinary
+  referral sent to ODC District I (Philadelphia).
+court: external
+required_authorities:
+  - Pa.R.P.C. 3.3 — Candor toward the tribunal (false statements of law/fact)
+  - Pa.R.P.C. 4.1 — Truthfulness in statements to others
+  - Pa.R.P.C. 8.4 — Misconduct (knowing assist of another's misconduct)
+  - 210 Pa. Code § 121.1 et seq. — ODC jurisdiction and procedures
+  - Pa.R.P.C. 8.1 — Licensing and disciplinary matters (truthfulness)
+trigger_defects:
+  - opposing_counsel_misconduct
+  - NON_BINDING_AS_CONTROLLING
+  - candor_violation
+  - false_statement_of_law
+  - false_statement_of_fact
+  - failure_to_disclose_controlling_authority
+required_facts:
+  - case_id
+  - caption
+  - opposing_attorney_name
+  - opposing_firm
+  - defect_total
+  - specific_violations
+structure:
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_enforcement
+  - block: arguments/candor_violation
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

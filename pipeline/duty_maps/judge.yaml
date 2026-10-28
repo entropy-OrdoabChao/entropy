@@ -1,0 +1,130 @@
+version: 1
+entity_type: judge
+fiduciary: true
+fiduciary_basis: >
+  A judge holds a fiduciary relationship to the parties and the public: the
+  judicial office is a public trust requiring impartiality, a neutral and
+  detached tribunal, and fidelity to due process. Breach of these duties is not
+  mere error — it is a breach of the judge's fiduciary obligation, supporting
+  disqualification, vacatur, and judicial-conduct accountability.
+description: >
+  Fiduciary / due-process duties owed by a judicial officer. Every authority
+  below is verified present in the corpus (:8100). Sources are citation keys the
+  retriever resolves to full text; the LLM never invents them (R7).
+
+duties:
+  - id: jud_fid_001
+    name: Duty of Impartiality / Disqualification for Probable Bias
+    class: fiduciary
+    source: Caperton v. A.T. Massey Coal
+    source_title: Caperton v. A.T. Massey Coal Co., 556 U.S. 868 (2009)
+    jurisdiction: federal
+    description: >
+      Due process requires recusal where, objectively, the probability of actual
+      bias is too high to be constitutionally tolerable. This constitutional floor
+      exceeds the statutory grounds and triggers automatic vacatur of orders
+      entered by a disqualified judge.
+    triggering_actions:
+      - BIAS_JUDICIAL
+      - BIAS_EMOTIONAL_LANGUAGE
+      - BIAS_PUNITIVE_APPEAL
+      - BIAS_PRO_SE_GATEKEEPING
+      - bias_indicator
+      - indicia_of_judicial_bias
+      - improper_argumentative_prejudicial_language
+      - sovereign_citizen_label
+      - improper_pro_se_gatekeeping
+      - appearance_of_partiality
+    violation_remedy:
+      - Recusal / disqualification
+      - Vacatur of orders entered while disqualified
+      - Judicial-conduct complaint (28 U.S.C. 351 / state JCB)
+
+  - id: jud_fid_002
+    name: Duty to Provide a Neutral and Detached Tribunal
+    class: fiduciary
+    source: Ward v. Village of Monroeville
+    source_title: Ward v. Village of Monroeville, 409 U.S. 57 (1972); Tumey v. Ohio, 273 U.S. 510 (1927)
+    jurisdiction: federal
+    description: >
+      Due process entitles a party to a neutral and detached judicial officer.
+      A tribunal with a direct, personal, or institutional interest in the outcome
+      denies due process regardless of actual prejudice.
+    triggering_actions:
+      - neutral_tribunal_denied
+      - judge_interest_in_outcome
+      - sua_sponte_ruling
+      - denied_without_briefing
+      - dissolved_writ_without_notice
+    violation_remedy:
+      - Void order (Fed. R. Civ. P. 60(b)(4) / Pa.R.C.P. equivalent)
+      - Disqualification
+
+  - id: jud_fid_003
+    name: Duty of a Fair Tribunal (Procedural Due Process)
+    class: fiduciary
+    source: In re Murchison
+    source_title: In re Murchison, 349 U.S. 133 (1955)
+    jurisdiction: federal
+    description: >
+      A fair trial in a fair tribunal is a basic requirement of due process.
+      Adjudicating on grounds no party raised, or without notice and an
+      opportunity to be heard, breaches the tribunal's fiduciary duty of fairness.
+    triggering_actions:
+      - NOTICE_INADEQUATE
+      - MTD_GRANTED_AGAINST_PLAINTIFF
+      - CLAIMS_DISMISSED
+      - PROCEDURAL_DUE_PROCESS_VIOLATION
+      - FRAUD_ON_THE_COURT
+      - VOID_JUDGMENT_RULE_60B4
+      - PRIMA_FACIE_EVIDENCE_IGNORED
+      - SUBJECT_MATTER_JURISDICTION_DEFECT
+      - procedural_due_process_violation
+      - inadequate_notice
+      - sua_sponte_ruling
+      - failure_to_address_record_evidence
+      - conclusory_dismissal_without_required_analysis
+    violation_remedy:
+      - Reconsideration / vacatur
+      - Reinstatement with notice and opportunity to be heard
+
+  - id: jud_fid_004
+    name: Duty to Avoid the Appearance of Partiality
+    class: fiduciary
+    source: Liteky v. United States
+    source_title: Liteky v. United States, 510 U.S. 540 (1994); Offutt v. United States, 348 U.S. 11 (1954); 28 U.S.C. 455
+    jurisdiction: federal
+    description: >
+      A judge must disqualify where impartiality might reasonably be questioned;
+      justice must satisfy the appearance of justice. Persistent one-sided rulings
+      and pejorative characterization of a party supply the appearance the duty
+      forbids.
+    triggering_actions:
+      - BIAS_EMOTIONAL_LANGUAGE
+      - BIAS_PUNITIVE_APPEAL
+      - appearance_of_partiality
+      - bias_indicator
+      - frivolous_characterization
+      - harassment_characterization
+    violation_remedy:
+      - Recusal under 28 U.S.C. 455
+      - Judicial-conduct complaint
+
+  - id: jud_fid_005
+    name: Duty Not to Act with Actual Bias
+    class: fiduciary
+    source: Bracy v. Gramley
+    source_title: Bracy v. Gramley, 520 U.S. 899 (1997)
+    jurisdiction: federal
+    description: >
+      The due-process guarantee that a litigant be tried before a judge with no
+      actual bias against him or interest in the outcome is the most basic of
+      protections; its violation is structural.
+    triggering_actions:
+      - FRAUD_ON_THE_COURT
+      - actual_bias
+      - bias_indicator
+      - mtd_granted_against_plaintiff
+    violation_remedy:
+      - Vacatur (structural error)
+      - Disqualification

@@ -1,0 +1,22 @@
+name: procedure
+group: study
+unit: claim            # claim | term | cite | count | document | case | draft
+axis: "Axis 4 — PROCEDURE / POSTURE: the SHALL rule at this posture, deadlines, waiver by silence (8(b)(6), 1029(b)), Zerbst symmetry."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - amjur_pleading
+  - frcp
+  - frap
+  - fre
+  - pa_rcp
+  - pa_rap
+  - pa_re
+  - pa_rja
+  - pa_bulletin
+queries:
+  - "{claim} rule shall"
+  - "failure to deny admitted 1029"
+  - "waiver Zerbst intentional relinquishment known right"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

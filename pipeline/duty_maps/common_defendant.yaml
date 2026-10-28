@@ -1,0 +1,353 @@
+version: 1
+entity_type: common_defendant
+description: >
+  Common-law and cross-cutting duties owed by EVERY defendant regardless of
+  entity classification. Used as the duty source for theories where
+  entity_type is null in theory_map.yaml (breach_of_contract_general,
+  conversion, unjust_enrichment, pa_utpcpl_violation, quiet_title_chain_defect,
+  fcra_*, fraudulent_concealment_tolling, regulatory_noncompliance).
+
+  Each duty declares `applies_to_domains:` — the auto_attach_duties function
+  filters by overlap with the theory's `domains:` field. This means a
+  conversion theory (domains: tort, property) will pick up duties tagged
+  with tort or property domains; a breach_of_contract_general theory
+  (domains: contract) will pick up contract-tagged duties.
+
+  Sources are common-law doctrine, RESTATEMENT (SECOND) of Contracts/Torts,
+  and PA-specific common law where applicable. NO interpretation of law —
+  these are settled doctrine.
+
+duties:
+
+  # ═══════════════ CONTRACT (common law) ═══════════════
+
+  - id: cmn_con_001
+    name: Implied Covenant of Good Faith and Fair Dealing
+    class: common_law
+    source: Restatement-2d-Contracts-205
+    source_title: Restatement (Second) of Contracts § 205
+    jurisdiction: pa
+    applies_to_domains:
+      - contract
+      - quasi_contract
+      - insurance
+      - real_property
+    description: >
+      Every contract imposes upon each party a duty of good faith and fair
+      dealing in its performance and its enforcement. Breach of this implied
+      covenant is independently actionable and supports an unjust enrichment
+      claim where the breaching party has retained a benefit.
+    triggering_actions:
+      - failed_to_perform
+      - withheld_performance
+      - retained_payment_without_performance
+      - breached_contract
+    burden_flip_questions:
+      - "Produce all internal communications regarding performance of the contract."
+      - "Identify by name and title every employee who reviewed the obligation and the date of review."
+      - "Produce all internal policies governing performance of contracts of this type."
+    evidence_demanded:
+      - executed contract
+      - communications evidencing performance demand
+      - internal performance review records
+      - payment ledgers
+    violation_remedy:
+      - Expectation damages
+      - Restitution
+      - Consequential damages if foreseeable
+
+  - id: cmn_con_002
+    name: Duty to Perform Material Promises
+    class: common_law
+    source: Restatement-2d-Contracts-235
+    source_title: Restatement (Second) of Contracts § 235 (Effect of Performance and Non-Performance)
+    jurisdiction: pa
+    applies_to_domains:
+      - contract
+      - quasi_contract
+      - real_property
+    description: >
+      Full performance discharges the duty under a contract. Non-performance
+      of a duty when due is a breach. PA courts apply this doctrine to
+      contractor/customer disputes, mortgage servicing, and lease obligations.
+    triggering_actions:
+      - failed_to_perform
+      - did_not_honor_agreement
+      - breached_contract
+      - performance_not_received
+    burden_flip_questions:
+      - "Produce the executed contract and any written modifications."
+      - "Produce all evidence of performance rendered and the dates of rendering."
+      - "Identify the specific contractual provision relied upon to justify non-performance."
+    evidence_demanded:
+      - executed contract
+      - performance records
+      - amendments and modifications
+      - notice of breach communications
+    violation_remedy:
+      - Expectation damages
+      - Specific performance where appropriate
+      - Reliance damages
+
+  # ═══════════════ TORT — CONVERSION (common law) ═══════════════
+
+  - id: cmn_tort_001
+    name: Duty Not to Convert Another's Property
+    class: common_law
+    source: Restatement-2d-Torts-222A
+    source_title: Restatement (Second) of Torts § 222A (Conversion Defined)
+    jurisdiction: pa
+    applies_to_domains:
+      - tort
+      - property
+      - equity
+    description: >
+      Conversion is an intentional exercise of dominion or control over a
+      chattel which so seriously interferes with the right of another to
+      control it that the actor may justly be required to pay the full value
+      of the chattel. Money is subject to conversion in PA when the funds
+      are specifically identifiable. Refusal to return on demand satisfies
+      the dominion element.
+    triggering_actions:
+      - withheld_money
+      - took_money
+      - retained_property_after_demand
+      - refused_to_return
+      - wrongful_possession
+    burden_flip_questions:
+      - "Produce all records identifying the source, date, and amount of every payment received from the plaintiff."
+      - "Produce the policy or authority justifying retention of the funds after demand for return."
+      - "Identify all steps taken to comply with plaintiff's demand for return."
+    evidence_demanded:
+      - payment receipt records
+      - communications evidencing demand for return
+      - retention authorization documents
+      - account ledgers
+    violation_remedy:
+      - Damages at fair market value at time of conversion
+      - Punitive damages if malicious
+      - Pre-judgment interest
+
+  # ═══════════════ EQUITY — UNJUST ENRICHMENT (common law) ═══════════════
+
+  - id: cmn_eq_001
+    name: Duty Not to Retain Benefit Without Justification
+    class: common_law
+    source: Restatement-3d-Restitution-1
+    source_title: Restatement (Third) of Restitution and Unjust Enrichment § 1
+    jurisdiction: pa
+    applies_to_domains:
+      - equity
+      - quasi_contract
+      - contract
+      - property
+    description: >
+      A person who is unjustly enriched at the expense of another is
+      subject to liability in restitution. PA recognizes the doctrine
+      where (1) plaintiff conferred a benefit, (2) defendant appreciated
+      the benefit, and (3) acceptance and retention without payment
+      would be inequitable.
+    triggering_actions:
+      - retained_money
+      - kept_payment
+      - benefit_retained
+      - no_consideration
+    burden_flip_questions:
+      - "Produce the consideration provided by defendant for the benefit retained."
+      - "Identify the contractual or legal basis authorizing retention."
+      - "Produce all communications discussing return of the benefit."
+    evidence_demanded:
+      - payment records
+      - documentation of consideration provided in exchange
+      - retention authorization
+    violation_remedy:
+      - Restitution of value retained
+      - Disgorgement of profits
+      - Constructive trust
+
+  # ═══════════════ STATUTORY — UTPCPL (PA Consumer Protection) ═══════════════
+
+  - id: cmn_stat_001
+    name: PA UTPCPL Prohibition on Deceptive Conduct
+    class: statutory
+    source: 73-PS-201-2
+    source_title: PA Unfair Trade Practices and Consumer Protection Law § 201-2
+    jurisdiction: pa
+    applies_to_domains:
+      - consumer_protection
+      - statutory
+      - consumer_finance
+      - insurance
+      - real_property
+    description: >
+      PA UTPCPL prohibits "unfair methods of competition and unfair or
+      deceptive acts or practices in the conduct of any trade or commerce."
+      Catchall provision (§ 201-2(4)(xxi)) reaches any fraudulent or
+      deceptive conduct that creates a likelihood of confusion or
+      misunderstanding.
+    triggering_actions:
+      - deceptive_practice
+      - misleading_consumer
+      - fraudulent_conduct
+      - consumer_harm
+      - unfair_business_practice
+    burden_flip_questions:
+      - "Produce all communications with the consumer regarding the disputed conduct."
+      - "Produce internal policies governing consumer-facing representations of this type."
+      - "Identify all consumer complaints received concerning similar conduct in the past five years."
+    evidence_demanded:
+      - consumer-facing communications
+      - internal policies on representations
+      - prior consumer complaint records
+      - training materials on UTPCPL compliance
+    violation_remedy:
+      - Actual damages OR $100 minimum per violation
+      - Treble damages at court discretion
+      - Attorney fees
+      - Equitable relief
+    regulator: PA_attorney_general
+
+  # ═══════════════ STATUTORY — FCRA (federal, applies to all furnishers/CRAs) ═══
+
+  - id: cmn_stat_002
+    name: FCRA Duty of Accuracy and Reinvestigation
+    class: statutory
+    source: 15-USC-1681i
+    source_title: Fair Credit Reporting Act § 611
+    jurisdiction: federal
+    applies_to_domains:
+      - consumer_finance
+      - statutory
+    description: >
+      Consumer reporting agencies must conduct reasonable reinvestigation
+      of disputed information within 30 days. Furnishers must investigate
+      disputes forwarded by CRAs (15 USC 1681s-2(b)). Both willful
+      (1681n) and negligent (1681o) noncompliance are actionable.
+    triggering_actions:
+      - failed_to_investigate
+      - inaccurate_consumer_report
+      - failed_reasonable_reinvestigation
+      - willful_noncompliance
+      - negligent_noncompliance
+    burden_flip_questions:
+      - "Produce the complete reinvestigation file for each dispute."
+      - "Produce all communications with the furnisher regarding the dispute."
+      - "Identify by name and title every employee involved in the reinvestigation."
+    evidence_demanded:
+      - reinvestigation files
+      - dispute records
+      - communications with furnishers
+      - reinvestigation procedures manual
+    violation_remedy:
+      - Actual damages (1681o)
+      - Statutory damages $100-$1000 (1681n)
+      - Punitive damages for willful (1681n)
+      - Attorney fees and costs
+    regulator: CFPB
+
+  # ═══════════════ REAL PROPERTY — QUIET TITLE / CHAIN OF TITLE ═══════════════
+
+  - id: cmn_prop_001
+    name: Duty to Maintain Valid Chain of Title
+    class: common_law
+    source: PA-Quiet-Title-Doctrine
+    source_title: PA Common Law Quiet Title and Chain of Title
+    jurisdiction: pa
+    applies_to_domains:
+      - real_property
+      - equity
+    description: >
+      Party asserting interest in real property must produce unbroken chain
+      of title from a recognized source of title. Defective assignments,
+      missing endorsements, and improperly executed conveyances defeat
+      standing to enforce. Quiet title actions resolve adverse claims.
+    triggering_actions:
+      - broken_chain_of_title
+      - mers_assignment_defect
+      - lost_note
+      - no_standing_to_foreclose
+      - robosigning
+    burden_flip_questions:
+      - "Produce the complete chain of title from origination through current holder."
+      - "Produce the original wet-ink note and all assignments."
+      - "Identify each entity that held the note and the dates of transfer."
+    evidence_demanded:
+      - original note
+      - complete assignment chain
+      - recorded mortgage documents
+      - allonges and endorsements
+      - MERS milestone records
+    violation_remedy:
+      - Quiet title decree
+      - Cancellation of recorded instruments
+      - Damages for slander of title
+
+  # ═══════════════ PROCEDURAL — TOLLING / FRAUDULENT CONCEALMENT ═══════════════
+
+  - id: cmn_proc_001
+    name: Doctrine of Fraudulent Concealment Tolling
+    class: common_law
+    source: PA-Fraudulent-Concealment-Doctrine
+    source_title: PA Common Law Fraudulent Concealment Tolling
+    jurisdiction: pa
+    applies_to_domains:
+      - procedural
+      - equity
+    description: >
+      Statute of limitations is tolled where defendant by acts of
+      concealment causes plaintiff to relax vigilance or deviate from
+      right of inquiry. PA applies discovery rule plus fraudulent
+      concealment tolling independently.
+    triggering_actions:
+      - active_concealment
+      - misrepresentation_about_facts
+      - failure_to_disclose_when_duty_to_disclose
+    burden_flip_questions:
+      - "Produce all communications discussing disclosure obligations regarding the underlying facts."
+      - "Identify all actions taken or omitted that affected plaintiff's ability to discover the claim."
+      - "Produce internal counsel opinions on duty to disclose."
+    evidence_demanded:
+      - communications evidencing concealment
+      - internal disclosure policies
+      - records of concealment actions
+    violation_remedy:
+      - Tolling of statute of limitations
+      - Estoppel against limitations defense
+
+  # ═══════════════ REGULATORY — CROSS-CUTTING ═══════════════
+
+  - id: cmn_reg_001
+    name: Compliance With Applicable Regulatory Framework
+    class: regulatory
+    source: Regulatory-Compliance-Cross-Cutting
+    source_title: Cross-cutting regulatory compliance duty
+    jurisdiction: federal_and_state
+    applies_to_domains:
+      - regulatory
+      - cross_cutting
+      - consumer_finance
+      - insurance
+      - real_property
+      - consumer_protection
+    description: >
+      Regulated entities owe duty of compliance with applicable statutes,
+      regulations, and supervisory guidance. Non-compliance is admissible
+      as evidence of breach of standard of care and triggers regulator
+      complaint vehicles (CFPB, FTC, PA AG, PA Insurance Department, OCC).
+    triggering_actions:
+      - regulatory_violation
+      - failure_to_follow_supervisory_guidance
+      - non_compliance_with_applicable_rule
+    burden_flip_questions:
+      - "Produce the compliance program documentation applicable to the conduct at issue."
+      - "Produce all internal audit findings related to the type of conduct alleged."
+      - "Identify all regulatory examinations covering the conduct period."
+    evidence_demanded:
+      - compliance program documents
+      - internal audit findings
+      - regulatory examination reports
+      - corrective action plans
+    violation_remedy:
+      - Evidence of breach of standard of care
+      - Basis for regulator complaint
+    regulator: applicable_supervisory_agency

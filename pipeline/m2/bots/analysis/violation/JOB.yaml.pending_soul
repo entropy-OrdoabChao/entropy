@@ -1,0 +1,30 @@
+name: violation
+group: analysis
+unit: claim            # claim | term | cite | count | document | case | draft
+axis: "Axis 4b — VIOLATION ROW: the mandatory rule (its own shall/must words) set against what the record shows was done instead. Two sentences, no explanation. This is the row every concise filing (appeal screening paper, objection, violation list) prints; m1 renders it, it does not rewrite it."
+lane: 3090              # production lane only (M2_LANE); B70 joins after 3090-alone is proven
+families:
+  - frcp
+  - frap
+  - ca3_lar
+  - usc_15_
+  - stat_
+  - usreports
+  - amjur_federal
+  - amjur_dismissal
+  - amjur_clerks
+  - amjur_courts
+  - pa_rcp
+  - pa_rap
+queries:
+  - "{claim} shall must"
+  - "{claim} mandatory duty no discretion"
+  - "the clerk must enter the default"
+  - "is filed by delivering it to the clerk"
+  - "all defendants who have been properly joined and served must join in or consent"
+  - "must permit a curative amendment unless futile"
+  - "summary judgment should not be granted until reasonable opportunity to complete discovery"
+  - "designation of the final judgment is sufficient to bring up for review all interlocutory orders"
+cite_rule: enacted text over codification; the binding court's own words over a treatise; a treatise (Am Jur) is cited only for a rule no enacted text or binding case in the excerpts states
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

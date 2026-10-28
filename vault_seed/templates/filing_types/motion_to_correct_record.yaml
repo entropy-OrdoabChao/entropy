@@ -1,0 +1,44 @@
+id: motion_to_correct_record
+title: Motion to Correct the Record Under FRAP 10(e)
+description: 'Motion under Fed. R. App. P. 10(e) to correct the record on appeal
+  when a material omission or discrepancy exists — e.g., the Clerk failed to reflect
+  that the appellant filed a brief, appendix, or other document that was actually
+  delivered. Grounded in the court''s inherent authority to maintain an accurate
+  record and FRAP 10(e)''s mandate that the record be corrected when it does not
+  reflect what actually occurred.
+
+  This is the FIRST step in the appellate-reinstatement sequence: correct the record
+  to show what was actually filed, then file the motion to reinstate with the corrected
+  record as the factual predicate.
+
+  Key provisions:
+  - FRAP 10(e): "On appeal the record should be corrected if there is any difference
+    between what actually occurred and what the reporter''s transcription shows."
+  - FRAP 10(e)(2): The parties must settle any difference; if they cannot agree,
+    the district court resolves it.
+  - Pro se litigants get liberal construction of their filings (Haines v. Kerner, 404 U.S. 519).
+  - The court has inherent authority to correct clerical errors in the record.
+  '
+court: federal_appellate
+required_authorities:
+- Fed. R. App. P. 10(e) — Correction of the Record on Appeal
+- Fed. R. App. P. 10(a) — The Record on Appeal
+- Fed. R. App. P. 11 — Power of the Court
+- Haines v. Kerner, 404 U.S. 519 (1972) — Pro se liberal construction
+- 28 U.S.C. § 2077 — Inherent authority of appellate courts
+- Poulis v. State Farm Fire & Cas. Co., 747 F.2d 863 (3d Cir. 1984) — Clerk's duty
+trigger_defects:
+- dismissal
+- FATAL/PROCEDURAL
+- clerk_record_omission
+- material_omission
+- FATAL/JURISDICTION
+structure:
+- block: boilerplate/caption_appellate_3rd_cir
+- block: sections/introduction
+- block: sections/procedural_history
+- block: arguments/statement_of_facts
+- block: arguments/reinstatement_grounds
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

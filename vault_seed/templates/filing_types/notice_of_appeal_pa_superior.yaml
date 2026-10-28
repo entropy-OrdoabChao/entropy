@@ -1,0 +1,76 @@
+id: notice_of_appeal_pa_superior
+title: Notice of Appeal to Pennsylvania Superior Court
+description: >
+  Notice of Appeal filed in PA state court to initiate an appeal to the Pennsylvania Superior Court.
+  This is the FIRST document in the PA appellate process — it is NOT a brief. It starts the appeal clock.
+  
+  Key deadlines:
+  - Pa.R.A.P. 903: Notice of appeal must be filed within 30 days of the order being appealed
+  - Pa.R.A.P. 901: The notice must identify the judgment or order from which the appeal is taken
+  - Pa.R.A.P. 2701(b)(1): If the court fails to act on a pending motion, the appeal clock starts
+    from the date of the motion's assignment (failure to act provision)
+  - Extension for excusable neglect: Pa.R.A.P. 903 allows the trial court to extend the time
+    for excusable neglect, but this is discretionary, not guaranteed
+  
+  This filing-type uses the PA Superior Court caption format. The notice must identify:
+  - The trial court (Court of Common Pleas of Philadelphia County)
+  - The docket/control number of the order being appealed
+  - The parties to the appeal
+  - The specific order or judgment from which the appeal is taken
+  
+  After filing the notice of appeal, the appellant must file a principal brief under
+  Pa.R.A.P. 2111-2135 within the time limits set by the Superior Court.
+
+court: PA_SUPERIOR
+required_authorities:
+  - citation: "Pa.R.A.P. 901"
+    proposition: "Notice of appeal — must identify the judgment or order from which the appeal is taken, the court to which the appeal is taken, and the party filing the appeal."
+  - citation: "Pa.R.A.P. 903"
+    proposition: "Time for appeal — notice of appeal must be filed within 30 days of the order being appealed, unless extended for excusable neglect."
+  - citation: "Pa.R.A.P. 2701(b)(1)"
+    proposition: "Failure to act — when a court fails to act on a matter pending before it, the court is deemed to have acted against the party, and the appeal clock starts from the date of the matter's assignment."
+  - citation: "Pa.R.A.P. 2111"
+    proposition: "Advancement and briefing — governs the filing of principal briefs on appeal."
+  - citation: "Pa.R.A.P. 2135"
+    proposition: "Briefs — brief is limited to 14,000 words. Requires Certificate of Compliance if longer than 30 pages or by word count regardless of pages."
+
+trigger_defects:
+  - final_judgment_entered
+  - dismissal_with_prejudice
+  - adverse_final_order
+  - FATAL/PROCEDURAL
+  - FATAL/JURISDICTION
+  - FATAL/APPEAL
+  - FATAL/OPERATIVE_TEXT
+  - SERIOUS/OPERATIVE_TEXT
+  - FATAL/NO_WORD_ADDED_OR_SUBTRACTED
+  - SERIOUS/NO_WORD_ADDED_OR_SUBTRACTED
+  - judge_inaction
+  - failure_to_act
+  - Pa_RAP_2701_b_1
+
+structure:
+  - type: caption
+    block: boilerplate/caption_pa_superior
+  - type: section
+    block: sections/introduction
+    content: "State the nature of the appeal, the order being appealed, and the court to which the appeal is taken."
+  - type: section
+    block: sections/procedural_history
+    content: "Trace the procedural history leading to the order being appealed, including the entry of judgment, any pending motions, and the order from which the appeal is taken."
+  - type: section
+    block: appellate/statement_of_issues
+    content: "Identify the specific order or judgment from which the appeal is taken and the legal basis for the appeal."
+  - type: section
+    block: appellate/jurisdictional_statement
+    content: "Establish the Superior Court's jurisdiction under Pa.R.A.P. 2711 and the relevant appellate statutes."
+  - type: section
+    block: sections/conclusion
+    content: "Request that the Superior Court accept the notice of appeal and grant such relief as the court deems just."
+  - type: section
+    block: sections/prayer_for_relief
+    content: "Prayer for: (1) acceptance of the notice of appeal; (2) reversal or modification of the order being appealed; (3) such other relief as the court deems just."
+  - type: boilerplate
+    block: boilerplate/certificate_of_service
+  - type: boilerplate
+    block: boilerplate/proposed_order

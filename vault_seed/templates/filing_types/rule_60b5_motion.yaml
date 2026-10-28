@@ -1,0 +1,69 @@
+id: rule_60b5_motion
+title: Motion for Relief from Judgment Under FRCP 60(b)(5)
+description: |
+  Motion for relief from a final judgment under the FRCP 60(b)(5) provision
+  for "any other reason that justifies relief" — specifically, where conditions
+  have changed since the judgment was entered.
+
+  Unlike the other subdivisions, (b)(5) has NO ONE-YEAR LIMIT — it may be
+  filed at any time after the judgment. See FRCP 60(c)(1) (one-year limit
+  applies only to (b)(1)-(3) and (b)(6)).
+
+  The standard is STRICT: the movant must show that "the judgment is no longer
+  equitable" because conditions have changed. The Third Circuit has held that
+  (b)(5) is for circumstances where "conditions have changed such that the
+  judgment is no longer equitable."
+
+  Examples of grounds that have qualified under (b)(5):
+  - Change in law that was controlling at time of judgment
+  - Change in circumstances that makes the judgment inequitable
+  - New evidence that was unavailable at time of judgment
+  - The judgment has become a source of ongoing injustice
+
+  This is NOT a substitute for (b)(4) — if the judgment is void, use (b)(4)
+  which has no time limit. (b)(5) is for circumstances where the judgment
+  was valid when entered but has become inequitable due to changed conditions.
+
+court: any
+
+required_authorities:
+  - FRCP 60(b)(5) — Relief for changed conditions; no time limit
+  - FRCP 60(c)(1) — Time limits for (b)(1)-(3) and (b)(6) only; (b)(5) is unlimited
+  - United States v. Beggerly, 524 U.S. 38 (1998) — (b)(5) has no time limit
+  - Budinich v. Becton Dickinson & Co., 486 U.S. 196 (1988) — Changed conditions standard
+  - Fed. R. Evid. 201(b)(2) — Judicial notice of changed conditions
+
+trigger_defects:
+  - SERIOUS/VOID_JUDGMENT
+  - SERIOUS/CONSTRUCTION
+  - judgment_contradicts_docket
+  - FATAL/JURISDICTION
+  - void_order
+  - FRCP_60B_eligible
+  - service_finding_contradicted_by_docket
+  - clerical_error_manifest_injustice
+  - incomplete_docket_record
+
+required_facts:
+  - case_id
+  - caption
+  - judgment_date
+  - changed_conditions_description — specific description of what conditions have changed
+  - why_judgment_no_longer_equitable — explain why the judgment is no longer equitable
+  - why_other_subdivisions_inadequate — explain why (b)(1)-(4) and (b)(6) do not apply
+  - one_year_clock_expired — boolean, whether the one-year clock has expired
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/60b6_extraordinary_circumstances
+    when: changed_conditions_description is not null
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

@@ -1,0 +1,30 @@
+id: appellate_reply_brief
+title: Appellant's Reply Brief
+description: 'Reply brief filed in the Third Circuit responding to appellee''s
+
+  answering brief.
+
+  '
+court: federal_appellate
+required_authorities:
+- Fed. R. App. P. 28(c) (reply briefs)
+- 3d Cir. L.A.R. 28.1 (brief requirements)
+- Haines v. Kerner, 404 U.S. 519 (1972)
+trigger_defects:
+- SERIOUS/AUTHORITY
+- FATAL/AUTHORITY
+- FATAL/JURISDICTION
+- dismissal
+structure:
+- block: boilerplate/caption_appellate_3rd_cir
+- block: sections/introduction
+- block: sections/factual_statement_federal
+- block: arguments/non_binding_authority
+  when: defect_categories.AUTHORITY > 0
+- block: arguments/jurisdiction_attack
+  when: defect_categories.JURISDICTION > 0
+- block: arguments/procedural_defect
+  when: defect_categories.PROCEDURAL > 0
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

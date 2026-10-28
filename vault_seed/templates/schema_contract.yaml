@@ -1,0 +1,1072 @@
+# schema_contract.yaml
+# =============================================================================
+# RULEBOOK for what each block ID in obsidian_sync/templates/filing_types/*.yaml
+# and obsidian_sync/templates/blocks/**/*.md must produce.
+#
+# This file does NOT replace filing_type YAMLs. They are the RECIPES (which
+# blocks to use, in what order, under what conditions). This file is the
+# CONTRACT (what a valid block render looks like + court-level format rules).
+#
+# Render-time loop:
+#   1. motion_drafter_v2 picks filing_type via decision chain
+#   2. Loads obsidian_sync/templates/filing_types/<id>.yaml (the recipe)
+#   3. For each block in structure[]:
+#        a. Evaluates `when` predicate against case state
+#        b. Loads block .md, hydrates placeholders, runs LLM where needed
+#        c. Looks up block_contracts[<block_id>] HERE
+#        d. Runs every validator listed in that contract
+#        e. Soft-warn: writes gap to schema_gaps.jsonl, marks inline as
+#           [SCHEMA GAP: <block_id> — <validator> — <reason>]
+#   4. Renders to docx with md_to_docx.render_md_to_docx
+#   5. Closed feedback: if same (block_id, validator, gap_pattern) hits 3+
+#      times across otherwise-clean drafts, writes a yaml_update_proposal
+#
+# This file is updated when a clean draft surfaces a gap, OR when a new
+# block .md is added to obsidian_sync/templates/blocks/. The decision chain
+# never sees this file directly; it consumes it via motion_drafter_v2's
+# validator.
+# =============================================================================
+
+version: 3
+schema_id: motion_block_contract_v1
+last_updated: 2026-06-09
+last_updated_reason: |
+  v3 (2026-06-09): closed-feedback iteration #2 from first real-LLM test:
+    - no_duplicate_block_renders: catches v2 dual-path bug where LLM-grounded
+      + block-template both emit, concatenating two complete documents
+    - motion_title_matches_filing_type: catches "Notice of Supplemental
+      Authority" filings titled "Motion to Strike"
+    - consistent_docket_cite_form: catches mixed 'ECF No. 141' + 'Dkt 141'
+      within one document
+    - no_cross_jurisdiction_authority: catches Pa.R.C.P. cited in federal
+      filing (or Fed.R.Civ.P. cited in PA filing)
+    - truncation_check: catches drafts ending mid-table / mid-sentence
+  v2 (2026-06-09): closed-feedback iteration #1 from baseline sweep:
+    - ends_with_general_relief: relaxed regex to accept all three catchall
+      variants ("such other and further relief" | "such further relief" |
+      "such other relief") since the block source uses "such further relief"
+    - no_filename_leak.cross_court_forbidden: tightened all entries to
+      require digit suffix (e.g., "R.R. 123a" not bare "R.R."), eliminating
+      false positives from random abbreviations in case-name citations.
+  v1 (2026-06-09): initial scaffold from existing filing_type + block .md
+      conventions.
+
+# =============================================================================
+# COURT RULES — enforceable per-court format/limit data.
+# Validator looks up rules by (court_id, brief_type). Numbers from
+# hermes_drafting_rules.md §V; re-verify before relying for high-stakes
+# filings (3d Cir rehearing limit specifically — published vs IOP can differ).
+# =============================================================================
+court_rules:
+
+  EDPA:
+    name: U.S. District Court for the Eastern District of Pennsylvania
+    tier: federal_trial
+    font: Times New Roman 12pt
+    line_spacing: 1.5
+    margins_inches: 1.0
+    word_limit_default: null              # no trial-level word limit
+    page_limit_default: 25                # L.R. 7.1
+    page_limit_reply: 15
+    coc_required: false
+    cover_color: null
+    procedural_rules:
+      reconsider_window_days: 14          # L.R. 7.1(g)
+      judicial_notice_rule: Fed. R. Evid. 201(b)(2)
+    page_number_location: footer
+    # Acceptable docket-cite forms in this court. Any record citation
+    # MUST match one of these patterns. Filenames forbidden.
+    record_cite_forms:
+      - "ECF No\\. \\d+"                  # primary: "ECF No. 141"
+      - "Dkt\\. \\d+"                     # alt: "Dkt. 141"
+      - "Doc\\. \\d+"
+      - "Exhibit [A-Z0-9]+"
+      - "Ex\\. [A-Z0-9]+"
+      - "Order dated [A-Z][a-z]+ \\d{1,2},? \\d{4}"
+    record_cite_forbidden:
+      - "[A-Za-z0-9_-]+\\.(pdf|docx|doc|md|txt)"   # NEVER filenames
+      - "Filed in [^\\s]+ on "
+
+  3D_CIR:
+    name: U.S. Court of Appeals for the Third Circuit
+    tier: federal_appellate
+    font: Times New Roman 14pt
+    line_spacing: 2.0
+    margins_inches: 1.0
+    word_limits:
+      principal: 13000                    # FRAP 32(a)(7)(B), reduced 12/1/2016
+      reply: 6500
+      rehearing_panel: 3900               # FRAP 40 panel rehearing
+      rehearing_en_banc: 3900             # FRAP 35(b)(2)(A)
+      cross_appeal_appellee_principal: 15300
+    page_safe_harbor:
+      principal: 30
+      reply: 15
+      cross_appeal: 35
+    coc_required: true                    # FRAP 32(g)
+    cover_color:
+      appellant_principal: blue
+      appellee: red
+      appellant_reply: gray
+    local_authorities:
+      iop_5_7: not-precedential opinions are NOT binding under 3d Cir. I.O.P. 5.7
+      lar_28_1_a_2: Statement of Related Cases required (3d Cir. L.A.R. 28.1(a)(2))
+      lar_28_3: binding hierarchy (3d Cir. L.A.R. 28.3)
+    record_cite_forms:
+      - "Doc\\. \\d+"                     # 3d Cir CM/ECF doc number
+      - "ECF No\\. \\d+"
+      - "Dkt\\. \\d+"
+      - "J\\.A\\. \\d+"                   # joint appendix page
+      - "App\\. \\d+"                     # appendix
+      - "Pet\\. App\\. [a-z0-9]+"
+      - "Order dated [A-Z][a-z]+ \\d{1,2},? \\d{4}"
+      - "Order entered [A-Z][a-z]+ \\d{1,2},? \\d{4}"
+      - "Exhibit [A-Z0-9]+"
+      - "Ex\\. [A-Z0-9]+"
+    record_cite_forbidden:
+      - "[A-Za-z0-9_-]+\\.(pdf|docx|doc|md|txt)"
+      - "Filed in [^\\s]+ on "
+
+  SCOTUS:
+    name: Supreme Court of the United States
+    tier: federal_supreme
+    font: Century Schoolbook 12pt
+    line_spacing: 2.0
+    margins_inches: 1.0
+    pro_se_format: Rule 33.2 letter (8.5x11)   # NOT booklet
+    page_limits:
+      cert_petition: 40                   # Rule 33.2(b)
+      reply: 15
+      supplemental: 15
+      rehearing: 15
+    word_limits:
+      cert_petition_booklet: 9000         # Rule 33.1 booklet path (impractical pro se)
+    cover_color: white                    # Rule 33.1(g)(i)
+    ifp_copies: 11                        # original + 10 (Rule 39)
+    required_sections_rule_14_1:
+      - questions_presented
+      - parties_to_proceeding
+      - opinions_below
+      - statement_of_jurisdiction
+      - statutes_involved
+      - statement_of_the_case
+      - reasons_for_granting_petition
+      - conclusion
+      - appendix
+    record_cite_forms:
+      - "Pet\\. App\\. [a-z0-9]+"         # petition appendix: "Pet. App. 1a"
+      - "J\\.A\\. \\d+"                   # joint appendix
+      - "App\\. \\d+"
+      - "Op\\. at \\d+"                   # cited opinion page
+      - "Slip op\\. at \\d+"
+      - "Order dated [A-Z][a-z]+ \\d{1,2},? \\d{4}"
+      - "Exhibit [A-Z0-9]+"
+    record_cite_forbidden:
+      - "[A-Za-z0-9_-]+\\.(pdf|docx|doc|md|txt)"
+      - "Filed in [^\\s]+ on "
+
+  PA_SUPER:
+    name: Pennsylvania Superior Court
+    tier: state_appellate
+    font: Times New Roman 14pt
+    line_spacing: 2.0
+    margins_inches: 1.0
+    word_limits:
+      principal: 14000                    # Pa.R.A.P. 2135(a)(1)
+      reply: 7000
+      cross_appeal: 16500
+      capital_direct_principal: 17500
+      capital_direct_reply: 8500
+      capital_pcra_principal: 22500
+      capital_pcra_reply: 11250
+    page_safe_harbor:
+      principal: 30
+      reply: 15
+      cross_appeal: 35
+    coc_required: true                    # Pa.R.A.P. 2135
+    required_sections_pa_rap_2111:
+      - statement_of_jurisdiction
+      - order_in_question
+      - scope_standard_of_review
+      - statement_of_questions
+      - statement_of_the_case
+      - summary_of_argument
+      - argument
+      - conclusion
+    record_cite_forms:
+      - "R\\.R\\. \\d+a?"                 # reproduced record: "R.R. 123a"
+      - "R\\.R\\. at \\d+a?"
+      - "N\\.T\\. \\d+"                   # notes of testimony page
+      - "N\\.T\\.,? [A-Z][a-z]+ \\d{1,2},? \\d{4},? at \\d+"
+      - "Op\\. at \\d+"
+      - "Slip op\\. at \\d+"
+      - "Order dated [A-Z][a-z]+ \\d{1,2},? \\d{4}"
+      - "Order entered [A-Z][a-z]+ \\d{1,2},? \\d{4}"
+      - "Exhibit [A-Z0-9]+"
+      - "Ex\\. [A-Z0-9]+"
+    record_cite_forbidden:
+      - "[A-Za-z0-9_-]+\\.(pdf|docx|doc|md|txt)"
+      - "Filed in [^\\s]+ on "
+
+  PA_COMMWLTH:
+    name: Pennsylvania Commonwealth Court
+    tier: state_appellate
+    inherits_from: PA_SUPER               # same rules
+
+  PA_SUPREME:
+    name: Pennsylvania Supreme Court
+    tier: state_supreme
+    inherits_from: PA_SUPER
+
+  PA_CP_PHILA:
+    name: Philadelphia Court of Common Pleas (Civil Trial Division)
+    tier: state_trial
+    font: Times New Roman 12pt
+    line_spacing: 2.0
+    margins_inches: 1.0
+    page_limit_default: null              # no formal trial-level limit
+    coc_required: false
+    procedural_rules:
+      verification_required: true         # Pa.R.C.P. 1024 for pleadings
+      service_after_original: Pa.R.C.P. 440
+      service_by_mail: Pa.R.C.P. 403
+    record_cite_forms:
+      # PA CCP primary docket form is the Control Number assigned by the
+      # Office of Judicial Records. Court orders are cited by date.
+      - "Control No\\. \\d{8,12}"         # "Control No. 25080123"
+      - "Cont\\. No\\. \\d{8,12}"
+      - "Dkt\\. Entry No\\. \\d+"
+      - "Dkt\\. No\\. \\d+"
+      - "Order dated [A-Z][a-z]+ \\d{1,2},? \\d{4}"
+      - "Order entered [A-Z][a-z]+ \\d{1,2},? \\d{4}"
+      - "Court Order dated [A-Z][a-z]+ \\d{1,2},? \\d{4}"
+      - "Praecipe filed [A-Z][a-z]+ \\d{1,2},? \\d{4}"
+      - "Complaint filed [A-Z][a-z]+ \\d{1,2},? \\d{4}"
+      - "Exhibit [A-Z0-9]+"
+      - "Ex\\. [A-Z0-9]+"
+    record_cite_forbidden:
+      - "[A-Za-z0-9_-]+\\.(pdf|docx|doc|md|txt)"
+      - "Filed in [^\\s]+ on "
+      - "ECF No\\."                       # ECF is federal; PA CCP must NOT use it
+
+# =============================================================================
+# JUDGE NAME REGISTRY — for the no_hardcoded_judge validator.
+# Any of these surnames appearing as LITERAL TEXT in a block .md source,
+# OR appearing in a rendered draft when judge_name (case state) does NOT
+# resolve to it, is a hard validator fail.
+# Add new judges here as cases are filed.
+# =============================================================================
+known_judges:
+  - surname: "{{JUDGE}}"
+    full: "{{JUDGE}}"
+    courts: [EDPA]
+    cases_known: ["{{CASE_ID}}", "{{CASE_ID}}", "{{CASE_ID}}"]
+  - surname: Hall
+    full: "{{JUDGE}}"
+    courts: [PA_CP_PHILA]
+    cases_known: ["{{CASE_ID}}"]
+  - surname: Bibas
+    full: Stephanos Bibas
+    courts: [3D_CIR]
+  - surname: Krause
+    full: Cheryl Ann Krause
+    courts: [3D_CIR]
+  - surname: Restrepo
+    full: Luis Felipe Restrepo
+    courts: [3D_CIR]
+  # When adding new cases, append the assigned judge here. The validator
+  # uses this list to detect cross-case judge-name leakage (e.g., a draft
+  # for the phila_ccp case accidentally rendering "{{JUDGE}}, J.").
+
+# =============================================================================
+# BLOCK CONTRACTS — keyed by block_id used in filing_type YAMLs.
+# Each contract:
+#   description       human-readable
+#   block_path        relative path under obsidian_sync/templates/blocks/
+#   required_facts    placeholders the block .md declares (must resolve)
+#   forbidden_hardcode  values that MUST come from case state, not literals
+#   output_constraints  format/structure rules the rendered block must satisfy
+#   validators        list of validator IDs run against the rendered block
+#   notes             engineering rationale, source of any backlog fix
+# =============================================================================
+block_contracts:
+
+  # === CAPTIONS =============================================================
+
+  boilerplate/caption_federal:
+    description: District-court caption (EDPA) with two-column pleading layout
+    block_path: boilerplate/caption_federal.md
+    required_facts: [caption, case_id, judge_name, defendant_list]
+    forbidden_hardcode: [judge_name, defendant_list]
+    output_constraints:
+      defendant_listing: mixed_case
+      include_all_defendants: true        # patch landed: no status filter
+      judge_line_format: "Judge {{judge_name}}"
+    validators:
+      - non_empty
+      - mixed_case_defendants
+      - all_defendants_listed
+      - no_hardcoded_judge
+      - all_placeholders_resolved
+    notes: |
+      Backlog 2026-05-26 #1 + #4 (ALL CAPS + hardcoded "{{JUDGE}}"). Patch
+      landed this session: _build_caption_table renders all defendants
+      regardless of status. Mixed Case enforcement enforced here.
+
+  boilerplate/caption_state_pa_ccp:
+    description: PA Court of Common Pleas (Philadelphia) caption
+    block_path: boilerplate/caption_state_pa_ccp.md
+    required_facts: [caption, case_id, judge_name, defendant_list]
+    forbidden_hardcode: [judge_name, defendant_list]
+    output_constraints:
+      defendant_listing: mixed_case
+      include_all_defendants: true
+      court_header: |
+        IN THE COURT OF COMMON PLEAS
+        OF PHILADELPHIA COUNTY, PENNSYLVANIA
+        CIVIL TRIAL DIVISION
+    validators:
+      - non_empty
+      - mixed_case_defendants
+      - all_defendants_listed
+      - no_hardcoded_judge
+      - all_placeholders_resolved
+
+  boilerplate/caption_appellate_3rd_cir:
+    description: Third Circuit appellate caption
+    block_path: boilerplate/caption_appellate_3rd_cir.md
+    required_facts:
+      - case_id
+      - caption
+      - registry.appellate_docket
+      - registry.docket_aliases.0
+    forbidden_hardcode: [judge_name]
+    output_constraints:
+      defendant_listing: mixed_case
+      include_district_court_below: true
+      court_header: |
+        IN THE UNITED STATES COURT OF APPEALS
+        FOR THE THIRD CIRCUIT
+    validators:
+      - non_empty
+      - mixed_case_defendants
+      - no_hardcoded_judge
+      - all_placeholders_resolved
+
+  boilerplate/caption_scotus:
+    description: Supreme Court caption (pro se Rule 33.2 letter format)
+    block_path: boilerplate/caption_scotus.md
+    required_facts: [case_id, caption, scotus_docket, lower_court]
+    output_constraints:
+      defendant_listing: mixed_case
+      court_header: |
+        IN THE
+        SUPREME COURT OF THE UNITED STATES
+    validators:
+      - non_empty
+      - mixed_case_defendants
+      - all_placeholders_resolved
+
+  boilerplate/caption_pa_superior:
+    description: PA Superior Court appellate caption
+    block_path: boilerplate/caption_pa_superior.md
+    required_facts: [case_id, caption, registry.pa_super_docket]
+    output_constraints:
+      defendant_listing: mixed_case
+    validators: [non_empty, mixed_case_defendants, all_placeholders_resolved]
+
+  boilerplate/caption_pa_commwlth:
+    description: PA Commonwealth Court appellate caption
+    block_path: boilerplate/caption_pa_commwlth.md
+    required_facts: [case_id, caption, registry.pa_commwlth_docket]
+    output_constraints:
+      defendant_listing: mixed_case
+    validators: [non_empty, mixed_case_defendants, all_placeholders_resolved]
+
+  boilerplate/caption_pa_supreme:
+    description: PA Supreme Court caption
+    block_path: boilerplate/caption_pa_supreme.md
+    required_facts: [case_id, caption, registry.pa_supreme_docket]
+    output_constraints:
+      defendant_listing: mixed_case
+    validators: [non_empty, mixed_case_defendants, all_placeholders_resolved]
+
+  # === COMMON SECTIONS ======================================================
+
+  sections/introduction:
+    description: Single-paragraph prose introduction
+    block_path: sections/introduction.md
+    required_facts: [case_id, caption, defect_total, fatal_count]
+    output_constraints:
+      header: "## I. INTRODUCTION"
+      paragraph_form: single_prose        # one continuous paragraph
+      pro_se_italic: true                 # "*pro se*" not "pro se"
+    validators:
+      - non_empty
+      - single_paragraph_prose
+      - no_numbered_enumeration
+      - no_reasoning_leak
+      - all_placeholders_resolved
+    notes: |
+      Patch landed this session: _section_prompt(introduction) forbids
+      numbered/bulleted output. Must be 3-6 sentences of continuous prose.
+
+  sections/factual_statement_federal:
+    description: Numbered factual statement for federal cases (deterministic block — pure substitution, no LLM)
+    block_path: sections/factual_statement_federal.md
+    mode: deterministic                   # block .md declares mode: deterministic
+    required_facts: [case_id, caption, defendants_rendered, procedural_summary, registry.docket_aliases.0, judge.name]
+    output_constraints:
+      header: "## FACTUAL STATEMENT"
+      sub_headers: ["### Parties", "### Procedural Posture", "### Relief Sought"]
+      paragraph_form: prose_under_subheaders
+      record_cite_required_per_paragraph: false   # deterministic; no fact-by-fact cites in this short form
+    validators:
+      - non_empty
+      - all_placeholders_resolved
+      - no_hardcoded_judge
+      # NOTE: no_reasoning_leak / no_filename_leak NOT applied — this is
+      # pure substitution, no LLM in the loop. If LLM-grounded fact-by-fact
+      # version is later added, switch to those validators.
+
+  sections/factual_statement_enforcement:
+    description: Numbered factual statement for post-judgment / enforcement cases
+    block_path: sections/factual_statement_enforcement.md
+    required_facts: [case_id, scenario_facts, underlying_judgment]
+    output_constraints:
+      header: "## II. STATEMENT OF FACTS"
+      paragraph_form: numbered
+      record_cite_required_per_paragraph: true
+    validators:
+      - non_empty
+      - numbered_paragraphs
+      - record_cited_each_paragraph
+      - no_reasoning_leak
+      - no_filename_leak
+      - all_placeholders_resolved
+
+  sections/procedural_history:
+    description: Procedural history block (deterministic — three short paragraphs)
+    block_path: sections/procedural_history.md
+    mode: deterministic
+    required_facts: [case_id, caption, court, posture, registry.docket_aliases.0, defect_total, fatal_count]
+    output_constraints:
+      header: "## II. PROCEDURAL HISTORY"
+      paragraph_form: prose
+    validators:
+      - non_empty
+      - all_placeholders_resolved
+      - no_hardcoded_judge
+
+  sections/standard_of_review:
+    description: Standard of review for the motion type
+    block_path: sections/standard_of_review.md
+    required_facts: [case_id, motion_type]
+    output_constraints:
+      header: "## IV. STANDARD OF REVIEW"
+      cites_controlling_authority: true
+    validators:
+      - non_empty
+      - cites_authority
+      - all_placeholders_resolved
+
+  sections/prayer_for_relief:
+    description: Prayer for relief with WHEREFORE opening
+    block_path: sections/prayer_for_relief.md
+    required_facts: [case_id, defect_total]
+    output_constraints:
+      header: "## PRAYER FOR RELIEF"
+      opening: "WHEREFORE,"
+      items_numbered: true
+      items_bold_action_verb: true        # "1. **GRANT** ..."
+      includes_general_relief: true       # last item is "such other and further relief"
+    validators:
+      - non_empty
+      - numbered_list
+      - ends_with_general_relief
+      - all_placeholders_resolved
+
+  sections/conclusion:
+    description: Short formal conclusion
+    block_path: sections/conclusion.md
+    required_facts: [case_id]
+    output_constraints:
+      header: "## CONCLUSION"
+      paragraph_form: single_prose
+    validators:
+      - non_empty
+      - single_paragraph_prose
+      - all_placeholders_resolved
+
+  # === ARGUMENTS ============================================================
+
+  arguments/jurisdiction_attack:
+    description: Argument that order exceeded jurisdictional authority
+    block_path: arguments/jurisdiction_attack.md
+    required_facts: [defect_categories.AUTHORITY, controlling_authority]
+    output_constraints:
+      header_format: "## V. {NUMBER}. {TITLE}"
+      cites_controlling_authority: true
+      element_lock_required: true         # Rule / Application / Authority / Conclusion
+    validators:
+      - non_empty
+      - has_section_headers
+      - cites_authority
+      - no_reasoning_leak
+      - no_filename_leak
+      - element_lock_present
+      - all_placeholders_resolved
+
+  arguments/non_binding_authority:
+    description: Strike opposing reliance on non-binding authority
+    block_path: arguments/non_binding_authority.md
+    required_facts: [non_binding_citations, controlling_authority]
+    output_constraints:
+      cites_controlling_authority: true
+      cites_iop_5_7_for_3d_cir: true      # 3d Cir. I.O.P. 5.7
+    validators:
+      - non_empty
+      - cites_authority
+      - no_reasoning_leak
+      - all_placeholders_resolved
+
+  arguments/haines_v_kerner_standard:
+    description: Pro se liberal-construction argument
+    block_path: arguments/haines_v_kerner_standard.md
+    required_facts: [pro_se_status]
+    output_constraints:
+      required_citations:
+        - Haines v. Kerner, 404 U.S. 519 (1972)
+        - Erickson v. Pardus, 551 U.S. 89 (2007)
+    validators:
+      - non_empty
+      - cites_required_authorities
+      - no_reasoning_leak
+      - all_placeholders_resolved
+
+  arguments/void_order_misuse:
+    description: Argument that void order is given preclusive effect across cases
+    block_path: arguments/void_order_misuse.md
+    required_facts: [cross_case_count, void_order_facts]
+    output_constraints:
+      cites_controlling_authority: true
+    validators:
+      - non_empty
+      - cites_authority
+      - no_reasoning_leak
+      - all_placeholders_resolved
+
+  arguments/equity_maxims_argument:
+    description: Equitable maxims supporting relief (Pomeroy / Bouvier)
+    block_path: arguments/equity_maxims_argument.md
+    required_facts: [equity_grounds]
+    output_constraints:
+      maxim_must_be_grounded: true        # Latin + English + treatise/case cite
+    validators:
+      - non_empty
+      - no_ungrounded_maxim
+      - no_reasoning_leak
+      - all_placeholders_resolved
+
+  arguments/mandamus_grounds:
+    description: FRAP 21 mandamus grounds — has intentional human-attestation bracket for sworn facts
+    block_path: arguments/mandamus_grounds.md
+    mode: mixed                           # deterministic substitution + reserved attestation bracket
+    required_facts: [case_id, procedural_summary]
+    output_constraints:
+      header: "## GROUNDS FOR THE WRIT"
+      sub_headers: ["### 1. Standard", "### 2. Procedural Posture", "### 3. Application", "### 4. Conclusion"]
+      required_citations:
+        - Cheney v. U.S. Dist. Court, 542 U.S. 367 (2004)
+        - Kerr v. U.S. Dist. Court, 426 U.S. 394 (1976)
+        - Fed. R. App. P. 21
+      cheney_three_factor_addressed: true
+      # The "### 3. Application" sub-section is a DELIBERATE human-attestation
+      # gate. The bracket "[PLAINTIFF TO STATE THE SWORN FACTS — ...]" must
+      # remain in the rendered output for the filer to replace before filing.
+      # The all_placeholders_resolved validator excludes this pattern.
+      attestation_gate: "[PLAINTIFF TO STATE THE SWORN FACTS"
+    validators:
+      - non_empty
+      - cites_required_authorities
+      - all_placeholders_resolved
+      - no_hardcoded_judge
+
+  arguments/reasons_for_granting_petition:
+    description: SCOTUS cert reasons (conflict, importance, error correction)
+    block_path: arguments/reasons_for_granting_petition.md
+    required_facts: [circuit_splits, federal_question, case_id]
+    output_constraints:
+      header: "## REASONS FOR GRANTING THE PETITION"
+      cert_framing: true                  # conflict/importance, not error correction
+    validators:
+      - non_empty
+      - has_section_headers
+      - cites_authority
+      - no_reasoning_leak
+      - all_placeholders_resolved
+
+  # === APPELLATE-SPECIFIC SECTIONS ==========================================
+
+  appellate/questions_presented:
+    description: Questions presented (numbered legal questions, one sentence each)
+    block_path: appellate/questions_presented.md
+    required_facts: [questions_list]
+    output_constraints:
+      header: "## QUESTIONS PRESENTED"
+      items_numbered: true
+      one_sentence_per_question: true
+    validators: [non_empty, numbered_list, all_placeholders_resolved]
+
+  appellate/parties_to_proceeding:
+    description: Parties to the proceeding (SCOTUS Rule 14.1(b))
+    block_path: appellate/parties_to_proceeding.md
+    required_facts: [parties_list]
+    validators: [non_empty, all_placeholders_resolved]
+
+  appellate/opinions_below:
+    description: Opinions below citation chain
+    block_path: appellate/opinions_below.md
+    required_facts: [lower_court_opinions]
+    validators: [non_empty, cites_authority, all_placeholders_resolved]
+
+  appellate/statement_of_jurisdiction:
+    description: Statement of jurisdiction with statutory grant
+    block_path: appellate/statement_of_jurisdiction.md
+    required_facts: [jurisdictional_statute]
+    output_constraints:
+      cites_jurisdictional_statute: true
+    validators:
+      - non_empty
+      - cites_jurisdictional_statute
+      - all_placeholders_resolved
+
+  appellate/statutes_involved:
+    description: Verbatim text of statutes involved
+    block_path: appellate/statutes_involved.md
+    required_facts: [statutes_involved]
+    output_constraints:
+      verbatim_statute_text: true         # quote, do not paraphrase
+    validators: [non_empty, all_placeholders_resolved]
+
+  appellate/statement_of_the_case:
+    description: Statement of the case (combined facts + procedural)
+    block_path: appellate/statement_of_the_case.md
+    required_facts: [scenario_facts, docket_entries]
+    output_constraints:
+      record_cite_required_per_paragraph: true
+    validators:
+      - non_empty
+      - record_cited_each_paragraph
+      - no_reasoning_leak
+      - no_filename_leak
+      - all_placeholders_resolved
+
+  # === BOILERPLATE SIGNATURES ===============================================
+
+  boilerplate/signature_block_pro_se:
+    description: Pro se signature block (deterministic — privacy redactions intentional)
+    block_path: boilerplate/signature_block_pro_se.md
+    mode: deterministic
+    required_facts: [case_id]
+    output_constraints:
+      signature_form: "_____________________________________"   # blank signature line
+      pro_se_designation: "*pro se*"                            # italic per block source
+      includes_pro_se_attestation: true
+      # The privacy redactions below are INTENTIONAL — "{{USER_FIRST}}" uses them
+      # to avoid filing his home address/email/phone on the public docket.
+      # The all_placeholders_resolved validator excludes these brackets.
+      privacy_redactions_preserved:
+        - "[Plaintiff's address on file]"
+        - "[Plaintiff's email on file]"
+        - "[Plaintiff's phone on file]"
+      date_line: "Dated: ___________________________"
+    validators:
+      - non_empty
+      - all_placeholders_resolved
+      - no_hardcoded_judge
+
+  boilerplate/certificate_of_service:
+    description: Certificate of Service listing all served parties
+    block_path: boilerplate/certificate_of_service.md
+    required_facts: [served_parties, service_method, filing_date]
+    output_constraints:
+      header: "## CERTIFICATE OF SERVICE"
+      lists_all_served_parties: true
+    validators:
+      - non_empty
+      - served_parties_match_caption
+      - all_placeholders_resolved
+
+  boilerplate/proposed_order:
+    description: Proposed order (deterministic — uses {{judge.name}} placeholder + ::right layout directives)
+    block_path: boilerplate/proposed_order.md
+    mode: deterministic
+    required_facts: [case_id, judge.name]
+    forbidden_hardcode: [judge.name]
+    output_constraints:
+      header: "## PROPOSED ORDER"
+      opening: "AND NOW, this _____ day of _________________, 20___,"
+      judge_signature_line: "{{judge.name}}, J.::right"
+      layout_directives_allowed: ["::right", "::center", "::left"]
+      fallback_if_no_judge: "J.::right"
+    validators:
+      - non_empty
+      - no_hardcoded_judge
+      - judge_placeholder_resolved
+      - all_placeholders_resolved
+    notes: |
+      Block source uses {{judge.name}} (nested) — correct. The 2026-05-26
+      backlog hardcoded-"{{JUDGE}}" issue was NOT in this block source; it
+      surfaced in LLM-generated argument sections from earlier runs OR in
+      .bak.pre_federal_factual blocks. no_hardcoded_judge validator scans
+      the RENDERED output to catch it regardless of source.
+
+# =============================================================================
+# VALIDATORS — named, reusable, applied per block_contract.
+# Each validator is implemented in pipeline/schema_validator.py and returns
+# {pass: bool, gap: str|None, severity: hard|soft}.
+# =============================================================================
+validators:
+
+  non_empty:
+    description: section text must be non-empty after stripping
+    severity: hard
+    fail_message: "section is empty"
+
+  mixed_case_defendants:
+    description: defendant names in caption must not be entirely uppercase
+    severity: hard
+    pattern_forbidden_on: defendant_list
+    pattern_forbidden: "^[A-Z0-9\\s\\.,;:()&-]{4,}$"
+    fail_message: "defendant name rendered ALL CAPS; caption must use mixed case (e.g., 'Example Card Issuer (USA), N.A.' not 'CAPITAL ONE BANK (USA), N.A.')"
+    backlog_fix: 2026-05-26-1
+
+  all_defendants_listed:
+    description: caption lists every defendant of record (no status filter)
+    severity: hard
+    fail_message: "caption missing one or more defendants from case_map"
+
+  no_hardcoded_judge:
+    description: judge surname from known_judges registry only appears via resolved {{judge_name}}; never as block-source literal or as mismatched render output
+    severity: hard
+    scan_block_source: true               # check the block .md source file too
+    scan_rendered_output: true            # check final rendered text
+    surname_source: known_judges
+    must_match_resolved_slot: judge_name
+    fail_message: "judge surname appears as hardcoded literal OR does not match case state judge_name"
+    backlog_fix: 2026-05-26-4
+
+  all_placeholders_resolved:
+    description: no unresolved placeholders OR [MISSING:] markers remain in output
+    severity: hard
+    patterns_forbidden:
+      - "\\{\\{[^}\\n]+\\}\\}"            # any {{...}} that did not resolve
+      - "\\[MISSING:\\s*[^\\]]+\\]"       # any [MISSING: foo] marker
+    # INTENTIONAL bracket patterns that MUST be preserved (not flagged).
+    # These are human-attestation gates or privacy redactions that are
+    # deliberately left in the rendered output for the filer to address.
+    patterns_excluded:
+      - "\\[PLAINTIFF TO STATE THE SWORN FACTS[\\s\\S]+?\\]"   # mandamus_grounds.md attestation
+      - "\\[Plaintiff's address on file\\]"                    # signature_block_pro_se.md
+      - "\\[Plaintiff's email on file\\]"
+      - "\\[Plaintiff's phone on file\\]"
+      - "\\[Bates No\\.[^\\]]+\\]"                              # exhibit bates ranges
+    # Render-layout directives that pass through to the renderer.
+    # NOT placeholders; do not flag.
+    directives_allowed:
+      - "::right"                                              # right-align layout (proposed_order.md)
+      - "::center"
+      - "::left"
+    fail_message: "unresolved placeholder or [MISSING:] marker in output"
+    backlog_fix: 2026-05-26-2
+
+  judge_placeholder_resolved:
+    description: no {{judge.name}} or [JUDGE] placeholders remain in proposed_order or caption
+    severity: hard
+    patterns_forbidden:
+      - "\\{\\{judge\\.name\\}\\}"        # actual nested syntax from block sources
+      - "\\{\\{judge_name\\}\\}"          # legacy flat syntax (defense-in-depth)
+      - "\\{\\{judge\\}\\}"               # bare judge object
+      - "\\[JUDGE\\]"
+      - "\\[Judge's name\\]"
+    fail_message: "judge placeholder unresolved in rendered output"
+
+  single_paragraph_prose:
+    description: block content is one continuous prose paragraph
+    severity: hard
+    pattern_forbidden_first_chars: "^\\d+\\.\\s|^[a-z]\\.\\s|^[*-]\\s"
+    fail_message: "block must be single prose paragraph; numbered/bulleted enumeration forbidden"
+
+  no_numbered_enumeration:
+    description: no "1. ... 2. ..." pattern in the block
+    severity: hard
+    pattern_forbidden: "(?m)^\\d+\\.\\s"
+    fail_message: "numbered enumeration forbidden in this block"
+
+  numbered_paragraphs:
+    description: paragraphs prefixed with "N." or "N.\\t"
+    severity: hard
+    pattern_required: "(?m)^\\d+\\.[\\s\\t]"
+    fail_message: "paragraphs not numbered"
+
+  numbered_list:
+    description: list items numbered "1.", "2.", "3."
+    severity: hard
+    pattern_required: "(?m)^\\d+\\.[\\s\\t]"
+    fail_message: "list items not numbered"
+
+  record_cited_each_paragraph:
+    description: each numbered paragraph cites a record entry in the court-appropriate docket form
+    severity: hard
+    # Looks up court_rules[<court_id>].record_cite_forms — every numbered
+    # paragraph in the block must match at least ONE of the patterns
+    # listed for the case's court. Filenames are forbidden via
+    # court_rules[<court_id>].record_cite_forbidden.
+    looks_up_per_court: record_cite_forms
+    enforces_per_court: record_cite_forbidden
+    examples_per_court:
+      EDPA:          "ECF No. 141 / Dkt. 121 / Order dated June 9, 2026"
+      3D_CIR:        "Doc. 12 / J.A. 45 / App. 78"
+      SCOTUS:        "Pet. App. 1a / J.A. 12 / Op. at 4"
+      PA_SUPER:      "R.R. 123a / N.T. 45 / Order dated June 9, 2026"
+      PA_COMMWLTH:   "R.R. 123a / Order dated June 9, 2026"
+      PA_SUPREME:    "R.R. 123a / Order dated June 9, 2026"
+      PA_CP_PHILA:   "Control No. 25080123 / Order dated June 9, 2026 / Praecipe filed June 9, 2026"
+    fail_message: "fact paragraph lacks court-appropriate record cite (filename references are forbidden)"
+
+  has_section_headers:
+    description: argument contains Roman or A./B./C. style headers
+    severity: hard
+    pattern_required: "(?m)^(I{1,3}V?|IV|V|VI{0,3}|IX|X)\\.[\\s\\t]|^[A-D]\\.[\\s\\t]"
+    fail_message: "argument lacks Roman/letter section headers"
+
+  cites_authority:
+    description: block cites at least one authority (case or statute)
+    severity: hard
+    pattern_required: "(\\d+ U\\.S\\.C\\.|\\d+ F\\.\\d|Fed\\.\\s?R\\.\\s?Civ\\.\\s?P\\.|Pa\\.R\\.C\\.P\\.|FRAP|Pa\\.R\\.A\\.P\\.|U\\.S\\.\\s\\d+|\\([12]\\d{3}\\))"
+    fail_message: "block cites no authority"
+
+  cites_jurisdictional_statute:
+    description: jurisdiction block cites 28 U.S.C. or equivalent
+    severity: hard
+    pattern_required: "(28 U\\.S\\.C\\.|U\\.S\\.C\\.|Pa\\.R\\.A\\.P\\.|FRAP\\s+\\d)"
+    fail_message: "jurisdictional statute not cited"
+
+  cites_required_authorities:
+    description: every authority listed in block_contracts[id].output_constraints.required_citations appears in the rendered block
+    severity: hard
+    looks_up: output_constraints.required_citations
+    fail_message: "required authority missing from rendered block"
+
+  ends_with_general_relief:
+    description: prayer for relief closes with general-relief catchall
+    severity: hard
+    # Accept any of: "such other and further relief", "such further relief",
+    # "such other relief" — all are standard catchall forms; block source
+    # uses "such further relief as the Court deems just and proper".
+    pattern_required: "such (other\\s+and\\s+further|other|further)\\s+relief"
+    fail_message: "prayer missing general-relief catchall (e.g., 'such further relief as the Court deems just and proper')"
+
+  no_reasoning_leak:
+    description: no LLM thinking preamble; current Qwen3 enable_thinking=false should prevent these, but defense-in-depth
+    severity: hard
+    patterns_forbidden:
+      - "^The user wants me to"
+      - "^Let'?s (draft|review|look|think|check|refine|add)"
+      - "^Let me (check|review|double|refine|add|think|draft)"
+      - "^Wait, the (prompt|motion|stub|case|user)"
+      - "^I (need|should|will|must|can) (use|state|draft|review|check|add|note)"
+      - "^Okay,? the user"
+      - "^First,? I'?ll"
+      - "^Looking at"
+      - "^Based on the prompt"
+      - "^The stub says:?"
+      - "^The case audit (mentions|says|shows)"
+      - "<think>"
+      - "</think>"
+      - "<reasoning>"
+      - "</reasoning>"
+    fail_message: "LLM reasoning preamble or <think> tag leaked into output"
+
+  no_filename_leak:
+    description: no source-file references (.pdf/.docx/.md/etc.) anywhere in the rendered output
+    severity: hard
+    # This is the negative pole. Positive pole is record_cited_each_paragraph
+    # which REQUIRES court-appropriate docket forms.
+    patterns_forbidden:
+      - "[A-Za-z0-9_-]+\\.(pdf|docx|doc|md|txt|html|rtf)\\b"   # any filename.ext
+      - "Filed in [^\\s]+\\.(pdf|docx|md|txt|rtf) on "         # legacy "Filed in foo.pdf on Date"
+      - "Filed in .* on None"
+      - 'Specifically, the record contains: "'                # raw OCR quote tail
+      - "from the file [^\\s]+"
+      - "source: [A-Za-z0-9_/.-]+\\.[a-z]{2,4}"
+      - "filename: [A-Za-z0-9_/.-]+"
+    # Cross-court enforcement: ECF/Dkt are federal-only; using them in a
+    # PA filing is a court-mismatch leak. Patterns require a docket number
+    # to avoid false positives from random "R.R." or "N.T." abbreviations
+    # in case-name citations.
+    cross_court_forbidden:
+      PA_CP_PHILA:    ["ECF No\\. \\d+", "Doc\\. \\d+"]
+      PA_SUPER:       ["ECF No\\. \\d+"]
+      PA_COMMWLTH:    ["ECF No\\. \\d+"]
+      PA_SUPREME:     ["ECF No\\. \\d+"]
+      EDPA:           ["Control No\\. \\d+", "R\\.R\\. \\d+a?", "N\\.T\\. \\d+"]
+      3D_CIR:         ["Control No\\. \\d+", "R\\.R\\. \\d+a?"]
+    fail_message: "filename leaked OR wrong-court docket form used"
+
+  no_ungrounded_maxim:
+    description: every Latin maxim has Latin + English + treatise/case grounding
+    severity: hard
+    pattern_required_when_latin_present: "(Pomeroy|Bouvier|Black'?s|\\d+ U\\.S\\.|F\\.\\d)"
+    fail_message: "Latin maxim deployed without grounding citation (treatise section or case)"
+
+  served_parties_match_caption:
+    description: COS lists exactly the defendants from the caption
+    severity: soft
+    fail_message: "COS served-parties list does not match caption defendants"
+
+  date_format_iso_or_long:
+    description: dates in ISO (YYYY-MM-DD) or long form (June 9, 2026)
+    severity: soft
+    pattern_required: "(\\d{4}-\\d{2}-\\d{2}|[A-Z][a-z]+ \\d{1,2},? \\d{4})"
+    fail_message: "date format unrecognized"
+
+  word_count_under_limit:
+    description: brief word count is under the court's published limit
+    severity: hard
+    looks_up: court_rules[court_id].word_limits[brief_type]
+    fail_message: "brief exceeds word limit"
+
+  page_count_under_limit:
+    description: filing page count is under the court's page limit
+    severity: hard
+    looks_up: court_rules[court_id].page_limit_default OR page_safe_harbor[brief_type]
+    fail_message: "filing exceeds page limit"
+
+  element_lock_present:
+    description: argument follows Rule / Application / Authority / (Equity) / Conclusion structure
+    severity: soft
+    pattern_required_subheaders:
+      - "(?m)^### 1\\. Rule"
+      - "(?m)^### 2\\. Application"
+      - "(?m)^### 3\\. Authority"
+    fail_message: "argument missing element-lock structure (Rule/Application/Authority/Conclusion)"
+
+  # ===========================================================================
+  # SCHEMA v3 additions (2026-06-09 iteration #2) — substantive defect catchers
+  # surfaced by the first real-LLM test on notice_of_supplemental_authority.
+  # ===========================================================================
+
+  no_duplicate_block_renders:
+    description: same block_id should not appear twice in blocks_seen
+    severity: hard
+    # Catches v2 dual-render bug: LLM-grounded path + block-template path both
+    # emit, producing concatenated double-document. Validator runs at doc level
+    # on the final blocks_seen list — if same block_id appears 2+ times outside
+    # the permitted_block_prefixes, fail.
+    permitted_block_prefixes:
+      - "arguments/"          # multiple Roman-numeral argument sections OK
+    fail_message: "block_id rendered multiple times — dual-path bug (LLM-grounded + block-template both ran)"
+
+  motion_title_matches_filing_type:
+    description: top-of-document title (first '# ' heading) matches filing_type slug
+    severity: hard
+    # filing_type 'notice_of_supplemental_authority' → expect 'NOTICE OF SUPPLEMENTAL AUTHORITY' in title
+    # filing_type 'motion_to_strike_federal' → expect 'MOTION TO STRIKE' in title
+    # filing_type 'frap_21_petition_for_writ_of_mandamus' → expect 'PETITION FOR WRIT OF MANDAMUS' in title
+    # Maps filing_type tokens to required-in-title keywords. Built dynamically
+    # at validator runtime from filing_type string (split on underscore,
+    # drop articles/numerals, uppercase).
+    stopwords_dropped: ["of", "the", "for", "to", "and", "a", "an", "in", "on"]
+    title_extract_pattern: "(?m)^#\\s+(.+?)\\s*$"   # first H1
+    fail_message: "document title does not reflect filing_type (e.g., 'Notice of Supplemental Authority' should not be titled 'Motion to Strike')"
+
+  consistent_docket_cite_form:
+    description: all docket cites in document use the same form (e.g., all 'ECF No. N' or all 'Dkt. N', not mixed)
+    severity: soft
+    # Counts occurrences of each cite-form pattern; if >1 distinct form found
+    # for the same court, flag inconsistency. The forms-per-court table is in
+    # court_rules[<court_id>].record_cite_forms.
+    fail_message: "docket cite form mixed within one document (e.g., 'ECF No. 141' alongside 'Dkt 141')"
+
+  no_cross_jurisdiction_authority:
+    description: federal filing must not cite Pa.R.C.P./Pa.R.A.P. as alternative authority; PA filing must not cite Fed.R.Civ.P./FRAP — EXCEPT for filing types declared court:any in their filing_type YAML
+    severity: soft
+    # 8 filing types declared `court: any` in obsidian_sync/templates/filing_types/
+    # legitimately cite dual-jurisdiction parallel authority. For these, the
+    # validator skips the check. For court-specific filings (frap_*, scotus_*,
+    # appellate_brief_3rd_cir, etc.), cross-jurisdiction citations remain
+    # flagged. To extend: add the new filing_type slug here AND make sure the
+    # corresponding filing_type YAML has `court: any`.
+    exempt_filing_types:
+      - motion_for_default_judgment
+      - motion_for_reconsideration
+      - motion_for_recusal
+      - motion_for_summary_judgment
+      - motion_to_compel_discovery
+      - motion_to_vacate
+      - motion_to_strike
+      - motion_to_strike_federal
+      - motion_to_strike_state
+      - motion_to_remand
+      - notice_of_supplemental_authority
+      - opposition_to_motion_to_dismiss
+    # Federal courts apply federal procedural law; PA state courts apply PA
+    # procedural law. For non-exempt filings, citing the "other" jurisdiction's
+    # procedural rules is a substantive defect.
+    cross_jurisdiction_forbidden:
+      EDPA:           ["Pa\\.R\\.C\\.P\\.", "Pa\\.R\\.A\\.P\\.", "42 Pa\\.C\\.S\\."]
+      3D_CIR:         ["Pa\\.R\\.C\\.P\\.", "Pa\\.R\\.A\\.P\\."]
+      SCOTUS:         []   # may cite state law in cert cases
+      PA_CP_PHILA:    ["Fed\\.\\s?R\\.\\s?Civ\\.\\s?P\\.", "FRAP\\s+\\d", "Fed\\.\\s?R\\.\\s?App\\.\\s?P\\."]
+      PA_SUPER:       ["Fed\\.\\s?R\\.\\s?Civ\\.\\s?P\\.", "FRAP\\s+\\d"]
+      PA_COMMWLTH:    ["Fed\\.\\s?R\\.\\s?Civ\\.\\s?P\\.", "FRAP\\s+\\d"]
+      PA_SUPREME:     ["Fed\\.\\s?R\\.\\s?Civ\\.\\s?P\\.", "FRAP\\s+\\d"]
+    fail_message: "wrong-jurisdiction procedural rule cited in court-specific filing"
+
+  truncation_check:
+    description: last 3 non-empty lines of document do not end with bare table separators or stray markup
+    severity: hard
+    # Conservative — only the most unambiguous truncation signals. Earlier
+    # broader patterns (mid-sentence, underscore-only) generated noise from
+    # legitimate signature blanks and short closing lines.
+    patterns_forbidden_in_tail:
+      - "\\|[-:\\s\\|]+\\|\\s*$"          # bare table separator with no rows after
+      - "(?m)^\\s*\\[$"                   # stray opening bracket alone on a line
+      - "^\\s*:\\s*$"                     # stray colon alone on a line
+    tail_line_count: 5
+    fail_message: "document appears truncated (last lines end with bare table separator or stray markup)"
+
+
+# =============================================================================
+# CLOSED-FEEDBACK WIRING — where the validator writes results.
+# =============================================================================
+feedback:
+  schema_gaps_log: "{{ENTROPY_HOME}}/_review/schema_gaps.jsonl"
+  block_contract_violations_log: "{{ENTROPY_HOME}}/_review/block_contract_violations.jsonl"
+  yaml_update_proposals_log: "{{ENTROPY_HOME}}/_review/yaml_update_proposals.jsonl"
+  draft_pass_log: "{{ENTROPY_HOME}}/_review/draft_schema_pass.jsonl"
+  # Gap record schema:
+  #   {ts, case_id, filing_type, court_id, brief_type, block_id, validator,
+  #    severity, gap, sample_text, suggested_fix}
+  # Pass record schema:
+  #   {ts, case_id, filing_type, court_id, brief_type, blocks_rendered: [...],
+  #    blocks_skipped: [{block_id, reason}], validator_pass_count, hard_pass_rate}
+  # When the SAME (block_id, validator, gap_pattern) hits 3+ otherwise-clean
+  # drafts (no reasoning_leak, no filename_leak, all_placeholders_resolved),
+  # the validator writes a yaml_update_proposal — the closed-feedback loop.
+
+# =============================================================================
+# UNVERIFIED BLOCKS — block IDs referenced in filing_type YAMLs that I have
+# NOT yet read the source .md for. Each gets a default contract (non_empty,
+# all_placeholders_resolved). When the source .md is read, this list shrinks
+# and the contract gains specificity.
+# =============================================================================
+unverified_blocks:
+  - boilerplate/caption_pa_superior
+  - boilerplate/caption_pa_commwlth
+  - boilerplate/caption_pa_supreme
+  - boilerplate/caption_scotus
+  # ↑ have contracts above; have NOT yet inspected the .md source files.
+  # Add more here as filing_type YAMLs reveal new block IDs.

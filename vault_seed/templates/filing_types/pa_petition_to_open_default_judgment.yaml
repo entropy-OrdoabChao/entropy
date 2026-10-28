@@ -1,0 +1,53 @@
+id: pa_petition_to_open_default_judgment
+title: Petition to Open/Strike Default Judgment — Pa.R.C.P. 206.1
+description: >
+  Petition to open, strike, or vacate a default judgment or judgment of
+  non pros under Pa.R.C.P. 206.1, supported by Rule to Show Cause and
+  Affidavit of Merits. Primary defensive vehicle for pro se defendants
+  defaulted due to improper service or confessed judgment without due
+  process.
+court: state (PA Commonwealth Courts)
+required_authorities:
+  - Pa.R.C.P. 206.1
+  - Pa.R.C.P. 206
+  - Pa.R.C.P. 243
+  - 50 U.S.C. §§ 3901 et seq.
+  - Pa.R.C.P. 1016
+  - Pa.R.C.P. 1020
+trigger_defects:
+  - default_judgment_entered_without_due_process
+  - judgment_of_non_pros
+  - improper_service
+  - failure_to_notify_defendant
+  - confessed_judgment_without_affidavit_of_merits
+  - servicemembers_civil_relief_act_violation
+  - court_failure_to_schedule_return_date
+  - opposing_counsel_failure_to_properly_serve
+required_facts:
+  - case_id
+  - caption
+  - prothonotary_name
+  - county_courthouse
+  - default_judgment_date
+  - judgment_type
+  - whether_military_status_applies
+  - whether_affidavit_of_merits_filed
+  - relief_sought
+structure:
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/ground_truth_default_entry
+    when: default_judgment_entered_without_due_process
+  - block: sections/servicemembers_status
+    when: whether_military_status_applies
+  - block: sections/affidavit_of_merits_compliance
+    when: affidavit_filed
+  - block: arguments/pa_rcp_206_1_grounding
+  - block: arguments/due_process_violation
+  - block: arguments/reciprocal_duty
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

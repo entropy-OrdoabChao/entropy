@@ -1,0 +1,61 @@
+id: praecipe_to_amend_garnishee_caption
+court: state_pa_ccp
+title: Praecipe to Amend Garnishee Caption Under Pa.R.C.P. 1033
+description: |
+  Praecipe to amend the garnishee caption after a motion to strike has been granted.
+  Pa.R.C.P. 1033 permits amendment of pleadings to conform to the evidence or to
+  correct a misnomer or misdescription of a party. When a motion to strike is
+  granted against a garnishee, the caption must be amended to reflect the correct
+  garnishee designation (e.g., "State Farm Fire and Casualty Company" instead of
+  "State Farm Insurance Company" as garnishee).
+  
+  This filing type is grounded in Pa.R.C.P. 1033, which provides that "the court
+  may at any time in furtherance of justice allow any process or proceeding to be
+  amended, and the court may allow the pleadings to be amended."
+  
+  The amendment is necessary because the garnishee's legal name must match the
+  entity that holds the insurance policy. State Farm Fire and Casualty Company is
+  the actual insurer; "State Farm Insurance Company" is a common misnomer.
+trigger_defects:
+  - garnishee_caption_mismatch
+  - FATAL/OPERATIVE_TEXT
+  - SERIOUS/OPERATIVE_TEXT
+  - FATAL/NO_WORD_ADDED_OR_SUBTRACTED
+  - SERIOUS/NO_WORD_ADDED_OR_SUBTRACTED
+  - Pa_RAP_1925b_error_preservation
+  - Pa_RAP_2701_b_1
+required_authorities:
+  - citation: "Pa.R.C.P. 1033"
+    proposition: "The court may at any time in furtherance of justice allow any process or proceeding to be amended."
+  - citation: "Pa.R.C.P. 3101 et seq."
+    proposition: "Garnishment procedure — writ of execution against garnishee."
+  - citation: "42 Pa.C.S. § 8101"
+    proposition: "Post-judgment interest."
+structure:
+  - type: caption
+    block: boilerplate/caption_state_pa_ccp
+  - type: section
+    block: sections/introduction
+    content: "State the nature of the praecipe — to amend the garnishee caption to conform to the evidence and correct a misnomer."
+  - type: section
+    block: sections/procedural_history
+    content: "Trace: (1) the entered default judgment; (2) the writ of execution against the garnishee; (3) the motion to strike; (4) the order granting the motion to strike; (5) the need to amend the caption."
+  - type: section
+    block: sections/definitions_schedule_canons
+    content: "Define 'garnishee,' 'misnomer,' 'praecipe,' and 'amendment of caption' per Pa.R.C.P. 1033, 3101 et seq., and 3145."
+  - type: argument
+    block: arguments/operative_text_discipline
+    content: "Argue that the garnishee's legal name must be quoted verbatim from the operative statutory text — Pa.R.C.P. 1033 requires the amendment to conform to the evidence, and the evidence establishes that the actual insurer is State Farm Fire and Casualty Company, not State Farm Insurance Company."
+  - type: argument
+    block: arguments/no_word_added_or_subtracted
+    content: "Flag any silent word changes from the statutory definition of 'garnishee' or the garnishee's legal name as a departure from the operative text."
+  - type: section
+    block: sections/conclusion
+    content: "Request: (1) leave to amend the garnishee caption; (2) post-judgment interest; (3) such other relief as the court deems just."
+  - type: section
+    block: sections/prayer_for_relief
+    content: "Prayer for: (1) amendment of garnishee caption per Pa.R.C.P. 1033; (2) post-judgment interest per 42 Pa.C.S. § 8101; (3) costs; (4) such other relief as the court deems just."
+  - type: boilerplate
+    block: boilerplate/certificate_of_service
+  - type: boilerplate
+    block: boilerplate/proposed_order

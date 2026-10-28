@@ -1,0 +1,12 @@
+name: assembly
+group: drafting
+unit: draft            # claim | term | cite | count | document | case | draft
+axis: "DRAFTING — the locked anatomy: caption, POF Q&A, Schedule A + DEFINITIONS, ABC ENTITIES 1-5, counts, prayer, oath, sui juris/§1308 signature, blank Case No.; then the deterministic guardrails."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - doctrine
+queries:
+  - "{claim}"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

@@ -1,0 +1,15 @@
+name: remedies
+group: drafting
+unit: count            # claim | term | cite | count | document | case | draft
+axis: "DRAFTING — the prayer: every mandatory remedy the statute gives, tied to its trigger element."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - usc_
+  - pa_cs_
+  - pa_73ps_
+  - amjur_22
+queries:
+  - "{claim}"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

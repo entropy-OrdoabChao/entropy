@@ -1,0 +1,56 @@
+id: motion_for_protective_order
+title: Motion for Protective Order Under FRCP 26(c)
+description: |
+  Motion for a protective order under Fed. R. Civ. P. 26(c) to prevent
+  disclosure of information deemed privileged or protected from disclosure
+  on other grounds. The court may make any order that justice requires —
+  including but not limited to: (1) forbidding the disclosure, (2) specifying
+  terms for disclosure, (3) forbidding inquiry into certain matters,
+  (4) sealing documents, or (5) any other just order.
+
+  This is NOT a motion to compel (which forces discovery). This is the
+  plaintiff's motion when opposing counsel seeks overly broad discovery that
+  invades privacy, demands irrelevant information, or attempts to use
+  discovery as a burden rather than a means of discovery.
+
+court: any
+required_authorities:
+  - "Fed. R. Civ. P. 26(c) — Protective Order"
+  - "Fed. R. Civ. P. 26(b)(1) — Scope of Discovery (limits relevance)"
+  - "Fed. R. Civ. P. 26(b)(2)(C) — Proportionality limitations"
+  - "Fed. R. Civ. P. 37(a)(5) — Sanctions for improper discovery"
+  - "Fed. R. Civ. P. 56 — Standard for protective order (de novo review)"
+  - "Fed. R. Evid. 501 — Privilege"
+  - "Fed. R. Evid. 403 — Exclusion of relevant but unfairly prejudicial evidence"
+  - "28 U.S.C. 1746 — Unsworn declarations under penalty of perjury"
+
+trigger_defects:
+  - overbroad_discovery
+  - discovery_garnishee_abuse
+  - privacy_violation
+  - discovery_abuse
+  - proportionality_violation
+  - privilege_claim
+
+required_facts:
+  - case_id
+  - caption
+  - discovery_dispute_description
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/arguments
+  - block: arguments/proportionality_defense
+    when: is_federal == true
+  - block: arguments/privilege_claim
+    when: is_federal == false
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

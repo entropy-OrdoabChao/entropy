@@ -1,0 +1,56 @@
+id: civil_conspiracy
+title: Civil Conspiracy Complaint
+description: >
+  Complaint alleging civil conspiracy — an agreement between two or more persons
+  to accomplish an unlawful purpose or to accomplish a lawful purpose by unlawful
+  means, resulting in damages. Grounded in common law, 42 U.S.C. § 1985(3)
+  (conspiracy against civil rights), and federal RICO-style predicate-act
+  conspiracy under 18 U.S.C. § 37 (conspiracy to commit offense against the U.S.).
+  The Iqbal pleading standard (556 U.S. 662 (2009)) governs conspiracy and
+  aiding-and-abetting liability: each conspirator must have actual knowledge of
+  the unlawful scheme and the purpose to further it.
+
+court: federal_district
+required_authorities:
+  - Iqbal v. Ashcroft, 556 U.S. 662 (2009) — pleading standard for conspiracy and aiding-and-abetting
+  - Ashcroft v. Iqbal, 556 U.S. 662, 678 — "mere knowledge" of unlawful conduct is insufficient; need purpose
+  - Bell Atlantic Corp. v. Twombly, 550 U.S. 544 (2007) — plausibility pleading
+  - Monroe v. Pape, 365 U.S. 167 (1961) — §1983 individual liability within a conspiracy
+  - 42 U.S.C. § 1985(3) — conspiracy against civil rights (private persons)
+  - 18 U.S.C. § 37 — general conspiracy to commit a federal offense (Pinkerton liability)
+  - Restatement (Second) of Torts § 876 — liability for assisting tortious conduct
+trigger_defects:
+  - COLLABORATIVE_VIOLATION
+  - RICO Predicate Act — where the underlying conduct is a known RICO predicate
+  - §1983 Violation — when multiple state actors conspire
+  - Common Law Fraud — where multiple parties participate in a fraudulent scheme
+  - Fraud on the Court — where court officers and counsel conspire
+required_facts:
+  - case_id
+  - caption
+  - defendant_1 — primary conspirator
+  - defendant_2 — co-conspirator(s)
+  - common_scheme — description of the agreement or understanding
+  - unlawful_purpose — the objective that is unlawful on its face or achieved by unlawful means
+  - overt_act — specific acts taken in furtherance of the conspiracy
+  - damages — resulting injury flowing from the conspiracy
+  - knowledge_and_purpose — actual knowledge of each co-conspirator of the unlawful objective
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/jurisdiction_and_venue
+  - block: sections/parties
+  - block: sections/procedural_history
+  - block: sections/factual_statement_federal
+  - block: sections/general_allegations
+  - block: arguments/civil_conspiracy_elements
+  - block: arguments/iqbal_plausibility
+  - block: arguments/solidarity_liability
+  - block: sections/prayer_for_relief
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order
+resolution_path: obsidian_sync/templates/filing_types/civil_conspiracy.yaml

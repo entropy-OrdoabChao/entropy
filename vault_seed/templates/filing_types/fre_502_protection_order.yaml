@@ -1,0 +1,76 @@
+id: fre_502_protection_order
+title: FRE 502(b)/(d) Protection Order
+description: >
+  FRE 502(b)/(d) Protection Order as a procedural vehicle — a motion for a
+  protective order governing the treatment of privilege and work-product
+  protected information during discovery. Grounded in Fed. R. Evid. 502(b)
+  (inadvertent disclosure does not operate as a waiver if reasonable steps
+  taken) and Fed. R. Evid. 502(d) (court may by order direct that disclosure
+  does not constitute waiver in any federal or state proceeding).
+
+  KEY: FRE 502(d) orders apply bindingly in ALL federal and state
+  proceedings — a reciprocal shield that binds both the producing and
+  receiving party across jurisdictions. The corpus supports this as a
+  distinct procedural mechanism for managing privilege exposure during
+  discovery, grounded in the 2008 amendments to the Federal Rules of Evidence.
+
+  FRE 502(b) establishes that inadvertent disclosure of privileged or
+  work-product material does NOT waive the privilege if the holder took
+  reasonable steps to prevent disclosure and promptly took reasonable steps
+  to rectify the error. FRE 502(d) goes further: the court may by order
+  direct that the information does not constitute a waiver in any federal
+  OR state proceeding — a broad, jurisdiction-spanning shield.
+
+court: federal
+required_authorities:
+  - Fed. R. Evid. 502(b) (Inadvertent Disclosure)
+  - Fed. R. Evid. 502(d) (Proceedings Under State or Federal Law)
+  - Fed. R. Evid. 502(e) (Inadmissibility of Evidence Regarding Waiver)
+  - Fed. R. Civ. P. 26(c) (Protective Orders)
+  - Fed. R. Civ. P. 16(b) (Pretrial Conferences; Scheduling; Management)
+  - H.R. Rep. No. 110-542 (2008), discussing 502(d) orders
+  - Zambrano v. Time Inc., 789 F. Supp. 2d 341 (S.D.N.Y. 2011)
+  - In re Coregon Corp., 309 B.R. 636 (Bankr. E.D. Pa. 2004)
+trigger_defects:
+  - privileged_information_disclosed
+  - discovery_abuse
+  - cross_case
+  - procedural_advantage
+structure:
+  - block: boilerplate/caption_federal
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: sections/factual_statement_discovery
+  - block: sections/standard_of_review
+  - block: arguments/fre_502_b_inadvertent_disclosure
+    when: case_context == "inadvertent_disclosure"
+  - block: arguments/fre_502_d_protection_order
+    when: case_context == "broad_waiver_shield"
+  - block: arguments/fre_502_reciprocal_enforcement
+    when: case_context == "multi_jurisdictional"
+  - block: arguments/fre_502_d_binding_effect
+    when: case_context == "state_federal_linkage"
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order
+when_clauses:
+  - description: >
+      Use when opposing party demands production of documents that contain
+      attorney-client privileged or work-product material, and the filing
+      party seeks a FRE 502(d) order to ensure that inadvertent disclosure
+      does NOT operate as a waiver in any federal or state proceeding.
+  - description: >
+      Use when inadvertent disclosure of privileged material has occurred
+      and the filing party seeks FRE 502(b) relief — demonstrating reasonable
+      steps to prevent disclosure and prompt rectification.
+  - description: >
+      Use when a FRE 502(d) order already exists in the case and the
+      filing party seeks enforcement or extension of its binding effect
+      against the opposing party across related state or federal proceedings.
+  - description: >
+      Use when opposing counsel is attempting to use inadvertent disclosure
+      as a waiver strategy — the FRE 502(d) order serves as a reciprocal
+      shield that binds all parties regardless of jurisdiction.
+resolution_path: "obsidian_sync/templates/filing_types/fre_502_protection_order.yaml"

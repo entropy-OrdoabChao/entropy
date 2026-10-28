@@ -1,0 +1,46 @@
+id: motion_for_fraud_on_the_court
+title: Motion for Relief from Judgment — Fraud on the Court Under FRCP 60(d)(3)
+description: |
+  Motion under FRCP 60(d)(3) for relief from a final judgment or order
+  obtained by fraud on the court. This is the most extreme grounds under
+  FRCP 60 and carries no time limitation — unlike FRCP 60(b)(1)-(5) which
+  are subject to a one-year clock.
+  FRCP 60(d)(3) applies when the fraud is directed at the court itself,
+  not just at an opposing party. The fraud must involve serious misconduct
+  that undermines the integrity of the judicial process.
+  Grounds include: court relied on a judgment/record obtained by fraud;
+  opposing party submitted false evidence to the court; the court's order
+  contradicts the docket record (e.g., claims a party was not served when
+  proof of service is filed on the docket).
+court: any
+required_authorities:
+  - FRCP 60(d)(3) — Fraud on the court; no time limitation
+  - FRCP 60(c)(1) — Standard for motion under FRCP 60
+  - Hazel-Atlas Glass Co. v. Hartford-Empire Co., 322 U.S. 238 (1944) — Fraud on the court standard
+  - Herring v. United States, 424 F.3d 384 (3d Cir. 2005) — Fraud on the court in federal court
+trigger_defects:
+  - FRAUD_ON_COURT_JUDICIAL
+  - SERIOUS/FRAUD_ON_COURT
+  - judgment_contradicts_docket
+  - court_relied_on_fraud
+  - FATAL/JURISDICTION
+  - void_order
+required_facts:
+  - case_id
+  - caption
+  - defendant_name
+  - fraud_description
+  - judgment_or_order_targeted
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/procedural_history
+  - block: arguments/fraud_on_court
+  - block: sections/prayer_for_relief
+  - block: sections/conclusion
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service
+  - block: boilerplate/proposed_order

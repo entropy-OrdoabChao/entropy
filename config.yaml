@@ -1,0 +1,111 @@
+# ══════════════════════════════════════════════════════════════
+# Beezle AI — Unified Configuration
+# This file is the SINGLE SOURCE OF TRUTH for all modules.
+# Location: {{ENTROPY_HOME}}\config.yaml
+# ══════════════════════════════════════════════════════════════
+
+# ── Server ──────────────────────────────────────────────────
+server:
+  host: "0.0.0.0"
+  port: 8644
+
+# ── Vector Database (IMMUTABLE — DO NOT MODIFY) ────────────
+vectordb:
+  host: "localhost"
+  port: 8100
+  collection: "legal_docs"
+  distance_metric: "cosine"
+  # WARNING: DB is immutable. Do NOT delete, re-index, or reset.
+
+# ── Embedding Model ─────────────────────────────────────────
+embedding:
+  model: "BAAI/bge-base-en-v1.5"
+  device: "cuda"
+  batch_size: 32
+  dimension: 768
+  # CRITICAL: dimension MUST match ingested corpus (768-dim).
+  # DO NOT change model without re-embedding entire corpus.
+
+# ── Chunking ────────────────────────────────────────────────
+chunking:
+  target_chunk_size: 400
+  overlap: 100
+  min_chunk_size: 80
+  preserve_sections: true
+
+# ── Retrieval ───────────────────────────────────────────────
+retrieval:
+  top_k_dense: 20
+  top_k_bm25: 0        # Disabled — corpus too large for in-memory BM25
+  pre_rerank_k: 20
+  reranker_enabled: true
+  reranker_model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+  reranker_batch_size: 16
+  final_top_k: 8
+  score_threshold: 0.01
+  max_context_chars: 10000
+
+# ── LLM Layer ───────────────────────────────────────────────
+# Phase 2: Uses Anthropic API via Claude
+# Only used for: fact extraction, template-based drafting
+llm:
+  provider: "anthropic"
+  model: "claude-sonnet-4-20250514"
+  max_tokens: 4096
+  temperature: 0.1
+  # NEVER use LLM for: legal conclusions, rule creation, memory storage
+
+# ── Document Generation ──────────────────────────────────────
+generation:
+  default_font: "Times New Roman"
+  font_size: 12
+  margins_inches: 1.0
+  line_spacing: "double"
+  max_output_versions: 3
+
+# ── OCR ──────────────────────────────────────────────────────
+ocr:
+  dpi: 300
+  pdfplumber_first: true
+  fallback_tesseract: true
+  lang: "eng"
+
+# ── Context Control ──────────────────────────────────────────
+context:
+  max_total_chars: 12000
+  max_facts_chars: 3000
+  max_law_chars: 5000
+  max_authority_chars: 3000
+  max_pattern_chars: 1000
+
+# ── Case Defaults ────────────────────────────────────────────
+case:
+  jurisdiction: "PA"       # Default jurisdiction
+  court: "Court of Common Pleas of Philadelphia County"
+  plaintiff: ""
+  defendant: ""
+  case_no: ""
+
+# ── External APIs ────────────────────────────────────────────
+apis:
+  courtlistener:
+    base_url: "https://www.courtlistener.com/api/rest/v3/"
+    # API key set via COURTLISTENER_API_KEY env var
+    rate_limit: 5000  # requests per day
+
+# ── Paths (relative to BASE_PATH) ────────────────────────────
+paths:
+  data: "data"
+  output: "output"
+  logs: "logs"
+  memory: "memory"
+  obsidian: "obsidian_sync"
+
+# ── Obsidian Integration (Phase 4) ────────────────────────
+obsidian:
+  enabled: true
+  pattern_threshold: 2          # Min occurrences before promoting to pattern
+  max_case_logs_scan: 50        # How many case logs to scan for patterns
+  async_dispatch: true           # Fire-and-forget post-pipeline writes
+  feedback_enabled: true         # Pre-draft feedback from past patterns
+  max_query_results: 5           # Max results from pattern queries

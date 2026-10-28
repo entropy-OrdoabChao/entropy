@@ -1,0 +1,41 @@
+id: appellate_brief_3rd_cir
+title: Brief of Appellant
+description: 'Principal brief on appeal to the Third Circuit per Federal Rule of
+
+  Appellate Procedure 28 and Local Appellate Rule 28.1. Brief is
+
+  limited to 13,000 words (FRAP 32(a)(7)(B)). Requires Certificate
+
+  of Compliance per FRAP 32(g). Cover must be blue for appellant''s
+
+  principal brief (FRAP 32(a)(2)).
+
+  '
+court: 3D_CIR
+brief_type: principal
+required_authorities:
+- FRAP 4(a)(1)(A) (time for filing notice of appeal)
+- FRAP 28(a) (required contents of appellant's brief)
+- FRAP 32(a)(7) (length limits)
+- FRAP 32(g) (certificate of compliance)
+- 3d Cir. L.A.R. 28.1 (local content requirements)
+- 3d Cir. L.A.R. 28.3 (binding hierarchy)
+- 3d Cir. I.O.P. 5.7 (not-precedential opinions are not binding)
+structure:
+- block: boilerplate/caption_appellate_3rd_cir
+- block: appellate/jurisdictional_statement
+- block: sections/factual_statement_federal
+- block: appellate/statement_of_issues
+- block: appellate/statement_of_related_cases
+- block: appellate/statement_of_the_case
+- block: appellate/summary_of_argument
+- block: sections/standard_of_review
+- block: arguments/court_rules_violation
+  when: defect_categories.PROCEDURAL > 0
+- block: arguments/non_binding_authority
+  when: defect_categories.AUTHORITY > 0
+- block: arguments/jurisdiction_attack
+  when: defect_categories.JURISDICTION > 0
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service

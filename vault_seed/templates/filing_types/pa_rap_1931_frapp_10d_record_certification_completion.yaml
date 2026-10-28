@@ -1,0 +1,115 @@
+# Pa.R.A.P. 1931 × FRAP 10(d) — Record Certification & Completion Duty
+# Created 2026-09-02 by DISCOVER-VEHICLE (kanban t_1630ae63).
+# Copied from the closest baseline: pa_r_c_p_236_clerical_error_correction.yaml
+# (same ministerial-clerk-duty posture, same block inventory convention).
+# Grounding (3 semantic corpus searches, pa_code_t210_ch19 + frb/wright treatise):
+#  - Pa.R.A.P. 1931(a)(1): the record on appeal S{{JUDGE}} be transmitted within 60 days
+#    after the notice of appeal (pa_code_t210_ch19, score 0.736).
+#  - Pa.R.A.P. 1935(a): prothonotary must give WRITTEN notice to the trial court
+#    judge of any delinquency in transmission within 10 days after the filing date
+#    (pa_code_t210_ch19, score 0.742); 1935(b): report up the administrative chain.
+#  - Pa.R.A.P. 1921 Official Note: an appellate court may consider ONLY facts duly
+#    certified in the record — Commonwealth v. Young, 456 Pa. 102, 317 A.2d 258
+#    (pa_code_t210_ch19, score 0.774).
+#  - Federal mirror: FRAP 10(d) completion of record — referenced verbatim in
+#    irs_irm_full / irs_irm_tfm (score ~0.80); Wright & Miller treatise (federal
+#    practice and procedure) carries the pre-1968 Rule 75 text (clerk certifies
+#    and transmits the record; supplemental record where omissions).
+#  NOT IN CORPUS (flagged): standalone verbatim FRAP 10(d) rule text as a
+#  dedicated chunk; Pa.R.A.P. 3191 (Supreme Court chapter) verbatim text.
+# arsenal_critic will compose-check this on its next run and quarantine if broken.
+
+id: pa_rap_1931_frapp_10d_record_certification_completion
+title: Motion to Compel Certification and Completion of the Record on Appeal (Pa.R.A.P. 1931 / FRAP 10(d))
+description: >
+  Filing type for the procedural mechanism compelling the trial court / clerk
+  to certify and transmit the COMPLETE record on appeal — the reciprocal
+  ministerial duty that sits on the COURT'S side of every appeal.
+
+  Pa.R.A.P. 1931(a)(1) makes transmission a S{{JUDGE}}-due: the record on appeal,
+  including the transcript and exhibits necessary for the determination of the
+  appeal, shall be transmitted to the appellate court within 60 days after the
+  filing of the notice of appeal. Pa.R.A.P. 1935(a) adds the enforcement
+  ladder: within ten days after the transmission date the appellate
+  prothonotary must give written notice of any delinquency to the trial court
+  judge, and 1935(b) carries a further delay up the administrative chain
+  (Administrative Office / Supreme Court). The federal mirror is Fed. R. App.
+  P. 10(d) (Completion of Record): where the transmitted record is incomplete
+  or contains omissions, the deficiency is corrected by a supplemental
+  certification and the appeal is NOT put at risk on account of the record the
+  court below failed to produce.
+
+  RECIPROCAL-DUTY FRAME: the pro se appellant is held to every appellate
+  deadline (1925(b) concise statement, briefing schedule, record designation);
+  the trial court is likewise held to the record deadline, and the certification
+  duty is ministerial, not discretionary. The official note to Pa.R.A.P. 1921
+  makes the consequence symmetric: the appellate court may consider ONLY the
+  facts duly certified in the record (Commonwealth v. Young, 456 Pa. 102,
+  115, 317 A.2d 258 (1974)). An uncertified, untransmitted, or incomplete
+  record is a divergence the appellant must expose — the same exposure the
+  court demanded of the pro se party at every other step.
+
+  WHEN: notice of appeal filed, 60-day clock running, and (a) the record has
+  not been transmitted/certified, (b) the transmitted record omits
+  transcripts, exhibits, or the certified docket, or (c) the appellate court is
+  treating the appeal as incomplete on account of the record.
+
+court: state_pa_ccp  # federal variant maps to FRAP 10(d) alone (see required_authorities)
+required_authorities:
+  - citation: "Pa.R.A.P. 1931(a)(1)"
+    proposition: "The record on appeal, including the transcript and exhibits necessary for the determination of the appeal, shall be transmitted to the appellate court within 60 days after the filing of the notice of appeal (pa_code_t210_ch19, corpus score 0.736)."
+  - citation: "Pa.R.A.P. 1935(a)"
+    proposition: "Within ten days after the date for filing the record, the appellate prothonotary shall give written notice to the trial court judge of any delinquency in the transmission of the record; a copy goes to the president judge of the judicial district (pa_code_t210_ch19, score 0.742)."
+  - citation: "Pa.R.A.P. 1921 Official Note; Commonwealth v. Young, 456 Pa. 102, 115, 317 A.2d 258 (1974)"
+    proposition: "An appellate court may consider only the facts which have been duly certified in the record on appeal — certification is the gate between the record and the appellate decision (pa_code_t210_ch19, score 0.774)."
+  - citation: "Fed. R. App. P. 10(d) (Completion of Record)"
+    proposition: "In lieu of the original papers and transcript, the parties may prepare and sign an agreed statement; where the transmitted record is incomplete or contains omissions, the record is completed by a supplemental certification — the IRM treats 10(d) as the completion mechanism (irs_irm_full, irs_irm_tfm, corpus scores ~0.80). Standalone verbatim FRAP 10(d) rule text NOT IN CORPUS — flagged."
+  - citation: "Fed. R. App. P. 10(a)-(c) (record preparation; Wright & Miller treatise, corpus)"
+    proposition: "The clerk of the district court, under his hand and the seal of the court, shall transmit a true copy of the record designated by the parties, always including the entry of judgment; the duty to prepare and transmit the record is ministerial (treatise_federal_practice_and_procedure, corpus score ~0.77)."
+
+trigger_defects:
+  - record_not_transmitted
+  - record_incomplete
+  - transcript_omitted
+  - exhibits_omitted
+  - certification_missing
+  - 60_day_record_clock_lapsed
+  - SERIOUS/RECORD
+  - FATAL/RECORD
+
+structure:
+  - type: caption
+    block: boilerplate/caption_state_pa_ccp
+  - type: section
+    block: sections/introduction
+    content: "State that this is a Motion to Compel Certification and Completion of the Record on Appeal under Pa.R.A.P. 1931/1935 (and, in federal court, Fed. R. App. P. 10(d)). Identify the notice of appeal, its filing date, the 60-day transmission deadline, and the specific deficiency (not transmitted / omitted transcript / omitted exhibits / uncertified docket)."
+  - type: section
+    block: sections/procedural_history
+    content: "Trace the notice of appeal filing date, the 60-day clock under Pa.R.A.P. 1931(a)(1), any 1925(b) extension, and the current state of the record (what was transmitted, what was omitted). Quote the 1935(a) delinquency-notice ladder: the appellate prothonotary's written notice to the trial judge within 10 days after the filing date, and the 1935(b) report up the administrative chain."
+  - type: section
+    block: sections/definitions_schedule_canons
+    content: "Define 'record on appeal' per Pa.R.A.P. 1921 (original papers and exhibits, transcript if any, certified docket entries — 'shall constitute the record on appeal in all cases') and 'certification' per the 1921 Official Note and Commonwealth v. Young (only duly certified facts are reviewable). Contrast certification (ministerial, court/clerk duty) with the appellant's designation duty."
+  - type: argument
+    block: arguments/procedural_defect
+    content: "Argue that transmission is a S{{JUDGE}}-duty, not discretionary: Pa.R.A.P. 1931(a)(1) 'shall be transmitted ... within 60 days'; the delinquency ladder (1935(a)/(b)) exists precisely because the rule contemplates non-compliance by the trial side. The appellant's own duties (1925(b) concise statement, briefing, record designation) were performed; the reciprocal ministerial duty sits on the court/clerk side."
+  - type: argument
+    block: arguments/void_order_misuse
+    content: "Argue the symmetry Young enforces: the appellate court may consider only duly certified facts, so an incomplete or uncertified record is not a defect in the APPEAL but a defect in the RECORD — and the record is the court below's to produce. Cite FRAP 10(d) as the federal completion mechanism (supplemental certification cures omissions; IRM 10(d) practice) and Wright & Miller's pre-1968 Rule 75 (clerk transmits a true copy under his hand and seal). Flag: dismissing or stalling the appeal on an incomplete record the court below failed to produce is a divergence from the certification gate."
+  - type: section
+    block: sections/conclusion
+    content: "Request an order compelling the trial court/clerk to certify and transmit (or supplement) the complete record on appeal — transcript, exhibits, certified docket — and, where the 60-day clock has lapsed, an order noting the 1935(a) delinquency notice to the trial judge."
+  - type: section
+    block: sections/prayer_for_relief
+    content: "Prayer for: (1) certification and transmission of the complete record on appeal per Pa.R.A.P. 1931(a)(1) / FRAP 10(d); (2) a 1935(a) written delinquency notice where the clock has lapsed; (3) a supplemental certification curing any omissions; (4) the appeal to proceed on the completed record; (5) such other relief as is just."
+  - type: boilerplate
+    block: boilerplate/certificate_of_service
+  - type: boilerplate
+    block: boilerplate/proposed_order
+
+case_applications:
+  - case_id: "{{CASE_ID}}"
+    note: "Reyes-Pellegrino — notice_of_appeal + FRAP 31 briefing schedule already armed (notice_of_appeal_federal_3rd_circuit.yaml, frap_31_appellate_briefing_schedule.yaml); this filing arms the RECORD side of the same appeal: when the 3d Circuit receives an incomplete record, the deficiency is cured by FRAP 10(d) supplemental certification, not by penalizing the appellant."
+  - case_id: "{{CASE_ID}}"
+    note: "{{OPPOSING_PARTY}} — any Pa. Superior Court appeal from {{JUDGE}}'s unexplained one-liners (26032282 / 26023992 / 26034317, see pa_rap_1925a_opinion.yaml) rides on a certified record: the prothonotary's 1931(a)(1) 60-day transmission duty and the 1935(a) delinquency ladder are the reciprocal duties the court holds the appellant to at every other step."
+
+resolution_path: obsidian_sync/templates/filing_types/pa_rap_1931_frapp_10d_record_certification_completion.yaml

@@ -1,0 +1,23 @@
+name: pleading_sufficiency
+group: record
+unit: claim            # each numbered paragraph / ground of the filing fed in
+axis: "RECORD — PLEADING SUFFICIENCY: does each paragraph meet the pleading rules? conclusion-for-fact, missing material fact, unattached writing, unverified, objection outside 1028(a)/12(b), speaking demurrer, waiver/appearance."
+lane: local-gpu              # production lane (M2_LANE)
+families:
+  - amjur_pleading
+  - pa_rcp
+  - frcp
+  - amjur_estoppel
+  - edpa_lr
+  - amjur_dismissal
+  - amjur_discovery
+queries:
+  - "{claim} conclusions of law pleaded facts demurrer"
+  - "material facts on which a cause of action or defense is based concise summary form"
+  - "preliminary objections may be filed by any party to any pleading limited to the following grounds"
+  - "demurrer admits all well pleaded material facts"
+  - "general appearance answering to the merits objection jurisdiction of the person"
+  - "requests for admission deemed admitted failure to answer"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic

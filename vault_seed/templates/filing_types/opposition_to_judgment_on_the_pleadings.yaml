@@ -1,0 +1,64 @@
+id: opposition_to_judgment_on_the_pleadings
+title: Plaintiff's Opposition to Motion for Judgment on the Pleadings (FRCP 12(c))
+description: |
+  Opposition brief responding to defendant's motion for judgment on the pleadings
+  under FRCP 12(c). FRCP 12(c) standard is identical to FRCP 12(b)(6) — judgment
+  is proper only if "no genuine dispute exists as to any material fact and the movant
+  is entitled to judgment as a matter of law." Celotex/Anderson/Matsushita standard.
+  The motion must be based on pleadings + matters of public record. If extrinsic
+  materials are considered, it converts to FRCP 56 summary judgment.
+
+court: any
+
+required_authorities:
+  - Fed. R. Civ. P. 12(c)
+  - Celotex Corp. v. Catrett, 477 U.S. 317 (1986)
+  - Anderson v. Liberty Lobby, 477 U.S. 242 (1986)
+  - Matsushita Elec. Indus. Co. v. Zenith Radio Corp., 475 U.S. 574 (1986)
+  - Ashcroft v. Iqbal, 556 U.S. 662 (2009)
+  - Bell Atl. Corp. v. Twombly, 550 U.S. 544 (2007)
+  - Haines v. Kerner, 404 U.S. 519 (1972) (pro se liberal construction)
+  - Safeco Ins. Co. v. Burr, 551 U.S. 47 (2007) (FCRA willfulness = reckless disregard)
+  - McLaughlin v. Richland Shoe Co., 486 U.S. 128 (1988) (willfulness = knowing/reckless)
+  - E.D. Pa. L.R. 7.1(c) (response deadline)
+
+trigger_defects:
+  - SERIOUS/AUTHORITY
+  - FATAL/AUTHORITY
+  - SERIOUS/DISMISSAL
+  - FATAL/DISMISSAL
+  - FATAL/JURISDICTION
+  - dismissal
+  - judgment_on_pleadings
+  - 12c_motion
+
+structure:
+  - block: boilerplate/caption_federal
+    when: is_federal == true
+  - block: boilerplate/caption_state_pa_ccp
+    when: is_federal == false
+  - block: sections/introduction
+  - block: sections/factual_statement_federal
+    when: posture != 'post-judgment'
+  - block: sections/procedural_history
+  - block: sections/standard_of_review_12c
+  - block: arguments/12c_standard_identical_to_summary_judgment
+    when: defect_categories.CLAIM_DEFECT > 0
+  - block: arguments/genuine_dispute_exists
+    when: defect_categories.CLAIM_DEFECT > 0
+  - block: arguments/fcra_willful_survives_pleadings
+    when: case_type == 'fraud_fcra'
+  - block: arguments/fcra_negligent_survives_pleadings
+    when: case_type == 'fraud_fcra'
+  - block: arguments/utpcpl_fact_intensive
+    when: has_utpcpl == true
+  - block: arguments/motion_convert_to_summary_judgment
+    when: extrinsic_materials_considered == true
+  - block: arguments/non_binding_authority
+    when: defect_categories.AUTHORITY > 0
+  - block: arguments/haines_v_kerner_standard
+    when: defect_categories.DISMISSAL > 0
+  - block: sections/prayer_for_relief_opposition
+  - block: sections/conclusion_opposition
+  - block: boilerplate/signature_block_pro_se
+  - block: boilerplate/certificate_of_service

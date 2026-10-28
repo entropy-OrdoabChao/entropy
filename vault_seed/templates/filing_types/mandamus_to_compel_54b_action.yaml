@@ -1,0 +1,32 @@
+---
+id: mandamus_to_compel_54b_action
+title: Petition for Writ of Mandamus to Compel Rule 54(b) Action
+description: 'Petition to the Third Circuit for a writ of mandamus commanding the
+  district court to either grant 54(b) certification or make the required
+  express determination when it has dismissed a party with prejudice but
+  refused to certify without applying the Curtiss-Wright factors. This is the
+  last resort when the district court refuses to apply the controlling rule.'
+court: federal_appellate
+required_authorities:
+- 28 U.S.C. § 1651
+- Fed. R. App. P. 21
+- Cheney v. United States District Court for the District of Columbia, 542 U.S. 367 (2004)
+- Roane Chem. Co. v. United States, 260 U.S. 424 (1922)
+trigger_defects:
+- denial_of_54b_certification
+- FATAL/JURISDICTION
+- void_order
+- dismissal
+structure:
+- block: boilerplate/caption_appellate_3rd_cir
+  when: is_federal_appellate == true
+- block: sections/introduction
+- block: sections/procedural_history
+- block: sections/standard_of_review
+- block: arguments/mandamus_grounds
+- block: arguments/section_1292b_interlocutory_path
+  when: denial_of_54b_certification == true
+- block: sections/prayer_for_relief
+- block: sections/conclusion
+- block: boilerplate/signature_block_pro_se
+- block: boilerplate/certificate_of_service
