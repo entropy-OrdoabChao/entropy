@@ -153,7 +153,7 @@ GENERIC_DEFENDANT_FRAGMENTS = [
     "experian", "equifax", "transunion", "trans_union", "trans-union",
     "discover", "synchrony", "capital_one", "capital-one", "capitalone",
     "wells_fargo", "wellsfargo", "wells-fargo",
-    "lippi", "avant", "lendly", "lending_club", "lendingclub",
+    "example_creditor", "avant", "lendly", "lending_club", "lendingclub",
     "credit_one", "creditone", "credit-one",
     "midland", "portfolio_recovery", "lvnv",
     "amex", "american_express",

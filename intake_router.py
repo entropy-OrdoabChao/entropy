@@ -96,13 +96,13 @@ def extract_docket_candidates(filename):
         "capital one": "fed:2:26-cv-00123",
         "greensky": "fed:2:26-cv-00123",
         "avant": "fed:2:26-cv-00123",
-        "amerisave": "fed:2:26-cv-00456",
-        "planet home": "fed:2:26-cv-00456",
-        "dovenmuehle": "fed:2:26-cv-00456",
+        "example_lender": "fed:2:26-cv-00456",
+        "example mortgage co": "fed:2:26-cv-00456",
+        "example_servicer": "fed:2:26-cv-00456",
         "state farm": "fed:2:26-cv-00789",
         "allstate": "fed:2:26-cv-00789",
         "progressive": "fed:2:26-cv-00789",
-        "lippi": "phila_ccp:260100000",
+        "example_creditor": "phila_ccp:260100000",
         
     }
     for kw, canonical in party_keywords.items():
@@ -216,7 +216,7 @@ def case_dir_for(canonical_id, case_map):
     jur = meta.get("jurisdiction", "fed")
     
     # Naming convention from existing dirs: <jur>_<case_id>_" + _ident.party_key() + "_v_<party>
-    # e.g. fed_26-cv-00123, phila_ccp_260100000_" + _ident.party_key() + "_v_lippi
+    # e.g. fed_26-cv-00123, phila_ccp_260100000_" + _ident.party_key() + "_v_example_creditor
     case_id_safe = case_id.replace(":", "-").replace("/", "-")
     return f"{jur}_{case_id_safe}_{_ident.party_key()}_v_{party}"
 

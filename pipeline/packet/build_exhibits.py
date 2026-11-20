@@ -18,6 +18,7 @@ from core.entropy_paths import entropy_root as _eroot, package_root as _epkg, he
 import argparse
 import csv
 import difflib
+import glob
 import json
 import logging
 import re
@@ -211,20 +212,70 @@ def render(md_text: str, out: Path, title: str, comparison: bool, asfiled: dict 
 
 
 # ---------------------------------------------------------------- H: ledger CSV -> readable PDF table (unchanged)
-def build_ledger_pdf(h_pdf: Path, ledger_csv: Path, ledger_md: Path, csv_name: str, title_tail: str):
+def _glob1(pattern: str) -> str:
+    """A path that may contain '*': the first existing match (sorted), else the pattern itself so
+    the caller's own 'missing input' message still names what it looked for."""
+    if "*" not in str(pattern):
+        return str(pattern)
+    hits = sorted(glob.glob(str(pattern)))
+    return hits[0] if hits else str(pattern)
+
+
+_COURT_SHORT = {"PA_CP_PHILA": "Phila. CCP", "PHILA_CCP": "Phila. CCP", "EDPA": "E.D. Pa.",
+                "PAED": "E.D. Pa.", "CA3": "3d Cir.", "3DCIR": "3d Cir.",
+                "PA_SUPER": "Pa. Super.", "PA_COMMW": "Pa. Commw."}
+
+
+def _derived_caption(slug: str) -> str:
+    """'<filer surname> v. <adverse party>, <forum> No. <docket>' from the case profile."""
+    try:
+        from pipeline.case_profile import filer_surname, profile
+        pr = profile(slug)
+        adv = (pr.get("adverse_names") or ["Defendant"])[0]
+        court = _COURT_SHORT.get(str(pr.get("court") or "").upper().replace(" ", "_"),
+                                 str(pr.get("court") or "").strip())
+        dkt = pr.get("docket") or ""
+        tail = f"{court} No. {dkt}".strip()
+        return f"{filer_surname() or 'Plaintiff'} v. {adv}" + (f", {tail}" if tail.strip() else "")
+    except Exception as e:
+        return f"[CAPTION NOT DERIVABLE for {slug}: {e}]"
+
+
+def _policy_tail(text: str) -> str:
+    """', Policy <n>' when the ledger itself states a policy number; '' when it does not."""
+    m = re.search(r"Policy\s*(?:No\.?|Number|#)?\s*[:\-]?\s*(\d{6,})", text, re.I)
+    return f", Policy {m.group(1)}" if m else ""
+
+
+def _ledger_span(text: str) -> str:
+    """' (<n> rows, <first> → <last>)' counted from the ledger's own date column."""
+    days = re.findall(r"\b(20\d\d-\d\d)(?:-\d\d)?\b", text)
+    rows = [l for l in text.splitlines() if re.match(r"\s*\|?\s*20\d\d-\d\d", l)]
+    if not days:
+        return ""
+    return f" ({len(rows) or len(days)} rows, {min(days)} \u2192 {max(days)})"
+
+
+def build_ledger_pdf(h_pdf: Path, ledger_csv: Path, ledger_md: Path, csv_name: str, title_tail: str,
+                     ex_letter: str = "H"):
     from reportlab.lib.pagesizes import letter, landscape
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
     from reportlab.lib.styles import getSampleStyleSheet
     from reportlab.lib import colors
     styles = getSampleStyleSheet()
     small = styles["BodyText"]; small.fontSize = 7.5; small.leading = 9
-    doc = SimpleDocTemplate(str(h_pdf), pagesize=landscape(letter), leftMargin=36, rightMargin=36, topMargin=36, bottomMargin=36,
-                            title="Exhibit H — Premium ledger, Policy 928356298")
-    story = [Paragraph(f"EXHIBIT H — Premium Ledger, Progressive Policy 928356298 ({title_tail})", styles["Heading2"]),
-             Paragraph("Compiled from Defendant's own payment confirmation and scheduled-payment reminder emails; every row is pinned to the Gmail message id of the "
-                       f"document it is taken from. Source CSV: {csv_name} (82 rows, one per month 2019-03 → 2025-12). "
-                       "Totals computed with exact decimal arithmetic.", small), Spacer(1, 8)]
     md = ledger_md.read_text(encoding="utf-8")
+    policy_tail = _policy_tail(md)
+    doc = SimpleDocTemplate(str(h_pdf), pagesize=landscape(letter), leftMargin=36, rightMargin=36, topMargin=36, bottomMargin=36,
+                            title=f"Exhibit {ex_letter} — Premium ledger{policy_tail}")
+    # S-no-hardcode (2026-11-14): the exhibit letter, the party, the policy number and the row
+    # span were spelled in ("EXHIBIT H ... Progressive Policy 928356298 ... 82 rows, one per
+    # month 2019-03 → 2025-12"), so this exhibit title lied for any other case, any other policy
+    # and any other ledger. Every one of them is now read from the ledger itself / the caption.
+    story = [Paragraph(f"EXHIBIT {ex_letter} — Premium Ledger{policy_tail} ({title_tail})", styles["Heading2"]),
+             Paragraph("Compiled from Defendant's own payment confirmation and scheduled-payment reminder emails; every row is pinned to the Gmail message id of the "
+                       f"document it is taken from. Source CSV: {csv_name}{_ledger_span(md)}. "
+                       "Totals computed with exact decimal arithmetic.", small), Spacer(1, 8)]
     tot_rows = []
     for ln in md.splitlines():
         if ln.startswith("| ") and "Window" in ln or (tot_rows and ln.startswith("| ")):
@@ -269,11 +320,16 @@ def main(argv=None) -> int:
     ap.add_argument("--copy", action="append", default=None, help="LETTER[.ext]=SRC straight copy ({ROOT},{CASE},{M} expand); repeatable; default = today's 6")
     ap.add_argument("--merge", action="append", default=None, help="LETTER=PDF appended after that letter's txt->pdf; default F=<reply attachment>")
     ap.add_argument("--ledger-letter", default="H")
-    ap.add_argument("--ledger-csv", default="{CASE}/evidence/progressive_premium_ledger.csv")
-    ap.add_argument("--ledger-md", default="{CASE}/evidence/progressive_premium_ledger.md")
-    ap.add_argument("--ledger-caption", default="Filer v. Example Insurer Ins. Co., Phila. CCP No. 260100001")
+    # S-no-hardcode (2026-11-14): these three defaults named ONE case's party, ledger files and
+    # docket, so --case <other case> silently built THIS case's exhibit. The ledger files are now
+    # found by shape inside the case's own evidence dir and the caption is derived from the case
+    # profile (filer surname v. adverse party, forum short form, docket).
+    ap.add_argument("--ledger-csv", default="{CASE}/evidence/*premium_ledger.csv")
+    ap.add_argument("--ledger-md", default="{CASE}/evidence/*premium_ledger.md")
+    ap.add_argument("--ledger-caption", default=None,
+                    help="exhibit caption tail; default = derived from the case profile")
     ap.add_argument("--amend-md", default="{M}/EXHIBIT_PROPOSED_AMENDED_COMPLAINT.md")
-    ap.add_argument("--asfiled-ocr", default="{CASE}/intake/_ocr/PROGRESSIVE_COMPLAINT_asfiled_260100001.pdf.txt")
+    ap.add_argument("--asfiled-ocr", default="{CASE}/intake/_ocr/*COMPLAINT*asfiled*.pdf.txt")
     ap.add_argument("--clean-letter", default="K")
     ap.add_argument("--comparison-letter", default="L")
     ap.add_argument("--amend-title", default="PROPOSED FIRST AMENDED COMPLAINT")
@@ -281,6 +337,13 @@ def main(argv=None) -> int:
 
     CASE, M = Path(a.case), Path(a.m)
     subs = {"ROOT": a.root, "CASE": str(CASE), "M": str(M)}
+    # S-no-hardcode (2026-11-14): resolve the ledger / as-filed inputs by SHAPE inside this
+    # case's own dirs, and derive the exhibit caption from this case's profile.
+    a.ledger_csv = _glob1(a.ledger_csv.format(**subs))
+    a.ledger_md = _glob1(a.ledger_md.format(**subs))
+    a.asfiled_ocr = _glob1(a.asfiled_ocr.format(**subs))
+    if not a.ledger_caption:
+        a.ledger_caption = _derived_caption(CASE.name)
     out = Path(a.outdir) if a.outdir else M
     out.mkdir(parents=True, exist_ok=True)
     stub = Path(a.stub) if a.stub else default_stub(M)
@@ -300,6 +363,11 @@ def main(argv=None) -> int:
         if letter not in by_letter:
             print(f"[{k}] skipped: no manifest row {letter}")
             continue
+        if not src.exists() and ext:
+            # an ext-form key (H.csv / H.md) names a DERIVED file of one run (the Progressive ledger); when this case has none,
+            # the manifest row's PDF must not be re-labelled .csv/.md — the row is copied as itself in step 3b.
+            print(f"[{k}] skipped: default derived source missing ({src.name}); row {letter} handled as its own document")
+            continue
         if not src.exists():
             # DEFAULT_COPIES are one run's paths; the manifest row's own [doc:] path (resolved by
             # read_manifest against the case/record dirs) is the authority for any other bundle.
@@ -316,7 +384,7 @@ def main(argv=None) -> int:
     from pipeline.m1 import _text_to_pdf
     merges = _kv(a.merge if a.merge is not None else DEFAULT_MERGE, subs)
     for r in rows:
-        if not r["doc"].lower().endswith(".txt"):
+        if not r["doc"].lower().endswith((".txt", ".md")):      # a text record (.txt, or a .md provenance/log) renders the same way
             continue
         p = out / Path(r["doc"]).name
         if not p.exists():
@@ -326,6 +394,8 @@ def main(argv=None) -> int:
         pdf = _text_to_pdf(p)          # -> <name>.txt.exhibit.pdf
         final = out / (p.stem + ".pdf")
         att = merges.get(r["letter"])
+        if att and not Path(att).exists():
+            print(f"[{r['letter']}] merge attachment absent in this case ({Path(att).name}) — exhibit stands alone"); att = None
         if att:
             # the reply + its attachment (Final Bill) as ONE exhibit, text first
             w = PdfWriter()
@@ -338,12 +408,24 @@ def main(argv=None) -> int:
             shutil.copy2(pdf, final)
         print(f"[{r['letter']}] {final.name} pages={pages(final)}")
 
-    # 3. ledger table
-    if a.ledger_letter and a.ledger_letter in by_letter:
+    # 3. ledger table — only when THIS case has a ledger (csv + md on disk); the letter is otherwise an ordinary record document
+    _lc, _lm = Path(a.ledger_csv.format(**subs)), Path(a.ledger_md.format(**subs))
+    if a.ledger_letter and a.ledger_letter in by_letter and _lc.exists() and _lm.exists():
         h_pdf = out / doc_name(a.ledger_letter, "pdf")
-        build_ledger_pdf(h_pdf, Path(a.ledger_csv.format(**subs)), Path(a.ledger_md.format(**subs)),
-                         doc_name(a.ledger_letter, "csv"), a.ledger_caption)
+        build_ledger_pdf(h_pdf, _lc, _lm, doc_name(a.ledger_letter, "csv"), a.ledger_caption, a.ledger_letter)
         print(f"[{a.ledger_letter}] {h_pdf.name} pages={pages(h_pdf)}")
+    elif a.ledger_letter and a.ledger_letter in by_letter:
+        print(f"[{a.ledger_letter}] no ledger in this case ({_lm.name} absent) — row treated as a record document")
+
+    # 3b. every manifest row whose own document is a PDF on disk and has not been produced above is copied as itself
+    #     (S-no-hardcode: the manifest decides the exhibits; DEFAULT_COPIES was one run's list)
+    for letter, r in sorted(by_letter.items()):
+        dst = out / doc_name(letter, "pdf")
+        if dst.exists():
+            continue
+        src = Path(r["path"]) if r.get("exists") else None
+        if src and src.exists() and src.suffix.lower() == ".pdf":
+            shutil.copy2(src, dst); print(f"[{letter}] {dst.name} pages={pages(dst)} (manifest row copied as itself)")
 
     # 4. K / L: amended complaint, clean + comparison -> 5. docx -> pdf (LibreOffice headless)
     amend = Path(a.amend_md.format(**subs))

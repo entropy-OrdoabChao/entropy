@@ -34,6 +34,32 @@ import re
 import sys
 from pathlib import Path
 
+from pipeline.case_profile import CaseProfileGap, profile as _case_profile
+
+
+# ------------------------------------------------- signature (S-no-hardcode 2026-11-14)
+# The signer was spelled into this lane ("FILER NAME, sui juris"), so EVERY case's
+# application carried ONE matter's filer. The name, the capacity word and the role now come from
+# pipeline.case_profile (case_registry/case_map/CASE_FACTS + cases_index/filer_identity.json).
+# A gap is a hard exit naming the field — never a fill, exactly like the RELIEF rule above.
+def _signature_lines(case_id: str, stub_name: str = "<stub>") -> list:
+    try:
+        return list(_case_profile(case_id)["signature_lines"])
+    except CaseProfileGap as e:
+        sys.exit(f"application lane: no signature block for case {case_id!r} "
+                 f"(stub {stub_name}) — {e}")
+
+
+def _signer_phrase(case_id: str, stub_name: str = "<stub>") -> str:
+    """'<name>, <capacity>' for the opening sentence, from the case profile."""
+    try:
+        pr = _case_profile(case_id)
+        name = pr["signature_name"]
+        cap = pr.get("filer_capacity")
+        return f"{name}, {cap}" if cap else name
+    except CaseProfileGap as e:
+        sys.exit(f"application lane: no signer for case {case_id!r} (stub {stub_name}) — {e}")
+
 # ---------------------------------------------------------------- forum data (2026-10-24)
 # Court family -> the forum's own verification form. DATA keyed by family; a new forum is a
 # row here, not a code path. A court that resolves to no family gets an UNVERIFIED marker the
@@ -295,7 +321,7 @@ def assemble(stub: dict, case_id: str, court: str, out_path: str, filing_type: s
     verb = ("submits this supplement to his pending application for relief" if supp
             else "applies to this Court for relief")
     opener = (
-        f"{role} FILER NAME, sui juris, "
+        f"{role} {_signer_phrase(case_id, stub_name)}, "
         + (f"pursuant to {rule}, " if rule else "")
         + f"{verb} and states the following grounds with particularity, together with proof of "
         f"service on all other parties."
@@ -385,8 +411,7 @@ def assemble(stub: dict, case_id: str, court: str, out_path: str, filing_type: s
         lines.append("")
         lines.append("Date: ______________________")
         lines.append("")
-        lines.append("/s/ FILER NAME")
-        lines.append("FILER NAME, sui juris")
+        lines.extend(_signature_lines(case_id, stub_name))
         lines.append("")
 
     # ---- PROOF OF SERVICE, filed WITH the application. Omitted when the finisher appends the
@@ -402,8 +427,7 @@ def assemble(stub: dict, case_id: str, court: str, out_path: str, filing_type: s
         lines.append("")
         lines.append("Date: ______________________")
         lines.append("")
-        lines.append("/s/ FILER NAME")
-        lines.append("FILER NAME, sui juris")
+        lines.extend(_signature_lines(case_id, stub_name))
         lines.append("")
 
     body = f"# {title}\n\n" + "\n".join(lines).rstrip() + "\n"

@@ -4,8 +4,8 @@
 THE GAP THIS CLOSES (2026-08-25, user-spotted): single-document analysis
 (regex pins or the LLM reciprocity pass) reads one production at a time, so
 it can NEVER see that two productions of the SAME instrument disagree —
-e.g. AmeriSave's file copy of the note carries a blank-indorsed allonge
-while Planet Home Lending's own "verification of the debt" packet contains
+e.g. Example Lender's file copy of the note carries a blank-indorsed allonge
+while Example Mortgage Co's own "verification of the debt" packet contains
 the same note with NO allonge at all. That conflict is dispositive-grade
 (13 Pa.C.S. 3204(a)/3205(b); FRE 1003 genuine-question-of-authenticity)
 and lives BETWEEN documents, not inside any one of them.
@@ -32,7 +32,7 @@ _WITHOUT_RECOURSE = re.compile(r"Without\s+Recourse", re.I)
 # names that count as a NAMED transferee on an allonge (extend as cases add parties)
 _ENTITY = re.compile(
     r"(PLANET\s+HOME\s+LENDING|U\.?S\.?\s+BANK|GINNIE\s+MAE|BANK\s+OF|WELLS\s+FARGO|"
-    r"DOVENMUEHLE|LAKEVIEW|FREEDOM\s+MORTGAGE|TRUST\s+20\d\d)", re.I)
+    r"EXAMPLE SERVICER|LAKEVIEW|FREEDOM\s+MORTGAGE|TRUST\s+20\d\d)", re.I)
 _OFFSITE_ADMISSION = re.compile(
     r"original\s+(?:promissory\s+)?note[^.]{0,120}?"
     r"(?:housed|stored|held|maintained|located)[^.]{0,80}"

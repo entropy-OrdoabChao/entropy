@@ -62,7 +62,7 @@ structure:
 
 case_applications:
   - case_id: "{{CASE_ID}}"
-    caption: "{{USER_LAST}} v. {{OPPOSING_PARTY}}, {{OPPOSING_PARTY}}, MGGT Group LLC"
+    caption: "{{USER_LAST}} v. {{OPPOSING_PARTY}}, {{OPPOSING_PARTY}}, EXAMPLE CO Group LLC"
     orders_1925a_triggered:
       - control: "26032282"
         disposition: "DENIED IN ITS ENTIRETY"

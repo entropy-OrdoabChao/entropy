@@ -296,5 +296,6 @@ def get_embedder():
     global _EMBEDDER
     if _EMBEDDER is None:
         from sentence_transformers import SentenceTransformer
-        _EMBEDDER = SentenceTransformer("BAAI/bge-base-en-v1.5")
+        import os as _os  # S-cpu-jobs-hide-cuda (2026-11-20): CPU by default — the local-gpu is full under the prod lane; see db_connector.
+        _EMBEDDER = SentenceTransformer("BAAI/bge-base-en-v1.5", device=_os.environ.get("BEEZLE_EMBED_DEVICE", "cpu"))
     return _EMBEDDER

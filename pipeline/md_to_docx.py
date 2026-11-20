@@ -399,7 +399,7 @@ def _build_caption_table(doc, ctx: dict, rules: dict):
         # dismissal / default / judgment-by-default status. The prior status
         # filter ('active'|'default_available' only) dropped 3 of 6 defendants
         # in fed_26-cv-00123 (Avant/Equifax/Example Card Issuer) and ALL 3 defendants
-        # in phila_ccp_260100000 (Lippi/Cacia/MGGT) from the caption.
+        # in phila_ccp_260100000 (Example Creditor/Example Co/EXAMPLE CO) from the caption.
         kept = [d for d in defendants
                 if (isinstance(d, dict) and (d.get("name") or "").strip())
                 or (isinstance(d, str) and str(d).strip())]
@@ -913,6 +913,14 @@ def build_filing_from_blocks(
         ctx.update(extra_context)
     ctx.setdefault("defect_categories", {})
     ctx.setdefault("cross_case_count", 0)
+    # Governing Text — Legal Evidence of the Law gate (deterministic; default omit). Same organ as the
+    # composer's partiality_detected: a computed flag the filing-type YAML `when:` reads.
+    try:
+        from pipeline.governing_text_gate import apply_governing_text_gate
+        apply_governing_text_gate(ctx)
+    except Exception:
+        ctx.setdefault("governing_text_emit_federal", False)
+        ctx.setdefault("governing_text_emit_pa", False)
     # Content-variable defaults (empty string → unresolved {{vars}} disappear)
     _content_defaults = {
         "defect_total": "", "fatal_count": "", "posture": "active",

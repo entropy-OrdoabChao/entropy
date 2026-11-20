@@ -658,6 +658,11 @@ def _win_path(p) -> str:
 
 
 def _find_soffice() -> str | None:
+    # BEEZLE_SOFFICE: explicit converter (e.g. the WSL-side LibreOffice wrapper) — wins over the Windows candidates, which
+    # exist on disk but cannot run when WSL interop is dead (UtilAcceptVsock accept4 failed 110; 2026-11-15, po-16 packet).
+    _env = os.environ.get("BEEZLE_SOFFICE", "").strip()
+    if _env and os.path.isfile(_env):
+        return _env
     for cand in _SOFFICE_CANDIDATES:
         if cand and os.path.isfile(cand):
             return cand

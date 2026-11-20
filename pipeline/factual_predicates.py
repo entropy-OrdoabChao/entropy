@@ -44,7 +44,7 @@ ENTITY_PATTERNS = [
     ("TransUnion",      ["transunion", "trans union"]),
     ("Avant",           ["avant"]),
     ("Example Card Issuer",     ["capital one"]),
-    ("Amerisave",       ["amerisave"]),
+    ("Example Lender",       ["example_lender"]),
     ("State Farm",      ["state farm"]),
     # Government / court entities
     ("First Judicial District",

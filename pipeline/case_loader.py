@@ -16,7 +16,6 @@ those phrases are appended verbatim to the synthesized fact list.
 """
 
 from __future__ import annotations
-from core import identity as _ident
 from pathlib import Path
 from core.entropy_paths import entropy_root as _eroot, package_root as _epkg, hermes_home as _ehermes
 import json
@@ -117,7 +116,7 @@ def _v18j_resolve_case_id(case_id):
                     for alias in case_data.get("docket_aliases", []) or []:
                         idx[str(alias)] = canon_id
                         idx[str(alias).lower()] = canon_id
-                    # Slug form (e.g. fed_2-26-cv-00456_filer_v_amerisave)
+                    # Slug form (e.g. fed_2-26-cv-00456_filer_v_example_lender)
                     # Build by replacing : with - and adding caption-derived suffix
                     if ":" in canon_id:
                         slug_prefix = canon_id.replace(":", "_")
@@ -160,13 +159,13 @@ def _v18j_resolve_case_id(case_id):
                 return _V18J_RESOLVER_CACHE[candidate]
 
     # _V18J2_REGEX_FIX: federal + state slug parsing with party suffix stripping
-    # Federal: fed_2-26-cv-00456_filer_v_amerisave -> fed:2:26-cv-00456
+    # Federal: fed_2-26-cv-00456_filer_v_example_lender -> fed:2:26-cv-00456
     _v18j2_m = re.match(r"^(fed)_(\d+)-(\d+-cv-\d+)(?:_.*)?$", case_id, re.IGNORECASE)
     if _v18j2_m:
         _v18j2_canon = f"{_v18j2_m.group(1)}:{_v18j2_m.group(2)}:{_v18j2_m.group(3)}"
         if _v18j2_canon in _V18J_RESOLVER_CACHE:
             return _V18J_RESOLVER_CACHE[_v18j2_canon]
-    # State: phila_ccp_260100000_filer_v_lippi -> phila_ccp:260100000
+    # State: phila_ccp_260100000_filer_v_example_creditor -> phila_ccp:260100000
     _v18j2_m = re.match(r"^([a-z]+_[a-z]+)_(\d+)(?:_.*)?$", case_id, re.IGNORECASE)
     if _v18j2_m:
         _v18j2_canon = f"{_v18j2_m.group(1)}:{_v18j2_m.group(2)}"
@@ -196,10 +195,33 @@ def expected_doctrines_for(status: str, case_type: str) -> List[str]:
 
 
 # ─── role detection ───────────────────────────────────────────────────────
+# S-no-hardcode (2026-11-14): role detection matched the literal surname "FILER", so for any
+# other filer every case read as "defendant". The filer's own name forms come from
+# cases_index/filer_identity.json via pipeline.case_profile — no name is spelled here.
+def _filer_name_forms():
+    try:
+        from pipeline.case_profile import filer_names, filer_tokens
+        forms = {n.upper() for n in filer_names()}
+        forms |= {t.upper() for t in filer_tokens()}
+        return forms
+    except Exception:
+        return set()
+
+
+def _filer_tags():
+    """The filer's own party tag(s), to drop 'us' from a defendant list."""
+    try:
+        from pipeline.case_profile import filer_party_tags, filer_tokens
+        return filer_party_tags() | filer_tokens()
+    except Exception:
+        return set()
+
+
 def detect_role(caption: str) -> str:
     cap = (caption or "").upper()
-    if cap.startswith(_ident.caption_name()) or (_ident.caption_name() + " V") in cap[:60]:
-        return "plaintiff"
+    for f in _filer_name_forms():
+        if cap.startswith(f) or f"{f} V" in cap[:30 + len(f)]:
+            return "plaintiff"
     return "defendant"
 
 
@@ -431,13 +453,13 @@ _PARTY_VOCAB_CONDITIONAL = {
     "experian": {
         "fraud_fcra": ["credit report", "inaccurate information", "failed to investigate"],
     },
-    "amerisave": {
+    "example_lender": {
         "quiet_title": ["broken chain of title", "no standing to foreclose"],
     },
-    "planet_home": {
+    "example_mortgage_co": {
         "quiet_title": ["MERS assignment", "broken chain"],
     },
-    "dovenmuehle": {
+    "example_servicer": {
         "quiet_title": ["servicer failed to respond", "loan servicing"],
     },
     "northern_trust": {
@@ -493,7 +515,8 @@ def synthesize_facts(entry: dict, audit: Optional[dict]) -> List[str]:
 
     parties = entry.get("parties", [])
     if parties:
-        facts.append(f"defendants: {', '.join(p for p in parties if p != _ident.party_key())}")
+        _mine = _filer_tags()
+        facts.append(f"defendants: {', '.join(p for p in parties if p not in _mine)}")
 
     # Layer 2: registry notes verbatim
     for note in entry.get("notes", []):

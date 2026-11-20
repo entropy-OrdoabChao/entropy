@@ -225,6 +225,13 @@ def _mandatory_attachments(court, kind):
         _non_brief = any(t in _k for t in ("affidavit", "declaration", "verification", "sworn",
                                            "certificate", "cover_sheet", "coversheet", "ifp",
                                            "complaint"))   # a first pleading never takes a brief's attachments
+        # S-examined-kind-declares-none (2026-11-17): when the court profile HAS an entry for this kind (derived from its
+        # governing rule) and that entry names no mandatory_attachments, the court declares none — do not fall through to the
+        # generic brief_or_opposition row (*1028(c)(4) answer-to-POs papers), which failed a *208.3(b) reply brief on
+        # "missing BRIEF" (it IS the brief) and "missing PROPOSED ORDER" (a reply carries none).
+        _own = (prof.get(court) or {}).get(kind)
+        if isinstance(_own, dict) and _own.get("mandatory_sections") and not _own.get("mandatory_attachments"):
+            return []
         for k in ((kind,) if _non_brief else (kind, "brief_or_opposition")):
             v = ((prof.get(court) or {}).get(k) or {}).get("mandatory_attachments")
             if v:
@@ -243,6 +250,9 @@ def _mandatory_attachments(court, kind):
 # bare chunk ids ('amjur2d_32A_volume_32a#ffff418347786dab', '507bv#a7423581a5', 'usc_t28_s1446_c0').
 PROVENANCE_TAG_RX = re.compile(
     r"\[\s*(?:corpus|doc|official|record|source|chunk|chunk_id)\s*(?::[^\]\n]*)?\]"
+    # m2-room cells write provenance in PARENTHESES — '(record:Point 6; record:POSTURE 2026-11-10)' — and the
+    # 11-17 reply brief shipped 11 of them; the first alternative only knew brackets.
+    r"|\(\s*(?:corpus|doc|official|record|source|chunk|chunk_id)\s*:[^()\n]*\)"
     r"|\[\s*NOT IN CORPUS\s*\]"
     r"|(?<![\w/])[A-Za-z0-9_.\-]{2,}#[0-9a-f]{8,}\b"
     r"|\b(?:usc|cfr|pa_code|frcp|frap|amjur2d|docvault|scotus|cap|courtlistener)_[a-z0-9]+(?:_[a-z0-9]+)+\b",
@@ -666,6 +676,317 @@ def waiver_findings(text, orders_matrix, issues_md=None, addendum_json=None, add
     return out
 
 
+# ---------------------------------------------------------------------------------------------
+# 2d. FORUM ATTACHMENT CONTRACT (2026-11-14) — the court's OWN attachment rule, read as DATA from
+# pipeline/forum_profiles/attachment_rules.json via pipeline.forum_profile.
+#
+# Section 2c above checks the rule_requirements contract by LABEL (a heading or a filename carrying
+# the item's words). That is necessary and not sufficient: Phila.Civ.R. *1028(c) commands "copies of
+# all items necessary or relevant to the disposition of the preliminary objections ... the complaint,
+# answer, and reply to new matter ... marked as exhibits separately" and arms the court to "decide
+# preliminary objections against a party who fails to attach". Three defects 2c cannot see:
+#   (i)   the COMPLAINT is named by KIND, so a packet full of other exhibits still fails the rule;
+#   (ii)  a ground the rule confines to the four corners of the pleading (a demurrer) that cites a
+#         record document is a SPEAKING objection — the paper defeats itself;
+#   (iii) an exhibit carrying confidential information (a financial-account number) filed without the
+#         form the sovereign's public-access policy commands exposes the filer, not the opponent.
+# All three are checked here from DATA, so the same code covers the next forum and the next case.
+#
+# Inputs are CONTRACTS, never case literals:
+#   EXHIBIT_MAP.json  [{letter,title,path,units,source_kind,confidential}]  (child record_binder)
+#   GROUNDS.json      [{id,rule,docs[]}]   the grounds raised and the record items each relies on
+# Both are read from the packet dir. Absent -> the check reports "no map/grounds on file" and does
+# not invent one; a missing input is a reported gap, never a silent PASS.
+# ---------------------------------------------------------------------------------------------
+_EXHIBIT_MAP_NAME = "EXHIBIT_MAP.json"
+_GROUNDS_NAME = "GROUNDS.json"
+
+
+def _read_json_list(path):
+    """A list of dicts from a sidecar contract file; [] when absent or malformed (reported, not raised)."""
+    try:
+        if not Path(path).is_file():
+            return []
+        d = json.loads(Path(path).read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    if isinstance(d, dict):
+        for k in ("exhibits", "grounds", "items", "rows"):
+            if isinstance(d.get(k), list):
+                d = d[k]
+                break
+        else:
+            return []
+    return [x for x in d if isinstance(x, dict)] if isinstance(d, list) else []
+
+
+def exhibit_map(packet_dir):
+    """The packet's EXHIBIT_MAP.json rows (record_binder contract)."""
+    return _read_json_list(Path(packet_dir) / _EXHIBIT_MAP_NAME)
+
+
+def grounds_raised(packet_dir):
+    """The packet's GROUNDS.json rows: [{id, rule, docs[]}]."""
+    return _read_json_list(Path(packet_dir) / _GROUNDS_NAME)
+
+
+def _doc_refs(ground):
+    """Every record item a ground relies on, from `docs` or from [doc:<path>] markers in its text.
+
+    The [doc:] marker is the room's own provenance form (an m2 cell's record_facts cites the record
+    that way), so a ground carried straight out of the room needs no reshaping to be checked here."""
+    out = []
+    for d in (ground.get("docs") or []):
+        if isinstance(d, str) and d.strip():
+            out.append(d.strip())
+        elif isinstance(d, dict) and (d.get("path") or d.get("doc")):
+            out.append(str(d.get("path") or d.get("doc")).strip())
+    blob = " ".join(str(ground.get(k) or "") for k in ("text", "record_facts", "basis", "support"))
+    out += [m.group(1).strip() for m in re.finditer(r"\[doc:\s*([^\]\n]+?)\s*\]", blob)]
+    seen, uniq = set(), []
+    for p in out:
+        if p not in seen:
+            seen.add(p)
+            uniq.append(p)
+    return uniq
+
+
+def _exhibit_for_doc(doc_path, emap):
+    """The EXHIBIT_MAP row that carries this record item, or None. Matches on the path, then on the
+    basename, so a map written with an absolute path still answers a ground that cites a relative one."""
+    d = str(doc_path or "").strip()
+    if not d:
+        return None
+    base = Path(d).name.lower()
+    for row in emap:
+        rp = str(row.get("path") or "")
+        if not rp:
+            continue
+        if rp == d or Path(rp).name.lower() == base:
+            return row
+    return None
+
+
+def _packet_files(packet_dir, exclude_name=None):
+    """Real artifacts in the packet dir. A placeholder/TODO marker is not an attachment (the 2026-10-27
+    lesson: the Phila cover sheet 'passed' on its own .TODO filename) and neither is an empty file."""
+    ph = re.compile(r"\.(todo|missing|placeholder|stub)$|_REQUIRED_BY_", re.I)
+    try:
+        return [p.name for p in Path(packet_dir).iterdir()
+                if p.is_file() and p.name != exclude_name
+                and not ph.search(p.name) and p.stat().st_size > 0]
+    except Exception:
+        return []
+
+
+def _item_evidenced(item, headings, names):
+    """True when the packet (or a heading of the paper itself) carries EVERY `match` word of the item,
+    or every word of its `match_alt` alternative. The words come from the contract, not from code."""
+    for key in ("match", "match_alt"):
+        toks = [str(t).lower() for t in (item.get(key) or []) if str(t).strip()]
+        if not toks:
+            continue
+        hay = [re.sub(r"[\[\]()*_\-.]", " ", h).lower() for h in list(headings) + list(names)]
+        for h in hay:
+            words = {w for w in re.findall(r"[a-z0-9]+", h)}
+            stems = {w[:-1] if w.endswith("s") and len(w) > 4 else w for w in words}
+            if all(any(t in w or w.startswith(t) for w in words | stems) for t in toks):
+                return True
+    return False
+
+
+def attachment_contract_findings(draft_path, court, filing_type, packet_dir=None):
+    """Enforce the forum's attachment contract. -> (findings, warnings, lines).
+
+    findings  = FAIL reasons (a court can reject or decide against the filer for each one)
+    warnings  = defects the filer must answer but which do not by themselves break the rule
+    lines     = one printed line per check WITH ITS RULE CITE, so the operator sees the authority
+                for every demand instead of a bare verdict.
+    """
+    findings, warns, lines = [], [], []
+    try:
+        from pipeline import forum_profile as fp
+    except Exception as e:
+        return ([], [], [f"ATTACHMENT CONTRACT: resolver unavailable ({e})"])
+    kind = str(filing_type or "")
+    rules = fp.attachment_rules(court, kind)
+    if not rules:
+        lines.append(f"ATTACHMENT CONTRACT: none on file for ({court}, {kind}) — "
+                     f"covered forums: {', '.join(fp.attachment_courts()) or 'NONE'}")
+        return (findings, warns, lines)
+    req = [a for a in (rules.get("required") or []) if isinstance(a, dict)]
+    lines.append(f"ATTACHMENT CONTRACT: {court} / {kind} — {rules.get('rule', '?')} "
+                 f"{rules.get('cite', '')} ({len(req)} required items)")
+    if not req:
+        lines.append(f"  RULE SAYS NONE: {rules.get('rule', '')} {rules.get('cite', '')}")
+        return (findings, warns, lines)
+
+    pdir = Path(packet_dir) if packet_dir else Path(draft_path).resolve().parent
+    self_name = Path(draft_path).name
+    text = ""
+    try:
+        text = Path(draft_path).read_text(errors="replace")
+    except Exception:
+        pass
+    heads = re.findall(r"(?m)^\s{0,3}#{1,4}\s*(.+?)\s*$", text)
+    heads += [m.group(1) for m in re.finditer(
+        r"(?m)^\s*\d+\.\s+\*\*Exhibit\s+[A-Z]\d?\*\*\s*[—-]\s*(.+?)\s*$", text)]
+    names = _packet_files(pdir, exclude_name=self_name)
+    emap = exhibit_map(pdir)
+    grounds = grounds_raised(pdir)
+    lines.append(f"  packet dir: {pdir}  files={len(names)}  exhibit_map={len(emap)}  grounds={len(grounds)}")
+
+    # --- which conditional duties are live, decided by the DATA and the packet, not by a flag in code
+    any_conf = any(bool(r.get("confidential")) for r in emap)
+    classes = [(g, fp.ground_class(court, kind, g.get("rule") or g.get("id"))) for g in grounds]
+    any_evidence_ground = any(c["evidence_required"] for _, c in classes)
+    conf = fp.confidential_rule(court)
+
+    for item in req:
+        iid = str(item.get("id") or "")
+        label = str(item.get("label") or iid).strip()
+        cite = str(item.get("cite") or "")
+        rule = str(item.get("rule") or "")
+        when = str(item.get("when") or "")
+        if not cite or cite.upper().startswith("NOT IN CORPUS"):
+            lines.append(f"  UNENFORCEABLE (no corpus cite, reported not enforced): {label} ({rule}) {cite}")
+            continue
+        # conditional duties
+        if when == "any_exhibit_confidential" and not any_conf:
+            lines.append(f"  N/A (no exhibit flagged confidential): {label} ({rule}) {cite}")
+            continue
+        if when == "any_ground_evidence_required" and not any_evidence_ground:
+            lines.append(f"  N/A (no ground needs facts outside the record): {label} ({rule}) {cite}")
+            continue
+        if when == "pleading_of_record":
+            # the rule names the answer and the reply by kind; a pleading that does not yet exist in
+            # this action is not an omission. It is of record only when the map says so.
+            want = (item.get("requires_exhibit") or {}).get("pleading_id")
+            if not any(str(r.get("pleading_id") or r.get("title") or "").lower().replace(" ", "_").find(
+                    str(want or "").lower()) >= 0 for r in emap):
+                lines.append(f"  N/A (not a pleading of record in this action): {label} ({rule}) {cite}")
+                continue
+        if str(item.get("satisfied_by") or "").lower() == "efiling_system" and \
+                (os.environ.get("BEEZLE_FILING_CHANNEL") or _court_channel(court) or "mail").lower() == "efile":
+            lines.append(f"  SATISFIED BY E-FILING SYSTEM: {label} ({rule}) {cite}")
+            continue
+
+        # --- the item itself
+        if str(item.get("satisfied_by") or "").lower() == "self":
+            ok = _item_evidenced(item, heads + [self_name], [])
+            lines.append(f"  {'OK' if ok else 'FAIL'} (this document): {label} ({rule}) {cite}")
+            if not ok:
+                findings.append(f"ATTACHMENT MISSING: {label} — {rule} {cite}: "
+                                f"this paper does not identify itself as the required item. "
+                                f"Rule: \"{item.get('quote', '')}\"")
+            continue
+
+        # an exhibit the rule names BY KIND (the complaint): the EXHIBIT_MAP must carry it
+        rx = item.get("requires_exhibit") or {}
+        if rx:
+            want_kind = str(rx.get("source_kind") or "").lower()
+            want_id = str(rx.get("pleading_id") or "").lower().replace("_", " ")
+            hit = None
+            for r in emap:
+                sk = str(r.get("source_kind") or "").lower()
+                title = str(r.get("title") or "").lower()
+                pid = str(r.get("pleading_id") or "").lower().replace("_", " ")
+                if want_kind and sk != want_kind:
+                    continue
+                if want_id and want_id not in title and want_id not in pid:
+                    continue
+                hit = r
+                break
+            if hit is None and not emap:
+                # no map on file: fall back to the packet's own filenames (the pre-record_binder path)
+                if _item_evidenced(item, heads, names):
+                    lines.append(f"  OK (packet filename; no {_EXHIBIT_MAP_NAME} on file): {label} ({rule}) {cite}")
+                    continue
+            if hit is None:
+                lines.append(f"  FAIL: {label} ({rule}) {cite}")
+                findings.append(
+                    f"ATTACHMENT MISSING: {label} — {rule} {cite}: the rule names this item BY KIND and "
+                    f"the packet does not carry it. Rule: \"{item.get('quote', '')}\""
+                    + (f" SANCTION: {rules.get('sanction')}" if rules.get("sanction") else ""))
+            else:
+                lines.append(f"  OK (exhibit {hit.get('letter', '?')}): {label} ({rule}) {cite}")
+            continue
+
+        # one exhibit per record item the grounds rely on
+        if str(item.get("from") or "") == "grounds_docs":
+            if not grounds:
+                lines.append(f"  NO GROUNDS ON FILE ({_GROUNDS_NAME} absent) — cannot verify: {label} ({rule}) {cite}")
+                continue
+            missing = []
+            for g, cl in classes:
+                for d in _doc_refs(g):
+                    if _exhibit_for_doc(d, emap) is None and not _item_evidenced(
+                            {"match": [Path(d).stem.lower()[:12]]}, heads, names):
+                        missing.append((str(g.get("id") or cl["id"] or "?"), d))
+            if missing:
+                lines.append(f"  FAIL ({len(missing)} record items not attached): {label} ({rule}) {cite}")
+                for gid, d in missing[:12]:
+                    findings.append(
+                        f"ATTACHMENT MISSING: record item relied on by ground {gid} is not attached as an "
+                        f"exhibit — {rule} {cite}: {d}. Rule: \"{item.get('quote', '')}\"")
+            else:
+                lines.append(f"  OK (every record item the grounds rely on is an exhibit): {label} ({rule}) {cite}")
+            continue
+
+        ok = _item_evidenced(item, heads, names)
+        lines.append(f"  {'OK' if ok else 'FAIL'}: {label} ({rule}) {cite}")
+        if not ok:
+            findings.append(f"ATTACHMENT MISSING: {label} — {rule} {cite}. "
+                            f"Rule: \"{item.get('quote', '')}\""
+                            + (f" SANCTION: {rules.get('sanction')}" if rules.get("sanction") else ""))
+
+    # --- CONFIDENTIAL INFORMATION: an exhibit flagged confidential may not ship without the form
+    # the sovereign's public-access policy commands (or, where the duty is to redact, without the
+    # redaction the local rule commands). DATA decides which of the two this forum is.
+    if any_conf:
+        form = fp.confidential_form_required(court)
+        flagged = [f"{r.get('letter', '?')}:{r.get('title') or Path(str(r.get('path') or '')).name}"
+                   for r in emap if r.get("confidential")]
+        if form:
+            have = _item_evidenced({"match": ["confidential"], "match_alt": ["cif"]}, heads, names)
+            lines.append(f"  {'OK' if have else 'FAIL'} ({len(flagged)} confidential exhibit(s)): "
+                         f"{form} required — {conf.get('rule', '')} {conf.get('cite', '')}")
+            if not have:
+                findings.append(
+                    f"CONFIDENTIAL EXHIBIT WITHOUT {form}: {', '.join(flagged)} — "
+                    f"{conf.get('rule', '')} {conf.get('cite', '')}: \"{conf.get('quote', '')}\"")
+        else:
+            lines.append(f"  REDACTION DUTY ({len(flagged)} confidential exhibit(s)): "
+                         f"{conf.get('rule', '')} {conf.get('cite', '')} — no form; the filer redacts")
+            warns.append(f"CONFIDENTIAL EXHIBIT: {', '.join(flagged)} must be redacted before filing — "
+                         f"{conf.get('rule', '')} {conf.get('cite', '')}: \"{conf.get('quote', '')}\"")
+
+    # --- SPEAKING OBJECTION: a ground the rule confines to the pleading that leans on a record
+    # document. WARN (not FAIL): the cure is to move the ground, or to re-plead it under a
+    # subdivision that takes evidence — a decision for the drafter, not for the gate.
+    fl = fp.ground_flags(court, kind)
+    for g, cl in classes:
+        if not cl["four_corners"]:
+            continue
+        gid = str(g.get("id") or cl["id"] or "?")
+        outside = []
+        for d in _doc_refs(g):
+            row = _exhibit_for_doc(d, emap)
+            pid = str((row or {}).get("pleading_id") or "").lower()
+            title = str((row or {}).get("title") or "").lower()
+            if row is not None and (pid == "complaint" or "complaint" in title):
+                continue                      # the pleading under attack is inside the four corners
+            outside.append(d)
+        if outside:
+            lines.append(f"  WARN speaking objection: ground {gid} ({cl['rule']} {cl['cite']}) "
+                         f"cites {len(outside)} document(s) outside the pleading")
+            warns.append(
+                f"SPEAKING OBJECTION WARNING: ground {gid} is confined to the four corners of the "
+                f"pleading ({cl['rule']} {cl['cite']}) yet relies on {', '.join(outside[:6])}. "
+                + (cl.get("note") or fl.get("four_corners_note") or ""))
+    return (findings, warns, lines)
+
+
 def check(draft_path, court, filing_type, is_word_limited_form=True, docket=None, serve_list=None, orders_matrix=None, issues_md=None, stub_path=None):
     text = Path(draft_path).read_text(errors="replace")
     # CANONICAL COURT ID. Every lookup below (COURT_RULES, REQ_DB bucket, style profile)
@@ -729,6 +1050,19 @@ def check(draft_path, court, filing_type, is_word_limited_form=True, docket=None
         _lowb = re.sub(r"[\[\]]", "", low)
         if a not in _lowb and a.replace(" ", "") not in _lowb.replace(" ", ""):
             findings.append(f"DB-REQUIRED artifact not evidenced in draft: {artifact}")
+    # 2a-i. UNIVERSAL rows (pipeline.filing_requirements.universal_requirements — user-locked 2026-11-15 "IFP for all"):
+    # every filing in every court carries the fee OR the forum's IFP petition. Draft-side evidence = the petition text
+    # or an express reference to it / to a prior IFP order of this court. Missing = gate FAIL, not a note. (Defect:
+    # PO 260100002 shipped with no Rule 240 petition because PO fell to the generic 'motion' row and no row said fee.)
+    try:
+        from pipeline.filing_requirements import universal_requirements as _univ
+        for u in _univ(court):
+            if u["key"] == "fee_or_ifp" and not re.search(
+                    r"in forma pauperis|\bifp\b|rule 240|§ ?1915|rule 24\(a\)|fee waiver|waive(r of)? (the )?(filing )?fee|filing fee (paid|tendered)|prior ifp order",
+                    low):
+                findings.append(f"UNIVERSAL-REQUIRED not evidenced in draft: {u['label']} — {u['cite']}")
+    except Exception as _e:
+        findings.append(f"UNIVERSAL-REQUIRED check unavailable: {_e}")
     # 2a-ii. STANDALONE PAPERS IN THE RENDERED .docx (OJR rejection 2026-10-27, E-File #2610062538: "ENSURE THE PROPOSED ORDER IS
     # ON ITS OWN PAGE WITH THE CASE CAPTION AND CASE NUMBER"). Presence of the words was never the court's test; the page was.
     # Checked on the .docx next to the draft when it exists: each standalone heading must be preceded by a page break and the
@@ -749,8 +1083,18 @@ def check(draft_path, court, filing_type, is_word_limited_form=True, docket=None
     # cover sheet is not "a brief or memorandum of law" (*210 applies to briefs only), so it
     # is measured against its own contract if one exists, never against the brief's sections.
     _ft = (filing_type or "").lower()
-    _non_brief = any(k in _ft for k in ("affidavit", "declaration", "verification",
-                                       "sworn", "certificate", "cover_sheet", "coversheet", "ifp"))
+    # F9 (2026-11-11): the filing's CLASS comes from its spec when one exists (templates/filing_specs/<type>.yaml) —
+    # a PLEADING (reply to new matter, answer) is never measured against the brief/motion contract (*210 is for briefs).
+    _spec_class = None
+    try:
+        from pipeline import m1_spec_assembler as _sm_cls
+        _spp = _sm_cls.SPEC_DIR / f"{filing_type}.yaml"
+        if _spp.exists():
+            _spec_class = _sm_cls.load_spec(str(_spp)).get("class")
+    except Exception:
+        _spec_class = None
+    _non_brief = (_spec_class is not None and _spec_class != "brief") or any(
+        k in _ft for k in ("affidavit", "declaration", "verification", "sworn", "certificate", "cover_sheet", "coversheet", "ifp"))
     _kinds = (filing_type,) if _non_brief else (filing_type, "brief_or_opposition", "opposition_or_motion")
     for _kind in _kinds:
         _heads = _mandatory_sections(court, _kind)
@@ -811,7 +1155,7 @@ def check(draft_path, court, filing_type, is_word_limited_form=True, docket=None
     # FAIL CLOSED: a state trial court with no section contract at all means the rule
     # organ never ran for this (court, kind), or the court id did not resolve. Silence here
     # is how five missing *210 sections passed as "0 findings".
-    if _contract_kind is None and not _court_examined(court):
+    if _contract_kind is None and not _court_examined(court) and _spec_class is None:
         # Distinguish "rules examined, none mandate sections" (a profile entry exists --
         # legitimate for e.g. E.D. Pa. L.R. 7.1) from "this court was never looked at".
         findings.append(f"NO RULE CONTRACT for court={court!r} (input {_court_in!r}) "
@@ -820,6 +1164,10 @@ def check(draft_path, court, filing_type, is_word_limited_form=True, docket=None
     # EVIDENCE each item the forum requires to be filed together with it: a same-named
     # heading in the .md, or a sibling file in the packet dir whose name carries the item.
     _atts = _mandatory_attachments(court, _contract_kind or filing_type)
+    if _spec_class and _spec_class != "brief" and _contract_kind is None:
+        # F9: a spec'd pleading is measured against its OWN spec gate (step 10); the forum's brief/motion attachment
+        # contract (*210 brief, *1028(c)(4) answer-to-POs papers, proposed order) does not apply to it.
+        _atts = [a for a in (_atts or []) if str(a.get("kind") or "") == filing_type]
     if _atts:
         _pdir = Path(draft_path).resolve().parent
         # Only siblings that belong to THIS document count: same leading packet index
@@ -868,6 +1216,18 @@ def check(draft_path, court, filing_type, is_word_limited_form=True, docket=None
                                 + (f" [{_item}]" if _label != _item else "")
                                 + (f" ({_a.get('rule')})" if _a.get("rule") else "")
                                 + (f" -- {_a.get('requires')}" if _a.get("requires") else ""))
+
+    # 2d. FORUM ATTACHMENT CONTRACT (DATA: pipeline/forum_profiles/attachment_rules.json)
+    _att_findings, _att_warns, _att_lines = [], [], []
+    try:
+        _att_findings, _att_warns, _att_lines = attachment_contract_findings(
+            draft_path, court, filing_type)
+    except Exception as _e:
+        _att_lines = [f"ATTACHMENT CONTRACT: check raised {_e!r} — reported, not swallowed"]
+        _att_warns = [f"ATTACHMENT CONTRACT CHECK FAILED TO RUN: {_e!r}"]
+    findings += _att_findings
+    profile["attachment_checks"] = _att_lines
+    profile["attachment_warnings"] = _att_warns
 
     # 3. GLOBAL draft-checkable rules
     if rules.get("is_federal") and "notice to defend" in low:
@@ -1020,8 +1380,38 @@ def check(draft_path, court, filing_type, is_word_limited_form=True, docket=None
             findings += waiver_findings(text, _omx, issues_md, _dp.with_name(_stem + "_ADDENDUM.json"), _dp.with_name(_stem + "_ADDENDUM.md"))
         except Exception as _e:
             findings.append(f"WAIVER CHECK UNAVAILABLE: {_e.__class__.__name__}: {_e}")
+    # 10. F9 SPEC GATE: a filing_type that names a filing spec (templates/filing_specs/<type>.yaml) also runs the spec's own
+    #     deterministic gate — every adverse ¶ answered, no general denial, every response cites a Compl. ¶ (departure),
+    #     no argument headings in a pleading. The adverse paper is <bundle>/adverse.md next to the draft, or $M1_ADVERSE.
+    try:
+        from pipeline import m1_spec_assembler as _sm
+        _sp = _sm.SPEC_DIR / f"{filing_type}.yaml"
+        if _sp.exists():
+            _spec = _sm.load_spec(str(_sp))
+            _dp = Path(draft_path)
+            _adv = os.environ.get("M1_ADVERSE") or next((str(pp / "adverse.md") for pp in [_dp.parent, _dp.parent.parent, _dp.parent.parent.parent] if (pp / "adverse.md").exists()), None)
+            _adv_text = Path(_adv).read_text(errors="replace") if _adv else None
+            if _adv_text is None:
+                findings.append("SPEC GATE: adverse paper not found (adverse.md / $M1_ADVERSE) — every-paragraph-answered check impossible")
+            findings += [f"SPEC[{filing_type}]: {f}" for f in _sm.spec_gate(text, _spec, _adv_text)]
+    except Exception as _e:
+        findings.append(f"SPEC GATE UNAVAILABLE: {_e.__class__.__name__}: {_e}")
+    # ---- PROFILE GATE (S-filing-type-on-demand 2026-11-14): a filing_type that is a court-profile KIND (e.g. movant_preliminary_objections)
+    #   with no spec yaml is measured by m1_profile_assembler.profile_gate: numbered objection headings, WHEREFORE per objection,
+    #   every cited Compl. ¶ exists in the adverse paper, no banned label, no attorney reference in the proposed order.
+    try:
+        from pipeline import m1_profile_assembler as _pm
+        from pipeline import m1_spec_assembler as _sm2
+        if _contract_kind and not (_sm2.SPEC_DIR / f"{filing_type}.yaml").exists():
+            _dp = Path(draft_path)
+            _adv = os.environ.get("M1_ADVERSE") or next((str(pp / "adverse.md") for pp in [_dp.parent, _dp.parent.parent, _dp.parent.parent.parent] if (pp / "adverse.md").exists()), None)
+            _adv_text = Path(_adv).read_text(errors="replace") if _adv else None
+            findings += [f"PROFILE[{_contract_kind}]: {f}" for f in _pm.profile_gate(text, court, _contract_kind, _adv_text)]
+    except Exception as _e:
+        findings.append(f"PROFILE GATE UNAVAILABLE: {_e.__class__.__name__}: {_e}")
     verdict = "PASS" if not findings else "FAIL"
     return {"verdict": verdict, "findings": findings, "profile": profile,
+            "warnings": list(profile.get("attachment_warnings") or []),
             "court": court, "filing_type": filing_type, "file": str(draft_path)}
 
 def main():
@@ -1037,11 +1427,15 @@ def main():
     a = ap.parse_args()
     sl = [l.strip() for l in open(a.serve_list) if l.strip()] if a.serve_list else None
     r = check(a.draft, a.court, a.ftype, docket=a.docket, serve_list=sl, orders_matrix=a.orders_matrix, issues_md=a.issues, stub_path=a.stub)
+    # 2d prints EVERY attachment check with the rule that commands it, so the operator reads the
+    # authority for each demand (and each N/A) instead of a bare verdict.
+    for _l in (r.get("profile", {}).get("attachment_checks") or []):
+        print(_l, file=sys.stderr)
+    for _w in (r.get("warnings") or []):
+        print(f"WARN: {_w}", file=sys.stderr)
     print(json.dumps(r, indent=1))
     sys.exit(0 if r["verdict"] == "PASS" else 1)
 
-if __name__ == "__main__":
-    main()
 
 
 def _standalone_paper_findings(draft_path, court) -> list:
@@ -1077,3 +1471,6 @@ def _standalone_paper_findings(draft_path, court) -> list:
             out.append(f"STANDALONE PAPER missing caption/case number on its page: '{t}' ({docx.name})")
     return out
 
+
+if __name__ == "__main__":
+    main()

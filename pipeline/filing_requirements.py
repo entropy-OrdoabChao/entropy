@@ -54,7 +54,6 @@ REGISTRY: Dict[tuple, List[dict]] = {
     ("new_complaint", "EDPA"): [
         _r("civil_cover_sheet", "Civil Cover Sheet (JS-44)", "28 U.S.C. § 1914 / local rule"),
         _r("summons", "Summons for each defendant", "Fed. R. Civ. P. 4"),
-        _r("ifp", "IFP application or filing fee", "28 U.S.C. § 1915 (AO 240)", "conditional"),
         _r("proof_of_service", "Certificate of Service", "Fed. R. Civ. P. 5(d)"),
     ],
     # ---- Generic motion (any court) ----
@@ -65,6 +64,24 @@ REGISTRY: Dict[tuple, List[dict]] = {
     # ---- Response/opposition (any court) ----
     ("response", "*"): [
         _r("proof_of_service", "Certificate of Service", "Fed. R. Civ. P. 5(d) / Pa.R.C.P. 440"),
+    ],
+    # ---- PA Common Pleas PRELIMINARY OBJECTIONS (defect fixed 2026-11-15: PO fell to the generic 'motion' row, so the
+    # 1028(c)(2) affidavit and the fee/IFP petition were never gate requirements) ----
+    ("preliminary_objections", "PA_CP_PHILA"): [
+        _r("preliminary_objections", "Preliminary Objections, numbered paragraphs, each ground stated specifically", "Pa.R.C.P. 1028(a)-(b) [corpus]"),
+        _r("brief", "Brief / memorandum in support", "Phila.Civ.R. *1028(c) [corpus] — filed with the POs"),
+        _r("notice_to_plead", "Notice to Plead (when POs raise facts not of record)", "Pa.R.C.P. 1028(c)(2), 1026 [corpus]", "conditional", "an endorsed notice to plead makes the factual averments answerable"),
+        _r("affidavit", "Verification / affidavit of facts not of record", "Pa.R.C.P. 1024 [corpus]; 1028(c)(2) [corpus]", "conditional", "required when any objection rests on facts outside the complaint (service, standing, capacity)"),
+        _r("proposed_order", "Proposed Order", "Phila.Civ.R. *208.3(b)(3)(A)(ii) [corpus]"),
+        _r("proof_of_service", "Certificate of Service (manner stated; e-service on counsel of record under Pa.R.C.P. 205.4(g))", "Pa.R.C.P. 440 [corpus]; 205.4(g) [corpus]"),
+        _r("ujs_public_access_cert", "UJS Public Access Policy certificate of compliance", "204 Pa. Code § 213.81 / UJS Case Records Public Access Policy § 7 [official]"),
+    ],
+    ("answer", "PA_CP_PHILA"): [
+        _r("answer", "Answer with New Matter, numbered paragraphs, specific denials", "Pa.R.C.P. 1029, 1030 [corpus]"),
+        _r("verification", "Verification", "Pa.R.C.P. 1024 [corpus]"),
+        _r("notice_to_plead", "Notice to Plead endorsed on New Matter", "Pa.R.C.P. 1026(a), 1029(d) [corpus]"),
+        _r("proof_of_service", "Certificate of Service", "Pa.R.C.P. 440 [corpus]"),
+        _r("ujs_public_access_cert", "UJS Public Access Policy certificate of compliance", "204 Pa. Code § 213.81 [official]"),
     ],
     # ---- PA Common Pleas POST-ORDER vehicles (S-m1-vehicle-recon, 2026-10-24) ----
     # CLASS RULE: an adverse Common Pleas order has two 30-day vehicles, both clocked from ENTRY (the docket date of
@@ -161,6 +178,10 @@ def category_of(filing_type: str) -> str:
     # post-order vehicles first: "petition_341c" must never fall to the complaint/appeal buckets (S-m1-vehicle-recon)
     if re.search(r"reconsider|petition_341c|341\(?c\)?|motion_to_vacate|\bvacate", t):
         return "post_order_motion"
+    if re.search(r"preliminary_objection|\bpo\b|\b1028\b|demurrer", t):
+        return "preliminary_objections"
+    if re.search(r"\banswer\b|new_matter|new matter", t):
+        return "answer"
     if re.search(r"appellate_brief|notice_of_appeal|amended_notice_of_appeal|frap_2\d|petition_for_writ|reproduced_record", t):
         return "appeal"
     if re.search(r"complaint", t) and not re.search(r"judicial_council|1983|misconduct|odc|jcb", t):
@@ -170,11 +191,39 @@ def category_of(filing_type: str) -> str:
     return "motion"
 
 
+# ---- UNIVERSAL requirements (user-locked 2026-11-15: "agnostic meant rules too — IFP for all") ----
+# Every filing, every category, every court: the fee is paid OR the forum's in forma pauperis petition is filed WITH
+# the paper. The filer in this office proceeds IFP in every matter, so the row is REQUIRED, not conditional — a packet
+# without the petition (or a prior IFP order of that court) fails the gate. Court family -> the rule that names the
+# petition. Unknown court -> the generic row still fires (the gate asks; it never silently passes).
+IFP_RULE_BY_COURT_FAMILY = [
+    (re.compile(r"^PA_CP|^PA_COM|^PHILA|^pa_cp", re.I), "Pa.R.C.P. 240 [corpus] — petition + affidavit (240(h) form) + proposed order; filed with the paper, 240(c)(1)"),
+    (re.compile(r"^PA_SUPER|^PA_CMWLTH|^PA_SUP|^PA_", re.I), "Pa.R.A.P. 551-561 [corpus] — application to proceed IFP (Rule 552) or trial-court IFP order carried up (Rule 551)"),
+    (re.compile(r"^EDPA|^NJD|^[A-Z]{1,2}D[A-Z]{2}$|^FED_DIST|^fed:", re.I), "28 U.S.C. § 1915(a)(1) [corpus] — affidavit of assets (AO 240); fee or affidavit accompanies the paper"),
+    (re.compile(r"^CA\d|^3D_CIR|^THIRD", re.I), "Fed. R. App. P. 24(a) [corpus]; 28 U.S.C. § 1915 — motion in district court first, or 24(a)(5) in the court of appeals"),
+    (re.compile(r"^SCOTUS|^US_SUP", re.I), "Sup. Ct. R. 39 [corpus] — motion for leave to proceed IFP + affidavit (Rule 39.1)"),
+]
+
+
+def universal_requirements(court: str) -> List[dict]:
+    cite = "fee or the forum's IFP rule — NOT IN CORPUS for this court tag; resolve before filing"
+    for rx, c in IFP_RULE_BY_COURT_FAMILY:
+        if rx.search(court or ""):
+            cite = c
+            break
+    return [
+        _r("fee_or_ifp", "Filing fee paid OR In Forma Pauperis petition/affidavit filed with this paper (or the court's prior IFP order attached)",
+           cite, "required", "universal: applies to every filing in every court; a prior IFP order of the SAME court satisfies it only if attached and cited"),
+    ]
+
+
 def requirements(filing_type: str, court: str) -> List[dict]:
     """Required + recommended components for this filing type at this court. Falls back to the '*'
-    (any-court) entry for the category."""
+    (any-court) entry for the category. The UNIVERSAL rows (fee_or_ifp) are appended for every category/court."""
     cat = category_of(filing_type)
-    return REGISTRY.get((cat, court)) or REGISTRY.get((cat, "*")) or []
+    base = REGISTRY.get((cat, court)) or REGISTRY.get((cat, "*")) or []
+    keys = {r["key"] for r in base}
+    return list(base) + [r for r in universal_requirements(court) if r["key"] not in keys]
 
 
 def checklist(filing_type: str, court: str, present_keys: List[str]) -> Dict[str, Any]:

@@ -588,8 +588,8 @@ def _extract_defendant_from_filename(filename: str) -> str | None:
     """Extract defendant name from a filename. Best-effort heuristic."""
     fn = filename.upper()
     defendant_map = {
-        "AMERISAVE": "Amerisave Mortgage Corporation",
-        "Dovenmuehle": "DMI (Dovenmuehle Mortgage Inc)",
+        "EXAMPLE LENDER": "Example Lender",
+        "Example Servicer": "DMI (Example Servicer Inc)",
         "BNY": "Bank of New York Mellon",
         "WELLS FARGO": "Wells Fargo Bank, N.A.",
         "TRUMP": "Trump",

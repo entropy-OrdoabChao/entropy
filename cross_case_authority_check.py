@@ -8,7 +8,7 @@ related cases without disclosure (Pa.R.P.C. 3.3 candor violation territory).
 Typical scenario:
   - You have fed:2:26-cv-00789 (federal bad faith case, judge issued void order)
   - You filed mandamus challenging that order
-  - In phila_ccp:260100000 (Lippi state case), opposing counsel cites that
+  - In phila_ccp:260100000 (Example Creditor state case), opposing counsel cites that
     same federal order to support their motion to strike
   - They didn't disclose the mandamus to the state court
   - That's a candor violation + reliance on void authority
@@ -192,8 +192,8 @@ def find_opposing_filings(case_id: str, case_data: dict) -> list:
     opposing_keywords = [
         "defendant", "opposition", "opposing", "answer", "reply",
         "motion to dismiss", "motion to strike", "memorandum",
-        "lippi", "amerisave", "equifax", "state farm", "example trust co",
-        "planet home", "allstate", "progressive",
+        "example_creditor", "example_lender", "equifax", "state farm", "example trust co",
+        "example mortgage co", "allstate", "progressive",
         "state_farm",
     ]
 

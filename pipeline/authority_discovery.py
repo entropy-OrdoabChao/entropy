@@ -52,8 +52,14 @@ CL_API_KEY = os.environ.get(
     "8e7b9e2c521ab2bb034a375d1c73702544339a00"
 )
 CL_BASE = "https://www.courtlistener.com/api/rest/v4"
-CL_HEADERS = {"Authorization": f"Token {CL_API_KEY}"}
+CL_HEADERS = {"Authorization": f"Token {CL_API_KEY}"}   # UNUSED since item cl_client: pipeline/cl_client.py
+                                                        # builds the auth header from the shared token
+                                                        # resolver. Kept for any external importer.
 CL_TIMEOUT = 30
+# BACKLOG (item cl_client, not in scope tonight): the literal fallback key above is a secret in
+# git history — it resolves to the SAME token as env COURTLISTENER_API_KEY and
+# ~/.beezle_cache/courtlistener.token (verified by sha256 prefix, never printed), so deleting it
+# changes nothing operationally. Removing it is a separate credential-hygiene item.
 
 # ── Court ID Mapping ──────────────────────────────────────────────────
 
@@ -111,14 +117,21 @@ CASE_LAW_EXPANSIONS = {
 # ══════════════════════════════════════════════════════════════════════
 
 def _cl_api_get(url: str) -> Optional[dict]:
-    """Make an authenticated GET request to CourtListener."""
-    try:
-        req = urllib.request.Request(url, headers=CL_HEADERS)
-        with urllib.request.urlopen(req, timeout=CL_TIMEOUT) as resp:
-            return json.loads(resp.read())
-    except Exception as e:
-        log.warning("cl_api", f"CourtListener request failed", error=str(e))
-        return None
+    """Authenticated GET to CourtListener — via pipeline/cl_client.py (item cl_client).
+
+    The 5 req/min quota is per ACCOUNT, so pacing lives in ONE fcntl-locked on-disk token
+    bucket (output/audit/cl_bucket.json) shared by every process, not in this module.
+    cl_client honors Retry-After once, caches 24 h, receipts every call to
+    output/audit/cl_calls.log, and resolves the token itself (env COURTLISTENER_API_KEY /
+    COURTLISTENER_TOKEN / token files / config.yaml). A 429 is TERMINAL: None, no retry loop.
+    """
+    from pipeline import cl_client
+    r = cl_client.get(url, caller="authority_discovery._cl_api_get", timeout=CL_TIMEOUT)
+    if r.get("ok"):
+        return r.get("data")
+    log.warning("cl_api", "CourtListener request failed", error=str(r.get("reason")),
+                retry_after=r.get("retry_after"))
+    return None
 
 
 def search_case_law(query: str, court: str = "", n_results: int = 5) -> list[dict]:

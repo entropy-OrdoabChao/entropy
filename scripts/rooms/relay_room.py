@@ -109,8 +109,10 @@ PROP_FORM_POSTURE = os.environ.get("ROOM_PROP_FORM_POSTURE",
     "Vehicle: <name> — Rule: “<verbatim>” <cite> [corpus:<chunk>]. Trigger: <event + date from the record>. Deadline rule: <verbatim words>. Standard: <verbatim>. Must contain: <items>.")
 PROP_FORM_REMEDY = os.environ.get("ROOM_PROP_FORM_REMEDY",
     "Relief <n>: <what the court is asked to do> — Rule: “<verbatim>” <cite> [corpus:<chunk>]. Because: <record fact>.")
-LANE_FORM = {"posture-vehicle": "posture", "dismissal-posture": "posture", "jurisdiction": "posture", "remedy": "remedy", "vacatur-sequence": "remedy", "vehicle-foreclosure": "posture"}   # default: violation
-FORMS = {"violation": PROP_FORM, "posture": PROP_FORM_POSTURE, "remedy": PROP_FORM_REMEDY}
+PROP_FORM_CHARACTERIZATION = os.environ.get("ROOM_PROP_FORM_CHARACTERIZATION",
+    "Claim <count/claim>: FIELD <tort/contract/statutory/procedural/remedial> — S/P <substance|procedure> — GOVERNING LAW <law + why; false conflict if so> — FORUM RULE OWNING SUFFICIENCY “<verbatim>” <rule cite> [corpus:<chunk>] — LIMIT <constitutional / public-policy test, or none engaged> — PROPOSITION: <the forum must apply X to this claim because Y>.")
+LANE_FORM = {"conflict-of-laws": "characterization", "posture-vehicle": "posture", "dismissal-posture": "posture", "jurisdiction": "posture", "remedy": "remedy", "vacatur-sequence": "remedy", "vehicle-foreclosure": "posture"}   # default: violation
+FORMS = {"violation": PROP_FORM, "posture": PROP_FORM_POSTURE, "remedy": PROP_FORM_REMEDY, "characterization": PROP_FORM_CHARACTERIZATION}
 
 
 def prop_form_block(chain):
@@ -124,6 +126,8 @@ def prop_form_block(chain):
         lines.append(f"posture lanes ({', '.join(by_form['posture'])}) — your vehicle / deadline / standard / must-contain card uses THIS form, never 'Violation: None': <{PROP_FORM_POSTURE}>; a violation you find still uses the violation form.")
     if "remedy" in by_form:
         lines.append(f"remedy lane ({', '.join(by_form['remedy'])}) — one card per relief item, THIS form: <{PROP_FORM_REMEDY}>")
+    if "characterization" in by_form:
+        lines.append(f"characterization lane ({', '.join(by_form['characterization'])}) — runs FIRST; ONE card per claim/count in THIS form (all six fields, forum rule quoted by key), never the violation form: <{PROP_FORM_CHARACTERIZATION}>")
     return "\n".join(lines)
 GW_ID = "install:4c9466e0f6a34fb390d66e521f7a4f29"
 ground = open(f"{IN}/ground_table.md").read()
@@ -290,13 +294,13 @@ Prior bots' cards are above you in this chat (and pasted below if from an earlie
 
 YOUR TURN: ≤ 2 tool calls total (searches only, only if the table lacks what your axis needs). definitions / verbatim-rule / construction: ZERO tool calls — the pack's definitions, rule text and chunks are your only sources; a term or rule absent from the pack is NOT IN CORPUS, say so and move on. Budget: your whole turn ≤ 90 seconds of work. Cards only, ≤ 15 lines, no narration. End your message with exactly one line: @<next bot in the order>. The last lane ends with: @skeptic
 OUTPUT FORM — one card per line:
-CARD: <axis> | <finding> | <record file:line or Ex.> | <authority: cite — "words copied from the table/chunk" — chunk_id, or NOT IN CORPUS> | SUSTAINED|OPEN | PROPOSITION: <your lane's form below. No meta: never mention the sur-reply, the draft, the room, files, cards, or what "should be titled". This sentence goes into the brief verbatim.>
+CARD: <axis> | <finding> | <record file:line or Ex.> | <authorities: cite — "words copied from the table/chunk" — chunk_id; cite — "words" — chunk_id; … — EVERY authority that grounds the finding (the definition, the statute or rule, the treatise), ";"-separated, never just one when the pack holds more; or NOT IN CORPUS> | SUSTAINED|OPEN | PROPOSITION: <your lane's form below. No meta: never mention the sur-reply, the draft, the room, files, cards, or what "should be titled". This sentence goes into the brief verbatim.>
 {form_block}
 NEW POINTS: a finding that fits none of the numbered points is posted as "Issue <next number>" — it is kept as a NEW unit, never dropped.
 CARD: <axis> | CONTRADICTION: <what the movant said then vs now> | <both locations> | — | OPEN | PROPOSITION: <the sentence the brief says about it>
 QUOTE DISCIPLINE: inside quotation marks only words copied from the ground table excerpt, a chunk you retrieved this turn, or an input file; chunk_id/file:line right after the quote; paraphrase outside quotes; cannot quote → NOT QUOTED + OPEN. A deterministic gate forces unverifiable quotes OPEN after the room.
 STANDING RULES: corpus and enacted text decide; tag [doc]/[corpus:<chunk_id>]/[official:<cite>]; never invent cites, dates, amounts, control numbers; the signer is sui juris — never "pro se".
-skeptic: one VERDICT line per card above: VERDICT: <axis> | <card #> | SUSTAINED|REJECTED|OPEN | <reason ≤ 15 words> — grade reasoning against the table AND the PROPOSITION: REJECTED when the proposition claims more than the authority or record supports, argues the movant's side, states a fact not in the record, or contains meta (sur-reply/draft/file names). The table's chunks are already verified, do not re-fetch them. Grade ONLY the cards posted in THIS room (prior-room cards are already graded — never re-grade them).{skeptic_extra} FIRST line(s) of your turn, before any VERDICT: one per GROUND in the pack: COVERAGE: G<n> | <# SUSTAINED cards answering it> | COVERED|GAP — a GAP names what is missing. Then the VERDICT lines, ≤ 25. End with: @proof
+skeptic: one VERDICT line per card above: VERDICT: <axis> | <card #> | SUSTAINED|REJECTED|OPEN | <reason ≤ 15 words> — grade reasoning against the table AND the PROPOSITION: REJECTED when the proposition claims more than the authority or record supports, argues the movant's side, states a fact not in the record, or contains meta (sur-reply/draft/file names). The table's chunks are already verified, do not re-fetch them. Grade ONLY the cards posted in THIS room (prior-room cards are already graded — never re-grade them).{skeptic_extra} FIRST line(s) of your turn, before any VERDICT: one per GROUND in the pack AND one per GROUND+ line: COVERAGE: G<n> | <# SUSTAINED cards answering it> | COVERED|GAP — a GAP names what is missing; a GROUND+ authority no card applied or expressly rejected is a GAP. Then the VERDICT lines, ≤ 25. End with: @proof
 proof: you are the filing verifier. One RECORD line per record fact the cards rely on, checked against the RECORD sections below: RECORD: <fact> | CONFIRMED|DENIED|NOT IN RECORD | <record heading/line>. Also one CARD per CONTRADICTION between the adverse filing and the record (dates, exhibits named but absent, control numbers, parties, amounts). End with: DONE.
 {prior_txt}{leg_cards_txt}
 ==== 1. ADVERSE FILING (verbatim) ====

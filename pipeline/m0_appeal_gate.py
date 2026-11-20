@@ -42,7 +42,7 @@ def _b70_gateway() -> str:
             return f"http://{m.group(1)}:8080"
     except Exception:
         pass
-    return "http://localhost:8080"
+    return "http://localhost:8000"
 
 from pipeline.m0_amendment_gate import _gt_for, _load_audit, _gather_signals  # reuse
 
@@ -93,7 +93,7 @@ def _appeal_posture(case_id: str) -> dict:
                               "temporary restraining", "1292(a)")),
         "void_indicator_types": void_hits,
         "void_indicator_count": sum(1 for v in proc if (v.get("violation_type") or "") in _VOID_TYPES),
-        # ---- RECORD-ON-APPEAL DELINQUENCY (added 2026-09-29, Lippi/0000 EDA 2026) ----
+        # ---- RECORD-ON-APPEAL DELINQUENCY (added 2026-09-29, Example Creditor/0000 EDA 2026) ----
         # An appeal can stall before any brief is due because the TRIAL COURT never
         # transmitted the record. That is not the appellant's defect and it is not cured
         # by re-filing anything in the trial court: Pa.R.A.P. 1931(b) puts the duty on the
@@ -246,7 +246,7 @@ def detect_appeal_type_deterministic(stub_text, case_id=""):
             return "rule_54b"
         if "final" in t:
             return "full_appeal_as_of_right"
-    # RECORD-ON-APPEAL DELINQUENCY (2026-09-29, Lippi/0000 EDA 2026). An instrument whose own
+    # RECORD-ON-APPEAL DELINQUENCY (2026-09-29, Example Creditor/0000 EDA 2026). An instrument whose own
     # subject is the MISSING RECORD is not a merits vehicle — there is nothing to brief until the
     # record is transmitted, and the whole transmission duty sits with the lower court under
     # Pa.R.A.P. 1931(b)-(c). Checked before the merits branches so a record-enforcement stub never gets dressed
@@ -578,7 +578,7 @@ def materialize_stubs(case_id: str, decision: dict, packet_dir) -> list:
     body = f"""# DRAFT - SUPPLEMENT TO APPLICATION FOR RELIEF UNDER Pa.R.A.P. 123 TO ENFORCE Pa.R.A.P. 1935 AND COMPEL TRANSMISSION OF THE RECORD ON APPEAL
 
 **Plaintiff:** FILER NAME, Appellant, sui juris
-**Defendant:** Lippi, et al., Appellees
+**Defendant:** Example Creditor, et al., Appellees
 **Case:** {appeal_no} (Superior Court of Pennsylvania) — appeal from {trial_no}, Court of Common Pleas of Philadelphia County
 **Filing type:** application_for_relief supplement
 **Court:** PA_SUPERIOR

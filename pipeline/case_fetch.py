@@ -162,12 +162,18 @@ def _cl_key():
 
 
 def _cl_get(url: str, key: str):
-    import urllib.request as _u
-    try:
-        r = _u.Request(url, headers={"Authorization": f"Token {key}", "User-Agent": UA})
-        return _u.urlopen(r, timeout=90).read().decode("utf-8", "ignore")
-    except Exception:
-        return ""
+    """EVERY CourtListener byte in this module goes through pipeline/cl_client.py.
+
+    item cl_client: the key is rate-limited PER ACCOUNT (~5 req/min), not per process, so the
+    private urlopen here raced topic_pull / caselaw_verify / fetch_bot's CL rung into 429s.
+    cl_client holds the one on-disk token bucket (fcntl-locked, shared by every process),
+    honors Retry-After exactly once, caches 24 h, and writes a receipt per call. `key` is kept
+    in the signature for the existing callers; cl_client resolves the token itself from the
+    same env/files/config this module used. Returns the JSON text (callers json.loads it) or
+    '' on miss / rate-limit — a 429 is terminal, never retried here.
+    """
+    from pipeline import cl_client
+    return cl_client.raw_text(url, caller="case_fetch._cl_get")
 
 
 def from_courtlistener(name: str, cite: str):
@@ -367,7 +373,21 @@ def ingest_case(name: str, cite: str, db: Path = None):
     con.executemany("INSERT INTO chunk_text_fts (text, source_id) VALUES (?,?)",
                     [(c, f"{src}_chunk_{i}") for i, c in enumerate(cs)])
     con.commit(); con.close()
-    return {"status": "ingested", "source": src, "chunks": len(cs), "provider": provider}
+    res = {"status": "ingested", "source": src, "chunks": len(cs), "provider": provider}
+    # G6' (PLAN_obsidian_corpus_graph §14): struct index + _graph hub for this slug in the same lane (ingest and linking are ONE lane).
+    # Flag-gated (GRAPH_EMIT=1) so a failing index/vault sync can never fail an ingest; deterministic, idempotent. Shape = official_source_puller.
+    if os.environ.get("GRAPH_EMIT") == "1":
+        try:
+            from pipeline.struct_index_build import index_slug
+            res["struct_index"] = index_slug(src)
+        except Exception as e:  # noqa: BLE001 — struct index is a side effect of ingest, never its gate
+            res["struct_index"] = {"error": f"{type(e).__name__}: {e}"}
+        try:
+            from pipeline.corpus_graph_build import graph_emit
+            res["graph_emit"] = graph_emit([src])
+        except Exception as e:  # noqa: BLE001 — graph is a side effect of ingest, never its gate
+            res["graph_emit"] = {"error": f"{type(e).__name__}: {e}"}
+    return res
 
 def backfill_fts(prefixes, db: Path = None):
     """One-pass backfill of chunk_text_fts for sources added without FTS rows (this session's ingests)."""

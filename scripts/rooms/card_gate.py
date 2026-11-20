@@ -79,6 +79,200 @@ def family_ok(cite, src, cid, text):
     return "family-unparsed"
 
 
+# ---------------------------------------------------------------- S-family-check (2026-11-13, class — BACKLOG "a cite is
+# 'resolved' when the pinned chunk merely MENTIONS it"): the PINNED SOURCE must BE the cite the card NAMES, not a chunk that
+# happens to carry the words. family_ok() above answers "is this chunk in the cite's family" for a QUOTE; the pair below is
+# the DETERMINISTIC GRADING check: parse the cite the card names and the source key of the chunk it attaches, and refuse the
+# card when their family / title / chapter / section CONTRADICT each other (24 C.F.R. § 203.431 pinned to usc_t12_s1748b;
+# 13 Pa.C.S. § 9308(e) pinned to pa_cs_t7). Nothing here is case-specific and nothing guesses: a part that does not parse on
+# either side is None and NEVER produces a mismatch ("unchecked"), so a forum/local rule or a treatise is never failed blind.
+# cite_family(cite) is the contract pipeline/cite_family.py publishes (family/title/chapter/section); when that live module
+# exists it is preferred, so the two children's parsers can never disagree.
+_EXT_CITE_FAMILY = "unset"
+
+
+def _ext_cite_family():
+    """pipeline/cite_family.py (another organ of the same backlog item) when it exists AND honours the contract; else None."""
+    global _EXT_CITE_FAMILY
+    if _EXT_CITE_FAMILY == "unset":
+        _EXT_CITE_FAMILY = None
+        for root in (str(Path.home() / "beezle"), str(_eroot())):
+            p = os.path.join(root, "pipeline", "cite_family.py")
+            if not os.path.exists(p): continue
+            try:
+                spec = importlib.util.spec_from_file_location("_cite_family_ext", p)
+                if spec is None or spec.loader is None: break
+                m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+                fn = getattr(m, "cite_family", None) or getattr(m, "family", None) or getattr(m, "_family", None)
+                probe = fn("12 U.S.C. § 1748b") if fn else None
+                if isinstance(probe, dict) and {"family", "title", "chapter", "section"} <= set(probe):
+                    _EXT_CITE_FAMILY = fn
+            except Exception:
+                _EXT_CITE_FAMILY = None
+            break
+    return _EXT_CITE_FAMILY
+
+
+_RULE_TITLE = {"Pa.R.C.P": "231", "Pa.R.A.P": "210", "Pa.R.E": "225", "Pa.R.Crim.P": "234", "Pa.R.J.A": "201",
+               "Pa.R.D.E": "204", "Pa.R.Civ.P": "231", "Pa.R.J.C.P": "237"}
+_F_USC = re.compile(r"(\d+)\s*U\.?\s?S\.?\s?C\.?(?:A\.?)?\s*§*\s*(\d+[A-Za-z]?(?:[-–]\d+[a-z]?)?)?", re.I)
+_F_CFR = re.compile(r"(\d+)\s*C\.?\s?F\.?\s?R\.?\s*§*\s*(\d+)(?:\.(\d+[a-z]?))?", re.I)
+_F_PACS = re.compile(r"(\d+)\s*Pa\.?\s?C\.?\s?S\.?(?:A\.?)?\s*§*\s*(\d+)?", re.I)
+_F_PS = re.compile(r"(\d+)\s*P\.\s?S\.\s*§*\s*([\d.]+)?", re.I)
+_F_PACODE = re.compile(r"(\d+)\s*Pa\.?\s?Code\s*§*\s*([\d.]+)?", re.I)
+_F_PARULE = re.compile(r"(Pa\.\s?R\.\s?[A-Za-z.]*?P|Pa\.\s?R\.\s?E|Pa\.\s?R\.\s?J\.\s?A)\.?\s*§*\s*(\d+(?:\.\d+)?)", re.I)
+_F_FRULE = re.compile(r"Fed\.?\s?R\.?\s?(Civ|App|Crim|Evid|Bankr)\.?\s?P?\.?\s*(\d+)", re.I)
+_F_LOCAL = re.compile(r"(Phila\.?\s?Civ\.?\s?R\.?|L\.?R\.?|Local Rule)\s*\*?\s*(\d+)", re.I)
+_F_AMJUR = re.compile(r"(\d+[A-Z]?)\s*Am\.?\s?Jur\.?\s?2d", re.I)
+
+
+def _blank(**kw):
+    d = {"family": None, "title": None, "chapter": None, "section": None}
+    d.update(kw); return d
+
+
+def cite_family(cite):
+    """A CITE as written → {family, title, chapter, section} (None where the cite does not say). Chapter is derived only
+    where the numbering system states it: a CFR section is <part>.<sec> (part = chapter); a Pa.C.S. section is
+    <chapter><2 digits> (§ 9308 → ch. 93, the UCC-9 chapters). Unknown citation form → family None (never a mismatch)."""
+    ext = _ext_cite_family()
+    if ext:
+        try:
+            r = ext(cite or "")
+            if isinstance(r, dict): return {k: (r.get(k) or None) for k in ("family", "title", "chapter", "section")}
+        except Exception:
+            pass
+    c = re.sub(r"\s+", " ", cite or "").strip()
+    if not c: return _blank()
+    m = _F_CFR.search(c)
+    if m: return _blank(family="cfr", title=m.group(1), chapter=m.group(2), section=(f"{m.group(2)}.{m.group(3)}" if m.group(3) else None))
+    m = _F_USC.search(c)
+    if m:
+        sec = (m.group(2) or "").lower() or None
+        return _blank(family="usc", title=m.group(1), section=sec)
+    m = _F_PACS.search(c)
+    if m:
+        sec = m.group(2)
+        ch = sec[:-2] if sec and len(sec) > 2 else None
+        return _blank(family="pacs", title=m.group(1), chapter=ch, section=sec)
+    m = _F_PS.search(c)
+    if m: return _blank(family="pastat", title=m.group(1), section=m.group(2))
+    m = _F_PACODE.search(c)
+    if m: return _blank(family="pacode", title=m.group(1), section=m.group(2))
+    m = _F_PARULE.search(c)
+    if m:
+        key = re.sub(r"[\s]", "", m.group(1)).rstrip(".")
+        return _blank(family="pacode", title=_RULE_TITLE.get(key), section=m.group(2))
+    m = _F_FRULE.search(c)
+    if m: return _blank(family="frule", chapter=m.group(1).lower(), section=m.group(2))
+    m = _F_AMJUR.search(c)
+    if m: return _blank(family="amjur", title=m.group(1).lower())
+    # a forum/local rule names no code family this gate can key on (same case as family_ok's 'family-unparsed') → unchecked
+    if _F_LOCAL.search(c): return _blank()
+    if _REP.search(c) or " v. " in c: return _blank(family="case")
+    return _blank()
+
+
+_S_USC = re.compile(r"^usc_t(\d+)_s([0-9a-z\u2013–-]+)", re.I)
+_S_USC_LII = re.compile(r"^USCODE-[A-Z]+-title(\d+)", re.I)
+_S_CFR_GOV = re.compile(r"^CFR-\d{4}-title(\d+)-vol\d+(?:-sec(\d+)-(\d+[a-z]?))?", re.I)
+_S_CFR_K = re.compile(r"^cfr_(\d+)(?:_(\d+))?(?:_(\d+[a-z]?))?", re.I)
+_S_PACS = re.compile(r"^pa_cs_t(\d+)(?:_ch(\d+))?", re.I)
+_S_PACODE = re.compile(r"^pa_code_t(\d+)(?:_ch(\d+))?", re.I)
+_S_PS = re.compile(r"^pa_(\d+)ps", re.I)
+_S_AMJUR = re.compile(r"^amjur2d_(\w+)", re.I)
+
+
+def source_family(src):
+    """A corpus SOURCE KEY → {family, title, chapter, section}. The key is the corpus' own name for the authority, so this is
+    a lookup, not an inference; an unrecognised key (comps-*, a .md doc, a reporter slug) → family None = unchecked."""
+    s = (src or "").split("#")[0].strip()
+    s = re.sub(r"_c\d+$", "", s)                      # chunk suffix (usc_t12_s1748b_c0)
+    if not s: return _blank()
+    m = _S_USC.match(s)
+    if m:
+        sec = re.split(r"[,\s]", m.group(2))[0].lower().replace("\u2013", "-")
+        return _blank(family="usc", title=m.group(1), section=sec or None)
+    m = _S_USC_LII.match(s)
+    if m: return _blank(family="usc", title=m.group(1))
+    m = _S_CFR_GOV.match(s)
+    if m: return _blank(family="cfr", title=m.group(1), chapter=m.group(2), section=(f"{m.group(2)}.{m.group(3)}" if m.group(3) else None))
+    m = _S_CFR_K.match(s)
+    if m: return _blank(family="cfr", title=m.group(1), chapter=m.group(2), section=(f"{m.group(2)}.{m.group(3)}" if m.group(2) and m.group(3) else None))
+    m = _S_PACS.match(s)
+    if m: return _blank(family="pacs", title=m.group(1), chapter=m.group(2))
+    if s.startswith("pa_consolidated_statutes"): return _blank(family="pacs")
+    m = _S_PACODE.match(s)
+    if m: return _blank(family="pacode", title=m.group(1))     # Pa. Code chapter numbering differs per title — title only
+    m = _S_PS.match(s)
+    if m: return _blank(family="pastat", title=m.group(1))
+    m = _S_AMJUR.match(s)
+    if m: return _blank(family="amjur", title=m.group(1).lower())
+    return _blank()
+
+
+def _desc(cite, f):
+    bits = [f["family"] or "?"]
+    if f["title"]: bits.append("t" + str(f["title"]))
+    if f["chapter"]: bits.append("ch" + str(f["chapter"]))
+    if f["section"]: bits.append("§" + str(f["section"]))
+    return f"{cite} [{' '.join(bits)}]" if cite else " ".join(bits)
+
+
+def family_check(cite, src):
+    """(verdict, why) for a cite ↔ pinned-source pair. verdict: 'ok' | 'unchecked' | 'mismatch'.
+    MISMATCH only on a positive contradiction, part by part (family, then title, then chapter, then section) — a part
+    either side leaves unparsed can never fail. why = \"family-mismatch: card names X, chunk is Y\"."""
+    cf, sf = cite_family(cite), source_family(src)
+    if not cf["family"] or not sf["family"]:
+        return "unchecked", f"family unparsed (cite={cf['family'] or '?'}, source={sf['family'] or '?'})"
+    bad = None
+    if cf["family"] != sf["family"]: bad = "family"
+    elif cf["title"] and sf["title"] and str(cf["title"]) != str(sf["title"]): bad = "title"
+    # chapter is compared only for Pa.C.S., the one family whose corpus keys state it unambiguously (pa_cs_t13_ch92 holds
+    # § 92xx, ch93 holds § 93xx — probed, not assumed). A CFR ingest key (cfr_26_16050p) does NOT encode part/section, so a
+    # chapter compare there would fail a correct pin; CFR drift is caught by the section compare on CFR-…-sec<part>-<sec>.
+    elif cf["family"] == "pacs" and cf["chapter"] and sf["chapter"] and str(cf["chapter"]) != str(sf["chapter"]): bad = "chapter"
+    elif cf["section"] and sf["section"] and cf["section"].lower() != sf["section"].lower(): bad = "section"
+    if bad:
+        return "mismatch", f"family-mismatch ({bad}): card names {_desc(cite, cf)}, chunk is {_desc((src or '').split('#')[0], sf)}"
+    return "ok", f"{cf['family']} t{cf['title'] or '?'} agrees"
+
+
+_SRC_CACHE = {}
+
+
+def chunk_source(cid, hint_map=None, cache=None):
+    """chunk id (or '<source_key>#<id>') → the chunk's SOURCE KEY. The DB is asked FIRST and its answer wins: a lane may
+    write a key that does not exist in the corpus (pa_code_t2319 for pa_code_t231_ch1019), and trusting that prefix would
+    report a family mismatch against a pin that is in fact correct. Ladder: chunk_text on the id (exact, then prefix — lanes
+    truncate ids to 8-10 hex) → the pack's own 'source=' hints → the written prefix, only if it parses as a key. '' when
+    nothing resolves, which family_check reads as 'unchecked' and never fails. Results cached (optional caller dict)."""
+    cid = (cid or "").strip()
+    if not cid: return ""
+    cache = _SRC_CACHE if cache is None else cache
+    if cid in cache: return cache[cid]
+    head, _, idpart = cid.partition("#")
+    out = ""
+    for probe in [x for x in (idpart, head) if x]:
+        try:
+            r = _db().execute("SELECT source FROM chunk_text WHERE chunk_id=?", (probe,)).fetchone()
+            if not r and re.fullmatch(r"[0-9a-f]{8,}", probe):
+                r = _db().execute("SELECT source FROM chunk_text WHERE chunk_id>=? AND chunk_id<? LIMIT 1", (probe, probe + "z")).fetchone()
+            if r and r[0]: out = r[0]; break
+        except Exception:
+            pass
+    if not out and hint_map:
+        out = hint_map.get(cid) or hint_map.get(idpart) or hint_map.get(head) or ""
+        if not out:
+            for k, v in hint_map.items():                    # the lane may quote a truncated id of a hinted chunk
+                if k and (k.startswith(idpart or head) or (idpart or head).startswith(k)) and min(len(k), len(idpart or head)) >= 8:
+                    out = v; break
+    if not out and head and source_family(head)["family"]: out = head
+    cache[cid] = out
+    return out
+
+
 # ---------------------------------------------------------------- candidates + verdict
 def _fts(phrase, limit=40):
     toks = re.sub(r"[^\w\s§]", " ", phrase).split()
@@ -125,12 +319,19 @@ def _windows(seg):
     return [x for x in wins if len(x.split()) >= 4]
 
 
-def verify_phrase(quote, cite=""):
+def verify_phrase(quote, cite="", cid=""):
     """-> {"status": verified|partial|unverified, "chunk_id", "source", "how"}.
     verified : every segment of the quote is a full substring of a chunk in the cited family (same chunk preferred).
     partial  : only a window (first/last 18 words or a 60-char middle) of some segment was found — NOT verified.
-    unverified: nothing found, or found only in a chunk of another authority family (how says which)."""
+    unverified: nothing found, or found only in a chunk of another authority family (how says which).
+    cid (S-prefetch 2026-11-10): the chunk_id the card itself names (GROUND+ line / authority field '— <chunk_id>'): checked FIRST by
+    direct lookup — FTS candidate recall missed 9 of 47 prefetch quotes (§/-- tokens in statute chunks) whose words ARE in that chunk."""
     segs = [norm(s) for s in segments(quote)] or [norm(quote)]
+    if cid:
+        src, txt = _chunk(cid)
+        if txt is not None and all(_in_text(seg, norm(txt)) for seg in segs):
+            fam = family_ok(cite, src, cid, txt)
+            if fam: return {"status": "verified", "chunk_id": cid, "source": src, "how": f"chunk_id on card; {fam}"}
     hits, wrong = [], None
     for seg in segs:
         full = None
@@ -249,11 +450,14 @@ def gate(path, input_dir=None):
             out.append(" | ".join(parts)); continue
         tally["quoted"] += 1
         cite = cite_of(auth)
+        # S-prefetch: the chunk_id the card names after its quote ('cite — "words" — <chunk_id>' or '[corpus:<chunk_id>]') → direct check first
+        cm = re.search(r"\[corpus:([A-Za-z0-9_.:-]+)\]", line) or re.search(r"[\"”]\s*[—-]\s*([A-Za-z0-9_.:-]{8,})\s*$", auth)
+        card_cid = cm.group(1) if cm else ""
         ok = False; where = None; best = None
         for qt in quotes:
             d = in_docs(qt, docs)
             if d: ok = True; where = d; tally["doc"] += 1; break
-            v = verify_phrase(qt, cite)
+            v = verify_phrase(qt, cite, card_cid)
             if v["status"] == "verified": ok = True; where = v["chunk_id"]; tally["corpus"] += 1; break
             if best is None or (v["status"] == "partial" and best["status"] != "partial"): best = v
         _, cn_note = normalize_note(cite)

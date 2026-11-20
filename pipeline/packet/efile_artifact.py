@@ -45,6 +45,30 @@ def _roll(d: _dt.date) -> _dt.date:
     return d
 
 
+
+def _adverse_filers(root: Path, slug: str, units: Path) -> list:
+    """S-efile-responding-party (class): who filed the paper we answer — read from the adverse paper's own opening line, not from
+    the caption (co-defendants sit in the caption without filing). Looks for room_inputs*/adverse.md beside the units file, then
+    any *adverse*.md in the bundle. Returns [] when nothing legible — the driver then prints NONE MATCHED instead of guessing."""
+    import re as _re
+    cands = []
+    b = units.parent.parent if units else None
+    if b and b.exists():
+        cands += sorted(b.glob("room_inputs*/adverse.md")) + sorted(b.glob("**/adverse.md"))
+    rx = _re.compile(r"(?:NOW,?\s+comes?|comes?\s+now)\s+(?:the\s+)?(?:Defendants?|Plaintiffs?|Respondents?|Petitioners?),?\s+([A-Z][A-Za-z.,&' -]{3,90}?)(?:\s*\(|,\s*by|\s+by\s+and\s+through|\s*$)", _re.M)
+    rx2 = _re.compile(r"^(?:Defendant|Plaintiff|Respondent|Petitioner)s?,?\s+([A-Z][A-Za-z.&' -]{3,90}?),?\s+by\s+and\s+through", _re.M)
+    for c in cands:
+        try:
+            txt = c.read_text(encoding="utf-8", errors="ignore")[:20000]
+        except Exception:
+            continue
+        for r in (rx, rx2):
+            m = r.search(txt)
+            if m:
+                name = _re.sub(r"\s+", " ", m.group(1)).strip(" ,.")
+                return [name]
+    return []
+
 def _case_judge(root: Path, slug: str) -> tuple[str | None, str]:
     from pipeline.case_judge import resolve
     r = resolve(root, slug)
@@ -101,7 +125,8 @@ def build_part3(root: Path, slug: str, units: Path, ftype: str | None) -> dict:
         "other_decided": "Y" if orders else "N", "decided_judge": judge if orders else None,
         "pending": "Y" if pending else "N", "pending_judge": judge if pending else None,
         "deadline": deadline, "extended": "Y" if extended else "N",
-        "_source": {"judge": jsrc,
+        "new_matter_filers": _adverse_filers(root, slug, units),
+        "_source": {"judge": jsrc, "new_matter_filers": "adverse paper opening line ('NOW comes the Defendant, X' / 'Defendant X, by and through')",
                     "order": f"{units.name} header ({hdr['label']}, Control No. {hdr['control_no']})",
                     "pending": [e["date"] + " " + e["event"][:80] for e in motions],
                     "deadline": f"{ftype}.yaml deadline_days={days} from {ent} (1 Pa.C.S. § 1908 roll)" if deadline else "no deadline_days in filing-type YAML"},

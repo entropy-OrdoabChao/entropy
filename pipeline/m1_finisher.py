@@ -288,7 +288,7 @@ def _opposed_instrument(filing_type: str):
 
 
 # AFFIRMATIVE instruments — filings that are not responses to anything. Added 2026-09-29
-# (Lippi/0000 EDA 2026). An opposition is named by what it opposes; an affirmative instrument
+# (Example Creditor/0000 EDA 2026). An opposition is named by what it opposes; an affirmative instrument
 # is named by the RULE THAT AUTHORIZES IT, because in the appellate courts the rule number is
 # what makes the paper cognizable. Pa.R.A.P. 123 is the generic application vehicle: any relief
 # not covered by a specific rule is sought by application, so the title must say both the
@@ -348,7 +348,15 @@ def adverse_control_no(case_id: str, filing_type: str) -> str:
     Match the timeline event to the opposed instrument by name; take the most recent. Never
     typed by hand -- an absent number stays absent and the caption simply omits the line."""
     if _posture_of(filing_type) != "opposition":
-        return ""
+        # S-control-no-own-motion (2026-11-17): a paper filed IN SUPPORT of the filer's own motion (reply in support,
+        # supplemental brief) carries that MOTION's Control Number — *208.3(b)(B) ties the number to the motion, and
+        # every paper under it uses it. The 11-17 reply brief rendered no control line because this organ only knew
+        # the opposition posture. The motion's name is the paper's own tail ('…_in_support_of_<motion>').
+        mm = re.search(r"(?i)in_support_of_(.+)$", str(filing_type or ""))
+        if not mm:
+            return ""
+        key = mm.group(1).replace("_", " ").lower()
+        return _control_no_for_key(case_id, key)
     label, _, _ = _opposed_instrument(filing_type)
     if label == "the Motion":
         # generic fallback = instrument unknown; a bare 'motion' would match any motion in
@@ -356,6 +364,11 @@ def adverse_control_no(case_id: str, filing_type: str) -> str:
         # is safer than the wrong number: the caption then omits the line and the log says so.
         return ""
     key = re.sub(r"^the\s+", "", label).lower().rstrip("s")
+    return _control_no_for_key(case_id, key)
+
+
+def _control_no_for_key(case_id: str, key: str) -> str:
+    """Most recent CASE_TIMELINE control number on an event naming `key` (lower-case instrument name)."""
     tl = _case_root(case_id) / "CASE_TIMELINE.json"
     if not tl.is_file():
         return ""
@@ -412,6 +425,21 @@ def _relief_from_stub(case_id: str, instrument_hint: str = "") -> list:
         m = re.search(r"(?mi)^#+\s*[A-Z]?\.?\s*Relief requested\s*$(.*?)(?=^#+\s|\Z)",
                       txt, re.S)
         if not m:
+            # S-anatomy-affirmative-paper (2026-11-17): an m2-room stub writes its prayer as a numbered
+            # '## RELIEF SHAPE (from remedy rows)' list. Transcribe it (tags stripped) — the "Deny the Motion"
+            # fallback below asked the court to deny Plaintiff's OWN motion on a reply in support of it.
+            ms = re.search(r"(?mi)^##+\s*RELIEF SHAPE[^\n]*\n(.*?)(?=^##\s|\Z)", txt, re.S)
+            if ms:
+                shaped = []
+                for ln in ms.group(1).splitlines():
+                    mm = re.match(r"^\s*\d+\.\s+(.+?)\s*$", ln)
+                    if not mm:
+                        continue
+                    t = re.sub(r"\s*\[\s*(?:corpus|doc|official|record)\s*:[^\]\n]*\]", "", mm.group(1)).strip().rstrip(".;")
+                    if len(t) >= 8:
+                        shaped.append(t)
+                if shaped:
+                    return shaped
             continue
         blob = " ".join(m.group(1).split())
         if not blob:
@@ -784,9 +812,64 @@ def _anatomy_by_rule(stub: str, heads: list, case_id: str, instrument_hint: str,
     consumes rather than silently dropped.
     """
     out = []
+    # S-anatomy-affirmative-paper (2026-11-17): this builder was written for the respondent-to-POs frame and printed
+    # "Before the Court are Defendant's Preliminary Objections … overruled", the OLD PO matrix's questions, and
+    # "Deny the Motion in its entirety" on Plaintiff's OWN reply in support of his motion to vacate. An m2-room stub
+    # declares the paper's vehicle, grounds and relief itself (## VEHICLE / ## GROUNDS / ## RELIEF SHAPE); when it
+    # does, every *210 section is transcribed from THAT stub. Agnostic: no case, court or motion named here.
+    _vehicle = _stub_section(stub, r"VEHICLE")
+    _grounds = _stub_section(stub, r"GROUNDS")
+    _affirmative = bool(_vehicle or _grounds or _stub_section(stub, r"RELIEF SHAPE"))
     for heading, rule, _req in heads:
         H = heading.upper()
-        if H.startswith("MATTER BEFORE"):
+        if H.startswith("MATTER BEFORE") and _affirmative:
+            paper = _sentence_case(str(instrument_hint or "").replace("_", " ").upper()) or "the paper"
+            stance = ""
+            for ln in _vehicle.splitlines():
+                ln = re.sub(r"\*\*|^\s*[-*]\s*", "", ln).strip()
+                if ln and not re.match(r"(?i)^vehicle:\s*not derived", ln):
+                    stance = re.sub(r"(?i)^stance:\s*", "", ln)
+                    break
+            stance = re.sub(r"\s*\[\s*(?:corpus|doc|official|record)\s*:[^\]\n]*\]", "", stance)
+            body = (f"Before the Court is Plaintiff's {paper}. "
+                    + (stance[0].upper() + stance[1:] + ("" if stance.endswith(".") else ".") if stance else "")
+                    + " Plaintiff asks that the relief stated below be granted.")
+            out.append((heading, re.sub(r"\s+", " ", body)))
+        elif (H.startswith("STATEMENT OF QUESTION") or "QUESTIONS INVOLVED" in H) and _affirmative:
+            # *210(2): one question per GROUND the paper raises (the stub's own numbered grounds, m2-room order).
+            # A ground that quotes the other side's proposition ("Their ¶1 clause (i): "…"") is put as their
+            # contention and answered No; a ground stated as our proposition is answered Yes.
+            qs = []
+            for m in re.finditer(r"(?m)^\d+\.\s+\[[^\]]*\]\s+\S+\s+[—–-]+\s+(.+?)\s*$", _grounds):
+                g = re.sub(r"\s*\[\s*(?:corpus|doc|official|record)\s*:[^\]\n]*\]", "", m.group(1)).strip().rstrip(".")
+                if re.match(r"(?i)^(open|not pleaded)\b", g):
+                    continue
+                mm = re.match(r"(?i)^their\s+(.+?):\s*(\".+\"|“.+”)\s*$", g)
+                if mm:
+                    qs.append(f"{len(qs) + 1}. Whether Defendant's {mm.group(1)}, {mm.group(2)}, is well taken?  Answer: No.")
+                else:
+                    # the ground's heading is a topic; the ISSUE is the first proposition the stub pleads under it
+                    # (CONTROLLING AUTHORITY → '### <heading>' → first 'PLEAD, verbatim:' that is not a bare Rule quote).
+                    prop = ""
+                    hb = re.search(r"(?ms)^###\s+" + re.escape(g[:60]) + r".*?\n(.*?)(?=^###\s|^##\s|\Z)", stub)
+                    for pl in re.findall(r"(?m)^-\s*PLEAD, verbatim:\s*(.+?)\s*$", hb.group(1) if hb else ""):
+                        pl = re.sub(r"\s*\[\s*(?:corpus|doc|official|record)\s*:[^\]\n]*\]", "", pl)
+                        if re.match(r"(?i)^rule:", pl):
+                            # 'Rule: "…" <cite>. Violation: <proposition>' — the issue is the Violation clause
+                            mv = re.search(r"(?i)\bviolation:\s*(.+)$", pl)
+                            if not mv:
+                                continue
+                            pl = mv.group(1)
+                        prop = re.split(r"(?<=[a-z\)\"”])\.\s+(?=[A-Z])", pl, 1)[0].strip().rstrip(".")
+                        break
+                    g = prop or re.sub(r"\s*\((?:impeachment only|one line each)[^)]*\)", "", g)
+                    g = re.sub(r"^STANCE\s*[—–-]+\s*", "", g)
+                    if not re.match(r"^(?:[A-Z]{2,}|Pa\.|Phila|Defendant|Plaintiff|Count|Progressive)", g):
+                        g = g[0].lower() + g[1:]
+                    qs.append(f"{len(qs) + 1}. Whether {g}?  Answer: Yes.")
+            if qs:
+                out.append((heading, "  ".join(qs)))
+        elif H.startswith("MATTER BEFORE"):
             # *210(1): the pleading before the court + the particular relief requested.
             what = _prose(_stub_section(stub, r"WHAT DEFENDANT OBJECTED TO",
                                         r"RECORD SCOPE"), 700)
@@ -824,6 +907,149 @@ def _anatomy_by_rule(stub: str, heads: list, case_id: str, instrument_hint: str,
         else:
             out.append((heading, ""))
     return out
+
+
+_ORD = ["FIRST", "SECOND", "THIRD", "FOURTH", "FIFTH", "SIXTH", "SEVENTH", "EIGHTH", "NINTH", "TENTH"]
+
+
+class MandatorySectionError(RuntimeError):
+    """A court-mandated brief section (Phila.Civ.R. *210) has NO deterministic source. Fail closed."""
+
+
+def _210_questions_from_body(body: str, side: str) -> str:
+    """*210(2) fallback: one question per numbered ground heading the draft itself raised
+    ('## FIRST PRELIMINARY OBJECTION — <ground>', '## COUNT I — <ground>', '## ISSUE 1 — <ground>').
+    Copied, not composed: the ground text is the heading's own (the 1028(a) text verbatim)."""
+    qs = []
+    for m in re.finditer(r"(?m)^#{2,3}\s+(\w+)\s+(PRELIMINARY OBJECTION|OBJECTION|COUNT|ISSUE|QUESTION)\s+[—–-]\s+(.+?)\s*$", body):
+        ordn, kind, ground = m.group(1), m.group(2), re.sub(r"\s+", " ", m.group(3)).strip()
+        ground = re.sub(r"[⁰¹²³⁴⁵⁶⁷⁸⁹]+", "", ground)
+        who = "Defendant's" if side in ("movant", "defendant", "") else "Plaintiff's"
+        verb = "must be sustained on the Complaint as pleaded" if kind.endswith("OBJECTION") else "must be resolved in the movant's favor on the record as pleaded"
+        qs.append(f"{len(qs) + 1}. Whether {who} {ordn.title()} {kind.title()} — {ground} — {verb}?\n\n   Suggested answer: Yes.")
+    return "\n\n".join(qs)
+
+
+def _210_facts_from_body(body: str) -> str:
+    """*210(3) fallback: the draft's OWN record-pinned numbered statements, copied verbatim
+    (Compl. ¶N / Exh. / Ans. ¶N / verification lines), superscripts stripped, de-duplicated. No new facts."""
+    po = body.split("## BRIEF OR MEMORANDUM OF LAW")[0]
+    out, seen = [], set()
+    for m in re.finditer(r"(?m)^\d+\.\s+((?:Compl\.|Ans\.|Exh\.|The complaint's verification|The Complaint)[^\n]+)$", po):
+        t = re.sub(r"[⁰¹²³⁴⁵⁶⁷⁸⁹]+", "", m.group(1)).strip()
+        if t[:60] in seen:
+            continue
+        seen.add(t[:60]); out.append(t)
+    if not out:
+        return ""
+    return ("The facts are those of the opposing party's own pleading and its exhibits, as pinned in the "
+            "objections above and restated here verbatim:\n\n" + "\n\n".join(f"{i}. {t}" for i, t in enumerate(out, 1)))
+
+
+def _210_matter(stub: str, side: str, title: str) -> str:
+    """*210(1), side-aware. The respondent string hardcoded here since 09/2026 printed 'Plaintiff opposes
+    the objections … overruled' on the MOVANT's own preliminary objections (po-16, 2026-11-15)."""
+    what = _prose(_stub_section(stub, r"WHAT DEFENDANT OBJECTED TO", r"RECORD SCOPE"), 700) if stub else ""
+    paper = _sentence_case(title) or "the pleading"
+    if side in ("movant", "defendant"):
+        body = (f"Before the Court are {paper}. " + (what or "")
+                + " Defendant asks that each objection be sustained and that the relief set out in the Proposed Order be granted.")
+    else:
+        body = (f"Before the Court are {paper}. " + (what or "")
+                + " Plaintiff opposes the objections in their entirety and requests that each be overruled.")
+    return re.sub(r"\s+", " ", body).strip()
+
+
+def brief_210_sections(body: str, case_id: str, court: str, side: str, paper_title: str) -> list:
+    """The *210 sections that precede ARGUMENT, for a filing whose BODY carries its own brief
+    ('## BRIEF OR MEMORANDUM OF LAW' with ### argument sections, as the profile lane emits for
+    preliminary objections, answers with new matter, replies). Each section has a deterministic source
+    or the finish FAILS CLOSED — a mandatory heading is never silently dropped (that drop shipped
+    three PA_CP_PHILA filings without *210(2)/(3))."""
+    heads = _mandatory_heads(court)
+    if not heads:
+        return []
+    stub = _stub_for(case_id, "") or ""
+    out = []
+    for heading, rule, _req in heads:
+        H = heading.upper()
+        if H.startswith("MATTER BEFORE"):
+            out.append((heading, _210_matter(stub, side, paper_title)))
+        elif H.startswith("STATEMENT OF QUESTION") or "QUESTIONS INVOLVED" in H:
+            q = _questions_from_matrix(case_id) or (_questions_involved(stub, case_id) if stub else "")
+            mq = _questions_from_mirrors(stub) if stub else ""
+            if mq:
+                q = (mq + ("\n\nDefendant's questions as framed, and the answers of record:\n\n" + q if q else "")).strip()
+            q = q or _210_questions_from_body(body, side)
+            if not q:
+                raise MandatorySectionError(f"{heading} ({rule}): no matrix, mirror or numbered ground heading to derive questions from")
+            out.append((heading, q))
+        elif H == "FACTS":
+            f = _operative_facts(case_id, 2200)
+            if not f or _PLACEHOLDER.search(f):
+                f = _210_facts_from_body(body)
+            if not f:
+                raise MandatorySectionError(f"{heading} ({rule}): no CASE_FACTS operative facts and no record-pinned lines in the body")
+            out.append((heading, f))
+        elif H in ("ARGUMENT", "RELIEF"):
+            continue   # ARGUMENT heads the body's own ### sections; RELIEF is the prayer/proposed order
+    return out
+
+
+def place_210_brief(body: str, case_id: str, court: str, side: str, paper_title: str) -> str:
+    """Insert the *210 pre-argument sections INSIDE the body's brief: after the brief heading and its
+    intro paragraph(s), before the first ### section, then '## ARGUMENT' over those sections. Deterministic."""
+    m = re.search(r"(?m)^## BRIEF OR MEMORANDUM OF LAW\s*$", body)
+    if not m:
+        return body
+    rest = body[m.end():]
+    first = re.search(r"(?m)^###\s+", rest)
+    if not first:
+        return body
+    secs = brief_210_sections(body, case_id, court, side, paper_title)
+    if not secs:
+        return body
+    intro = rest[:first.start()].strip()
+    if not intro:
+        # The brief heading needs its own body (the kind gate's HOLLOW floor is 15 words). Deterministic, from the
+        # KIND profile's own rule fields for this heading — never a hardcoded cite.
+        _rule, _req = "", ""
+        for _h, _r, _q in _mandatory_heads_kind(court, side):
+            if _h.upper().startswith("BRIEF OR MEMORANDUM"):
+                _rule, _req = _r, _q; break
+        who = "Defendant" if side in ("movant", "defendant", "") else "Plaintiff"
+        intro = (f"{who} submits this Brief or Memorandum of Law in support of the foregoing {_sentence_case(paper_title) or 'pleading'}"
+                 + (f", as required by Phila.Civ.R. {_rule}" if _rule else "")
+                 + (f" ({_req.rstrip('.')})" if _req else "") + ".")
+    block = "".join(f"\n## {h}\n{b}\n" for h, b in secs) + "\n## ARGUMENT\n"
+    return body[:m.end()] + "\n" + intro + "\n" + block + "\n" + rest[first.start():]
+
+
+def _sentence_case(t: str) -> str:
+    """ALL-CAPS filing title -> "Defendant's Preliminary Objections to Plaintiff's Complaint ..." (apostrophes kept)."""
+    t = (t or "").strip()
+    if not t or not t.isupper():
+        return t
+    small = {"to", "of", "in", "the", "and", "or", "for", "on", "a", "an", "by"}
+    words = re.sub(r"(?<![\w'])(\w)([\w']*)", lambda m: m.group(1) + m.group(2).lower(), t).split(" ")
+    return " ".join(w.lower() if (i and w.lower() in small) else w for i, w in enumerate(words))
+
+
+def _mandatory_heads_kind(court: str, side: str) -> list:
+    """[(HEADING, rule, requires)] of the filing KIND profile (<side>_<ftype> under the court), when one exists."""
+    try:
+        import json as _j, os as _o
+        from pathlib import Path as _P
+        cands = [_P(_o.environ["M1_STYLE_PROFILES"])] if _o.environ.get("M1_STYLE_PROFILES") else []
+        cands += [_P(__file__).resolve().parent.parent / "output" / "audit" / "m1_style_profiles.json",
+                  _P.cwd() / "output" / "audit" / "m1_style_profiles.json"]
+        prof = next((_j.loads(c.read_text(encoding="utf-8")) for c in cands if c.is_file()), {}) or {}
+        for k, v in (prof.get(court) or {}).items():
+            if side and k.startswith(side + "_") and isinstance(v, dict) and v.get("mandatory_sections"):
+                return [(m.get("heading", ""), m.get("rule", ""), m.get("requires", "")) for m in v["mandatory_sections"] if m.get("heading")]
+    except Exception:
+        pass
+    return []
 
 
 def anatomy_md(case_id: str, instrument_hint: str = "", court: str = "") -> str:
@@ -1003,6 +1229,95 @@ def proposed_order(relief_lines=None, filing_type=None, posture_type=None, court
     body += ["\nBY THE COURT:\n", "_________________________", "J."]
     return "\n\n".join(body)
 
+def exhibit_map_rows(case_id: str, packet_dir=None) -> list:
+    """EXHIBIT_MAP.json rows for this filing, or [] when none is on file.
+
+    CONTRACT (produced by the record_binder organ, consumed here and by m1_filing_gate 2d):
+        [{letter, title, path, units, source_kind, confidential}]
+    letter       exhibit designation ("A"); title the caption the index prints
+    path         the record item itself; units the analysis units it supports
+    source_kind  "pleading" | "order" | "correspondence" | "instrument" | ... (the rule in
+                 forum_profiles/attachment_rules.json names items BY KIND, e.g. the complaint)
+    confidential True when the item carries information the sovereign's public-access policy
+                 protects, which makes the forum's Confidential Information Form a live duty
+
+    Looked for beside the draft (the packet dir) and then at the case root, so a binder that
+    writes one map per bundle and one per case both answer. Absent -> [] and the caller keeps its
+    previous behaviour; a missing map is never an invented exhibit."""
+    cands = []
+    if packet_dir:
+        cands.append(Path(packet_dir) / "EXHIBIT_MAP.json")
+    base = _case_dir_for(case_id)
+    if base is not None:
+        cands.append(base / "EXHIBIT_MAP.json")
+    for c in cands:
+        try:
+            if not c.is_file():
+                continue
+            d = json.loads(c.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if isinstance(d, dict):
+            d = d.get("exhibits") or d.get("rows") or []
+        if isinstance(d, list):
+            rows = [r for r in d if isinstance(r, dict) and (r.get("path") or r.get("title"))]
+            if rows:
+                return rows
+    return []
+
+
+def exhibit_index_md(case_id: str, court: str = "", rule: str = "", packet_dir=None) -> tuple:
+    """(markdown EXHIBITS index, packet plan) built from EXHIBIT_MAP.json when one is on file.
+
+    The map is the single source for the letters, so the index, the exhibit covers and the gate's
+    attachment check all read the SAME designations — before this, each organ lettered independently
+    and an index could say "Exhibit C" for a file the cover sheet called "Exhibit D".
+    Returns ("", []) when no map exists; attachments_md() then keeps its record-scan behaviour."""
+    rows = exhibit_map_rows(case_id, packet_dir)
+    if not rows:
+        return "", []
+    rule = rule or ""
+    if not rule and court:
+        try:
+            from pipeline import forum_profile as _fp
+            rule = (_fp.attachment_rules(court, "preliminary_objections").get("rule")
+                    or _fp.attachment_rules(court, "brief_or_opposition").get("rule") or "")
+        except Exception:
+            rule = ""
+    md = ["", "## EXHIBITS", "",
+          f"Filed herewith and marked separately pursuant to {rule or 'the applicable rule'}:", "",
+          "| Exhibit | Document | Record Basis |", "|---|---|---|"]
+    plan, conf = [], []
+    for i, r in enumerate(rows):
+        ltr = str(r.get("letter") or "").strip() or chr(ord("A") + i)
+        title = str(r.get("title") or "").strip() or Path(str(r.get("path") or "")).stem
+        units = r.get("units") or []
+        basis = ", ".join(str(u) for u in units) if isinstance(units, list) else str(units)
+        kind = str(r.get("source_kind") or "").strip()
+        md.append(f"| {ltr} | {title}{f' ({kind})' if kind else ''} | {basis or '—'} |")
+        src = r.get("path")
+        if src:
+            sp = Path(str(src))
+            plan.append((f"EXHIBIT_{ltr}_{re.sub(r'[^A-Za-z0-9]+', '_', title).strip('_')}"
+                         f"{sp.suffix.lower()}", sp if sp.is_file() else None))
+        if r.get("confidential"):
+            conf.append(f"{ltr} ({title})")
+    if conf:
+        # The duty is the sovereign's, not this code's: the forum profile says whether it is a form
+        # or a redaction, and the gate FAILs the packet if neither is present.
+        try:
+            from pipeline import forum_profile as _fp
+            _c = _fp.confidential_rule(court) if court else {}
+            _form = _fp.confidential_form_required(court) if court else ""
+        except Exception:
+            _c, _form = {}, ""
+        md += ["", f"Exhibit(s) {', '.join(conf)} contain information protected by "
+                   f"{_c.get('rule') or 'the applicable public-access policy'}"
+                   + (f" and are filed with the {_form}." if _form
+                      else " and are filed in redacted form.")]
+    return "\n".join(md), plan
+
+
 def _mandatory_attachments(court: str, kind: str = "brief_or_opposition") -> list:
     """[{item,label,rule,requires}] the court's rules REQUIRE to be filed WITH this filing.
     DATA from rule_requirements (GROUND); empty when the forum declares none."""
@@ -1073,6 +1388,13 @@ def attachments_md(case_id: str, court: str, filing_type: str, instrument_hint: 
         if _re.search(r"\bORDER\b", label):
             continue  # proposed_order() already emits it; the no-attorney-reference rule is met there
         if _re.search(r"EXHIBIT", label):
+            # EXHIBIT_MAP.json (record_binder contract) is authoritative when present: ONE set of
+            # letters for the index, the covers and the gate. Fall back to the record scan below.
+            _mi, _mp = exhibit_index_md(case_id, court, rule)
+            if _mi:
+                md += ["", _mi]
+                plan += _mp
+                continue
             # which pleadings the rule names ("shall include the complaint, answer, and reply to new matter")
             named = [k for k in ("COMPLAINT", "ANSWER", "REPLY TO NEW MATTER") if k.lower() in req.lower()]
             have = dict(_record_pleadings(case_id))
@@ -1100,7 +1422,43 @@ def attachments_md(case_id: str, court: str, filing_type: str, instrument_hint: 
             continue
         # any other rule-mandated item we cannot build from the record: say so in the packet plan
         plan.append((f"{_re.sub(r'[^A-Za-z0-9]+', '_', label).strip('_')}_REQUIRED_BY_{_re.sub(r'[^A-Za-z0-9]+', '_', rule).strip('_')}.TODO", None))
+    # S-fee-or-ifp-producer (2026-11-16): filing_requirements.universal_requirements made fee-or-IFP a REQUIRED gate row
+    # (11-15 "IFP for all") but no producer wrote the evidence into the draft, so every gated paper failed on it. The record
+    # decides: when this court has already entered an IFP order in this case (record/orders or intake OCR named *IFP*), recite
+    # it and attach it as the next exhibit; otherwise leave the row to the petition the packet must carry (gate still FAILs
+    # loudly). Agnostic: no court or case named here.
+    _ifp = _prior_ifp_order(case_id)
+    if _ifp:
+        _date, _src = _ifp
+        _nxt = chr(ord("A") + sum(1 for n, _ in plan if n.startswith("EXHIBIT_")))
+        md += ["", "## FILING FEE", "",
+               f"No filing fee is tendered with this paper. The filer proceeds in forma pauperis under this Court's prior IFP "
+               f"order entered {_date} in this action (Pa.R.C.P. 240), a copy of which is attached as Exhibit {_nxt}."]
+        plan.append((f"EXHIBIT_{_nxt}_In_Forma_Pauperis_Order_{_date.replace('-', '')}{_src.suffix.lower()}", _src))
     return ("\n".join(md) if md else ""), plan
+
+
+def _prior_ifp_order(case_id: str):
+    """(iso_date, path) of this court's IFP order already entered in the case, from the record; None when there is none."""
+    import re as _re
+    base = _case_dir_for(case_id)
+    if not base:
+        return None
+    for sub in ("record/orders", "record", "intake", "intake/_ocr"):
+        d = Path(base) / sub
+        if not d.is_dir():
+            continue
+        for p in sorted(d.iterdir()):
+            if not _re.search(r"ifp|pauperis", p.name, _re.I) or p.suffix.lower() not in (".pdf", ".txt"):
+                continue
+            m = _re.search(r"(20\d{2})(\d{2})(\d{2})", p.name)
+            if not m:
+                continue
+            date = f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
+            # prefer the PDF of the same order when the hit is an OCR .txt
+            pdfs = [q for q in (Path(base) / "record" / "orders").glob(f"*{m.group(0)}*.pdf")] if (Path(base) / "record" / "orders").is_dir() else []
+            return date, (pdfs[0] if pdfs else p)
+    return None
 
 
 def _adverse_filing_pdf(case_id: str, instrument_hint: str = ""):
@@ -1228,7 +1586,7 @@ def registry_caption_ctx(case_id: str) -> dict | None:
     parts = [d.strip() for d in re.split(r"\s+(?:and|&)\s+|,\s*", defs) if d.strip()]
     docket_no = cap.get("case_no") or ""
     # FULL party names when the registry carries them (`caption_parties`, taken from the
-    # filed papers): the clerk's abbreviated caption ("FILER VS LIPPI ETAL") is a docket
+    # filed papers): the clerk's abbreviated caption ("FILER VS EXAMPLE CREDITOR ETAL") is a docket
     # label, not a pleading caption. DATA, per case; the split above stays the fallback.
     _row = (_REG.get(key) or {}) if isinstance(_REG, dict) else {}
     _cp = _row.get("caption_parties") or {}
@@ -1566,6 +1924,19 @@ def finish(body_md_path, case_id, court, filing_type, title, out_path,
     # An affidavit swears facts. It carries a jurat, not a prayer for relief, and no
     # defects table (that is advocacy, and advocacy cannot appear over a sworn signature).
     is_affidavit = filing_type in AFFIDAVIT_FILING_TYPES
+    # F9 (2026-11-11): CLASS from the filing spec. A PLEADING (reply to new matter, answer) is not a brief: it takes
+    # signature + Rule 1024 verification + certificate of service and NOTHING of the brief shell (endorsement, anatomy,
+    # ARGUMENT, defects ledger, prayer, proposed order, attachments plan). Schedule A only when the spec asks for it.
+    _spec_f = None
+    try:
+        from pipeline import m1_spec_assembler as _sm_f
+        _spf = _sm_f.SPEC_DIR / f"{filing_type}.yaml"
+        if _spf.exists():
+            _spec_f = _sm_f.load_spec(str(_spf))
+    except Exception:
+        _spec_f = None
+    is_pleading = bool(_spec_f) and _spec_f.get("class") == "pleading"
+    _pleading_schedule_a = bool(_spec_f and (_spec_f.get("finisher") or {}).get("schedule_a"))
     # S-finisher-duplicate-organs (2026-10-25): the application lane used to write its own RELIEF SOUGHT /
     # VERIFIED STATEMENT / PROOF OF SERVICE while this finisher appended the forum's mandatory RELIEF /
     # VERIFICATION / CERTIFICATE OF SERVICE (the Phila.Civ.R. *210 / Pa.R.C.P. 208.2 headings the gate keys
@@ -1604,19 +1975,28 @@ def finish(body_md_path, case_id, court, filing_type, title, out_path,
     # court term and number, and the filer's name/address/email. It is furniture of the
     # brief, so it rides at the head, above the body. Administrative papers and sworn
     # affidavits are not "briefs or memoranda of law" and carry none.
-    if not is_affidavit and not is_admin:
+    if not is_affidavit and not is_admin and not is_pleading:
         _endorse = endorsement_block(case_id, court)
         if _endorse:
             md.append(_endorse)
     # v2's anatomy (INTRODUCTION / STATEMENT OF THE CASE / STANDARD OF REVIEW),
     # transcribed from m0's stub rather than drafted by an LLM per section.
-    if not is_affidavit and not is_admin:
-        _anat = anatomy_md(case_id, instrument_hint or filing_type, court)
-        if _anat:
-            # S-finisher-source-tags (2026-10-25): CASE_FACTS provenance tags are not filing text
-            _anat = re.sub(r"\s*\[\s*(?:Source|corpus|doc|official|record)\s*:[^\]\n]*\]", "", _anat)
-            md.append(_anat)
-            md.append("## ARGUMENT")
+    if not is_affidavit and not is_admin and not is_pleading:
+        _side = (os.environ.get("M1_SIDE") or "").strip().lower()
+        if re.search(r"(?m)^## BRIEF OR MEMORANDUM OF LAW\s*$", body):
+            # The body carries its OWN brief (profile lane: preliminary objections, answer+new matter, reply).
+            # The *210 sections belong INSIDE that brief, not in front of the pleading — prepending the anatomy
+            # printed a respondent-side MATTER + a hollow '## ARGUMENT' before the objections and left *210(2)/(3)
+            # out of the brief (po-16, 2026-11-15). Deterministic; fails closed on a sourceless mandatory section.
+            body = place_210_brief(body, case_id, court, _side, title)
+            print("  [finish] *210 sections placed inside the body's brief")
+        else:
+            _anat = anatomy_md(case_id, instrument_hint or filing_type, court)
+            if _anat:
+                # S-finisher-source-tags (2026-10-25): CASE_FACTS provenance tags are not filing text
+                _anat = re.sub(r"\s*\[\s*(?:Source|corpus|doc|official|record)\s*:[^\]\n]*\]", "", _anat)
+                md.append(_anat)
+                md.append("## ARGUMENT")
     md.append(body)
     # Administrative instruments take NO defects ledger, for the same reason they take no
     # anatomy and no prayer: the table is drawn from the case-wide audit stream, so on a
@@ -1625,7 +2005,7 @@ def finish(body_md_path, case_id, court, filing_type, title, out_path,
     # on whether a state appellate prothonotary must issue a 1935(a) notice. Irrelevant
     # authority in an administrative paper is not padding; it is a target.
     _is_screen = _posture_of(filing_type) == "screen"
-    if not is_affidavit and not is_admin and not _is_screen:
+    if not is_affidavit and not is_admin and not _is_screen and not is_pleading:
         md.append(defects_table(case_id))
     # 6. PRAYER FOR RELIEF -- an opposition that states no request leaves the court
     # nothing to enter. Sworn affidavits and administrative papers carry none.
@@ -1634,7 +2014,7 @@ def finish(body_md_path, case_id, court, filing_type, title, out_path,
         # block (nothing is opposed) and no proposed order (a court of appeals enters its own).
         from pipeline import m1_screen as _scr
         md.append(_scr.relief_block(_sig_address()[0]))
-    elif not is_affidavit and not is_admin:
+    elif not is_affidavit and not is_admin and not is_pleading:
         _pray = prayer_for_relief(case_id, instrument_hint or filing_type, relief, court)
         # Phila.Civ.R. *210(5) names the section RELIEF; Pa.R.C.P. 208.2(a)(3) vehicles carry RELIEF SOUGHT;
         # the federal convention is PRAYER FOR RELIEF. Rename to the forum's own mandatory heading so the
@@ -1656,10 +2036,15 @@ def finish(body_md_path, case_id, court, filing_type, title, out_path,
     # RULE-MANDATED ATTACHMENTS (GROUND contract -> DRAFT). Exhibits ride inside the
     # document as an index and are copied into the packet dir as separately marked files.
     _att_plan = []
-    if not is_affidavit and not is_admin:
+    if not is_affidavit and not is_admin and not is_pleading:
         try:
             _att_md, _att_plan = attachments_md(case_id, court, filing_type, instrument_hint or "")
-            if _att_md:
+            # S-one-exhibit-list (po-16): when the composer already wrote the "## EXHIBITS" index from the stub's NEW EVIDENCE
+            # BLOCK (the same letters assemble_packet builds), the finisher must not add a second, shorter table ("A | Complaint")
+            # — two indexes with different letters is a defect the court sees. The packet plan (file copies) is still kept.
+            # S17 (2026-11-17): this line raised NameError '_re' (finish() has only the module-level `re`), so every brief lost its
+            # EXHIBITS index and the FILING FEE recital while the packet files were still copied — the gate then failed fee-or-IFP.
+            if _att_md and not any(re.search(r"^## EXHIBITS\b", str(x), re.M) for x in md):
                 md.append(_att_md)
         except Exception as _ae:
             print(f"  [attachments] skipped (non-fatal): {_ae}")
@@ -1675,7 +2060,7 @@ def finish(body_md_path, case_id, court, filing_type, title, out_path,
                                      recipients=(service_recipients(stub_path) if stub_path else None)))
     # an opposition always carries a prayer: without one the filing states no
     # relief for the court to enter.
-    if not is_affidavit and not _is_screen and (relief is not None
+    if not is_affidavit and not _is_screen and not is_pleading and (relief is not None
                              or (_posture_of(filing_type) == "opposition" and not is_admin)):
         # the lane normalizes filing_type to a bare posture word ("opposition"), which
         # no longer names WHAT is opposed — the caller passes the stub's own name so the
@@ -1686,7 +2071,7 @@ def finish(body_md_path, case_id, court, filing_type, title, out_path,
     # m0's OWN definitions organs (Schedule A + quantum superscript footnotes)
     if os.environ.get("M1_SCREEN_PAGE_LIMIT"):
         print(f"  [definitions] Schedule A omitted: court page limit {os.environ['M1_SCREEN_PAGE_LIMIT']} pages")
-    elif not is_admin:
+    elif not is_admin and (not is_pleading or _pleading_schedule_a):
         try:
             from pipeline import definitions_tagger
             definitions_tagger.set_forum(court)   # forum by identifier, never by body scan

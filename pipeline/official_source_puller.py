@@ -49,6 +49,7 @@ from core.entropy_paths import entropy_root as _eroot, package_root as _epkg, he
 import argparse
 import hashlib
 import json
+import os
 import re
 import sqlite3
 import sys
@@ -163,7 +164,7 @@ def _fts_match(con, phrase):
 
 
 # --------------------------------------------------------------------- gate
-def corpus_first_check(families=None, phrase=None, queries=None, db=None):
+def corpus_first_check(families=None, phrase=None, queries=None, db=None, key=None):
     """Step 1: sweep ALL families. Returns a dict; present=True if ANY channel
     hit. This is the check-first gate — a pull must not proceed when present."""
     db = str(db or CHUNK_DB)
@@ -182,16 +183,24 @@ def corpus_first_check(families=None, phrase=None, queries=None, db=None):
         if n:
             family_hits[f] = n
     fts_hits = _fts_match(con, phrase)
+    key_hits = []
+    if key:   # section-level pin: 'pa_cons_stat_t13_s9203' — a family having 22k OTHER sections is not presence of this one
+        key_hits = [r[0] for r in con.execute(
+            "SELECT source FROM chunk_text WHERE source LIKE ?||'%' GROUP BY source", (key,)).fetchall()]
     con.close()
     sem_hits = _semantic(queries) if queries else []
 
     api_down = any(h.get("api_error") for h in sem_hits)
     fts_err = any(h.get("fts_error") for h in fts_hits)
-    present = bool(family_hits or fts_hits or
-                   any(not h.get("api_error") for h in sem_hits))
+    if key:
+        present = bool(key_hits)
+    else:
+        present = bool(family_hits or fts_hits or
+                       any(not h.get("api_error") for h in sem_hits))
     verdict = "PRESENT" if present else ("MISSING" if (fams) else "NO_FAMILIES")
     return {
         "present": present,
+        "key": key, "key_hits": key_hits,
         "verdict": verdict,
         "checked_families": fams,
         "family_hits": family_hits,
@@ -408,6 +417,19 @@ def ingest_source(source, text, jurisdiction="US", cite="", phrase="",
                      "(`python3 -m pipeline.turbovec_ingest`)")
     _manifest(source, res, origin_url=origin_url, family=family,
               jurisdiction=jurisdiction, cite=cite, phrase=phrase)
+    # G6' (PLAN_obsidian_corpus_graph §14): regenerate the _graph hubs/nodes for this slug in the same lane.
+    # Flag-gated (GRAPH_EMIT=1) so a failing vault sync can never fail an ingest; deterministic, idempotent.
+    if os.environ.get("GRAPH_EMIT") == "1":
+        try:
+            from pipeline.struct_index_build import index_slug
+            res["struct_index"] = index_slug(source)
+        except Exception as e:  # noqa: BLE001 — struct index is a side effect of ingest, never its gate
+            res["struct_index"] = {"error": f"{type(e).__name__}: {e}"}
+        try:
+            from pipeline.corpus_graph_build import graph_emit
+            res["graph_emit"] = graph_emit([source])
+        except Exception as e:  # noqa: BLE001 — graph is a side effect of ingest, never its gate
+            res["graph_emit"] = {"error": f"{type(e).__name__}: {e}"}
     return res
 
 
@@ -424,9 +446,25 @@ def _manifest(source, res, origin_url="", family="", jurisdiction="", cite="", p
 
 # --------------------------------------------------------------------- fetch
 def fetch(url, timeout=40):
+    """Official text as str. PDF bodies (palegis.us serves statutes as PDF; the HTML view is a JavaScript shell with no
+    section text — every Pa.C.S. prefetch pinned 'not in receipt' until 2026-11-15) go through pdftotext -layout."""
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read().decode("utf-8", "replace")
+        body = r.read(); ctype = (r.headers.get("Content-Type") or "").lower()
+    if body[:5] == b"%PDF-" or "application/pdf" in ctype:
+        import subprocess, tempfile
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
+            f.write(body); tmp = f.name
+        try:
+            out = subprocess.run(["pdftotext", "-layout", tmp, "-"], capture_output=True, text=True, timeout=120)
+            return out.stdout
+        finally:
+            try: os.unlink(tmp)
+            except OSError: pass
+    text = body.decode("utf-8", "replace")
+    if "palegis.us" in url and "view-statute" in url and "Loading..." in text and "§" not in text:
+        raise RuntimeError("palegis.us HTML view is a JavaScript shell (no statute text) — use the txtType=PDF endpoint")
+    return text
 
 
 # ---------------------------------------------------------------------- main
@@ -437,6 +475,8 @@ def _print_check(check):
               "channels still decided; re-run the semantic tier when it is up.")
     if check.get("fts_error"):
         print(f"  NOTE: FTS probe errored: {check['fts_error']}")
+    if check.get("key"):
+        print(f"  KEY {check['key']}: {'HIT ' + ','.join(check['key_hits'][:4]) if check['key_hits'] else 'absent'}")
     if check["present"]:
         print("  -> STOP. Cite the existing key, NO pull:")
         for c in cite_existing(check):
@@ -462,7 +502,7 @@ def cmd_pull(a):
     fams = (a.checked.split(",") if a.checked and a.checked.split(",")
             else None)
     # 1. check-first gate
-    check = corpus_first_check(families=fams or ALL_FAMILY_PREFIXES[:12],
+    check = corpus_first_check(key=getattr(a, "key", None), families=fams or ALL_FAMILY_PREFIXES[:12],
                                phrase=a.phrase, queries=(a.query or None))
     _print_check(check)
     if check["present"] and not a.force:
@@ -555,6 +595,8 @@ def main(argv=None):
     p.add_argument("--family", default="", help="raw-dir family")
     p.add_argument("--jurisdiction", default="US")
     p.add_argument("--cite", default="")
+    p.add_argument("--key", default=None, help="corpus source-key prefix for THIS section (e.g. pa_cons_stat_t13_s9203); "
+                   "when given, presence = key hit only — family counts are notes, not presence")
     p.add_argument("--phrase", help="operative-phrase probe (required to verify)")
     p.add_argument("--query", action="append")
     p.add_argument("--force", action="store_true")

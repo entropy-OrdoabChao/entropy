@@ -45,6 +45,34 @@ import argparse, datetime, json, os, re, sys
 from pathlib import Path
 from pipeline._sentsplit import split_sentences as _split_sents
 
+# ---- S-no-hardcode (2026-11-14): two averment rules matched the literal "(Progressive|Defendant)",
+# so ONE case's adverse party was recognised as the speaker of a quoted statement and every other
+# case's adverse party was not. The names now come from pipeline.case_profile for --case.
+_CASE_SLUG = None                        # set from --case in main(); read by _adverse_alt()
+_ADV_ALT = {}
+
+
+def _adverse_alt() -> str:
+    """'Progressive|Example Insurer|...' for the case under draft, each
+    name re.escape'd. No case / unregistered -> '' and the rules fall back to the role word."""
+    key = _CASE_SLUG or ""
+    if key not in _ADV_ALT:
+        alt = ""
+        if key:
+            try:
+                from pipeline.case_profile import profile as _cp
+                alt = "|".join(re.escape(n) for n in (_cp(key).get("adverse_names") or []))
+            except Exception:
+                alt = ""
+        _ADV_ALT[key] = alt
+    return _ADV_ALT[key]
+
+
+def _adverse_or_role() -> str:
+    """Alternation of the adverse party's names plus the role word 'Defendant'."""
+    alt = _adverse_alt()
+    return (alt + "|Defendant") if alt else "Defendant"
+
 ROOT = Path(__file__).resolve().parent.parent
 
 # ---------------------------------------------------------------- stub parsing
@@ -743,7 +771,7 @@ def assemble(stub, court, case_id=None):
             if e["quote"]:
                 q = _clean_cut(e["quote"], 460)
                 d = _ev_date(e)
-                is_summary = bool(re.match(r"\s*(Progressive|Defendant)['\u2019]?s?\b", q)) or " its own " in q
+                is_summary = bool(re.match(r"\s*(" + _adverse_or_role() + r")['\u2019]?s?\b", q)) or " its own " in q
                 _dupe = next((pn for fp, pn in quote_para.items()
                               if pn != n and (fp[:40] in q or q[:40] in fp)), None)
                 _nested = ('"' in q) or ("\u201c" in q) or (" — " in q and "," in q and len(q) > 140)
@@ -800,7 +828,7 @@ def assemble(stub, court, case_id=None):
                             if first:
                                 # integrate the exhibit cite into the sentence — no
                                 # bolted-on parenthetical after a characterization
-                                _cl1 = re.sub(r"^(Progressive's|Defendant's) ",
+                                _cl1 = re.sub(r"^(" + _adverse_or_role() + r")['\u2019]?s ",
                                               lambda m: m.group(1) + f" (Exhibit {e['tag']}) "
                                               if False else m.group(1) + " ", cl)
                                 para = f"{n}. {cl}{_p} (Exhibit {e['tag']}.)"
@@ -1951,7 +1979,8 @@ def _resolve_issues(issues, cells_dir):
 
 
 def run(stub_path, court, out_path=None, case_id=None, voice=False, llm_url=None,
-        matrix=None, bank=None, ftype_override=None, cells=None, issues=None):
+        matrix=None, bank=None, ftype_override=None, cells=None, issues=None, spec_name=None, adverse=None,
+        instrument=None):
     """ONE streamline: route -> assemble -> voice -> gate -> render."""
     lane, stem = filing_type_from_stub(stub_path)
     stub_model = None
@@ -1972,13 +2001,137 @@ def run(stub_path, court, out_path=None, case_id=None, voice=False, llm_url=None
     elif _vehicle:
         lane = "application"              # stem names a post-order vehicle (no --type given)
     stubp = Path(stub_path)
+    # ---- F9 (2026-11-11): INSTRUMENT DECISION GUARD + spec-driven lane ------------------------------------
+    # The room's posture-vehicle lane posts one graded card: INSTRUMENT: <spec> | CLASS: <class> …  The skeptic grades the
+    # DECISION there (cheap), never a rendered draft. m1 routes only to a lane/spec of the SAME class; mismatch = STOP.
+    from pipeline import m1_spec_assembler as _spec_mod
+    # F9 ROUTING (2026-11-13): a RESPONSIVE PLEADING is not a brief. REBUTTAL_STEMS carries "reply"/"answer"/"response",
+    # so `--type reply_to_new_matter` (or a stub named for it) routed to the brief-style argument assembler unless a human
+    # passed --spec — the original F9 repro. CLASS rule, name-level and deterministic:
+    #   (a) a name that NAMES a filing spec routes to that spec's lane (the instrument guard below then demands the card);
+    #   (b) a name that names a responsive pleading with NO spec STOPs — m1 never writes a brief body for a pleading.
+    _route_name = re.sub(r"^\d+_", "", (ftype_override or stubp.stem).lower())
+    if not spec_name and not _vehicle and lane not in ("affidavit", "original_proceeding"):
+        _byname = _spec_mod.spec_for_name(_route_name)
+        if _byname:
+            spec_name = _byname
+            print(f"  [route] '{_route_name}' names filing spec '{_byname}' -> spec lane (CLASS from the spec)", file=sys.stderr)
+        elif lane == "rebuttal" and _spec_mod.is_responsive_pleading(_route_name):
+            sys.exit(f"STOP [instrument guard]: '{_route_name}' is a RESPONSIVE PLEADING (Pa.R.C.P. 1017(a): the pleadings are "
+                     f"a complaint and an answer thereto, a reply if the answer contains new matter) — it answers paragraph by "
+                     f"paragraph under Rule 1029, so it is not drafted by the brief/argument lane. No templates/filing_specs/"
+                     f"{_route_name}.yaml exists; write the spec (CLASS pleading) or pass --spec <instrument>. Not drafting.")
+    _bundle = next((pp for pp in [stubp.parent, stubp.parent.parent, stubp.parent.parent.parent] if (pp / "m2").is_dir() or (pp / "adverse.md").exists()), stubp.parent)
+    _cards = sorted((_bundle / "m2").glob("room_r*_cards.md")) if (_bundle / "m2").is_dir() else []
+    _decision = _spec_mod.instrument_decision([str(c) for c in _cards], explicit=instrument) if (_cards or instrument) else None
+    if _cards or instrument:
+        # the decision's provenance is part of the record: log WHAT m1 read, not only what it decided
+        print(f"  [route] instrument cards: {', '.join(c.name for c in _cards) or '(none)'}"
+              f"{' + --instrument ' + str(instrument) if instrument else ''} -> "
+              f"{(_decision['instrument'] + '/' + _decision['class'] + ' from ' + _decision['file']) if _decision else 'NO SUSTAINED INSTRUMENT CARD'}",
+              file=sys.stderr)
+    _spec = None
+    if spec_name or (_decision and (_spec_mod.SPEC_DIR / f"{_decision['instrument']}.yaml").exists()):
+        _spec = _spec_mod.load_spec(spec_name or _decision["instrument"])
+        lane = "spec"
+    # ---- S-filing-type-on-demand (2026-11-14, user-locked: "it should know how to build on demand … that is why m1 was a stub
+    #   config"): a SUSTAINED instrument card with NO spec yaml routes to the PROFILE lane — anatomy from the court profile
+    #   <court>.<side>_<type> (derived from the corpus by rule_requirements; derived ON DEMAND here when missing) + the verbatim
+    #   rule text + the cells. No per-instrument YAML is ever required; the spec lane stays for the one spec that exists.
+    _side = (os.environ.get("M1_SIDE") or "").strip().lower()
+    _kind = None
+    # S-fed-rebuttal-keeps-its-lane (2026-11-16): a rebuttal lane that arrives FED (--matrix + --bank from bank_bridge over the
+    # room's cells — the A14 reply-brief recipe, GREEN 10-16) is the brief assembler; the on-demand PROFILE hijack below is
+    # for an instrument with NO feed. Without this guard the fed brief was re-routed to the profile lane twice tonight and
+    # came back as the OTHER side's preliminary-objection template (725 words, 2 cites, 0 room pins).
+    _fed_rebuttal = bool(matrix) and bool(bank) and (lane == "rebuttal" or (_decision or {}).get("class") == "brief")
+    if _decision and _spec is None and lane in ("complaint", "rebuttal", "application") and not _fed_rebuttal:
+        from pipeline import m1_profile_assembler as _prof_mod
+        _kind = _prof_mod.kind_for(court, _route_name, _side)
+        if not _kind:
+            _rc = re.search(r"(Pa\.R\.C\.P\.\s*\d{3,4}|Pa\.R\.A\.P\.\s*\d{3,4}|Phila\.\s*Civ\.\s*R\.\s*\*?\d{3,5})", _decision.get("line", ""))
+            _rt, _ = _prof_mod.rule_pool([_rc.group(1)]) if _rc else ({}, [])
+            _kind = _prof_mod.derive_kind_on_demand(court, _route_name, _side, _rc.group(1) if _rc else "", next(iter(_rt.values()), ""),
+                                                    llm_url or os.environ.get("M1_LLM_URL", "http://localhost:8000/v1"))
+            print(f"  [route] profile kind for '{_route_name}' derived on demand from {_rc.group(1) if _rc else 'NO RULE CITE ON THE CARD'} -> {_kind}", file=sys.stderr)
+        if _kind:
+            lane = "profile"
+            print(f"  [route] '{_route_name}' -> PROFILE lane (court profile {court}.{_kind}; CLASS {_decision['class']} from the room's card)", file=sys.stderr)
+    _LANE_CLASS = {"affidavit": "affidavit", "original_proceeding": "original_proceeding", "application": "application",
+                   "rebuttal": "brief", "complaint": "pleading", "spec": (_spec or {}).get("class"),
+                   "profile": (_decision or {}).get("class")}
+    # S-room-class-routes-the-lane (2026-11-16): the lane above comes from STEM SUBSTRINGS ("vacate" → post-order vehicle →
+    # application). A reply brief IN SUPPORT OF a motion to vacate carries "vacate" too, so the stem said application while the
+    # room's SUSTAINED instrument card said CLASS brief — and the guard STOPped a correct room decision on a name heuristic.
+    # CLASS rule: when the room has decided and no human forced --spec/--instrument, the lane FOLLOWS the room's class (one
+    # map, class → lane). --type is the CHAIN's stem hint (chain_order_m2room.sh passes FTYPE), not a human override. The STOP
+    # below is kept for the genuine conflict: a forced spec/instrument that contradicts the room.
+    _CLASS_LANE = {"brief": "rebuttal", "application": "application", "pleading": "complaint", "affidavit": "affidavit",
+                   "original_proceeding": "original_proceeding"}
+    if _decision and not spec_name and not instrument and lane in _CLASS_LANE.values() \
+            and _LANE_CLASS.get(lane) != _decision["class"] and _decision["class"] in _CLASS_LANE:
+        print(f"  [route] stem lane '{lane}' (CLASS {_LANE_CLASS.get(lane)}) overridden by the room's SUSTAINED instrument card: "
+              f"CLASS {_decision['class']} -> lane '{_CLASS_LANE[_decision['class']]}' ({_decision['instrument']})", file=sys.stderr)
+        lane = _CLASS_LANE[_decision["class"]]
+    if _decision and _LANE_CLASS.get(lane) and _decision["class"] != _LANE_CLASS[lane]:
+        sys.exit(f"STOP [instrument guard]: room decided CLASS {_decision['class']} ({_decision['instrument']}) — "
+                 f"lane '{lane}' is CLASS {_LANE_CLASS[lane]}. Not drafting. ({_decision['file']})")
+    if lane == "spec" and not _decision and not os.environ.get("M1_NO_INSTRUMENT_GUARD"):
+        sys.exit(f"STOP [instrument guard]: spec '{_spec['instrument']}' requested but the room posted no SUSTAINED INSTRUMENT card "
+                 f"in {_bundle / 'm2'} — the decision is graded before any draft (fixture override: M1_NO_INSTRUMENT_GUARD=1)")
     if not case_id:
         # .../cases/<case_id>/drafts/_bundle*/motions/chain_*/stub.md
         parts = stubp.resolve().parts
         case_id = parts[parts.index("cases") + 1] if "cases" in parts else stubp.stem
+    global _CASE_SLUG                 # the adverse-party names for this draft come from the case
+    _CASE_SLUG = case_id
     out_path = Path(out_path) if out_path else stubp.with_name(stubp.stem + "_M1_DRAFT.md")
 
-    if lane == "affidavit":
+    if lane == "spec":
+        # SPEC-DRIVEN ASSEMBLER: anatomy from templates/filing_specs/<instrument>.yaml; deterministic slots/pairing/grammar,
+        # LLM response text from gated cells only. First spec: reply_to_new_matter (CLASS pleading).
+        _adv = Path(adverse) if adverse else (_bundle / "adverse.md")
+        if not _adv.exists():
+            sys.exit(f"spec lane: adverse paper not found ({_adv}); pass --adverse")
+        _parts = stubp.resolve().parts
+        _case_dir = Path(*_parts[:_parts.index("cases") + 2]) if "cases" in _parts else _bundle.parent.parent
+        _compl = sorted(Path(_case_dir, "intake", "_ocr").glob("*COMPLAINT*.txt")) if Path(_case_dir, "intake", "_ocr").is_dir() else []
+        if not _compl:
+            sys.exit(f"spec lane: OUR complaint OCR text not found under {_case_dir}/intake/_ocr/*COMPLAINT*.txt")
+        _cells_paths = ([cells] if cells else []) + [str(c) for c in _cards]
+        _ri = next((d for d in (_bundle / "room_inputs_m2room", _bundle / "room_inputs") if d.is_dir()), None)
+        _st = _spec_mod.assemble(_spec, str(_adv), str(_compl[-1]), _cells_paths, str(out_path), case_id, court,
+                                 llm_url or os.environ.get("M1_LLM_URL", "http://localhost:8000/v1"),
+                                 pairing_path=str(_ri / "recharacterization_table.md") if _ri else None,
+                                 face_path=str(_ri / "face_table.md") if _ri else None, decision=_decision)
+        print(f"assembled {_spec['instrument']}: {_st.get('answered')}/{_st.get('paragraphs')} adverse ¶ answered, open={_st.get('open')}, fail={_st.get('fail')}")
+        if not _st.get("ok"):
+            sys.exit(f"spec lane: section FAIL — {_st.get('fail') or _st.get('stop')} (no deterministic fallback draft; fix inputs or cells and rerun)")
+        from pipeline.m1_finisher import finish
+        finished_md, _ = finish(str(out_path), case_id, court, _spec["gate"]["type"], _spec["title"], str(out_path),
+                                instrument_hint=_spec["instrument"])
+        out_path = Path(finished_md)
+        gate_type = _spec["gate"]["type"]
+    elif lane == "profile":
+        # PROFILE-DRIVEN ASSEMBLER (S-filing-type-on-demand): the adverse paper is the pleading objected to / answered; no
+        # "our complaint" is required — the side that files is M1_SIDE (movant|respondent|defendant|plaintiff), an input.
+        from pipeline import m1_profile_assembler as _prof_mod
+        _adv = Path(adverse) if adverse else (_bundle / "adverse.md")
+        if not _adv.exists():
+            sys.exit(f"profile lane: adverse paper not found ({_adv}); pass --adverse")
+        _cells_paths = ([cells] if cells else []) + [str(c) for c in _cards]
+        _title = os.environ.get("M1_TITLE") or None
+        _st = _prof_mod.assemble(court, _kind, _route_name, _side, str(_adv), _cells_paths, str(out_path), case_id,
+                                 llm_url or os.environ.get("M1_LLM_URL", "http://localhost:8000/v1"), decision=_decision, title=_title)
+        print(f"assembled {_route_name} [profile {court}.{_kind}]: objections={_st.get('objections')} sections={_st.get('sections')} open={_st.get('open')} fail={_st.get('fail')}")
+        if not _st.get("ok"):
+            sys.exit(f"profile lane: section FAIL — {_st.get('fail') or _st.get('stop')} (no deterministic fallback draft; fix inputs or cells and rerun)")
+        from pipeline.m1_finisher import finish
+        finished_md, _ = finish(str(out_path), case_id, court, _route_name, _title or _route_name.replace("_", " ").upper(), str(out_path),
+                                instrument_hint=_route_name)
+        out_path = Path(finished_md)
+        gate_type = _kind
+    elif lane == "affidavit":
         # m0 owns the sworn content; m1 only wraps it in the filing shell.
         from pipeline.m0_answer_or_admit import affidavit as m0_affidavit
         body = m0_affidavit(case_id, court=court)   # oath follows the forum (Rule 1024/§4904 vs §1746)
@@ -2063,7 +2216,7 @@ def run(stub_path, court, out_path=None, case_id=None, voice=False, llm_url=None
         _iss_path = _resolve_issues(issues, Path(cells).parent)
         _iss = [_iss_path]
         _cells = [json.loads(l) for l in Path(cells).read_text(encoding="utf-8").splitlines() if l.strip()]
-        _lurl = llm_url or "http://localhost:8000/v1"
+        _lurl = llm_url or os.environ.get("M1_LLM_URL", "http://localhost:8000/v1")
         print(f"  [screen] issues from {_iss[0].name}{'' if issues else ' (mtime fallback)'}")
         _pages = _scr.page_limit_of(_stub_txt)
         if _pages:
@@ -2152,7 +2305,7 @@ def run(stub_path, court, out_path=None, case_id=None, voice=False, llm_url=None
         _stub_txt = Path(stub_path).read_text(encoding="utf-8", errors="replace")
         _screen = _scr.is_screen(_stub_txt)
         if _screen:
-            _framed, _side = _scr.frame(body, _scr.final_dkt_of(_stub_txt), llm_url or "http://localhost:8000/v1",
+            _framed, _side = _scr.frame(body, _scr.final_dkt_of(_stub_txt), llm_url or os.environ.get("M1_LLM_URL", "http://localhost:8000/v1"),
                                          drops=_scr.not_argued_of(_stub_txt))
             out_path.write_text(_framed, encoding="utf-8")
             Path(str(out_path) + ".screen.json").write_text(json.dumps(_side, indent=1, ensure_ascii=False), encoding="utf-8")
@@ -2181,6 +2334,22 @@ def run(stub_path, court, out_path=None, case_id=None, voice=False, llm_url=None
     # lane converges on, after every rewrite. Gate the FILE here, not the in-memory text.
     from pipeline.m1_finisher import _gate_cites, CiteGateError
     _final = Path(out_path).read_text(encoding="utf-8")
+    # DUPLICATE-HEADING COLLAPSE (2026-11-14, po-15): a section drafter that emits '## PROPOSED ORDER' then '### PROPOSED ORDER'
+    # makes the renderer break a NEW captioned page at each (standalone-paper rule) → two blank 'PROPOSED ORDER' pages before the
+    # real one, and the gate reads the first (0 words). Same title back-to-back at any level = one heading. Deterministic, agnostic.
+    _dedup = re.sub(r"(?m)^(#{1,6})\s*([^\n]+?)\s*\n(?:\s*\n)*#{1,6}\s*\2\s*\n",
+                    lambda m: f"{m.group(1)} {m.group(2)}\n", _final)
+    # po-15 (2026-11-14): '## PROPOSED ORDER' then '### ORDER' — different titles, so the same-title collapse missed it, and 'ORDER' is
+    # itself a standalone-paper name → a caption-only p.19 before the real order. Class rule: two headings back-to-back with NO body
+    # between them, where the second title is contained in the first (ORDER ⊂ PROPOSED ORDER) or the first in the second = one heading.
+    def _nest(m):
+        a, b = m.group(2).strip(), m.group(4).strip()
+        au, bu = re.sub(r"[\[\]]", "", a).upper(), re.sub(r"[\[\]]", "", b).upper()
+        return f"{m.group(1)} {a}\n" if (bu in au or au in bu) else m.group(0)
+    _dedup = re.sub(r"(?m)^(#{1,6})\s*([^\n]+?)\s*\n(?:\s*\n)*(#{1,6})\s*([^\n]+?)\s*\n", _nest, _dedup)
+    if _dedup != _final:
+        print(f"  [render] collapsed {len(re.findall(r'(?m)^#{1,6} ', _final)) - len(re.findall(r'(?m)^#{1,6} ', _dedup))} duplicate same-title heading(s)")
+        _final = _dedup; Path(out_path).write_text(_final, encoding="utf-8")
     _fg = _gate_cites(_final, str(out_path))
     if _fg.get("wrong"):
         raise CiteGateError(_fg)
@@ -2188,6 +2357,17 @@ def run(stub_path, court, out_path=None, case_id=None, voice=False, llm_url=None
     verdict = gate_check(str(out_path), court, gate_type)
     v = verdict.get("verdict") if isinstance(verdict, dict) else None
     print(f"  [gate] {v}: {verdict.get('findings') if isinstance(verdict, dict) else verdict}")
+    # The profile KIND's checklist (e.g. movant_preliminary_objections) carries the *1028(c) attachments only; the
+    # filing TYPE's corpus checklist (preliminary_objections → Phila.Civ.R. *210 brief sections) is what the standalone
+    # gate and the court apply. Three PA_CP_PHILA filings printed '[gate] PASS' here while failing *210(2)/(3)
+    # standalone (po-16, 2026-11-15). Run BOTH; the type verdict is the ship gate — fail closed.
+    _ftype_gate = (ftype_override or "").strip().lower()   # --type from the chain; the court's checklist key
+    if _ftype_gate and _ftype_gate != gate_type:
+        verdict2 = gate_check(str(out_path), court, _ftype_gate)
+        v2 = verdict2.get("verdict") if isinstance(verdict2, dict) else None
+        print(f"  [gate:{_ftype_gate}] {v2}: {verdict2.get('findings') if isinstance(verdict2, dict) else verdict2}")
+        if v2 == "FAIL" and not os.environ.get("M1_GATE_ADVISORY"):
+            sys.exit(f"filing gate FAIL under {court}/{_ftype_gate}: {verdict2.get('findings')}")
 
     from generation.md_to_docx import render_md_to_docx
     docx_path = str(out_path.with_suffix(".docx"))
@@ -2520,12 +2700,19 @@ def main():
     ap.add_argument("--bank", default=None, help="rebuttal lane: authority/content bank json")
     ap.add_argument("--cells", default=None, help="original_proceeding lane: gated relay cells.jsonl")
     ap.add_argument("--type", default=None, dest="ftype", help="override lane detection")
+    ap.add_argument("--spec", default=None, help="F9: filing spec name (templates/filing_specs/<name>.yaml); default = the room's SUSTAINED INSTRUMENT card")
+    ap.add_argument("--adverse", default=None, help="spec lane: the adverse paper (default <bundle>/adverse.md)")
+    ap.add_argument("--instrument", default=None,
+                    help="F9 DESIGN LOCK: the room's SUSTAINED INSTRUMENT card — a cards file or the card line itself "
+                         "('INSTRUMENT: <name> | CLASS: <class> | … | SUSTAINED'). Wins over the bundle's room_r*_cards.md; "
+                         "still must be SUSTAINED. m1 routes only to a spec of the card's CLASS.")
     ap.add_argument("--issues", default=None,
                     help="screen lane: the OUR_ISSUES*.md actually argued (explicit; without it m1 falls back to the "
                          "newest-by-mtime file beside --cells and prints a WARNING) — S-m1-issues-explicit")
     a = ap.parse_args()
     run(a.stub, a.court, out_path=a.out, case_id=a.case, voice=a.voice,
-        llm_url=a.llm_url, matrix=a.matrix, bank=a.bank, ftype_override=a.ftype, cells=a.cells, issues=a.issues)
+        llm_url=a.llm_url, matrix=a.matrix, bank=a.bank, ftype_override=a.ftype, cells=a.cells, issues=a.issues,
+        spec_name=a.spec, adverse=a.adverse, instrument=a.instrument)
 
 if __name__ == "__main__":
     main()

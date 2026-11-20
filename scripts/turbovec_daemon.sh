@@ -43,8 +43,8 @@ case "$CMD" in
     if alive; then echo "already running pid $(cat "$PIDFILE")"; exit 0; fi
     SP=$(sock_pid); if [ -n "$SP" ] && kill -0 "$SP" 2>/dev/null; then echo "$SP" >"$PIDFILE"; echo "already serving on $SOCK pid $SP (pidfile repaired)"; do_health; exit 0; fi
     if [ "${TURBOVEC_NO_EMBED:-}" != "1" ] && [ "${TURBOVEC_FORCE:-}" != "1" ]; then
-      if ! curl -s -m 3 localhost:8000/v1/models >/dev/null 2>&1; then
-        echo "REFUSED: local-gpu lane (localhost:8000) not answering — GPU/dxg health unknown. Use --no-embed or TURBOVEC_FORCE=1." >&2; exit 3
+      if ! curl -s -m 3 localhost:8000/v1/models >/dev/null 2>&1 && ! curl -s -m 3 localhost:8000/v1/models >/dev/null 2>&1; then
+        echo "REFUSED: local-gpu lane (localhost:8000 hyperqwen / :8086 strata) not answering — GPU/dxg health unknown. Use --no-embed or TURBOVEC_FORCE=1." >&2; exit 3
       fi
     fi
     [ -x "$PY" ] || { echo "python not found: $PY" >&2; exit 2; }

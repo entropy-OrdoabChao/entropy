@@ -40,8 +40,19 @@ def ladder_for(key: str) -> dict | None:
 _ACTOR_TO_FORUM = {
     "insurance_regulator": "insurance_pa", "opposing_counsel": "opposing_counsel",
     "tax_administration": "tax", "tax": "tax", "agency": "apa_review",
+    # F2.3 (2026-11-10): admin-room actor-map role phrases
+    "cfpb": "cfpb", "consumer financial protection bureau": "cfpb",
+    "federal regulator (consumer financial protection)": "cfpb",
+    "ftc": "ftc", "federal trade commission": "ftc",
+    "consumer reporting agency": "fcra_dispute", "cra": "fcra_dispute", "furnisher": "fcra_dispute",
+    "creditor/furnisher": "fcra_dispute",
+    "state attorney general": "state_ag_consumer", "pa attorney general": "state_ag_consumer",
+    "records custodian (pa agency)": "pa_rtkl", "pa agency": "pa_rtkl", "open-records officer": "pa_rtkl",
 }
 _FORUM_HINTS = [
+    ("pa_rtkl", ("right-to-know", "right to know", "rtkl", "open records", "open-records", "67.901", "office of open records")),
+    ("cfpb", ("cfpb", "consumer financial protection", "5493", "1070.1")),
+    ("ftc", ("federal trade commission", "ftc", "16 cfr 4.11", "reportfraud")),
     ("foia", ("foia", "freedom of information", "records request")),
     ("mortgage_servicing", ("servicer", "respa", "qwr", "notice of error", "mortgage servic")),
     ("fcra_dispute", ("fcra", "credit report", "reinvestigat", "1681")),

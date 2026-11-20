@@ -4,8 +4,8 @@ pipeline/statutes_registry.py — Static registry of common statutes and rules.
 DETERMINISTIC. NO LLM. NO INTERPRETATION.
 
 Returns 1-line summaries for the most common statutes and procedural rules
-that appear in Beezle's 4 active cases (Lippi state CCP, Equifax FCRA,
-Amerisave Quiet Title, State Farm Bad Faith).
+that appear in Beezle's 4 active cases (Example Creditor state CCP, Equifax FCRA,
+Example Lender Quiet Title, State Farm Bad Faith).
 
 Used by:
     generation/scorecard_exhibit.py — Section 7 (Statutes & Rules Implicated)

@@ -30,7 +30,7 @@ Obsidian folders in `~/.hermes/obsidian_sync/cases/` use the pattern `{case_type
 | FCRA fraud | `fraud_fcra_` | `fraud_fcra_{{USER_LAST}}_v_equifax` |
 | FOIA | `{{CASE_SLUG}}_` | `{{CASE_SLUG}}_{{USER_LAST}}_v_cfpb` |
 | Insurance | `insurance_badfaith_` | `insurance_badfaith_{{USER_LAST}}_v_{{CASE_SLUG}}` |
-| Mortgage fraud | `mortgage_fraud_` | `mortgage_fraud_{{USER_LAST}}_v_amerisave` |
+| Mortgage fraud | `mortgage_fraud_` | `mortgage_fraud_{{USER_LAST}}_v_example_lender` |
 
 ### Short Name Construction
 - **Full caption**: `{plaintiff}_v_{defendant}` (e.g., `{{USER_LAST}}_v_equifax`)

@@ -1,0 +1,31 @@
+name: failure_escalation
+group: admin
+unit: clock            # claim | term | cite | count | document | case | draft
+axis: "ADMIN 5 — FAILURE ESCALATION: on a lapsed/non-responsive clock → the claim (statutory private right / mandamus §1361 / APA §706 / FOIA §552(a)(4)(B) / state tort), elements vs record, vehicle, forum; handed to the order room + m1 as CARD + GROUND+."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - usc_28_1361
+  - usc_5_706
+  - usc_5_702
+  - usc_5_704
+  - usc_5_552
+  - usc_15_1681n
+  - usc_15_1681o
+  - usc_15_1681p
+  - usc_12_2605
+  - usc_15_1691e
+  - pa_73ps_201
+  - pa_65ps_67
+  - usc_28_1331
+  - usc_28_1391
+  - usreports
+  - ca3_
+queries:
+  - "compel an officer or employee of the United States to perform a duty owed"
+  - "compel agency action unlawfully withheld or unreasonably delayed"
+  - "{claim} de novo agency bears the burden"
+  - "{claim} civil liability willful noncompliance"
+  - "venue civil action agency defendant 1391(e)"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

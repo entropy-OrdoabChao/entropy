@@ -469,7 +469,7 @@ def detect_author(text_sample: str, doc_type: str, filename: str = "") -> str:
 
     # 2a — Defense firms (confirmed in your corpus + common Philly defense firms)
     DEFENSE_FIRMS = [
-        # Confirmed in your Lippi corpus (State Farm motions to strike)
+        # Confirmed in your Example Creditor corpus (State Farm motions to strike)
         r"forry\s+ullman",
         r"gary\s+a\.?\s+opposing counsel",
         # Common Philly / EDPA / federal defense firms
@@ -735,16 +735,16 @@ def detect_dockets(text: str, filename: str) -> List[str]:
 
 # Party detection — same tags as case_consolidator
 PARTY_PATTERNS = [
-    ("amerisave",      re.compile(r"\bAmerisave\b", re.I)),
-    ("planet_home",    re.compile(r"\bPlanet\s*Home\b", re.I)),
-    ("dovenmuehle",    re.compile(r"\bDovenmuehle\b", re.I)),
+    ("example_lender",      re.compile(r"\bExample Lender\b", re.I)),
+    ("example_mortgage_co",    re.compile(r"\bPlanet\s*Home\b", re.I)),
+    ("example_servicer",    re.compile(r"\bExample Servicer\b", re.I)),
     ("transunion",     re.compile(r"\bTransUnion\b", re.I)),
     ("equifax",        re.compile(r"\bEquifax\b", re.I)),
     ("experian",       re.compile(r"\bExperian\b", re.I)),
     ("capital_one",    re.compile(r"\bCapital\s*One\b", re.I)),
     ("greensky",       re.compile(r"\bGreen[Ss]ky\b", re.I)),
     ("avant",          re.compile(r"\bAvant\b", re.I)),
-    ("lippi",          re.compile(r"\bLippi\b", re.I)),
+    ("example_creditor",          re.compile(r"\bExample Creditor\b", re.I)),
     ("northern_trust", re.compile(r"\bNorthern\s*Trust\b", re.I)),
     ("state_farm",     re.compile(r"\bState\s*Farm\b", re.I)),
     ("allstate",       re.compile(r"\bAllstate\b", re.I)),

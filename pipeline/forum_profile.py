@@ -534,6 +534,193 @@ def derive(sov: str, court_id: str = "", court_name: str = "", apply: bool = Fal
     return report
 
 
+# ================================================================================================
+# ATTACHMENT CONTRACT — what the forum's own rules require to be filed TOGETHER WITH the paper.
+#
+# WHY HERE (2026-11-14, user: "I want this filing to be airtight" / "how can m2bots/room use this
+# kind of thing in other cases?"): before this section the attachment duty lived in two places that
+# could not see each other — m1_finisher._mandatory_attachments (which BUILDS papers) and
+# m1_filing_gate section 2c (which CHECKS headings/filenames). Neither knew (i) that Phila.Civ.R.
+# *1028(c)(b) names the complaint BY KIND and lets the court "decide preliminary objections against
+# a party who fails to attach", (ii) that Pa.R.C.P. 1028(c)(2) splits the grounds into ones that
+# need evidence and a demurrer that may not look past the pleading, or (iii) that an exhibit holding
+# a financial-account number may not be filed without a Confidential Information Form. All three are
+# now ONE data record per (court, kind) in forum_profiles/attachment_rules.json, so the next forum
+# is an entry in that file and the next case is a different packet dir — never a code change.
+#
+# DOCTRINE: deterministic = GUARDRAIL. Nothing here judges whether a ground is good; it answers
+# only "does the packet carry the papers this court's text commands, and does the cite exist".
+# A requirement whose `cite` is absent is reported as unenforceable rather than silently enforced.
+# ================================================================================================
+
+ATTACH_DIR = Path(os.environ.get("BEEZLE_FORUM_ATTACH_DIR",
+                                 Path(__file__).resolve().parent / "forum_profiles"))
+
+_ATTACH_CACHE = {"mtime": None, "data": None}
+
+
+def _attach_path() -> Path:
+    return ATTACH_DIR / "attachment_rules.json"
+
+
+def attachment_data() -> dict:
+    """The whole attachment contract file ({} when it is absent — callers report, never guess)."""
+    p = _attach_path()
+    try:
+        m = p.stat().st_mtime
+    except OSError:
+        return {}
+    if _ATTACH_CACHE["mtime"] != m:
+        try:
+            _ATTACH_CACHE["data"] = json.loads(p.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+        _ATTACH_CACHE["mtime"] = m
+    return _ATTACH_CACHE["data"] or {}
+
+
+def _attach_court(court_id) -> dict:
+    """The court's attachment record, aliases folded through the forum profile's own alias table."""
+    courts = attachment_data().get("courts", {}) or {}
+    k = _key(court_id)
+    if k in courts:
+        return courts[k]
+    rec = court(court_id)                    # alias -> canonical id via the F2 resolver
+    if rec and rec.get("id") in courts:
+        return courts[rec["id"]]
+    for cid in courts:
+        prof = court(cid)
+        if prof and k in [_key(a) for a in (prof.get("aliases") or [])]:
+            return courts[cid]
+    return {}
+
+
+def attachment_courts() -> list:
+    """Every court id the attachment contract covers (so an operator can prove it is not one-forum)."""
+    return sorted((attachment_data().get("courts") or {}).keys())
+
+
+def attachment_rules(court_id, kind) -> dict:
+    """The (court, kind) attachment record, or {} when this forum declares nothing for this kind.
+
+    NEVER falls back to another kind or another forum: a Pennsylvania preliminary-objection
+    contract applied to a federal brief is how a packet gets papers no court asked for. The caller
+    distinguishes "no contract" (report it) from "contract says none" (`required` == [])."""
+    kinds = (_attach_court(court_id).get("kinds") or {})
+    k = str(kind or "").strip().lower()
+    return dict(kinds.get(k) or {})
+
+
+def required_attachments(court_id, kind) -> list:
+    """[{id,label,rule,cite,quote,match,...}] the forum commands WITH this filing."""
+    return [a for a in (attachment_rules(court_id, kind).get("required") or []) if isinstance(a, dict)]
+
+
+def ground_flags(court_id, kind) -> dict:
+    """{rule,cite,quote,evidence_required[],pleading_only[],four_corners[]} for this kind."""
+    return dict(attachment_rules(court_id, kind).get("ground_flags") or {})
+
+
+def normalize_ground_id(raw) -> str:
+    """A ground's rule subdivision -> the contract's flag key. '(a)(4)', 'a(4)', '1028(a)(4)',
+    'Pa.R.C.P. 1028(a)(4)', '12(b)(6)' -> 'a4' / 'b6'. '' when nothing subdivision-shaped is there.
+
+    Deterministic reading of the rule's own numbering — not a per-court table. The LAST
+    letter-then-digit pair is the operative subdivision ('1028(a)(4)' -> a4, never '10' + '28')."""
+    s = str(raw or "")
+    pairs = re.findall(r"\(\s*([a-z])\s*\)\s*\(\s*(\d+)\s*\)", s, re.I)
+    if pairs:
+        return (pairs[-1][0] + pairs[-1][1]).lower()
+    m = re.findall(r"\b([a-z])\s*\(\s*(\d+)\s*\)", s, re.I)
+    if m:
+        return (m[-1][0] + m[-1][1]).lower()
+    m2 = re.fullmatch(r"\s*([a-z])\s*(\d+)\s*", s, re.I)
+    if m2:
+        return (m2.group(1) + m2.group(2)).lower()
+    return ""
+
+
+def ground_class(court_id, kind, raw_ground) -> dict:
+    """{id, evidence_required, pleading_only, four_corners, rule, cite} for one ground.
+
+    Unknown subdivision -> every flag False and id '' : the gate then says "not classified by the
+    contract" instead of inventing a class for a ground the rule file has never seen."""
+    fl = ground_flags(court_id, kind)
+    gid = normalize_ground_id(raw_ground)
+    return {
+        "id": gid,
+        "evidence_required": gid in [str(x).lower() for x in (fl.get("evidence_required") or [])],
+        "pleading_only": gid in [str(x).lower() for x in (fl.get("pleading_only") or [])],
+        "four_corners": gid in [str(x).lower() for x in (fl.get("four_corners") or [])],
+        "rule": fl.get("rule", ""),
+        "cite": fl.get("cite", ""),
+        "note": fl.get("four_corners_note", ""),
+    }
+
+
+def confidential_rule(court_id) -> dict:
+    """{rule,cite,quote,form_required,fields[],...} — the sovereign's confidential-information list."""
+    return dict(_attach_court(court_id).get("confidential") or {})
+
+
+def confidential_form_required(court_id) -> str:
+    """The paper this forum demands when a filing carries confidential information ('' when none)."""
+    c = confidential_rule(court_id)
+    if c.get("satisfied_by_redaction"):
+        return ""                              # the duty is to redact, not to file a form
+    return str(c.get("form_required") or "")
+
+
+# ------------------------------------------------------------------------------------------- forms
+def template_text(court_id, name) -> str:
+    """Raw text of a forum template (templates/<name>.md), '' when absent.
+
+    Templates are DATA beside the rule that commands them, so a forum whose certificate of service
+    must recite a different manner-of-service rule ships a different file, not a code branch."""
+    safe = re.sub(r"[^A-Za-z0-9_.-]", "_", str(name or ""))
+    for cand in (ATTACH_DIR / "templates" / f"{_key(court_id).lower()}.{safe}.md",
+                 ATTACH_DIR / "templates" / f"{safe}.md"):
+        if cand.is_file():
+            try:
+                return cand.read_text(encoding="utf-8")
+            except Exception:
+                return ""
+    return ""
+
+
+def render_template(court_id, name, case_id=None, extra=None) -> str:
+    """A forum template with {{field}} slots filled from pipeline.case_profile — NEVER from a
+    literal in code. An unresolved slot is left as a visible [[field]] marker so the gate's
+    scaffold check FAILs the packet rather than a court receiving a blank certificate."""
+    txt = template_text(court_id, name)
+    if not txt:
+        return ""
+    ctx = {}
+    try:
+        from pipeline import case_profile as _cp
+        if case_id:
+            p = _cp.profile(case_id) or {}
+            ctx.update({
+                "caption": p.get("caption") or p.get("caption_text") or "",
+                "docket": p.get("docket") or p.get("docket_no") or "",
+                "court_full": p.get("court_full") or p.get("court_name") or "",
+            })
+        ctx["filer_name"] = (_cp.filer_names() or [""])[0]
+        ctx["filer_address"] = "\n".join(_cp.filer_address_lines() or [])
+        ctx["filer_capacity"] = (_cp.filer_identity() or {}).get("capacity") or ""
+    except Exception:
+        pass
+    c = confidential_rule(court_id)
+    ctx.setdefault("confidential_rule", c.get("rule", ""))
+    ctx.setdefault("confidential_quote", c.get("quote", ""))
+    ctx.update({k: v for k, v in (extra or {}).items() if v not in (None, "")})
+    def _sub(m):
+        k = m.group(1).strip()
+        v = ctx.get(k)
+        return str(v) if v not in (None, "") else f"[[{k}]]"
+    return re.sub(r"\{\{\s*([A-Za-z0-9_]+)\s*\}\}", _sub, txt)
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="forum_profile")
     sp = ap.add_subparsers(dest="cmd", required=True)

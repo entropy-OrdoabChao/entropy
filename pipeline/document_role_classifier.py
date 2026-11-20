@@ -316,12 +316,12 @@ def classify(file_path: Path, case_id: Optional[str] = None,
     # ─── Stage 1: filename heuristics ────────────────────────────────────────
 
     # PRE-CHECK 0: named defendant + filing verb → opposing_party_filing
-    # Runs FIRST so "AmeriSave Opposition to Motion to Remand" and
+    # Runs FIRST so "Example Lender Opposition to Motion to Remand" and
     # "State Farm Reply to Motion" don\'t fall through to plaintiff patterns.
     _DEFENDANT_NAMES_RE = re.compile(
-        r"\b(amerisave|capital[\s_-]?one|state[\s_-]?farm|transunion|trans[\s_-]?union|"
+        r"\b(example_lender|capital[\s_-]?one|state[\s_-]?farm|transunion|trans[\s_-]?union|"
         r"equifax|experian|greensky|green[\s_-]?sky|avant|allstate|all[\s_-]?state|"
-        r"lippi|nationwide|geico|progressive|chase|wells[\s_-]?fargo|"
+        r"example_creditor|nationwide|geico|progressive|chase|wells[\s_-]?fargo|"
         r"bank[\s_-]?of[\s_-]?america|citibank|citi|discover|amex|"
         r"american[\s_-]?express|synchrony|navient|sallie[\s_-]?mae)"
         r"[\s_,.-]+"

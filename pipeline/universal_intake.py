@@ -213,8 +213,8 @@ def _is_blacklisted(path: Path) -> bool:
 # Defendants from your 4 active cases + common adversaries
 EVIDENCE_DEFENDANTS = [
     # Active case defendants
-    "equifax", "amerisave", "lippi", "state farm", "statefarm",
-    "planet home", "planet-home", "planethome",
+    "equifax", "example_lender", "example_creditor", "state farm", "statefarm",
+    "example mortgage co", "planet-home", "planethome",
     # Common credit/financial adversaries
     "experian", "transunion", "trans union", "trans-union",
     "capital one", "capitalone", "cap one", "cap-one", "capone",
@@ -411,7 +411,7 @@ def is_evidence_file(path: Path, mtime_cutoff_seconds: float = 0,
         if d_low in full_lower:
             return True, f"docket:{docket}"
         # Also check parent folder names for case identifiers
-        # e.g., file in folder named "Lippi" or "26-cv-00123"
+        # e.g., file in folder named "Example Creditor" or "26-cv-00123"
         m = re.search(r"(\d:\d{2}-cv-\d{4,5})", d_low)
         if m and m.group(1) in full_lower:
             return True, f"docket:{m.group(1)}"

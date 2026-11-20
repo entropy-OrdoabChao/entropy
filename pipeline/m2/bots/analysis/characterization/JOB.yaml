@@ -1,0 +1,25 @@
+name: characterization
+group: analysis
+unit: claim            # claim | term | cite | count | document | case | draft
+axis: "Axis 0b — CHARACTERIZATION / CONFLICT OF LAWS: field, substance-vs-procedure, governing law, the forum rule that owns sufficiency; the cure for which-law discretion."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - amjur2d_16_conflict_of_laws
+  - amjur_
+  - pa_code_t231_ch1000
+  - frcp_rule_
+  - pa_cs_
+  - usc_
+  - usreports
+  - cap_us_
+  - case_scotus_slug
+  - edpa_lr
+queries:
+  - "characterization substance or procedure {claim}"
+  - "law of the forum governs pleading sufficiency cause of action stated"
+  - "public policy of the forum found in its constitution statutes"
+  - "false conflict {claim}"
+  - "choice of law {claim}"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

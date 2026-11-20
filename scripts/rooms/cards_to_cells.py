@@ -13,10 +13,15 @@ A card naming a point beyond the units list is appended to <inputs>/NEW_UNITS.md
 GROUNDED only when the quote verifies in the corpus via card_gate (THE verifier): the card's named chunk, else its FTS search.
 S-card-unit-pin (run 53): a violation card is pinned to its unit by CONTENT (scored overlap vs the unit headings/bodies, env ROOM_UNITS_MD =
 ADVERSE_POINTS.md, else <inputs>/verified_record.md); the lane's 'Issue n' is a hint. Per-card log → sidecar.unit_pins {unit, method, score}.
+S-room-closure (2026-11-13, class — BACKLOG "ROOM — run-to-closure ledger"): the ledger is APPEND-ONLY and UPSERTED, never
+truncated (the old "w" open wiped r3's 70 cells on every new run, so closing units 14-20 meant hand-merging archived files).
+Every row carries `run` = the relay tag that produced it; a row already in the ledger with no `run` is tagged `[hand]` so a
+human insertion stays visible. Upsert key = (unit, lane, claim text); newest wins EXCEPT that a GROUNDED/RECORD row is never
+overwritten by an OPEN/weaker row (no downgrade). CELLS_APPEND=0 restores the truncating path byte-identically.
 usage: cards_to_cells.py <tag> <room_inputs_dir> <out_cells.jsonl> [cards_dir]"""
 from pathlib import Path
 from core.entropy_paths import entropy_root as _eroot, package_root as _epkg, hermes_home as _ehermes
-import re, sys, json, glob, os
+import os, re, sys, json, glob, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 try:
     import card_gate as _cg
@@ -43,6 +48,72 @@ POSTURE_LABELS = ["Rule:", "Trigger:", "Deadline rule:", "Standard:", "Must cont
 REMEDY_LABELS = ["Rule:", "Because:"]
 VIOLATION_LABELS = ["Rule:", "Violation:"]
 
+# ---- F2.1 (2026-11-10): ADMIN / REGULATOR ROOM lanes carry their own card form (not the Issue/Rule/Violation form).
+# Each lane's card body is "<HEAD> <n>: <subject> — LABEL value — LABEL value …" (labels in caps, joined by em-dashes); the
+# fields below are the labels the lane spec names. It maps labels → fields; it does not reason. A field the card does not
+# carry is None (never invented). with_authority = real [corpus:…]/[official:…] tags in the body.
+ADMIN_LANES = {"actor-map": "actor", "records-request": "request", "formal-demand": "demand",
+               "deadline-tracker": "clock", "failure-escalation": "escalation"}
+ADMIN_FIELDS = {
+    "actor":      {"ROLE": "role", "REGULATOR": "regulator", "COMPLAINT CHANNEL": "complaint_channel", "RECORDS CHANNEL": "records_channel", "LADDER": "ladder", "AUTHORITY": "authority"},
+    "request":    {"ROLE": "role", "REGULATOR": "regulator", "RECORDS CHANNEL": "records_channel", "STATUTE": "statute", "RULE": "rule", "CUSTODIAN": "custodian", "FEE RULE": "fee_rule", "RESPONSE CLOCK": "clock", "ON LAPSE": "on_lapse", "MAIL": "mail", "LADDER": "ladder", "AUTHORITY": "authority"},
+    "demand":     {"STATUTE": "statute", "DUTY": "duty", "TRIGGER": "trigger", "CLOCK": "clock", "ON LAPSE": "on_lapse", "RECORD": "record", "MAIL": "mail"},
+    "clock":      {"START": "start", "START UNDATED": "start_undated", "RULE": "rule", "DUE": "due", "MAIL": "mail", "STATUS": "clock_status"},
+    "escalation": {"CLAIM": "claim_statute", "ELEMENTS": "elements", "VEHICLE": "vehicle", "FORUM": "forum", "RULE": "rule", "HANDOFF": "handoff"},
+}
+ADMIN_HEAD_RX = re.compile(r"\s*(ACTOR|REQUEST|DEMAND|CLOCK|ESCALATION)\s+(\d{1,2})\s*[:\-—]?\s*(.*)", re.S)
+ADMIN_TAG_RX = re.compile(r"\[(corpus|official|ladder|doc):\s*([^\]]+)\]")
+MIRROR_ONLY_RX = re.compile(r"MIRROR|Issue-form|Issue form", re.I)
+
+
+def parse_admin(kind, finding, proposition, where="", authority=""):
+    """Split an admin card into {subject, number, <fields>, authorities[], not_in_corpus[]} by its own labels.
+    The card scaffold is 'CARD: <lane> | Issue n | <ADMIN BODY> | STATUS | PROPOSITION: …' — parse_cards files the body under
+    where/authority (it is not an Issue-form finding), so the body is looked for across finding, where and authority."""
+    cands = [x for x in (finding, where, authority, proposition) if x and ADMIN_HEAD_RX.match(x)]
+    body = cands[0] if cands else (where or finding or proposition)
+    hm = ADMIN_HEAD_RX.match(body or "")
+    number = int(hm.group(2)) if hm else None
+    rest = hm.group(3) if hm else (body or "")
+    labels = ADMIN_FIELDS[kind]
+    # split on " — LABEL " boundaries (label = the longest known label at that point)
+    lab_rx = re.compile(r"\s[—–-]\s(" + "|".join(sorted(map(re.escape, labels), key=len, reverse=True)) + r")\b\s*[:\-]?\s*")
+    parts = lab_rx.split(rest)
+    out = {"kind": kind, "number": number, "subject": parts[0].strip(" —-:") or None}
+    for lab, val in zip(parts[1::2], parts[2::2]):
+        f = labels[lab]
+        out[f] = (val or "").strip(" —-;") or None
+    text = " ".join(x for x in (finding, where, authority, proposition) if x)
+    auths = []
+    for fam, ref in ADMIN_TAG_RX.findall(text):
+        if fam in ("corpus", "official"):
+            ref = ref.strip()
+            q = re.search(r"\[" + fam + r":\s*" + re.escape(ref) + r"\]\s*[“\"]([^”\"]{12,})[”\"]", text)
+            auths.append({"cite": "", "quote": q.group(1) if q else "", "source": ref, "family": fam, "verified": False})
+    out["authorities"] = auths
+    out["not_in_corpus"] = [m.group(0)[:160] for m in re.finditer(r"[A-Z][A-Z /]{2,40}:?\s*[^—]{0,80}?NOT IN (?:CORPUS|LADDER)[^—]{0,80}", text)]
+    return out
+
+
+def admin_verify(auths):
+    """Mark an authority verified when its chunk id resolves (verify_quote ladder when a quote is carried; else chunk lookup)."""
+    for a in auths:
+        if a["family"] != "corpus": continue
+        if a.get("quote"):
+            v = verify_quote(a["quote"], "", a["source"].split("#")[-1] if "#" in a["source"] else a["source"])
+            if v and "source" in v: a["verified"], a["source"], a["verify"] = True, v["source"], v["how"]; continue
+        try:
+            import sqlite3
+            cid = a["source"].split("#")[-1]
+            db = sqlite3.connect("file:~/turbovec/chunk_text.db?mode=ro", uri=True, timeout=30)
+            a["verified"] = bool(db.execute("select 1 from chunk_text where chunk_id=? or chunk_id like ?", (cid, cid + "%")).fetchone())
+        except Exception:
+            pass
+    return auths
+
+
+VERDICT_REASON = {}   # F2.1: (room, axis, n) → skeptic reason text
+
 
 def parse_cards(tag, cards_dir):
     cards, verdicts, records = [], {}, []
@@ -52,7 +123,17 @@ def parse_cards(tag, cards_dir):
             if l.startswith("CARD:"):
                 p = [x.strip() for x in l[5:].split(" | ")]
                 si = next((i for i in range(len(p) - 1, 1, -1) if STATUS_RX.match(p[i].upper())), None)
-                if si is None and len(p) >= 2 and re.match(r"(Vehicle|Relief)\b[^|]{0,120}?(—|-) ?Rule:", p[1]):
+                # S-unit-key-column (2026-11-16): the room now posts `CARD: <axis> | Issue <n> | <FORM> …` — the unit key is its own
+                # column and the FORM (Vehicle:/Relief:/Rule:/PROPOSITION:) sits in p[2], not p[1]. The p[1]-only test below read 0
+                # of 191 corpus-tagged cards as forms (7 pins from 213 cards; m1 refused: VEHICLE NOT DERIVED, RELIEF 0). Class
+                # rule: the FORM is found by its LABEL in whichever column carries it; a bare unit key in p[1] stays the finding
+                # (the unit pin reads 'Issue n' from the finding at the claim step). One key set with every other card reader.
+                _FORM_RX = re.compile(r"^(?:(?:Issue|UNIT|Unit|Point)\s*#?\s*\d{1,3}\s*[—:.-]+\s*)?(?:Vehicle|Relief\s*\d*|Rule|PROPOSITION|GROUND\+?)\s*:", re.I)
+                _KEY_RX = re.compile(r"^(?:Issue|UNIT|Unit|Point)\s*#?\s*\d{1,3}\s*$", re.I)
+                if si is None and len(p) >= 3 and _KEY_RX.match(p[1]) and _FORM_RX.match(p[2]):
+                    body = " | ".join(p[2:])
+                    p = [p[0], p[1], "", "", "FORM", body if body.upper().startswith("PROPOSITION:") else "PROPOSITION: " + body]; si = 4
+                elif si is None and len(p) >= 2 and re.match(r"(Vehicle|Relief)\b[^|]{0,120}?(—|-) ?Rule:", p[1]):
                     # S-m2-blind-posture-r2: the posture / remedy FORM ("Vehicle: <name> — Rule: “<verbatim>” <cite> [corpus:<chunk>]. ...")
                     # is the whole card — it carries no `| where | authority | STATUS |` scaffold, so the status search found nothing
                     # and 97 of 104 posture cards were dropped SILENTLY (r2c). Recover deterministically: finding = the vehicle head,
@@ -65,6 +146,15 @@ def parse_cards(tag, cards_dir):
                 prop = next((x[len("PROPOSITION:"):].strip() for x in tail if x.upper().startswith("PROPOSITION:")), "")
                 gate = " | ".join(x for x in tail if x.startswith("GATE:"))
                 mid = p[2:si]
+                # S-unit-key-column (cont.): with a STATUS scaffold the FORM column ('Vehicle: … — Rule: …' / 'Issue n — Rule: … Violation: …')
+                # sits in mid and the PROPOSITION: column is the lane's one-sentence self-grade. Every downstream parser (parse_posture,
+                # parse_remedy, _split_labels(VIOLATION_LABELS), _rule_parts → the authority pin) reads the FORM, so the FORM is the
+                # proposition; the self-grade sentence joins `where`. Before this, the pin/vehicle/rule were read from the sentence → none.
+                _fi = next((i for i, x in enumerate(mid) if _FORM_RX.match(x)), None) if _KEY_RX.match(p[1]) else None
+                if _fi is not None:
+                    _form = mid.pop(_fi)
+                    if prop and not prop.upper().startswith(("VEHICLE", "RELIEF", "RULE")): mid.append("SELF-GRADE: " + prop)
+                    prop = _form
                 is_auth = lambda x: (bool(re.search(CITE_RX, x[:60])) or bool(re.match(r"\[?" + CHUNK_RX, x))) and len(x) < 400
                 auth = next((x for x in reversed(mid) if is_auth(x)), "")
                 where = " ; ".join(x for x in mid if x != auth)
@@ -74,6 +164,7 @@ def parse_cards(tag, cards_dir):
                 p = [x.strip() for x in l[8:].split(" | ")]
                 if len(p) >= 3:
                     m = re.search(r"\d+", p[1]); verdicts[(room, p[0], int(m.group(0)) if m else -1)] = p[2].split()[0].upper()
+                    VERDICT_REASON[(room, p[0], int(m.group(0)) if m else -1)] = " | ".join(p[3:])
             elif l.startswith("RECORD:"):
                 p = [x.strip() for x in l[7:].split(" | ")]
                 if len(p) >= 2: records.append({"fact": p[0], "status": p[1].split()[0].upper(), "where": p[2] if len(p) > 2 else ""})
@@ -112,7 +203,7 @@ def authority_of(field, cite_by_slug, chunks_by_cite):
         if re.search(CITE_RX, head[:60]) and not re.match(r"\[?" + CHUNK_RX, head): cite = head
     if not cite: return None
     norm = lambda c: re.sub(r"[^a-z0-9]", "", c.lower())
-    src = cid or next((ids[0] for c, ids in chunks_by_cite.items() if norm(c)[:18] and norm(c)[:18] in norm(cite) or norm(cite)[:18] in norm(c)), "")
+    src = cid or next((ids[0] for c, ids in chunks_by_cite.items() if ids and (norm(c)[:18] and norm(c)[:18] in norm(cite) or norm(cite)[:18] in norm(c))), "")
     # a rule cited as "Phila. Civ. R. *1028(c)(1)(b)" → the forum-section source for *1028(c)
     if not src:
         rk = re.match(r"(Phila\.? ?Civ\.? ?R\.? ?\*?\d+(?:\.\d+)?(?:\([a-z0-9]+\))?|Pa\.R\.C\.P\. ?\d+(?:\([a-z0-9]+\))?)", cite)
@@ -120,6 +211,40 @@ def authority_of(field, cite_by_slug, chunks_by_cite):
             for c, ids in chunks_by_cite.items():
                 if norm(c).startswith(norm(rk.group(1))[:12]): src = ids[0]; break
     return {"cite": cite, "quote": quote, "source": src}
+
+
+def _split_auth_field(field):
+    """'cite — "q" — chunk; cite — "q" — chunk' → the pieces (split on ';' OUTSIDE quotes; a '; ' inside a quote stays)."""
+    out, buf, inq = [], [], False
+    for ch in field or "":
+        if ch in "“”\"": inq = not inq
+        if ch == ";" and not inq: out.append("".join(buf)); buf = []; continue
+        buf.append(ch)
+    out.append("".join(buf))
+    return [x.strip() for x in out if x.strip()]
+
+
+def authorities_of(field, cite_by_slug, chunks_by_cite):
+    """S-multi-authority (po-16): the card's authority column carries EVERY authority that grounds the finding, ';'-separated
+    (definition + statute/rule + treatise). The old single-dict authority_of kept only the first — 49 unit-2 cells, none with 2+
+    authorities, so the treatise/definition layer the pack carried never became a cell. Returns a list (may be empty)."""
+    out, seen = [], set()
+    for piece in _split_auth_field(field):
+        a = authority_of(piece, cite_by_slug, chunks_by_cite)
+        if a and (a["cite"], a["source"]) not in seen:
+            seen.add((a["cite"], a["source"])); out.append(a)
+    return out
+
+
+def _verify_auth(a, gate_txt):
+    """the per-authority verification ladder (same as the primary authority's): gate hit → verified; else verify_quote."""
+    gm = re.search(r"GATE: quote verified \(([^)]+)\)", gate_txt or "")
+    a["verified"] = bool(a.get("quote")) and bool(gm) and not gm.group(1).endswith((".md", ".txt"))
+    if gm and re.match(CHUNK_RX + r"$|[0-9a-f]{16,}$|usc_t\d+_s\w+$|amjur2d_\w+$", gm.group(1)) and not a.get("source"): a["source"] = gm.group(1)
+    if not a["verified"] and a.get("quote"):
+        v = verify_quote(a["quote"], a.get("cite") or "", a.get("source") or None)
+        if v and "source" in v: a["verified"], a["source"], a["verify"] = True, v["source"], v["how"]
+    return a
 
 
 def _point_heads(inputs) -> dict:
@@ -190,7 +315,16 @@ def _deadline_from_chunk(source, quote):
 
 
 def classify_form(axis, proposition):
-    """lane + proposition → 'violation' | 'posture' | 'remedy' (the lane table decides; the text only decides the '?' lanes)."""
+    """lane + proposition → 'violation' | 'posture' | 'remedy' (the lane table decides; the text only decides the '?' lanes).
+    S-form-by-label (2026-11-16): a card that WRITES the posture form ('Vehicle: <name> — Rule: …') or the remedy form
+    ('Relief <n>: …') IS that form whatever lane posted it — the 2026-11-16 room's jurisdiction lane carried the § 5505 vehicle
+    cards (SUSTAINED, corpus-pinned) and the lane table filed them as violations, so m1 saw 'VEHICLE: NOT DERIVED'. The lane
+    table still decides every card that does not name its form."""
+    t = proposition or ""
+    if re.match(r"\s*Vehicle(?:\s+\d+\s+of\s+\w+)?\s*:", t):
+        return "posture"
+    if re.match(r"\s*Relief\s*\d*\s*:", t):
+        return "remedy"
     f = LANE_FORM.get(axis, "violation")
     if f == "posture?":
         pv = re.match(r"\s*Vehicle:", proposition or "")
@@ -462,12 +596,639 @@ def gate_deadline(cell, forum="pa"):
     return {"deadline_date": c["date"], "deadline_days": c["days"], "deadline_counting": c["counting"], "deadline_why": c["why"]}
 
 
+# ---- S-room-closure: the run-to-closure ledger (append + upsert, no downgrade, [hand] origin)
+HAND = "[hand]"                      # a ledger row with no `run` tag was inserted by a human, not by a room
+LEDGER_APPEND = os.environ.get("CELLS_APPEND", "1") != "0"
+STATUS_RANK = {"GROUNDED": 3, "RECORD": 3, "NOT IN CORPUS": 2, "OPEN": 1}
+
+
+def _claim_text(c):
+    """the row's CLAIM (the court-facing sentence), normalised — the third part of the upsert key."""
+    t = c.get("proposition") or c.get("relief_item") or c.get("finding") or c.get("title") or ""
+    return re.sub(r"[^a-z0-9]+", " ", str(t).lower()).strip()[:160]
+
+
+def ledger_key(c):
+    """(unit, lane, claim) — the backlog's upsert key. unit = claim number, lane = the bot/axis."""
+    return (c.get("claim"), str(c.get("bot") or c.get("lane") or "").lower(), _claim_text(c))
+
+
+def _rank(c):
+    return STATUS_RANK.get(str(c.get("status") or "").upper(), 0)
+
+
+def merge_ledger(out_path, new_cells):
+    """prior ledger rows + this run's rows -> one ledger. Order: prior rows keep their position (a replaced row is replaced
+    IN PLACE), new keys append — so replaying the same cards twice writes a byte-identical file. A GROUNDED/RECORD row is
+    never overwritten by a weaker one (no downgrade); the loser is counted, not dropped from history (its own run keeps it).
+    S-cells-guard: the ONE exception to no-downgrade is a row the DETERMINISTIC guards failed (family-mismatch / missing
+    record pointer / connected record not cited). No-downgrade exists to stop a weaker-evidence row from erasing a stronger
+    one; it must not protect a row the guard has disproved, or the first run's bad GROUNDED would close the unit forever."""
+    prior = []
+    if LEDGER_APPEND and os.path.exists(out_path):
+        for ln in open(out_path, errors="ignore"):
+            ln = ln.strip()
+            if not ln: continue
+            try: r = json.loads(ln)
+            except Exception: continue
+            if isinstance(r, dict):
+                r.setdefault("run", HAND)          # no run tag = a human put it there; keep it visible as [hand]
+                prior.append(r)
+    stats = {"prior": len(prior), "hand": sum(1 for r in prior if r.get("run") == HAND),
+             "new": len(new_cells), "added": 0, "replaced": 0, "kept_no_downgrade": 0, "guard_override": 0}
+    out, idx = [], {}
+    for r in prior:
+        k = ledger_key(r)
+        if k in idx: out[idx[k]] = r                # a duplicate already in the file: the later line is the newer one
+        else: idx[k] = len(out); out.append(r)
+    for r in new_cells:
+        k = ledger_key(r); i = idx.get(k)
+        if i is None:
+            idx[k] = len(out); out.append(r); stats["added"] += 1
+        elif _rank(r) < _rank(out[i]) and not r.get("guard"):
+            stats["kept_no_downgrade"] += 1          # GROUNDED/RECORD stands; OPEN/weaker never overwrites it
+        else:
+            if _rank(r) < _rank(out[i]): stats["guard_override"] += 1    # the guard disproved the stronger prior row
+            out[i] = r; stats["replaced"] += 1
+    return out, stats
+
+
+# ---- S-cells-guard (2026-11-13, class — BACKLOG "PREFETCH/SKEPTIC: a cite is 'resolved' when the pinned chunk merely
+# MENTIONS it", parts 2-4). Three deterministic refusals, every one of them a GUARDRAIL on the room's own output (the lanes
+# and the skeptic still do the reasoning; this only refuses to call a card GROUNDED when the record contradicts it):
+#   (2) FAMILY CHECK — the pinned chunk must BE the cite the card names (card_gate.family_check). The closure run pinned
+#       24 C.F.R. § 203.431 to usc_t12_s1748b (armed-services housing) and 13 Pa.C.S. § 9308(e) to pa_cs_t7, and the
+#       skeptic graded both GROUNDED. Checked twice: the cell's authority (cite ↔ source) AND every '<cite> … [corpus:<id>]'
+#       attribution in the card's own text (that is where the drift is written). Mismatch ⇒ the cell FAILS, reason logged
+#       to <m2>/FAMILY_CHECK.md per run.
+#   (3) RECORD POINTER — a GROUNDED/RECORD cell that ASSERTS a date, a dollar amount, a docket/ECF/Control number or an
+#       exhibit letter must carry a resolvable record pointer ('record.md:<line>' / 'adverse.md:<¶>' / '[doc:<case>/<note>]').
+#       Pointers the card wrote elsewhere (its 'record:Point n' / 'adverse §C' pin, its [doc:] tags) are RESOLVED and filled
+#       into record_facts first — the guard demands a pointer, not a particular column. 71/71 closure cells had none.
+#       An authorities entry beginning QUESTION:/ANSWER:/SKEPTIC: is skeptic text that leaked through the card parser: it is
+#       dropped from authorities and logged to <m2>/PARSE_DEFECTS.md with the relay id; it can never ground a cell.
+#   (4) CONNECTED RECORD — when connected_record.md is in the pack and a unit's text names the connected case (slug, docket
+#       alias from cases_index/case_map.json, or the [[cases/<slug>/_case]] link), the unit closes only if one of its closing
+#       cells cites that record with a [doc:<slug>/…] pointer; otherwise its closing cells go OPEN with
+#       gap='connected record not cited' so the closure loop re-dispatches the unit with that gap text.
+# Each guard has its own kill switch (CELLS_FAMILY_CHECK / CELLS_RECORD_GUARD / CELLS_CONNECTED_GUARD = 0) restoring the
+# previous output byte-identically.
+GUARD_FAMILY = os.environ.get("CELLS_FAMILY_CHECK", "1") != "0"
+GUARD_RECORD = os.environ.get("CELLS_RECORD_GUARD", "1") != "0"
+GUARD_CONNECTED = os.environ.get("CELLS_CONNECTED_GUARD", "1") != "0"
+PARSE_DEFECT_RX = re.compile(r"^\s*(QUESTION|ANSWER|SKEPTIC|VERDICT)\s*:", re.I)
+UNBRACKETED_DOC_RX = re.compile(r"(?<!\[)\bdoc:\s*[\w./-]+/[^\s;|)]+")
+_MONTHS = "January|February|March|April|May|June|July|August|September|October|November|December"
+ASSERT_RX = {
+    "date": re.compile(r"\b\d{1,2}/\d{1,2}/\d{4}\b|\b(?:" + _MONTHS + r") \d{1,2}, \d{4}\b|\b\d{4}-\d{2}-\d{2}\b"),
+    "amount": re.compile(r"\$\s?\d[\d,]*(?:\.\d{2})?"),
+    "docket": re.compile(r"(?:Control No\.?|ECF No\.?|Dkt\.?|Docket No\.?|Case No\.?)\s*#?\s*\d{3,}|\b\d{1,2}:\d{2}-cv-\d{3,}\b|\b\d{2}-cv-\d{3,}\b"),
+    "exhibit": re.compile(r"\bEx(?:h|hibit)s?\.?\s+[A-Z]\b"),
+}
+POINTER_OK_RX = re.compile(r"^(record\.md:\d+|adverse\.md:(?:¶\d+|\d+)|\[doc:[^\]]+\])$")
+
+
+def _ptr_ok(p):
+    """a record_fact entry carries a real record pointer — a bare string, or a structured entry {'pointer': …} such as the
+    contradiction cells' {pointer, source_kind, quote} (S-skeptic-contradiction). A structured pointer IS a pointer."""
+    if isinstance(p, dict):
+        p = p.get("pointer") or p.get("where") or ""
+    return bool(POINTER_OK_RX.match(str(p).strip()))
+DOC_TAG_RX = re.compile(r"\[doc:\s*([^\]]+)\]")
+REC_PIN_RX = re.compile(r"record\s*:\s*(?:Point|Issue)\s*(\d{1,3})", re.I)
+ADV_SEC_RX = re.compile(r"adverse(?:\.md)?\s*[§]\s*([A-Z])\b", re.I)
+ADV_PARA_RX = re.compile(r"(?:adverse(?:\.md)?[^.;|]{0,24})?¶{1,2}\s*(\d{1,4})")
+
+# ---- S-skeptic-contradiction (2026-11-14, CLASS-LEVEL): the gate's second duty — THEIR paper against THEIR paper.
+# The skeptic posts `CARD: skeptic | CONTRADICTION: … | ADMISSION: "<verbatim>" [doc:<p>] ; STATEMENT: "<verbatim>" [doc:<p>] |
+# ELEMENT: … | SUSTAINED | PROPOSITION: … VEHICLE: …`. The COMPREHENSION (do these two statements contradict?) is the lane's;
+# everything below is the deterministic GUARDRAIL: both sides must be quoted VERBATIM and each must carry its OWN [doc:] pointer,
+# or no cell is written. Doctrine behind the two source_kinds: a statement in the PLEADING is a judicial admission — "formal
+# judicial admissions which waive any evidence by the adverse party on the admitted matter are conclusive on the pleader"
+# [corpus:amjur2d_30_evidence#68448b486a], "A party is generally bound by allegations or admissions in his own pleadings"
+# [corpus:amjur2d_1stPleading_volume_1stpleading#244b159b66]; a statement outside the pleadings is an "extrajudicial admission.
+# An admission made outside court proceedings." [corpus:frb_chicago_fractional#ca3eeb0471] — evidential, impeaching, explainable.
+SKEPTIC_CONTRA = os.environ.get("CELLS_SKEPTIC_CONTRA", "1") != "0"
+CONTRA_RX = re.compile(r"\s*CONTRADICTION\s*:", re.I)
+_ADM_RX = re.compile(r"\bADMISSION\s*:\s*(.+?)(?=\s*[;|]?\s*(?:EXTRAJUDICIAL\s+)?STATEMENT\s*:|\s*\|\s*ELEMENT\s*:|$)", re.I | re.S)
+_STM_RX = re.compile(r"\b(?:EXTRAJUDICIAL\s+)?STATEMENT\s*:\s*(.+?)(?=\s*[;|]?\s*ELEMENT\s*:|\s*\|\s*(?:SUSTAINED|OPEN|REJECTED|NOT IN CORPUS)\b|$)", re.I | re.S)
+_ELEM_RX = re.compile(r"\bELEMENT\s*:\s*([^|]+)", re.I)
+_VEH_RX = re.compile(r"\bVEHICLE\s*:\s*(.+?)(?=\s*\|\s*[A-Z]{3,}\s*:|$)", re.I | re.S)
+CONTRA_KINDS = ("judicial_admission", "opponent_writing")
+
+
+def _contra_side(text):
+    """(quote, pointer) a labelled side of a contradiction card carries — '' / '' when it is not quoted or not pointed."""
+    q = QUOTE_RX.search(text or "")
+    p = DOC_TAG_RX.search(text or "")
+    return ((q.group(1).strip() if q else ""), (f"[doc:{p.group(1).strip()}]" if p else ""))
+
+
+def contra_cell(card, verdict, tag, profiles):
+    """(cell, why) for a skeptic CONTRADICTION card: kind=contradiction / status=RECORD, both sides quoted and pointed, the
+    pleading side tagged source_kind=judicial_admission and the other opponent_writing. (None, why) when the guardrail refuses."""
+    line = card.get("line") or ""
+    m_a, m_s = _ADM_RX.search(line), _STM_RX.search(line)
+    if not (m_a and m_s):
+        return None, "no ADMISSION:/STATEMENT: labels — the card does not classify the two statements"
+    a_q, a_p = _contra_side(m_a.group(1))
+    s_q, s_p = _contra_side(m_s.group(1))
+    if not (a_q and s_q):
+        return None, "a side is not quoted verbatim" + (" (ADMISSION)" if not a_q else "") + (" (STATEMENT)" if not s_q else "")
+    if not (a_p and s_p):
+        return None, "a side carries no [doc:] pointer" + (" (ADMISSION)" if not a_p else "") + (" (STATEMENT)" if not s_p else "")
+    if a_p == s_p:
+        return None, f"both statements point at the same document {a_p} — one pointer is not a contradiction of record"
+    el = _ELEM_RX.search(line)
+    vh = _VEH_RX.search(card.get("proposition") or "") or _VEH_RX.search(line)
+    vehicle = (vh.group(1).strip().rstrip(".") if vh else "")
+    # the unit this contradiction belongs to: the card's own 'Issue <n>' hint when it carries one (same rule as a violation
+    # card), else content pinning against the units' own words. A contradiction with no unit is still kept at claim 0.
+    _pn = re.match(r"\s*(?:Issue|Point|Ground)\s+(\d{1,2})\b", card.get("proposition") or "", re.I) \
+        or re.search(r"\b(?:Issue|Point|Ground)\s+(\d{1,2})\b", card["finding"] or "", re.I)
+    pin = pin_unit(card["finding"] + " " + (card.get("proposition") or ""),
+                   int(_pn.group(1)) if _pn else None, profiles)
+    rf = [{"pointer": a_p, "source_kind": "judicial_admission", "quote": a_q,
+           "classification": "JUDICIAL ADMISSION — in the pleading; conclusive on the pleader, the fact is withdrawn from issue"},
+          {"pointer": s_p, "source_kind": "opponent_writing", "quote": s_q,
+           "classification": "EXTRAJUDICIAL STATEMENT — outside the pleadings; evidential and impeaching, not conclusive"}]
+    cell = {"claim": pin.get("unit") or 0, "title": card["finding"][:160], "kind": "contradiction", "form": "record",
+            "status": "RECORD", "level": 6, "bot": card["axis"], "finding": card["finding"],
+            "proposition": card.get("proposition") or "", "verdict": verdict, "where": card.get("where") or "",
+            "element_defeated": (el.group(1).strip() if el else None),
+            "vehicle": vehicle or None, "vehicle_not_in_corpus": bool(vehicle) and "NOT IN CORPUS" in vehicle.upper(),
+            "authorities": [], "gap": None, "fix": None, "record_facts": rf,
+            "relay": f"{tag} r{card['room']} {card['axis']}#{card['n']}",
+            "text": (f"CONTRADICTION (skeptic, {card['status']}): {card['finding']}"
+                     f" | JUDICIAL ADMISSION: \u201c{a_q}\u201d {a_p}"
+                     f" | EXTRAJUDICIAL STATEMENT: \u201c{s_q}\u201d {s_p}"
+                     + (f" | element defeated: {el.group(1).strip()}" if el else "")
+                     + (f" | vehicle: {vehicle}" if vehicle else ""))}
+    return cell, ""
+
+
+def pack_index(inputs):
+    """The pack's own anchors, so a card's record pin resolves to a LINE: record.md '## Point n' / '## <n>.' headings and
+    its [doc:] blocks, adverse.md '## A.' section headings. {record_points, record_docs, adverse_secs, has_record, has_adverse}."""
+    idx = {"record_points": {}, "record_docs": {}, "adverse_secs": {}, "has_record": False, "has_adverse": False}
+    try:
+        lines = open(f"{inputs}/record.md", encoding="utf-8", errors="ignore").read().splitlines()
+        idx["has_record"] = True
+        for i, l in enumerate(lines, 1):
+            m = re.match(r"^#{1,4}\s*(?:Point|Issue)\s*(\d{1,3})\b", l) or re.match(r"^\*\*(\d{1,3})\.\s", l)
+            if m: idx["record_points"].setdefault(int(m.group(1)), i)
+            for d in DOC_TAG_RX.findall(l): idx["record_docs"].setdefault(d.strip(), i)
+    except Exception:
+        pass
+    # S-pointer-index-verified-record (2026-11-16): verified_record.md line 1 TELLS the lanes "cite as record:<point>" and carries
+    # '## Point n.' headings; the lanes obeyed ((record:Point 6) ×8 in one leg) but this index read record.md only (elements lists,
+    # no Point headings) → every record:Point pin resolved to nothing → 93 of 129 verified, corpus-pinned rows demoted to OPEN
+    # ("record_facts missing") → m1 refused. One key set: the file that defines the pointer form is indexed for it.
+    try:
+        lines = open(f"{inputs}/verified_record.md", encoding="utf-8", errors="ignore").read().splitlines()
+        for i, l in enumerate(lines, 1):
+            m = re.match(r"^#{1,4}\s*(?:Point|Issue)\s*(\d{1,3})\b", l) or re.match(r"^\*\*(\d{1,3})\.\s", l)
+            if m and int(m.group(1)) not in idx["record_points"]:
+                idx.setdefault("vr_points", {})[int(m.group(1))] = i; idx["has_record"] = True
+    except Exception:
+        pass
+    try:
+        lines = open(f"{inputs}/adverse.md", encoding="utf-8", errors="ignore").read().splitlines()
+        idx["has_adverse"] = True
+        for i, l in enumerate(lines, 1):
+            m = re.match(r"^#{1,4}\s*([A-Z])\.\s", l)
+            if m: idx["adverse_secs"].setdefault(m.group(1), i)
+    except Exception:
+        pass
+    return idx
+
+
+def record_pointers(text, idx):
+    """every RESOLVABLE record pointer in `text`, in the three pointer forms. A pin that does not resolve to a real anchor
+    (a point the record does not carry, an unbracketed 'doc: …') is NOT a pointer — the guard reports it as missing."""
+    out, t = [], text or ""
+    for d in DOC_TAG_RX.findall(t):
+        p = f"[doc:{d.strip()}]"
+        if p not in out: out.append(p)
+    for m in re.finditer(r"\b(record\.md:\d+|adverse\.md:(?:¶\d+|\d+))\b", t):
+        if m.group(1) not in out: out.append(m.group(1))
+    for m in REC_PIN_RX.finditer(t):
+        ln = idx["record_points"].get(int(m.group(1)))
+        if ln and f"record.md:{ln}" not in out: out.append(f"record.md:{ln}")
+        vl = (idx.get("vr_points") or {}).get(int(m.group(1)))     # S-pointer-index-verified-record: the pointer names ITS file
+        if not ln and vl and f"[doc:verified_record.md:L{vl}]" not in out: out.append(f"[doc:verified_record.md:L{vl}]")
+    for m in ADV_SEC_RX.finditer(t):
+        ln = idx["adverse_secs"].get(m.group(1).upper())
+        if ln and f"adverse.md:{ln}" not in out: out.append(f"adverse.md:{ln}")
+    if idx["has_adverse"]:
+        for m in ADV_PARA_RX.finditer(t):
+            if "adverse" in t[max(0, m.start() - 40):m.start()].lower():
+                p = f"adverse.md:¶{m.group(1)}"
+                if p not in out: out.append(p)
+    return out
+
+
+def ground_plus_sources(inputs, tag, cards_dir):
+    """chunk id → source key, free and exact, from the pack's and the cards' own GROUND+ lines
+    ('GROUND+: <cite> | <chunk id> | "<quote>" | source=<key> [fam]') plus the pack's '### R.'/'source:' rows."""
+    hint = {}
+    files = [f"{inputs}/ground_pack.md"] + sorted(glob.glob(f"{cards_dir}/{tag}_relay_r*_cards.md"))
+    for p in files:
+        if not os.path.exists(p): continue
+        for l in open(p, errors="ignore"):
+            if "GROUND+" not in l: continue
+            parts = [x.strip() for x in l.split("|")]
+            cid = next((x for x in parts[1:2] if re.match(r"^[\w.#-]+$", x or "")), None)
+            sm = re.search(r"source=(\S+)", l)
+            if cid and sm:
+                hint.setdefault(cid, sm.group(1))
+                if "#" in cid: hint.setdefault(cid.split("#")[-1], sm.group(1))
+    return hint
+
+
+TEXT_CITE_RX = re.compile(r"\d+\s*(?:U\.?\s?S\.?\s?C\.?(?:A\.?)?|C\.?\s?F\.?\s?R\.?|Pa\.?\s?C\.?\s?S\.?(?:A\.?)?|P\.\s?S\.|Pa\.?\s?Code)\.?\s*§*\s*[\d.]*[a-z]?"
+                          r"|Pa\.\s?R\.\s?[A-Za-z.]*\.?\s*\d+(?:\.\d+)?|Fed\.\s?R\.\s?\w+\.\s?P\.?\s*\d+")
+
+
+def text_attributions(text):
+    """[(cite, chunk id)] for every '… <cite> … [corpus:<id>]' attribution written in a card. The cite is the LAST one
+    before the tag (within 240 chars), else the first within 160 chars after it — the way the card forms are written:
+    'Rule: 24 C.F.R. § 203.431 — "…" [corpus:usc_t12_s1748b#…]'. This is where the family drift is recorded."""
+    t = text or ""
+    cites = [(m.start(), m.end(), re.sub(r"\s+", " ", m.group(0)).strip(" .,;")) for m in TEXT_CITE_RX.finditer(t)]
+    out = []
+    for tm in CORPUS_TAG_RX.finditer(t):
+        cid = tm.group(1)
+        before = [c for c in cites if c[1] <= tm.start() and tm.start() - c[1] <= 240]
+        pick = before[-1][2] if before else next((c[2] for c in cites if c[0] >= tm.end() and c[0] - tm.end() <= 160), None)
+        if pick: out.append((pick, cid))
+    return out
+
+
+def connected_aliases(inputs):
+    """The connected case(s) this pack carries, with the tokens a card may name them by: the slug, the [[cases/<slug>/_case]]
+    link, and every docket alias the case index knows (plus the docket's bare number, which is how lanes write it).
+    A slug counts only if the vault actually has cases/<slug>/ (or the case index names it) — a [doc:] tag's first segment
+    is otherwise just text ('output', 'intake', '<case>') and would make every unit 'name the connected case'.
+    -> {slug: [tokens]} — empty when the pack has no connected_record.md."""
+    p = f"{inputs}/connected_record.md"
+    if not os.path.exists(p): return {}
+    txt = open(p, encoding="utf-8", errors="ignore").read()
+    cand = set(d.split("/")[0].strip() for d in DOC_TAG_RX.findall(txt) if "/" in d)
+    cand |= set(m.group(1) for m in re.finditer(r"\[\[cases/([^/\]]+)/_case\]\]", txt))
+    maps = {}
+    for cm in (str(_eroot() / "cases_index/case_map.json"), str(_eroot() / "case_map.json")):
+        try: maps.update(json.load(open(cm)))
+        except Exception: pass
+    slugs = []
+    for s in sorted(x for x in cand if x and re.fullmatch(r"[A-Za-z][\w.:-]{3,60}", x)):
+        if os.path.isdir(f"<home>/obsidian_sync/cases/{s}") or s in maps or any(s in k for k in maps): slugs.append(s)
+    out = {}
+    for s in slugs:
+        toks = {s, s.replace("_", ":"), f"[[cases/{s}/_case]]"}
+        dm = re.search(r"(\d{1,2}[:-]\d{2})-(cv|cr)-(\d{3,6})", s)
+        if dm:
+            toks |= {f"{dm.group(1)}-{dm.group(2)}-{dm.group(3)}", f"{dm.group(2)}-{dm.group(3)}", dm.group(3), dm.group(3).lstrip("0")}
+        for k, v in maps.items():
+            blob = json.dumps(v) if not isinstance(v, str) else v
+            if s in k or s in blob or (dm and dm.group(3) in k):
+                for a in re.findall(r"\d{1,2}:\d{2}-cv-\d{3,6}|\d{2}-cv-\d{3,6}", k + " " + blob): toks.add(a)
+        out[s] = sorted(t for t in toks if t and len(str(t)) >= 4)
+    return out
+
+
+def _cell_text(c):
+    return " ".join(str(c.get(k) or "") for k in ("title", "finding", "proposition", "where", "rule_verbatim", "record_fact")) + \
+           " " + " ".join(f"{a.get('cite') or ''} {a.get('quote') or ''} {a.get('source') or ''}" for a in (c.get("authorities") or []))
+
+
+def _fail(c, reason, tagname):
+    """refuse the cell: never GROUNDED/RECORD on a guard failure; the reason is the gap the closure loop re-dispatches with."""
+    c["guard"] = sorted(set((c.get("guard") or []) + [tagname]))
+    c["gap"] = "; ".join(x for x in [c.get("gap"), reason] if x)
+    if str(c.get("status") or "").upper() in ("GROUNDED", "RECORD"): c["status"] = "OPEN"
+
+
+def guard_cells(cells, inputs, out_path, tag, cards_dir, uprof=None):
+    """Run guards (2)(3)(4) over this run's cells. Mutates the cells, writes the three logs next to the ledger, returns stats."""
+    m2dir = os.path.dirname(os.path.abspath(out_path)) or "."
+    hint = ground_plus_sources(inputs, tag, cards_dir)
+    cpath = os.path.join(m2dir, "_family_cache.json")
+    try: cache = json.load(open(cpath))
+    except Exception: cache = {}
+    idx = pack_index(inputs)
+    conn = connected_aliases(inputs) if GUARD_CONNECTED else {}
+    pre_status = {id(c): str(c.get("status") or "").upper() for c in cells}   # guard (4) judges the unit's CLOSING cells as the
+    fam_rows, defects, qg_rows, conn_rows = [], [], [], []                   # room wrote them, so a cell already demoted by
+    #                                                                          guard (2)/(3) still gets the connected gap text
+    st: dict = {"authorities_checked": 0, "family_mismatch": 0, "family_unchecked": 0, "parse_defects": 0,
+          "pointer_filled": 0, "quote_guard_demoted": 0, "connected_units_open": 0, "cells_failed": 0}
+
+    for c in cells:
+        relay = c.get("relay") or ""
+        auths = c.get("authorities") or []
+        # ---- (3a) parse defects: skeptic/Q&A text that leaked into the authority column is not an authority
+        keep = []
+        for a in auths:
+            blob = f"{a.get('cite') or ''} {a.get('quote') or ''}".strip()
+            if GUARD_RECORD and (PARSE_DEFECT_RX.match(a.get("cite") or "") or PARSE_DEFECT_RX.match(blob)):
+                defects.append({"relay": relay, "lane": c.get("bot"), "claim": c.get("claim"), "defect": "skeptic/Q&A text in authorities",
+                                "text": blob[:220]}); st["parse_defects"] += 1
+                continue
+            keep.append(a)
+        if len(keep) != len(auths):
+            c["authorities"] = keep
+            if not keep: _fail(c, "authorities dropped as parse defect (QUESTION:/ANSWER:/SKEPTIC: leak)", "parse-defect")
+        for m in UNBRACKETED_DOC_RX.finditer(_cell_text(c)):      # '(doc: case/file)' is not a [doc:…] pointer — log, never count
+            defects.append({"relay": relay, "lane": c.get("bot"), "claim": c.get("claim"),
+                            "defect": "record pointer written unbracketed (doc: … instead of [doc: …])", "text": m.group(0)[:160]})
+            st["parse_defects"] += 1
+            break
+        # ---- (2) family check: the cell's authority, then every attribution written in the card text
+        if GUARD_FAMILY:
+            pairs = [((a.get("cite") or ""), (a.get("source") or a.get("chunk_id") or ""), a) for a in (c.get("authorities") or [])]
+            pairs += [(cite, cid, None) for cite, cid in text_attributions(_cell_text(c))]
+            seen = set()
+            for cite, src, a in pairs:
+                if not cite or not src: continue
+                k = (cite, src)
+                if k in seen: continue
+                seen.add(k)
+                key = _cg.chunk_source(src, hint, cache) if (_cg and hasattr(_cg, "chunk_source")) else src
+                v, why = _cg.family_check(cite, key) if (_cg and hasattr(_cg, "family_check")) else ("unchecked", "card_gate has no family_check")
+                st["authorities_checked"] += 1
+                if v == "unchecked": st["family_unchecked"] += 1
+                if v != "mismatch": continue
+                st["family_mismatch"] += 1
+                if a is not None: a["verified"], a["family_check"] = False, why
+                fam_rows.append({"relay": relay, "lane": c.get("bot"), "claim": c.get("claim"), "cite": cite, "chunk": src,
+                                 "source_key": key or "(unresolved)", "why": why})
+                _fail(c, why, "family-mismatch")
+        # ---- (3b) record pointer for an asserted date / amount / docket number / exhibit letter
+        if GUARD_RECORD:
+            text = _cell_text(c)
+            asserts = [k for k, rx in ASSERT_RX.items() if rx.search(text)]
+            if asserts:
+                have = [p for p in (c.get("record_facts") or []) if _ptr_ok(p)]
+                if not have:
+                    found = record_pointers(" ".join(str(x) for x in (c.get("record_facts") or [])) + " " + text, idx)
+                    if found:
+                        c["record_facts"] = found + [x for x in (c.get("record_facts") or []) if x]
+                        have = found; st["pointer_filled"] += 1
+                if not have and str(c.get("status") or "").upper() in ("GROUNDED", "RECORD"):
+                    st["quote_guard_demoted"] += 1
+                    qg_rows.append({"relay": relay, "lane": c.get("bot"), "claim": c.get("claim"), "asserts": asserts,
+                                    "claim_text": (c.get("proposition") or c.get("title") or "")[:160]})
+                    _fail(c, "record_facts missing", "record-pointer")
+    # ---- (4) connected record: a unit whose text names the connected case must cite that record in a closing cell
+    if conn:
+        by_unit = {}
+        for c in cells:
+            if isinstance(c.get("claim"), int): by_unit.setdefault(c["claim"], []).append(c)
+        for unit, rows in sorted(by_unit.items()):
+            utext = " ".join(_cell_text(c) for c in rows)
+            if uprof and unit in uprof: utext += " " + str(uprof[unit].get("title") or "")
+            named = [s for s, toks in conn.items() if any(re.search(r"(?<![\w-])" + re.escape(t) + r"(?![\w-])", utext) for t in toks)]
+            if not named: continue
+            closing = [c for c in rows if pre_status.get(id(c)) in ("GROUNDED", "RECORD")]
+            cited = [c for c in closing if any(re.match(r"\[doc:\s*(" + "|".join(re.escape(s) for s in named) + r")/", str(p).strip())
+                                               for p in (c.get("record_facts") or []))]
+            if closing and not cited:
+                for c in closing: _fail(c, "connected record not cited", "connected-record")
+                st["connected_units_open"] += 1
+                conn_rows.append({"unit": unit, "cases": named, "closing_cells": len(closing)})
+    st["cells_failed"] = sum(1 for c in cells if c.get("guard"))
+    # ---- the three logs (per run, appended — the ledger's own history is append-only too)
+    def _log(name, title, rows, fmt):
+        p = os.path.join(m2dir, name)
+        fresh = not os.path.exists(p) or os.path.getsize(p) == 0
+        with open(p, "a", encoding="utf-8") as f:
+            if fresh: f.write(title + "\n")
+            f.write(f"\n## run {tag} — {len(rows)} finding(s)\n")
+            for r in rows: f.write(fmt(r) + "\n")
+            if not rows: f.write("(none)\n")
+        return p
+    _log("FAMILY_CHECK.md", "# FAMILY CHECK — cite ↔ pinned chunk, per run (cards_to_cells guard 2). A row here is a card that\n"
+                            "named one authority and attached another's chunk; it is NOT grounded.",
+         fam_rows, lambda r: f"- `{r['relay']}` {r['lane']} unit {r['claim']}: {r['why']} (chunk `{r['chunk']}` → source `{r['source_key']}`)")
+    _log("PARSE_DEFECTS.md", "# PARSE DEFECTS — room text that leaked into a machine field (cards_to_cells guard 3). Dropped, never grounded.",
+         defects, lambda r: f"- `{r['relay']}` {r['lane']} unit {r['claim']}: {r['defect']} — {r['text']}")
+    _log("QUOTE_GUARD.md", "# QUOTE GUARD — GROUNDED/RECORD cells demoted to OPEN for asserting a date / amount / docket number /\n"
+                           "exhibit letter with no resolvable record pointer (cards_to_cells guard 3). COVERAGE.md counts these as\n"
+                           "'quote-guard demoted'.",
+         qg_rows + [{"relay": "-", "lane": "connected-record", "claim": r["unit"], "asserts": r["cases"], "claim_text": f"{r['closing_cells']} closing cell(s) demoted: connected record not cited"} for r in conn_rows],
+         lambda r: f"- `{r['relay']}` {r['lane']} unit {r['claim']}: asserts {','.join(str(x) for x in r['asserts'])} — {r['claim_text']}")
+    try: json.dump(cache, open(cpath, "w"))
+    except Exception: pass
+    st["connected_cases"] = sorted(conn)
+    st["logs"] = ["FAMILY_CHECK.md", "PARSE_DEFECTS.md", "QUOTE_GUARD.md"]
+    st["family_rows"], st["parse_rows"], st["quote_rows"], st["connected_rows"] = fam_rows, defects, qg_rows, conn_rows
+    return st
+
+
+# ---- S-gap-second-pass (2026-11-14, _sandbox_prompt_prescreen; BACKLOG 2026-11-03 22:35 "m2 GAP second pass — re-ask only when
+# the pin-path pull finds the named cite") -------------------------------------------------------------------------------------
+# MEASURED (bisect 11-03, local-gpu seq8 w8, the same 72 cells): the unconditional second pass fired on 54 of 72 cells and took the
+# model wall from 295 s to 591 s for GROUNDED 18 vs 16 and cites 63/73 vs 69/74 — it bought two closures and LOST six verified
+# cites. The default was flipped OFF. But OFF is not the fix either: the re-ask is right exactly when the deterministic pull DID
+# produce the cite the bot said was missing.
+# CLASS RULE (the user's NOT-IN-CORPUS lock): a cell that says a named authority is absent is re-asked ONLY on EVIDENCE that the
+# authority is now in hand — and in this repo "in hand" has ONE meaning, room_prefetch's PIN RULE: a section/rule cite is
+# resolved only on an exact_header pin (pipeline/cite_family.header_matches), never on a chunk that merely MENTIONS it
+# (room_prefetch.py:312). So the gate reads the RECEIPT, <inputs>/prefetch.json, which already records pin_kind per cite:
+#     pin_kind == "exact_header"  (in `ground`, or a `pulls` record whose re_pin_kind is exact_header)
+#         -> the pull produced the section itself: the unit is RE-DISPATCHED (the re-queue leg re-asks it with that row pinned)
+#     pin_kind == "mention-only" / absent from the receipt / an ERROR entry
+#         -> NO re-dispatch. The unit stays OPEN with gap='cite not in corpus after pull' and the cite goes to the PULL LIST
+#            (COVERAGE.md's pull list / the fetch lane's work list) — a real NOT IN CORPUS after the pull, not a silent drop and
+#            not another model call that cannot possibly see the words.
+# The gate is DETERMINISTIC (it reads a receipt; it never calls a model) and it only ANNOTATES: the re-dispatch itself is the
+# chain's existing re-queue stage, which now takes its unit list from SECOND_PASS.json instead of re-asking every zero-row unit.
+# fired/skipped counts ride in the run summary and in SECOND_PASS.md next to the ledger. ROOM_SECOND_PASS_GATE=0 restores the
+# previous output byte-identically (no gap text, no files, no summary key).
+SECOND_PASS_GATE = os.environ.get("ROOM_SECOND_PASS_GATE", "1") not in ("0", "", "false")
+SECOND_PASS_STATUSES = ("OPEN", "NOT IN CORPUS")          # the room's GAP: a cell whose authority did not verify
+GAP_NOT_IN_CORPUS = "cite not in corpus after pull"
+EXACT_PIN = "exact_header"
+_SP_CITE_RX = re.compile(
+    r"\d{1,2}\s+U\.?\s?S\.?\s?C\.?(?:A\.?)?\s*§*\s*\d+[a-zA-Z]?(?:[-–—]\d+[a-zA-Z]?)?(?:\([a-zA-Z0-9]{1,4}\))*"
+    r"|\d{1,2}\s+C\.?\s?F\.?\s?R\.?\s*§*\s*\d{1,4}\.\d+[A-Za-z]?(?:\([a-zA-Z0-9]{1,4}\))*"
+    r"|\d{1,2}\s+Pa\.?\s*C\.?\s*S\.?(?:A\.?)?\s*§*\s*\d+(?:\.\d+)?(?:\([a-zA-Z0-9]{1,4}\))*"
+    r"|\d{1,3}\s+P\.?\s?S\.?\s*§+\s*\d+(?:[-.]\d+)*"
+    r"|\d{1,3}\s+Pa\.?\s*Code\s*§+\s*\d+(?:\.\d+)?"
+    r"|Pa\.\s*R\.\s*(?:Civ|C|A|E|J\.?A|Crim)\.\s*P\.\s*\d{1,4}(?:\.\d+)?(?:\s*\([a-zA-Z0-9]{1,4}\))*"
+    r"|Fed\.?\s*R\.?\s*(?:Civ|App|Evid|Crim|Bankr)\.?\s*P?\.?\s*\d{1,4}(?:\.\d+)?(?:\s*\([a-zA-Z0-9]{1,4}\))*")
+_SP_CF = None
+
+
+def _sp_cite_family():
+    """pipeline/cite_family.py — LIVE, promoted (never forked). None when it cannot be imported: the gate then keys cites by
+    their normalised text, which is weaker but still deterministic (and logged in the receipt match reason)."""
+    global _SP_CF
+    if _SP_CF is None:
+        _SP_CF = False
+        for root in (os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+                     os.environ.get("BEEZLE_CODE_ROOT", ""), str(Path.home() / "beezle"), str(_eroot())):
+            if not root or not os.path.isdir(os.path.join(root, "pipeline")): continue
+            try:
+                if root not in sys.path: sys.path.insert(0, root)
+                from pipeline import cite_family as CF
+                _SP_CF = CF; break
+            except Exception: continue
+    return _SP_CF or None
+
+
+def sp_key(cite):
+    """'24 C.F.R. § 203.431(a)' -> 'cfr:24:203.431' (the section, subsections dropped) via pipeline/cite_family.parse."""
+    c = re.sub(r"\s+", " ", str(cite or "")).strip(" ,;.")
+    if not c: return ""
+    CF = _sp_cite_family()
+    if CF is not None:
+        try:
+            p = CF.parse(c)
+            if p.get("family") not in ("unknown", "", None) and (p.get("section") or p.get("number")):
+                return f"{p['family']}:{p.get('title', '')}:{str(p.get('section') or p.get('number')).lower()}"
+        except Exception: pass
+    return "text:" + re.sub(r"[^a-z0-9.]", "", c.lower())
+
+
+def sp_cites(text):
+    """{key: cite as written} for every statute/regulation/rule cite in `text` (first written form wins)."""
+    out = {}
+    for m in _SP_CITE_RX.finditer(str(text or "")):
+        disp = re.sub(r"\s+", " ", m.group(0)).strip(" ,;.")
+        k = sp_key(disp)
+        if k and k not in out: out[k] = disp
+    return out
+
+
+def prefetch_pins(inputs):
+    """{cite key: {pin_kind, cite, chunk_id, via_pull, pull_target, status}} read from <inputs>/prefetch.json — the receipt
+    room_prefetch writes (its own pin rule, its own pull records). {} when there is no receipt (then NOTHING re-dispatches:
+    no receipt = no evidence)."""
+    p = os.path.join(inputs, "prefetch.json")
+    try:
+        d = json.load(open(p, encoding="utf-8"))
+    except Exception:
+        return {}
+    pulled = {}
+    for pr in (d.get("pulls") or []):
+        k = sp_key(pr.get("cite") or "")
+        if k: pulled[k] = pr
+    out = {}
+    for bucket in ("ground", "mention", "missing"):
+        for rec in (d.get(bucket) or []):
+            k = sp_key(rec.get("cite") or rec.get("request") or "")
+            if not k: continue
+            pr = pulled.get(k) or rec.get("pulled") or {}
+            pin = str(rec.get("pin_kind") or "none")
+            if pin != EXACT_PIN and str(pr.get("re_pin_kind") or "") == EXACT_PIN and str(pr.get("re_resolved") or "") == "FOUND":
+                pin = EXACT_PIN                                   # the one-section pull re-resolved it on its own heading
+            cur = out.get(k)
+            if cur and cur["pin_kind"] == EXACT_PIN: continue     # an exact pin is never downgraded by a later bucket
+            out[k] = {"pin_kind": pin, "cite": rec.get("cite") or "", "chunk_id": rec.get("chunk_id") or "",
+                      "status": rec.get("status") or "", "bucket": bucket,
+                      "via_pull": bool(pr), "pull_target": rec.get("pull_target") or pr.get("target") or ""}
+    return out
+
+
+def sp_named_cites(cell):
+    """The authorities THIS cell names in its own words (gap / finding / proposition / title / its authority cites) minus the
+    ones that already verified for it — the same 'what the answer named' rule as the m2 runner's second_pass_cites."""
+    parts = [str(cell.get(k) or "") for k in ("gap", "finding", "proposition", "title", "rule_verbatim", "fix")]
+    parts += [str(a.get("cite") or "") for a in (cell.get("authorities") or []) if isinstance(a, dict)]
+    have = {sp_key(a.get("cite") or "") for a in (cell.get("authorities") or [])
+            if isinstance(a, dict) and a.get("verified")}
+    return {k: v for k, v in sp_cites("\n".join(parts)).items() if k not in have}
+
+
+def second_pass_gate(cells, inputs, m2dir=None, tag=""):
+    """Annotate every GAP cell with the pin-gated second-pass decision; return the stats + the lists.
+
+    fired   = [{unit, cite, pin_kind, chunk_id, via_pull, relay}]  -> the re-queue leg's unit list (SECOND_PASS.json)
+    skipped = [{unit, cite, pin_kind, why, relay}]                 -> stayed OPEN, gap='cite not in corpus after pull'
+    pull_list = [{cite, pull_target, units}]                       -> COVERAGE.md's pull list / the fetch lane's work list
+    """
+    stat = {"gate": "on", "cells_seen": 0, "cells_with_cite": 0, "fired": 0, "skipped": 0,
+            "units_redispatch": [], "receipt": bool(0), "pins": 0, "exact_pins": 0,
+            "fired_rows": [], "skipped_rows": [], "pull_list": []}
+    if not SECOND_PASS_GATE:
+        return {**stat, "gate": "off"}
+    pins = prefetch_pins(inputs)
+    stat["receipt"] = bool(pins); stat["pins"] = len(pins)
+    stat["exact_pins"] = sum(1 for v in pins.values() if v["pin_kind"] == EXACT_PIN)
+    pull_by_cite = {}
+    for c in cells:
+        if str(c.get("status") or "").upper() not in SECOND_PASS_STATUSES: continue
+        stat["cells_seen"] += 1
+        named = sp_named_cites(c)
+        if not named: continue
+        stat["cells_with_cite"] += 1
+        unit = c.get("claim")
+        hit = next(((k, v) for k, v in named.items() if (pins.get(k) or {}).get("pin_kind") == EXACT_PIN), None)
+        if hit:
+            k, disp = hit[0], hit[1]
+            pin = pins[k]
+            c["second_pass"] = {"redispatch": True, "cite": disp, "pin_kind": EXACT_PIN, "chunk_id": pin["chunk_id"],
+                               "via_pull": pin["via_pull"], "why": "pin-path pull produced the named section's own heading"}
+            stat["fired"] += 1
+            stat["fired_rows"].append({"unit": unit, "cite": disp, "pin_kind": EXACT_PIN, "chunk_id": pin["chunk_id"],
+                                       "via_pull": pin["via_pull"], "relay": c.get("relay") or ""})
+            if isinstance(unit, int) and unit and unit not in stat["units_redispatch"]: stat["units_redispatch"].append(unit)
+            continue
+        worst = [(k, disp, (pins.get(k) or {}).get("pin_kind") or "not in receipt") for k, disp in named.items()]
+        c["gap"] = c.get("gap") or GAP_NOT_IN_CORPUS
+        c["second_pass"] = {"redispatch": False, "cites": [d for _, d, _ in worst],
+                            "pin_kinds": {d: p for _, d, p in worst},
+                            "why": "no exact_header pin for any named cite after the pull — NOT IN CORPUS for this run"}
+        stat["skipped"] += 1
+        for k, disp, pin in worst:
+            stat["skipped_rows"].append({"unit": unit, "cite": disp, "pin_kind": pin, "relay": c.get("relay") or "",
+                                         "why": GAP_NOT_IN_CORPUS})
+            e = pull_by_cite.setdefault(disp, {"cite": disp, "pin_kind": pin,
+                                               "pull_target": (pins.get(k) or {}).get("pull_target") or "", "units": []})
+            if unit not in e["units"]: e["units"].append(unit)
+    stat["pull_list"] = sorted(pull_by_cite.values(), key=lambda e: e["cite"])
+    stat["units_redispatch"] = sorted(stat["units_redispatch"])
+    if m2dir:
+        try:
+            json.dump({"run": tag, "units": stat["units_redispatch"], "fired": stat["fired_rows"],
+                       "skipped": stat["skipped_rows"], "pull_list": stat["pull_list"],
+                       "receipt": stat["receipt"], "pins": stat["pins"], "exact_pins": stat["exact_pins"]},
+                      open(os.path.join(m2dir, "SECOND_PASS.json"), "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+            p = os.path.join(m2dir, "SECOND_PASS.md")
+            fresh = not os.path.exists(p) or os.path.getsize(p) == 0
+            with open(p, "a", encoding="utf-8") as f:
+                if fresh:
+                    f.write("# GAP SECOND PASS — a GAP cell is re-dispatched ONLY when room_prefetch's pull produced an\n"
+                            "# exact_header pin for the cite the cell names (prefetch.json pin_kind). mention-only / absent =\n"
+                            "# the unit stays OPEN with gap 'cite not in corpus after pull' and the cite goes to the PULL LIST.\n")
+                f.write(f"\n## run {tag} — fired {stat['fired']} / skipped {stat['skipped']} "
+                        f"(receipt pins {stat['pins']}, exact {stat['exact_pins']})\n")
+                for r in stat["fired_rows"]:
+                    f.write(f"- FIRED unit {r['unit']}: {r['cite']} pin=exact_header chunk `{r['chunk_id']}` "
+                            f"via_pull={r['via_pull']} ({r['relay']})\n")
+                for r in stat["skipped_rows"]:
+                    f.write(f"- SKIPPED unit {r['unit']}: {r['cite']} pin={r['pin_kind']} — {r['why']} ({r['relay']})\n")
+                if not stat["fired_rows"] and not stat["skipped_rows"]: f.write("(no GAP cell named a cite)\n")
+            if stat["pull_list"]:
+                with open(os.path.join(m2dir, "PULL_LIST.md"), "a", encoding="utf-8") as f:
+                    f.write(f"\n## run {tag} — {len(stat['pull_list'])} cite(s) NOT IN CORPUS after the pull "
+                            "(COVERAGE.md pull list; the fetch lane's work list)\n")
+                    for e in stat["pull_list"]:
+                        f.write(f"- {e['cite']} | pin={e['pin_kind']} | pull={e['pull_target'] or '-'} | units {e['units']}\n")
+        except Exception as e:
+            sys.stderr.write(f"SECOND PASS GATE: log write failed ({type(e).__name__} {str(e)[:80]}) — stats still returned\n")
+    return stat
+
+
 def main(tag, inputs, out_path, cards_dir=str(_eroot() / "output/research/rooms_ab")):
     cards, verdicts, records = parse_cards(tag, cards_dir)
     cite_by_slug, chunks_by_cite = ground_table(inputs); G = grounds(inputs); points = _point_heads(inputs)
     UPROF = unit_profiles(inputs)                                        # S-card-unit-pin: the units' own words (ROOM_UNITS_MD else verified_record.md)
     for _k, _p in UPROF.items(): points.setdefault(_k, _p["title"])     # a re-queue leg's record lists only its units; the pin may name any unit
     cells, side, contradictions, new_units, open_lanes, pin_log = [], [], [], {}, [], []
+    vreason = VERDICT_REASON
     for c in cards:
         v = verdicts.get((c["room"], c["axis"], c["n"]))
         ok = v == "SUSTAINED" or (v is None and c["status"] == "SUSTAINED" and "GATE: quote NOT" not in c["gate"] and "carries no quote" not in c["gate"])
@@ -476,21 +1237,66 @@ def main(tag, inputs, out_path, cards_dir=str(_eroot() / "output/research/rooms_
         # word, decides GROUNDED vs OPEN. (r2c: 100 such cards were set aside as "verdict OPEN" with skeptic SILENT = posture 0.)
         ok = ok or (v is None and c["status"] == "FORM")
         why = None
-        if c["axis"] in META_AXES: why = "skeptic lane (grades, never a cell)"
+        if c["axis"] in META_AXES:
+            why = "skeptic lane (grades, never a cell)"
+            # S-skeptic-contradiction (2026-11-14, class): the gate's SECOND duty is THEIR paper against THEIR paper, and every
+            # skeptic card was dropped here, so the opposing party's own inconsistency — the strongest material in any matter —
+            # reached no cell and no leg of the coverage audit. A skeptic CARD whose finding starts 'CONTRADICTION:' and which
+            # carries TWO distinct [doc:] pointers IS a record fact (one statement is a JUDICIAL ADMISSION conclusive on the
+            # pleader, the other an EXTRAJUDICIAL STATEMENT: Am Jur 2d Evidence § 1099 / Pleading § 201, Black's), so it is
+            # emitted as kind=contradiction / status=RECORD exactly like the proof lane's record facts: cells_to_stub acts on
+            # GROUNDED rows only, so stubs are untouched, and no spec cites a record_fact as authority. One pointer, no pointer
+            # or verdict REJECTED => no cell (an unpointed contradiction is an assertion, not a record fact). The LLM does the
+            # comprehension; this parser only keeps score. CELLS_SKEPTIC_CONTRA=0 restores the old output byte-identically.
+            if SKEPTIC_CONTRA and (v or "").upper() != "REJECTED" and CONTRA_RX.match(c["finding"] or ""):
+                _cell, _why = contra_cell(c, v, tag, UPROF)
+                if _cell: cells.append(_cell); why = "skeptic CONTRADICTION → record cell (status RECORD)"
+                else: why = f"skeptic CONTRADICTION not a record fact ({_why})"
         elif c["axis"] in PROOF_AXES:
             why = "proof lane → sidecar.contradictions"; contradictions.append({"finding": c["finding"], "where": c["where"], "status": c["status"], "verdict": v, "proposition": c["proposition"], "card": c["line"][:400]})
+            # S-proof-facts-as-cells (2026-11-13, class): a proof CONTRADICTION is a RECORD FACT the drafter may plead (a pleading's
+            # specific denial / fact in avoidance IS a record fact — Pa.R.C.P. 1029(b)); it was invisible to m1, which reads cells
+            # only, so ¶123/¶124 of a reply fell to 'deemed denied' while the decisive fact (their own Ex. A) sat in the sidecar.
+            # Emitted IN ADDITION to the sidecar (unchanged) as kind=record_fact / status=RECORD: cells_to_stub acts on GROUNDED
+            # rows only, so stubs are untouched; m1 specs that plead record facts (reply) see it, motion/brief specs never cite
+            # a record_fact as authority. Verdict REJECTED is excluded. CELLS_PROOF_FACTS=0 restores the old output byte-identically.
+            if os.environ.get("CELLS_PROOF_FACTS", "1") == "1" and (v or "").upper() != "REJECTED" and c["finding"]:
+                _pm = re.search(r"¶{1,2}\s*(\d{1,4})", c["finding"] + " " + (c["where"] or ""))
+                _adv_n = int(_pm.group(1)) if _pm else None
+                _pin = pin_unit(c["finding"] + " " + c["proposition"], None, UPROF)
+                cells.append({"claim": _pin.get("unit") or 0, "title": c["finding"][:160], "kind": "record_fact", "form": "record", "status": "RECORD", "level": 6,
+                              "bot": c["axis"], "finding": c["finding"], "proposition": c["proposition"], "verdict": v, "adverse_para": _adv_n,
+                              "where": c["where"], "authorities": [], "gap": None, "fix": None, "record_facts": [c["where"]] if c["where"] else [],
+                              "relay": f"{tag} r{c['room']} {c['axis']}#{c['n']}",
+                              "text": f"RECORD FACT (proof, {c['status']}): {c['finding']} | where: {c['where']}" + (f" | adverse ¶{_adv_n}" if _adv_n else "")})
         elif META_RX.search(c["finding"]) or META_RX.search(c["proposition"]): why = "meta/self-check"
+        elif c["axis"] in ADMIN_LANES and not ok and v == "OPEN" and MIRROR_ONLY_RX.search(vreason.get((c["room"], c["axis"], c["n"]), "")):
+            why = None                                    # F2.1: a MIRROR/Issue-form objection does not apply to an admin-form card; the verifier decides
         elif not ok: why = f"verdict {v or c['status']}"
-        elif not c["proposition"]: why = "no PROPOSITION"
+        elif not c["proposition"] and c["axis"] not in ADMIN_LANES: why = "no PROPOSITION"
         if why:
             side.append({"why": why, "card": c["line"][:300]})
             if why.startswith("verdict"):
                 pm = re.match(r"\s*(?:Issue|Point|Ground|Relief)\s+(\d{1,2})\b", c["proposition"])
                 open_lanes.append({"lane": c["axis"], "point": int(pm.group(1)) if pm else None, "verdict": v or c["status"], "relay": f"{tag} r{c['room']} {c['axis']}#{c['n']}"})
             continue
-        form = classify_form(c["axis"], c["proposition"])
         relay = f"{tag} r{c['room']} {c['axis']}#{c['n']}"
-        a = authority_of(c["authority"], cite_by_slug, chunks_by_cite)
+        # ---- F2.1 admin row: actor / request / demand / clock / escalation — the admin room's own forms (never the Issue form)
+        if c["axis"] in ADMIN_LANES:
+            kind_a = ADMIN_LANES[c["axis"]]
+            p = parse_admin(kind_a, c["finding"], c["proposition"], c["where"], c["authority"])
+            auth = admin_verify(p.pop("authorities"))
+            n_a = p["number"] if (p["number"] in points or p["number"] in UPROF) else 0
+            status = "GROUNDED" if any(x["verified"] for x in auth) else ("NOT IN CORPUS" if p["not_in_corpus"] and not auth else "OPEN")
+            cells.append({"claim": n_a, "title": (p["subject"] or c["proposition"] or c["finding"])[:160], "kind": kind_a, "form": "admin", "status": status, "level": 6,
+                          "bot": c["axis"], "finding": c["finding"], "proposition": c["proposition"], "verdict": v,
+                          **{k: val for k, val in p.items() if k not in ("kind", "number", "subject")},
+                          "authorities": auth, "gap": None, "fix": None, "record_facts": [], "relay": relay})
+            continue
+        form = classify_form(c["axis"], c["proposition"])
+        _auths = authorities_of(c["authority"], cite_by_slug, chunks_by_cite)
+        a = _auths[0] if _auths else None
+        _extra = [_verify_auth(x, c["gate"]) for x in _auths[1:]]   # S-multi-authority: the 2nd..nth authorities, each verified
         # ---- posture row (claim 0): the vehicle, trigger, deadline, standard, must-contain — what the motion's opening + prayer are built from
         if form == "posture":
             p = parse_posture(c["proposition"], c["finding"], c["where"])
@@ -574,31 +1380,41 @@ def main(tag, inputs, out_path, cards_dir=str(_eroot() / "output/research/rooms_
         cells.append({"claim": _claim, "title": _title,
                       "status": "GROUNDED", "level": "record" if is_face or not a else 6, "bot": c["axis"],
                       "finding": c["finding"], "proposition": c["proposition"],
-                      "authorities": [a] if a else [], "gap": None, "fix": None,
+                      "authorities": ([a] if a else []) + _extra, "gap": None, "fix": None,
                       "record_facts": [c["finding"] + (f" ({c['where']})" if c["where"] else "")] if is_face else [],
                       "relay": relay, **({"new_unit": True, "kind": "violation"} if new else {})})
     nu_path = _new_units_md(inputs, list(new_units.values())) if new_units else None
+    gst = guard_cells(cells, inputs, out_path, tag, cards_dir, UPROF)      # S-cells-guard: family check + record pointer + connected record
     cite_log = normalize_cells(cells)                                   # S-cite-drift-normalize: room cells carry the corpus pin
+    sp = second_pass_gate(cells, inputs, os.path.dirname(os.path.abspath(out_path)) or ".", tag)   # S-gap-second-pass: pin-gated
+    for cell in cells: cell.setdefault("run", tag)                      # S-room-closure: every row names the run that produced it
+    ledger, lstats = merge_ledger(out_path, cells)                      # append + upsert (no downgrade); CELLS_APPEND=0 = old truncate
     with open(out_path, "w") as f:
-        for cell in cells: f.write(json.dumps(cell, ensure_ascii=False) + "\n")
+        for cell in ledger: f.write(json.dumps(cell, ensure_ascii=False) + "\n")
     json.dump({"set_aside": side, "records": records, "contradictions": contradictions, "open_by_lane": open_lanes,
-               "new_units": sorted(new_units), "new_units_md": nu_path, "cite_normalize": cite_log, "unit_pins": pin_log},
+               "new_units": sorted(new_units), "new_units_md": nu_path, "cite_normalize": cite_log, "unit_pins": pin_log,
+               "run": tag, "ledger": lstats, "guards": gst, "second_pass": sp},
               open(out_path.replace(".jsonl", "_sidecar.json"), "w"), indent=1, ensure_ascii=False)
     import collections
     kind = lambda c: c.get("kind", "violation")
     print(json.dumps({"cards": len(cards), "cells": len(cells),
+                      "ledger": {**lstats, "rows": len(ledger), "path": out_path, "append": LEDGER_APPEND},
                       "by_kind": dict(collections.Counter(kind(c) for c in cells)),
                       "with_authority": sum(1 for c in cells if c["authorities"]),
-                      "grounded": {k: sum(1 for c in cells if kind(c) == k and c["status"] == "GROUNDED") for k in ("posture", "remedy")},
+                      "grounded": {k: sum(1 for c in cells if kind(c) == k and c["status"] == "GROUNDED") for k in ("posture", "remedy") + tuple(ADMIN_LANES.values()) if any(kind(c) == k for c in cells)},
                       "set_aside": dict(collections.Counter(s["why"] for s in side)),
                       "open_by_lane": [f"{o['lane']}#{o['point']}:{o['verdict']}" for o in open_lanes],
                       "new_units": sorted(new_units), "contradictions": len(contradictions),
                       "unit_pin": {"methods": dict(collections.Counter(p["method"] for p in pin_log)), "units_with_rows": len({c["claim"] for c in cells if isinstance(c["claim"], int) and c["claim"] in UPROF}), "units": len(UPROF),
                                    "number_overruled": sum(1 for p in pin_log if p["number"] in UPROF and p["unit"] != p["number"])},
                       "verifier": "card_gate" if _cg else "gate-marker-only (card_gate import failed)",
+                      "guards": {k: gst[k] for k in ("authorities_checked", "family_mismatch", "family_unchecked", "parse_defects",
+                                                     "pointer_filled", "quote_guard_demoted", "connected_units_open", "cells_failed")},
                       "cite_normalize": {"normalized": sum(1 for x in cite_log if x["action"] == "normalized"), "fetch": sum(1 for x in cite_log if x["action"] == "fetch")},
+                      "second_pass": {k: sp[k] for k in ("gate", "cells_seen", "cells_with_cite", "fired", "skipped", "receipt", "pins", "exact_pins")} |
+                                     {"units_redispatch": sp["units_redispatch"], "pull_list": len(sp["pull_list"])},
                       "by_claim": dict(collections.Counter(str(c["claim"])[:40] for c in cells))}, ensure_ascii=False))
-    bad = [c for c in cells if not (isinstance(c["claim"], int) and (c["claim"] in points or c["claim"] in new_units or (c["claim"] == 0 and kind(c) in ("posture", "remedy"))))]
+    bad = [c for c in cells if not (isinstance(c["claim"], int) and (c["claim"] in points or c["claim"] in new_units or (c["claim"] == 0 and kind(c) in ("posture", "remedy") + tuple(ADMIN_LANES.values()))))]
     if bad: raise SystemExit(f"cards_to_cells: {len(bad)} cell(s) with a non-point claim — refusing to emit")
 
 

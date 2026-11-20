@@ -85,9 +85,9 @@ def _norm_party(p: str) -> str:
     up = p.upper()
     # canonicalize the known cast (extend as cases add parties)
     for canon, keys in {
-        "PLANET HOME LENDING": ("PLANET",),
-        "AMERISAVE MORTGAGE CORPORATION": ("AMERISAVE",),
-        "DOVENMUEHLE MORTGAGE": ("DOVENMUEHLE", "DMI"),
+        "EXAMPLE MORTGAGE CO": ("PLANET",),
+        "EXAMPLE LENDER": ("EXAMPLE LENDER",),
+        "EXAMPLE SERVICER": ("EXAMPLE SERVICER", "DMI"),
         "U.S. BANK": ("U.S. BANK", "US BANK"),
         "GINNIE MAE": ("GINNIE",),
         "TRANSUNION": ("TRANS UNION", "TRANSUNION"),

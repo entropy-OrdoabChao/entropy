@@ -94,8 +94,20 @@ def register_block_9b_tools(mcp) -> int:
         term: str,
         statute_scope: Optional[str] = None,
         candidates: Optional[list[dict]] = None,
+        cite: Optional[str] = None,
+        source: Optional[str] = None,
+        case_id: Optional[str] = None,
+        write_back: bool = False,
     ) -> dict:
         """Look up a legal term using priority-ranked sources.
+        Tier 0 (2026-11-10, KEYED — runs first whenever no explicit candidates are passed): the struct index's own
+          definition rows. cite ('40 P.S. § 310.1', '15 U.S.C. § 1681a') or source ('pa_40ps_insurance_department_act')
+          → the statute's OWN definitions section (hierarchy level 3) via struct_pins unit rung → ps_crosswalk rung,
+          verbatim defining sentence + chunk_id + unit + heading + means/includes scope; then Black's / Bouvier /
+          Am Jur / C.J.S. HEADWORD rows (level 7) in SOURCE_PRIORITY order, each with its edition. Adds `rungs`
+          (every rung, hierarchy order, FOUND / NOT IN CORPUS) and `ground_line` (room GROUND+ grammar). With
+          write_back=True the hit is recorded (rung + chunk_id) in _dynamic_term_grounding.yaml and, given case_id,
+          cases/<case>/_definitions.md. A keyed miss falls through to the tiers below with its rungs attached.
         Tiered fallback when no candidates passed:
           1. explicit candidates from caller (existing behavior)
           2. CORE_DEFINITIONS (litigation terms catalog)
@@ -109,172 +121,200 @@ def register_block_9b_tools(mcp) -> int:
         """
         import re as _re
         from pipeline.definition_engine import lookup_with_priority
-        # Tier 1: caller passed candidates
-        if candidates:
-            result = lookup_with_priority(term, statute_scope, candidates)
+        keyed = None
+        # Tier 0 ALWAYS runs (2026-11-10 r65 gate: bots pass the cite as a candidate, not as cite= — the keyed
+        # rung must still see it). cite precedence: cite= > statute_scope > the first cite-looking candidate.
+        _cand_cite = None
+        for _c in (candidates or []):
+            _v = _c if isinstance(_c, str) else (_c.get("citation") or _c.get("cite") or _c.get("source") or "") if isinstance(_c, dict) else ""
+            if _v and _re.search(r"§|U\.S\.C|C\.F\.R|P\.S\.|Pa\.C\.S|Stat\.|_t\d+|_s\d", str(_v)):
+                _cand_cite = str(_v); break
+        if True:
+            # Tier 0: keyed (struct index definition rows) — statute-own first, then dictionary headwords.
+            try:
+                from pipeline.case_definitions_page import keyed_definition_lookup
+                keyed = keyed_definition_lookup(term, cite=cite or statute_scope or _cand_cite, source=source, case_id=case_id, write_back=write_back)
+            except Exception as _e:
+                keyed = {"found": False, "tier": "keyed", "term": term, "rungs": [],
+                         "ground_line": "", "message": f"keyed tier error: {type(_e).__name__}: {str(_e)[:160]}"}
+            if keyed.get("found"):
+                return keyed
+
+        def _with_rungs(d):
+            if keyed is not None:
+                d.setdefault("rungs", keyed.get("rungs", []))
+                d.setdefault("ground_line", keyed.get("ground_line", ""))
+                d.setdefault("keyed_message", keyed.get("message", ""))
+            return d
+        def _legacy_tiers():
+            # the pre-11-10 tiers, unchanged, wrapped so every return carries the keyed tier's rungs/ground_line
+            # Tier 1: caller passed candidates
+            if candidates:
+                result = lookup_with_priority(term, statute_scope, candidates)
+                if result:
+                    return {"found": True, "tier": "explicit_candidates", **result}
+                return {"found": False, "tier": "explicit_candidates", "term": term,
+                        "message": f"No valid definition for '{term}' among candidates",
+                        "candidates_received": len(candidates)}
+            # Tier 2: CORE_DEFINITIONS
+            result = lookup_with_priority(term, statute_scope, None)
             if result:
-                return {"found": True, "tier": "explicit_candidates", **result}
-            return {"found": False, "tier": "explicit_candidates", "term": term,
-                    "message": f"No valid definition for '{term}' among candidates",
-                    "candidates_received": len(candidates)}
-        # Tier 2: CORE_DEFINITIONS
-        result = lookup_with_priority(term, statute_scope, None)
-        if result:
-            return {"found": True, "tier": "core_definitions", **result}
-        # Tier 3: definitions_learned cache
-        try:
-            from pathlib import Path
-            learned_dir = (_eroot() / "obsidian_sync/definitions_learned")
-            if learned_dir.exists():
-                term_slug = _re.sub(r"[^a-zA-Z0-9]+", "_", term.lower()).strip("_")
-                for f in learned_dir.glob("*.md"):
-                    if f.name.startswith("_"):
+                return _with_rungs({"found": True, "tier": "core_definitions", **result})
+            # Tier 3: definitions_learned cache
+            try:
+                from pathlib import Path
+                learned_dir = (_eroot() / "obsidian_sync/definitions_learned")
+                if learned_dir.exists():
+                    term_slug = _re.sub(r"[^a-zA-Z0-9]+", "_", term.lower()).strip("_")
+                    for f in learned_dir.glob("*.md"):
+                        if f.name.startswith("_"):
+                            continue
+                        if term_slug and term_slug in f.name.lower():
+                            text = f.read_text(encoding="utf-8", errors="ignore")
+                            return {
+                                "found": True,
+                                "tier": "definitions_learned_cache",
+                                "term": term,
+                                "definition": text[:2000],
+                                "source": f.name,
+                                "source_type": "cached",
+                                "cache_path": str(f),
+                            }
+            except Exception:
+                pass
+            # Tier 4: ChromaDB via the same code path search_chunks uses
+            # (proven to work in this MCP process). Falls back to direct db_connector
+            # if anything goes wrong.
+            try:
+                _hits = None
+                # Path A: use retriever.retrieve() with legal-term-of-art query expansion
+                try:
+                    from pipeline.retriever import retrieve as _expand_retrieve
+                    _hits = _expand_retrieve(term, jurisdiction="federal", final_k=15)
+                except Exception as _e_path_a:
+                    _hits = None
+                # Path B: fall back to raw query_text if expansion path errors
+                if not _hits:
+                    try:
+                        from pipeline.db_connector import get_db as _get_db_b
+                        _db_b = _get_db_b()
+                        _hits = _db_b.query_text(query_text=term, n_results=15)
+                    except Exception:
+                        _hits = []
+                _hits = _hits or []
+                # _hits is a list of dicts with keys: id, text, distance, source,
+                # section, chunk_type, citations, doc_id, has_definitions, metadata
+                ids_list = [h.get("id", "") for h in (_hits or [])]
+                docs_list = [h.get("text", "") for h in (_hits or [])]
+                metas_list = [h.get("metadata", {}) or {} for h in (_hits or [])]
+                _extras = {
+                    h.get("id", ""): {
+                        "source": h.get("source", ""),
+                        "section": h.get("section", ""),
+                        "chunk_type": h.get("chunk_type", ""),
+                        "distance": h.get("distance"),
+                    }
+                    for h in (_hits or [])
+                }
+                LEGAL_MARKERS = [
+                    r"\bU\.?S\.?C\.?\s*\u00a7?\s*\d+",
+                    r"\bC\.?F\.?R\.?\s*\u00a7?\s*\d+",
+                    r"\bUCC\s*\u00a7?\s*\d+-\d+",
+                    r"\b\d+\s+Stat\.\s+\d+",
+                    r"\bRule\s+\d+",
+                    r"\bF\.?R\.?C\.?P\.?\s*\d+",
+                    r"\bF\.?R\.?E\.?\s*\d+",
+                    r"\bPa\.?\s*R\.?\s*C\.?\s*P\.?\s*\d+",
+                    r"\b[A-Z][a-z]+\s+v\.\s+[A-Z]",
+                    r"\bH\.?J\.?\s*Res\.?\s*\d+",
+                    r"\u00a7\s*\d+",
+                    r"\u00a7\s*\d+-\d+",
+                    r"\b\d+-\d+\b",
+                    r"\bRestatement",
+                    r"\bSection\s+\d+",
+                ]
+                marker_re = _re.compile("|".join(LEGAL_MARKERS), _re.IGNORECASE)
+                extracted = []
+                term_lower = (term or "").lower()
+                AUTHORITY_TYPES = {"statutory", "regulatory", "case_law", "blacks_law", "bouviers"}
+                for i, cid in enumerate(ids_list):
+                    doc = docs_list[i] if i < len(docs_list) else ""
+                    meta = metas_list[i] if i < len(metas_list) else {}
+                    if not doc:
                         continue
-                    if term_slug and term_slug in f.name.lower():
-                        text = f.read_text(encoding="utf-8", errors="ignore")
+                    has_legal_marker = bool(marker_re.search(doc))
+                    has_term = term_lower and (term_lower in doc.lower())
+                    # Soft labeling
+                    cid_l = (cid or "").lower()
+                    if isinstance(meta, dict) and meta.get("source_type"):
+                        source_type = meta["source_type"]
+                    elif cid_l.startswith("blacks_law_"):
+                        source_type = "blacks_law"
+                    elif cid_l.startswith("ucc_") or "_ucc_" in cid_l:
+                        source_type = "statutory"
+                    elif "usc" in cid_l:
+                        source_type = "statutory"
+                    elif "cfr" in cid_l:
+                        source_type = "regulatory"
+                    elif "bouvier" in cid_l:
+                        source_type = "bouviers"
+                    else:
+                        source_type = "unknown"
+                    # ADMIT POLICY (other AI's correction):
+                    # Legal marker required. Term-only is allowed ONLY if metadata
+                    # source_type identifies an authority class.
+                    if not has_legal_marker:
+                        if not (has_term and source_type in AUTHORITY_TYPES):
+                            continue
+                    _xtra = _extras.get(cid, {})
+                    source_label = (
+                        (meta.get("source") if isinstance(meta, dict) else None)
+                        or _xtra.get("source")
+                        or _xtra.get("section")
+                        or f"chunk:{cid}"
+                    )
+                    if not isinstance(meta, dict) or not meta.get("source_type"):
+                        _ct = _xtra.get("chunk_type", "")
+                        if _ct and _ct.lower() in AUTHORITY_TYPES:
+                            source_type = _ct.lower()
+                    extracted.append({
+                        "term": term,
+                        "definition": doc[:1500],
+                        "source": source_label,
+                        "scope": statute_scope or "general",
+                        "source_type": source_type,
+                        "chunk_id": cid,
+                        "has_legal_marker": has_legal_marker,
+                        "has_term": has_term,
+                        "distance": _extras.get(cid, {}).get("distance"),
+                    })
+                # Pre-sort: statutory/regulatory first, then everything else
+                _order = {"statutory": 0, "regulatory": 1, "blacks_law": 2, "case_law": 3, "bouviers": 4, "unknown": 9}
+                extracted.sort(key=lambda c: _order.get(c.get("source_type", "unknown"), 9))
+                if extracted:
+                    ranked = lookup_with_priority(term, statute_scope, extracted)
+                    if ranked:
                         return {
                             "found": True,
-                            "tier": "definitions_learned_cache",
-                            "term": term,
-                            "definition": text[:2000],
-                            "source": f.name,
-                            "source_type": "cached",
-                            "cache_path": str(f),
+                            "tier": "chromadb_ranked",
+                            "candidates_extracted": len(extracted),
+                            **ranked,
                         }
-        except Exception:
-            pass
-        # Tier 4: ChromaDB via the same code path search_chunks uses
-        # (proven to work in this MCP process). Falls back to direct db_connector
-        # if anything goes wrong.
-        try:
-            _hits = None
-            # Path A: use retriever.retrieve() with legal-term-of-art query expansion
-            try:
-                from pipeline.retriever import retrieve as _expand_retrieve
-                _hits = _expand_retrieve(term, jurisdiction="federal", final_k=15)
-            except Exception as _e_path_a:
-                _hits = None
-            # Path B: fall back to raw query_text if expansion path errors
-            if not _hits:
-                try:
-                    from pipeline.db_connector import get_db as _get_db_b
-                    _db_b = _get_db_b()
-                    _hits = _db_b.query_text(query_text=term, n_results=15)
-                except Exception:
-                    _hits = []
-            _hits = _hits or []
-            # _hits is a list of dicts with keys: id, text, distance, source,
-            # section, chunk_type, citations, doc_id, has_definitions, metadata
-            ids_list = [h.get("id", "") for h in (_hits or [])]
-            docs_list = [h.get("text", "") for h in (_hits or [])]
-            metas_list = [h.get("metadata", {}) or {} for h in (_hits or [])]
-            _extras = {
-                h.get("id", ""): {
-                    "source": h.get("source", ""),
-                    "section": h.get("section", ""),
-                    "chunk_type": h.get("chunk_type", ""),
-                    "distance": h.get("distance"),
-                }
-                for h in (_hits or [])
-            }
-            LEGAL_MARKERS = [
-                r"\bU\.?S\.?C\.?\s*\u00a7?\s*\d+",
-                r"\bC\.?F\.?R\.?\s*\u00a7?\s*\d+",
-                r"\bUCC\s*\u00a7?\s*\d+-\d+",
-                r"\b\d+\s+Stat\.\s+\d+",
-                r"\bRule\s+\d+",
-                r"\bF\.?R\.?C\.?P\.?\s*\d+",
-                r"\bF\.?R\.?E\.?\s*\d+",
-                r"\bPa\.?\s*R\.?\s*C\.?\s*P\.?\s*\d+",
-                r"\b[A-Z][a-z]+\s+v\.\s+[A-Z]",
-                r"\bH\.?J\.?\s*Res\.?\s*\d+",
-                r"\u00a7\s*\d+",
-                r"\u00a7\s*\d+-\d+",
-                r"\b\d+-\d+\b",
-                r"\bRestatement",
-                r"\bSection\s+\d+",
-            ]
-            marker_re = _re.compile("|".join(LEGAL_MARKERS), _re.IGNORECASE)
-            extracted = []
-            term_lower = (term or "").lower()
-            AUTHORITY_TYPES = {"statutory", "regulatory", "case_law", "blacks_law", "bouviers"}
-            for i, cid in enumerate(ids_list):
-                doc = docs_list[i] if i < len(docs_list) else ""
-                meta = metas_list[i] if i < len(metas_list) else {}
-                if not doc:
-                    continue
-                has_legal_marker = bool(marker_re.search(doc))
-                has_term = term_lower and (term_lower in doc.lower())
-                # Soft labeling
-                cid_l = (cid or "").lower()
-                if isinstance(meta, dict) and meta.get("source_type"):
-                    source_type = meta["source_type"]
-                elif cid_l.startswith("blacks_law_"):
-                    source_type = "blacks_law"
-                elif cid_l.startswith("ucc_") or "_ucc_" in cid_l:
-                    source_type = "statutory"
-                elif "usc" in cid_l:
-                    source_type = "statutory"
-                elif "cfr" in cid_l:
-                    source_type = "regulatory"
-                elif "bouvier" in cid_l:
-                    source_type = "bouviers"
-                else:
-                    source_type = "unknown"
-                # ADMIT POLICY (other AI's correction):
-                # Legal marker required. Term-only is allowed ONLY if metadata
-                # source_type identifies an authority class.
-                if not has_legal_marker:
-                    if not (has_term and source_type in AUTHORITY_TYPES):
-                        continue
-                _xtra = _extras.get(cid, {})
-                source_label = (
-                    (meta.get("source") if isinstance(meta, dict) else None)
-                    or _xtra.get("source")
-                    or _xtra.get("section")
-                    or f"chunk:{cid}"
-                )
-                if not isinstance(meta, dict) or not meta.get("source_type"):
-                    _ct = _xtra.get("chunk_type", "")
-                    if _ct and _ct.lower() in AUTHORITY_TYPES:
-                        source_type = _ct.lower()
-                extracted.append({
-                    "term": term,
-                    "definition": doc[:1500],
-                    "source": source_label,
-                    "scope": statute_scope or "general",
-                    "source_type": source_type,
-                    "chunk_id": cid,
-                    "has_legal_marker": has_legal_marker,
-                    "has_term": has_term,
-                    "distance": _extras.get(cid, {}).get("distance"),
-                })
-            # Pre-sort: statutory/regulatory first, then everything else
-            _order = {"statutory": 0, "regulatory": 1, "blacks_law": 2, "case_law": 3, "bouviers": 4, "unknown": 9}
-            extracted.sort(key=lambda c: _order.get(c.get("source_type", "unknown"), 9))
-            if extracted:
-                ranked = lookup_with_priority(term, statute_scope, extracted)
-                if ranked:
                     return {
-                        "found": True,
-                        "tier": "chromadb_ranked",
+                        "found": False,
+                        "tier": "chromadb_extracted_unranked",
+                        "term": term,
                         "candidates_extracted": len(extracted),
-                        **ranked,
+                        "candidates": extracted[:8],
+                        "message": f"DB returned {len(extracted)} candidates with legal-text markers but none ranked as valid",
                     }
-                return {
-                    "found": False,
-                    "tier": "chromadb_extracted_unranked",
-                    "term": term,
-                    "candidates_extracted": len(extracted),
-                    "candidates": extracted[:8],
-                    "message": f"DB returned {len(extracted)} candidates with legal-text markers but none ranked as valid",
-                }
-        except Exception as _e_db:
-            return {"found": False, "tier": "db_error", "term": term,
-                    "error": str(_e_db),
-                    "message": f"DB fallback errored: {_e_db}"}
-        return {"found": False, "tier": "exhausted", "term": term,
-                "message": f"No definition for '{term}' in any tier"}
+            except Exception as _e_db:
+                return {"found": False, "tier": "db_error", "term": term,
+                        "error": str(_e_db),
+                        "message": f"DB fallback errored: {_e_db}"}
+            return {"found": False, "tier": "exhausted", "term": term,
+                    "message": f"No definition for '{term}' in any tier"}
+        return _with_rungs(_legacy_tiers())
     count += 1
 
     @mcp.tool

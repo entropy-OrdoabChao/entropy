@@ -15,7 +15,7 @@
 ### Active Cases:
 1. {{CASE_ID}} — {{USER_LAST}} VS {{OPPOSING_PARTY}} ETAL (judgment_by_default_active_motions_to_strike)
 2. {{CASE_ID}} — {{USER_LAST}} VS EQUIFAX INFORMATION SERVICES, LLC ETAL (trial_court_pending_FRCP_54b_certification)
-3. {{CASE_ID}} — {{USER_LAST}} VS AMERISAVE MORTGAGE CORPORATION ETAL (appellate_briefing_scheduled)
+3. {{CASE_ID}} — {{USER_LAST}} VS EXAMPLE LENDER ETAL (appellate_briefing_scheduled)
 4. {{CASE_ID}} — {{USER_LAST}} VS STATE FARM ETAL (merits_mandamus_pending)
 
 ---

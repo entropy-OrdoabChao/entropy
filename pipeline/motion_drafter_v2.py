@@ -35,7 +35,22 @@ import requests
 
 REPO = _eroot()
 LLAMA_URL = os.environ.get('LLAMA_URL', 'http://localhost:8000')
-PLAINTIFF_NAME = os.environ.get('PLAINTIFF_NAME', 'Filer Filer')
+
+# ---- S-no-hardcode (2026-11-14): the signer, the capacity word and the address of record were
+# spelled into five signature blocks (two of them with a DIFFERENT form of the same name), so a
+# filing drafted for any other filer carried this rig owner's name. They now come from
+# cases_index/filer_identity.json via pipeline.case_profile; env PLAINTIFF_NAME still wins.
+try:
+    from pipeline import case_profile as _cprof
+    _IDENT = _cprof.filer_identity()
+    _ADDR_LINES = _cprof.filer_address_lines()
+except Exception:                                   # degraded import -> loud placeholders, no name
+    _IDENT, _ADDR_LINES = {}, []
+PLAINTIFF_NAME = (os.environ.get('PLAINTIFF_NAME') or _IDENT.get('signature_name')
+                  or '[FILER NAME NOT SET — cases_index/filer_identity.json]')
+SIGNER_SHORT = _IDENT.get('signature_short') or PLAINTIFF_NAME
+CAPACITY = _IDENT.get('capacity') or 'sui juris'
+ADDRESS_BLOCK = "\n".join(_ADDR_LINES) or '[ADDRESS OF RECORD NOT SET — cases_index/filer_identity.json]'
 
 
 SYSTEM_PROMPT = (
@@ -982,18 +997,35 @@ def _ifthen_block_for(stub_text, motion_title, case_id=""):
 # === END BEEZLE_PATCH_P2_MOTION_DEFECTS_V2 ===
 # === SECTION_BY_SECTION_V1 ===
 # Each defendant is an alias GROUP; matching any alias scopes the whole group.
-_DEFENDANT_ALIASES = [
-    ["transunion", "trans union"],
-    ["experian"],
-    ["equifax"],
-    ["greensky", "green sky"],
-    ["capital one", "capital_one", "capitalone"],
-    ["avant"],
-    ["amerisave"],
-    ["state farm", "statefarm"],
-    ["progressive"],
-    ["lippi"],
-]
+def _build_defendant_aliases():
+    """Alias rows for EVERY party the indexes know, derived from the party tags themselves
+    (tag, tag with spaces, tag squashed). S-no-hardcode (2026-11-14): this was a 10-row hand
+    table, so a defendant added to a case was invisible to scope detection until someone edited
+    this file, and the rows named parties from unrelated cases."""
+    rows, seen = [], set()
+    try:
+        from pipeline.case_profile import filer_party_tags, iter_profiles
+        mine = filer_party_tags()
+        tags = []
+        for pr in iter_profiles():
+            for n in (pr.get("adverse_names") or []):
+                t = re.sub(r"[^a-z0-9]+", "_", n.lower()).strip("_")
+                if t and t not in mine:
+                    tags.append(t)
+        for t in tags:
+            if t in seen:
+                continue
+            seen.add(t)
+            row = [t.replace("_", " ")]
+            if "_" in t:
+                row += [t, t.replace("_", "")]
+            rows.append(row)
+    except Exception:
+        pass
+    return rows
+
+
+_DEFENDANT_ALIASES = _build_defendant_aliases()
 
 def _scope_defendants(scope_text):
     """From a stub scope like 'Example Card Issuer only', return (in_scope_aliases,
@@ -2289,16 +2321,16 @@ def assemble_full_draft(stub_text, llm_output, case_id, motion_filename):
     if _is_appellate_filing(motion_filename):
         _app_sig = (
             f"\n\nRespectfully submitted,\n\n"
-            f"/s/ FILER NAME\n_________________________\n"
-            f"{PLAINTIFF_NAME}, Appellant, *sui juris*\n"
-            f"123 Main St, Suite 100\nAnytown, ST 00000\n\n"
+            f"/s/ {SIGNER_SHORT}\n_________________________\n"
+            f"{PLAINTIFF_NAME}, Appellant, *{CAPACITY}*\n"
+            f"{ADDRESS_BLOCK}\n\n"
             f"Dated: {datetime.now().strftime('%B %-d, %Y')}\n\n"
             f"[[PAGEBREAK]]\n\n## CERTIFICATE OF SERVICE\n\n"
             f"I, {PLAINTIFF_NAME}, certify that on the date set forth below a true and correct copy of the "
             f"foregoing Brief was served upon all counsel and parties of record by U.S. Mail at the addresses "
             f"on file, in compliance with the applicable Rules of Appellate Procedure.\n\n"
-            f"/s/ FILER NAME\n_________________________\n"
-            f"{PLAINTIFF_NAME}, Appellant, *sui juris*\n\n"
+            f"/s/ {SIGNER_SHORT}\n_________________________\n"
+            f"{PLAINTIFF_NAME}, Appellant, *{CAPACITY}*\n\n"
             f"Dated: {datetime.now().strftime('%B %-d, %Y')}\n"
         )
         _full, _ = _verify_draft_cites(header + llm_output + _app_sig)
@@ -2322,11 +2354,10 @@ def assemble_full_draft(stub_text, llm_output, case_id, motion_filename):
 
     sig = (
         f"\n\nRespectfully submitted,\n\n"
-        f"/s/ FILER NAME\n"
+        f"/s/ {SIGNER_SHORT}\n"
         f"_________________________\n"
-        f"{PLAINTIFF_NAME}, *sui juris*\nAll rights reserved without prejudice; 13 Pa.C.S. \u00a7 1308 / U.C.C. \u00a7 1-308\nAppearing personally under 28 U.S.C. \u00a7 1654\n"
-        f"123 Main St, Suite 100\n"
-        f"Anytown, ST 00000\n\n"
+        f"{PLAINTIFF_NAME}, *{CAPACITY}*\nAll rights reserved without prejudice; 13 Pa.C.S. \u00a7 1308 / U.C.C. \u00a7 1-308\nAppearing personally under 28 U.S.C. \u00a7 1654\n"
+        f"{ADDRESS_BLOCK}\n\n"
         f"Dated: {datetime.now().strftime('%B %-d, %Y')}\n\n"
         f"[[PAGEBREAK]]\n\n"
         f"## CERTIFICATE OF SERVICE\n\n"
@@ -2335,9 +2366,9 @@ def assemble_full_draft(stub_text, llm_output, case_id, motion_filename):
         f"all parties of record by **first-class United States Mail, postage prepaid,** "
         f"at the addresses on file with the Court. I am not a registered electronic filer; "
         f"service is made by mail.\n\n"
-        f"/s/ FILER NAME\n"
+        f"/s/ {SIGNER_SHORT}\n"
         f"_________________________\n"
-        f"{PLAINTIFF_NAME}, *sui juris*\n\n"
+        f"{PLAINTIFF_NAME}, *{CAPACITY}*\n\n"
         f"Dated: {datetime.now().strftime('%B %-d, %Y')}\n\n"
         f"[[PAGEBREAK]]\n\n"
         f"## [PROPOSED] ORDER\n\n"
@@ -2678,7 +2709,7 @@ def _render_docx_for_draft(draft_md_path, case_id):
                  f"prepare it, and therefore {'complies with' if _wc <= cap else 'is being conformed to'} "
                  f"the {cap:,}-word limit.\n\n"
                  f"Dated: __________________          _______________________________\n"
-                 f"                                    FILER NAME, Appellant, sui juris\n")
+                 f"                                    {SIGNER_SHORT}, Appellant, {CAPACITY}\n")
         # place the certificate BEFORE the DEFINITIONS/footnote block if present, else append
         if "DEFINITIONS & AUTHORITIES" in md:
             _head, _foot = md.split("---\nDEFINITIONS & AUTHORITIES", 1) if "---\nDEFINITIONS & AUTHORITIES" in md else (md, "")

@@ -18,6 +18,8 @@ Output: obsidian_sync/_hermes_learnings/notes/<slug>.md  + _MOC.md index.
 
 CLI:  python -m pipeline.connected_notes            # ingest + relink + MOC
       python -m pipeline.connected_notes --relink   # just recompute links across existing notes
+      python -m pipeline.connected_notes --relink-connected-record [--cases-dir D] [--dry-run]
+                                                    # make CASE_FACTS '## CONNECTED RECORD' edges bidirectional
 """
 from __future__ import annotations
 from pathlib import Path
@@ -693,8 +695,86 @@ def record_learning(text: str, tags=None, source: str = "session", cite: str = "
         return None
 
 
+# ── CONNECTED RECORD edges between CASES (backlog connected_record, 2026-11-13) ──
+# A case's CASE_FACTS '## CONNECTED RECORD — [[cases/<other>/…]]' heading makes the OTHER case a record source for this
+# one (scripts/rooms/connected_record.py resolves it into the room pack). The edge must be BIDIRECTIONAL: if A reads B's
+# record, B's room must see that A exists (same instrument, same parties, or the prior/parallel action). This writes a
+# marker-delimited back-link block at the end of B's CASE_FACTS.md — idempotent (no write when the block is unchanged),
+# .bak.<TS> before any mutation, and it never touches a line it did not write.
+CR_HEAD_RE = re.compile(r"(?mi)^##\s+CONNECTED RECORD\b.*$")
+CR_WIKI_RE = re.compile(r"\[\[([^\]\|#]+?)(?:#[^\]\|]*)?(?:\|[^\]]*)?\]\]")
+CR_BEGIN = "<!-- CONNECTED-RECORD-BACKLINKS:BEGIN (auto, pipeline.connected_notes — do not hand-edit inside the markers) -->"
+CR_END = "<!-- CONNECTED-RECORD-BACKLINKS:END -->"
+CR_TITLE = ("## CONNECTED RECORD — back-links (auto; these cases name THIS case's record under their own CONNECTED RECORD "
+            "heading, so this case's record reaches their room — and theirs reaches this one)")
+
+
+def _cr_cases_dir(cases_dir=None) -> Path:
+    return Path(cases_dir) if cases_dir else (OBS / "cases")
+
+
+def case_connected_edges(cases_dir=None) -> dict:
+    """{host-slug: {linked-slug: 'the CONNECTED RECORD heading line'}} over every case CASE_FACTS.md in the tree."""
+    root = _cr_cases_dir(cases_dir)
+    edges = {}
+    if not root.is_dir(): return edges
+    for d in sorted(p for p in root.iterdir() if p.is_dir()):
+        f = d / "CASE_FACTS.md"
+        if not f.is_file(): continue
+        md = f.read_text(errors="ignore")
+        i, j = md.find(CR_BEGIN), md.find(CR_END)
+        if i >= 0 and j > i: md = md[:i] + md[j + len(CR_END):]   # the auto block is a DERIVED edge, never a declaration
+        for m in CR_HEAD_RE.finditer(md):
+            j = md.find("\n## ", m.end())
+            body = md[m.start():(j if j > 0 else len(md))]
+            for raw in CR_WIKI_RE.findall(body):
+                parts = raw.strip().strip("/").split("/")
+                if len(parts) >= 2 and parts[0] == "cases" and parts[1] != d.name and (root / parts[1]).is_dir():
+                    edges.setdefault(d.name, {}).setdefault(parts[1], m.group(0).strip())
+    return edges
+
+
+def _cr_block(back: dict) -> str:
+    lines = [CR_BEGIN, CR_TITLE]
+    for host in sorted(back):
+        lines.append(f"- [[cases/{host}/CASE_FACTS]] — names this case under: {back[host]}")
+    lines.append(CR_END)
+    return "\n".join(lines) + "\n"
+
+
+def relink_connected_record(cases_dir=None, apply: bool = True) -> dict:
+    """make every CONNECTED RECORD edge bidirectional. Returns {'edges','written','unchanged','files'}; apply=False is a
+    dry run (nothing is written). Idempotent: a second run writes nothing."""
+    import time
+    root = _cr_cases_dir(cases_dir)
+    edges = case_connected_edges(cases_dir)
+    inv = {}
+    for host, targets in edges.items():
+        for t, head in targets.items(): inv.setdefault(t, {})[host] = head
+    rep = {"cases_dir": str(root), "edges": {h: sorted(t) for h, t in sorted(edges.items())},
+           "written": [], "unchanged": [], "missing": []}
+    for target in sorted(inv):
+        f = root / target / "CASE_FACTS.md"
+        if not f.is_file(): rep["missing"].append(target); continue
+        cur = f.read_text(errors="ignore")
+        block = _cr_block(inv[target])
+        i, j = cur.find(CR_BEGIN), cur.find(CR_END)
+        new = (cur[:i].rstrip("\n") + "\n\n" + block + cur[j + len(CR_END):].lstrip("\n")) if (i >= 0 and j > i) \
+            else (cur.rstrip("\n") + "\n\n" + block)
+        if new == cur: rep["unchanged"].append(target); continue
+        if apply:
+            (f.parent / (f.name + ".bak." + time.strftime("%Y%m%d_%H%M%S"))).write_text(cur)
+            f.write_text(new)
+        rep["written"].append({"case": target, "back_links": sorted(inv[target]), "applied": bool(apply),
+                               "replaced": i >= 0, "bytes": len(new.encode())})
+    return rep
+
+
 if __name__ == "__main__":
-    if "--relink" in sys.argv:
+    if "--relink-connected-record" in sys.argv:
+        cd = next((sys.argv[i + 1] for i, a in enumerate(sys.argv) if a == "--cases-dir"), None)
+        print(json.dumps(relink_connected_record(cd, apply="--dry-run" not in sys.argv), indent=1))
+    elif "--relink" in sys.argv:
         print(f"relinked {relink()} notes")
     else:
         added = ingest()

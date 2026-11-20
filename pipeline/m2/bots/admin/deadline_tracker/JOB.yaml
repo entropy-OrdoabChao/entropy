@@ -1,0 +1,20 @@
+name: deadline_tracker
+group: admin
+unit: clock            # claim | term | cite | count | document | case | draft
+axis: "ADMIN 4 — DEADLINE TRACKER: every clock the room opened → start event, verbatim rule, due date via deadline_compute_all/deadline_track, mail mode, status."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - usc_5_552
+  - usc_15_1681i
+  - usc_12_2605
+  - pa_65ps_67
+  - frcp_rule_6
+  - usc_15_1681p
+queries:
+  - "{claim} days after receipt"
+  - "excepting Saturdays Sundays and legal public holidays"
+  - "{claim} business days"
+  - "computing time period"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

@@ -10,13 +10,13 @@ The registry is loaded from <home>\\cases_index\\case_registry.json,
 which is built and maintained by beezle_register_dockets.py.
 
 Key concept: ONE canonical case can have many docket aliases. State case
-250500817 and federal case 2:26-cv-00123 are the SAME case at different
-procedural stages â€” both should resolve to canonical_id "fed:2:26-cv-00123"
+250500817 and federal case 2:25-cv-01234 are the SAME case at different
+procedural stages â€” both should resolve to canonical_id "fed:2:25-cv-01234"
 (the federal docket, since that's where the case currently lives).
 
 When a state case gets removed to federal:
   - state_origin_docket: 250500817
-  - canonical_id: fed:2:26-cv-00123
+  - canonical_id: fed:2:25-cv-01234
   - All aliases (state, federal, cross-references, typos) point to the
     canonical_id
 
@@ -28,8 +28,8 @@ When a case mentions an unrelated docket in citation context:
 This eliminates:
   1. State/federal split where the same case showed as 2 separate cases
   2. False-positive cases built from citation-body docket numbers
-  3. Typo'd dockets (2:25-cv-0767) being treated as different cases
-  4. Cross-contamination from party-tag overlap (Lippi vs bad faith)
+  3. Typo'd dockets (2:26-cv-00456) being treated as different cases
+  4. Cross-contamination from party-tag overlap (Example Creditor vs bad faith)
 """
 
 from __future__ import annotations
@@ -51,9 +51,9 @@ log = logging.getLogger("beezle.case_registry")
 
 @dataclass
 class CaseRegistryEntry:
-    canonical_id: str                       # e.g. "fed:2:26-cv-00123"
+    canonical_id: str                       # e.g. "fed:2:25-cv-01234"
     case_court: str                         # EDPA, PA_CP_PHILA, CA3
-    caption: str                            # e.g. "FILER VS LIPPI ETAL"
+    caption: str                            # e.g. "FILER VS EXAMPLE CREDITOR ETAL"
     filed: str = ""                         # ISO date
     status: str = ""                        # active / removed_to_fed / dismissed / etc.
     case_type: str = ""                     # contracts_other / fraud / quiet_title / bad_faith
@@ -117,14 +117,14 @@ def normalize_docket(raw: str) -> str:
       - Court labels ('Civil Action No.', 'Case No.', 'Docket No.')
       - Judge initials suffix ('-XYZ', '-MAK')
       - 'DC ' prefix on cross-references
-      - Hyphens (so 2:26-cv-00123 == 2:25cv02822 == 22502822)
+      - Hyphens (so 2:25-cv-01234 == 2:25cv01234 == 22501234)
 
     Examples:
       "No. 260100000"           -> "260100000"
-      "2:26-cv-00123-XYZ"       -> "225cv02822"
-      "2:26-cv-00123"           -> "225cv02822"
-      "DC 2025CV02822"          -> "2025cv02822"
-      "2025CV02822"             -> "2025cv02822"
+      "2:25-cv-01234-XYZ"       -> "225cv01234"
+      "2:25-cv-01234"           -> "225cv01234"
+      "DC 2025CV01234"          -> "2025cv01234"
+      "2025CV01234"             -> "2025cv01234"
       "October Term 2024 No. 002969" -> "2024oct002969"
     """
     if not raw:
@@ -173,10 +173,10 @@ def short_sig(raw: str):
     the federal pattern (state cases stay in the full-form index).
 
     Examples:
-      "25-2822"          -> ("25", 2822)
-      "2:26-cv-00123"    -> ("25", 2822)
-      "25cv02822"        -> ("25", 2822)
-      "2025-CV-02822"    -> ("25", 2822)
+      "25-1234"          -> ("25", 1234)
+      "2:25-cv-01234"    -> ("25", 1234)
+      "25cv01234"        -> ("25", 1234)
+      "2025-CV-01234"    -> ("25", 1234)
       "241099828"        -> None  (state-style; ambiguous)
     """
     if not raw:

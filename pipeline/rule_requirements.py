@@ -115,10 +115,20 @@ def rule_text_from_corpus(probes, cap: int = 4, prefer: str = "") -> list:
                 # sqlite3.Error: continue` swallowed it, and every probe returned zero -- a
                 # FALSE "NOT IN CORPUS" on a rule that is in corpus twice. Absence of a hit is
                 # never a finding until the query itself is proven to run.
+                # prefer given: the cap applies AFTER the rule family is hoisted. Capping first dropped the court's own
+                # rule (PA_SUPER 2111(a) 'separately and distinctly entitled and in the following order': the 4 FTS hits
+                # were Pa. Bulletin notices; pa_code_t210_ch21 — the adopted rule — was hit #5+, never seen).
                 cur.execute(
                     "SELECT source_id FROM chunk_text_fts "
-                    "WHERE chunk_text_fts MATCH ? LIMIT ?", (f'"{ph}"', cap))
+                    "WHERE chunk_text_fts MATCH ? LIMIT ?", (f'"{ph}"', cap if not prefer else max(cap, 200)))
                 rows = cur.fetchall()
+                if prefer:
+                    _pl = prefer.lower()
+                    _src = {}
+                    for (cid,) in rows:
+                        cur.execute("SELECT source FROM chunk_text WHERE chunk_id = ?", (cid,))
+                        _r = cur.fetchone(); _src[cid] = (_r[0] if _r else "") or ""
+                    rows = sorted(rows, key=lambda r: 0 if _pl in _src[r[0]].lower() else 1)[:cap]
             except sqlite3.Error as e:
                 print(f"rule_requirements: FTS probe {ph!r} FAILED: {e}", file=sys.stderr)
                 continue
@@ -168,8 +178,8 @@ _DERIVE_SYS = """You are reading a COURT RULE verbatim. Extract the document sec
 rule MANDATES for the filing named, in the rule's OWN order.
 
 Return STRICT JSON, no prose, no markdown fence:
-{"sections":[{"heading":"...","rule":"...","requires":"..."}],
- "attachments":[{"item":"...","label":"...","rule":"...","requires":"..."}],
+{"sections":[{"heading":"...","rule":"...","requires":"...","condition":"..."}],
+ "attachments":[{"item":"...","label":"...","rule":"...","requires":"...","condition":"..."}],
  "answer_required":{"rule":"...","required_for":"...","not_required_for":"...","requires":"..."},
  "endorsement":{"rule":"...","requires":"..."},
  "citation_rules":["..."]}
@@ -180,6 +190,9 @@ Hard constraints:
 - "requires" = what the rule demands, quoted or closely paraphrased FROM THE TEXT GIVEN.
 - Include a section ONLY if the text given actually mandates it. Do not add conventional
   sections (no INTRODUCTION, no STANDARD OF REVIEW) unless this rule names them.
+- "condition" = when the rule makes the item CONDITIONAL ("Where the appellant challenges ...",
+  "if pertinent ...", "in a case in which ..."), the rule's OWN words of that condition, verbatim.
+  Empty string "" when the rule requires the item in every filing of this kind.
 - "citation_rules" = any rule about HOW authority must be cited in the filing.
 - "attachments" = every document the rule says must be FILED TOGETHER WITH / ATTACHED TO
   this filing (briefs, exhibits, copies of pleadings, proposed orders, certificates,
@@ -269,12 +282,31 @@ def _fix_rule_label(rule: str, rule_id: str, rule_text: str):
     cores = [c for c in re.findall(_RULE_NO, rule) if ":" in c or len(c.lstrip("*")) >= 3]
     if not cores:
         return rule, False
-    core = cores[0]
+    # Pick the RULE number among the label's numbers, not the first one: "210 Pa. Code § 2111(a)(1)" carries the TITLE
+    # number first, and reading cores[0] wiped every Pa.R.A.P. 2111 label to "" (2026-10-31, L36) -- the source rule
+    # was in the label all along.
     if rule_id:
-        if core == rule_id:
+        if rule_id in cores:
             return rule, False
+        core = cores[-1]
         return rule[:rule.find(core)] + rule_id, True
-    return (rule, False) if core in rule_text else ("", True)
+    return (rule, False) if any(c in rule_text for c in cores) else ("", True)
+
+
+# CONDITIONAL ITEMS (2026-10-31, L36). Pa.R.A.P. 2111(a)(4) -- "Where the appellant challenges the discretionary aspects
+# of a sentence, a concise statement of the reasons relied upon for allowance of appeal" -- was derived as a MANDATORY
+# section of every Superior Court brief, so a civil brief would be gated for a criminal-sentencing organ. The model reads
+# the condition (comprehension); the guardrail keeps it only when the condition's words are the rule's own words. An
+# unanchored condition is dropped and the item stays MANDATORY -- the rule text, not the model, can relax a requirement.
+def _condition_of(item: dict, rule_text: str) -> dict:
+    c = re.sub(r"\s+", " ", str((item or {}).get("condition") or "")).strip()
+    if not c:
+        return {}
+    # verbatim (normalized) phrase of the rule -- "if applicable" in 2111(a)(7) -- or a 4-word run of a longer clause.
+    # A 1-2 word paraphrase the rule never says ("optional") cannot relax a requirement.
+    verbatim = f" {' '.join(_norm(c).split())} " in f" {' '.join(_norm(rule_text).split())} "
+    longrun = len([w for w in _norm(c).split() if len(w) > 2]) >= 4 and _anchored(c, rule_text, 4)
+    return {"condition": c} if (verbatim or longrun) else {}
 
 
 def derive_requirements(rule_text: str, court: str, kind: str,
@@ -299,7 +331,8 @@ def derive_requirements(rule_text: str, court: str, kind: str,
         rule, _rl = _fix_rule_label(rule, rule_id, rule_text)
         if _rl: relabeled.append(head)
         if _anchored(head, rule_text, 2) or _anchored(req, rule_text, 4):
-            kept.append({"heading": head, "rule": rule, "requires": req})
+            kept.append({"heading": head, "rule": rule, "requires": req,
+                         **_condition_of(s, rule_text)})
         else:
             rejected.append(head)
     endo = got.get("endorsement") or {}
@@ -329,7 +362,7 @@ def derive_requirements(rule_text: str, court: str, kind: str,
         if _rl: relabeled.append(item)
         if _anchored(item, rule_text, 2) or _anchored(req, rule_text, 4):
             atts.append({"item": item, "label": label if _lab_ok else "",
-                         "rule": rule, "requires": req})
+                         "rule": rule, "requires": req, **_condition_of(a, rule_text)})
         else:
             att_rej.append(item)
     ans = got.get("answer_required") or {}
@@ -390,10 +423,28 @@ def upsert_profile(court: str, kind: str, reqs: dict, authority: str,
             demoted.append({"item": h, "rule": s.get("rule") or "", "requires": s.get("requires") or ""})
         else:
             new_secs.append(s)
-    entry["mandatory_sections"] = _merge(entry.get("mandatory_sections"), new_secs, _skey)
+    # Same item named twice by one rule: Pa.R.A.P. 2111(a)(11) lists "the statement of errors complained of on appeal"
+    # as a matter of the brief, and 2111(d) says it shall be APPENDED -- derived as both a section and an attachment, the
+    # finisher would print the heading and the gate would demand it twice. A section whose content words all sit inside
+    # ONE attachment item is that attachment (never a union across items: STATEMENT OF THE CASE must survive).
+    def _cw(t):
+        return {w for w in _norm(t).split() if len(w) > 2 and w not in ("the", "and", "for", "shall")}
+    _att_words = [_cw(a.get("item") or "") for a in (reqs.get("attachments") or [])]
+    new_secs = [s for s in new_secs
+                if not any(_cw(s.get("heading")) and _cw(s.get("heading")) <= aw for aw in _att_words)]
+    # conditional items go to their own keys: the gate enforces mandatory_* only; the lane decides applicability.
+    entry["mandatory_sections"] = _merge(entry.get("mandatory_sections"),
+                                         [s for s in new_secs if not s.get("condition")], _skey)
+    _cond = [s for s in new_secs if s.get("condition")]
+    if _cond:
+        entry["conditional_sections"] = _merge(entry.get("conditional_sections"), _cond, _skey)
     atts_in = (reqs.get("attachments") or []) + demoted
-    if atts_in:
-        entry["mandatory_attachments"] = _merge(entry.get("mandatory_attachments"), atts_in, _akey)
+    if [a for a in atts_in if not a.get("condition")]:
+        entry["mandatory_attachments"] = _merge(entry.get("mandatory_attachments"),
+                                                [a for a in atts_in if not a.get("condition")], _akey)
+    if [a for a in atts_in if a.get("condition")]:
+        entry["conditional_attachments"] = _merge(entry.get("conditional_attachments"),
+                                                  [a for a in atts_in if a.get("condition")], _akey)
     if reqs.get("answer_required"):
         entry["answer_required"] = reqs["answer_required"]
     if reqs.get("endorsement"):
@@ -611,9 +662,9 @@ def main() -> int:
     print(f"[derive] kept {len(reqs['sections'])} section(s); "
           f"rejected {len(reqs['rejected'])} unanchored: {reqs['rejected']}")
     for s in reqs["sections"]:
-        print(f"    {s['rule'] or '-':10} {s['heading']}")
+        print(f"    {s['rule'] or '-':10} {s['heading']}" + (f"   [IF: {s['condition'][:90]}]" if s.get("condition") else ""))
     for at in reqs.get("attachments") or []:
-        print(f"    ATTACH {at['rule'] or '-':14} {at['item']}")
+        print(f"    ATTACH {at['rule'] or '-':14} {at['item'][:110]}" + (f"   [IF: {at['condition'][:90]}]" if at.get("condition") else ""))
     if reqs.get("attachments_rejected"):
         print(f"[derive] rejected {len(reqs['attachments_rejected'])} unanchored attachment(s): "
               f"{reqs['attachments_rejected']}")

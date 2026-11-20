@@ -40,7 +40,7 @@ def _b70_gateway() -> str:
             return f"http://{m.group(1)}:8080"
     except Exception:
         pass
-    return "http://localhost:8080"
+    return "http://localhost:8000"
 
 
 # --- deterministic binding hierarchy -------------------------------------------------

@@ -63,9 +63,9 @@ log = logging.getLogger("filing_pipeline")
 # ---------------------------------------------------------------------------
 
 _CASE_ALIASES = {
-    "lippi":              "phila_ccp:260100000",
-    "lippi case":         "phila_ccp:260100000",
-    "lippi etal":         "phila_ccp:260100000",
+    "example_creditor":              "phila_ccp:260100000",
+    "example_creditor case":         "phila_ccp:260100000",
+    "example_creditor etal":         "phila_ccp:260100000",
     "contractor":         "phila_ccp:260100000",
     "garnishment":        "phila_ccp:260100000",
     "ccp":                "phila_ccp:260100000",
@@ -79,7 +79,7 @@ _CASE_ALIASES = {
     "2:26-cv-00123":      "fed:2:26-cv-00123",
     "26-cv-00123":        "fed:2:26-cv-00123",
 
-    "amerisave":          "fed:2:26-cv-00456",
+    "example_lender":          "fed:2:26-cv-00456",
     "respa":              "fed:2:26-cv-00456",
     "tila":               "fed:2:26-cv-00456",
     "quiet title":        "fed:2:26-cv-00456",
@@ -722,7 +722,7 @@ def _build_checklist(case_id: str, filing_type: str, caption: str,
 if __name__ == "__main__":
     import argparse
     p = argparse.ArgumentParser(description="Run the filing pipeline end-to-end.")
-    p.add_argument("case_id", help="Canonical case_id or party alias (e.g. 'lippi')")
+    p.add_argument("case_id", help="Canonical case_id or party alias (e.g. 'example_creditor')")
     p.add_argument("--filing-type", default=None,
                    help="Optional. Only used in composer fallback path.")
     p.add_argument("--mode", default="pipeline",

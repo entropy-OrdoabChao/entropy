@@ -19,6 +19,7 @@ from __future__ import annotations
 from pathlib import Path
 from core.entropy_paths import entropy_root as _eroot, package_root as _epkg, hermes_home as _ehermes
 import argparse, json, os, re, sqlite3, sys, threading, time, urllib.parse, urllib.request
+_WS = re.compile(r"\s+")   # hoisted: backslash inside an f-string expression is a SyntaxError on Python 3.11 (MCP server venv)
 from concurrent.futures import ThreadPoolExecutor, as_completed, wait, FIRST_COMPLETED
 from pathlib import Path
 
@@ -57,6 +58,14 @@ MAX_TOKENS = int(os.environ.get("M2_MAX_TOKENS", "1200"))   # a JSON cell is ~40
 #                    a cell that hits a per-bot cap (finish_reason=length) is re-asked ONCE at MAX_TOKENS, so no cell
 #                    can come back shorter than it would under the global cap — the cap only shortens runaway loops.
 PREFIX_ORDER = os.environ.get("M2_PREFIX_ORDER", "0") == "1"
+# M2_PATH_TO_LAW=1   S-m2-path-to-law (2026-11-09): hub-first retrieval seat. The axis half of fetch_cell_parts resolves the
+#                    authorities the claim NAMES (Pa.R.C.P. 440, 15 U.S.C. § 1681s-2, 12 C.F.R. § 1024.33, Am Jur titles, quoted
+#                    terms) to Obsidian rule/topic/term hubs (obsidian_sync/_graph/) and pulls their exact chunk ids by id
+#                    (text → defines → interprets → commentary), capped at M2_PTL_CAP=3. Hybrid semantic retrieval runs ONLY
+#                    when fewer than M2_PTL_MIN=2 chunks resolve (mode hybrid | mixed); every unresolved hub is appended to
+#                    output/graph/unresolved_links.jsonl (the ingest signal). Default off = byte-identical excerpts (regression:
+#                    tests/probe_path_to_law.py). Pins (pull_cites) are untouched in both modes.
+PATH_TO_LAW = os.environ.get("M2_PATH_TO_LAW", "1") == "1"   # PROMOTED 2026-11-09 20:21 (retrieval-100 39/39 both flags; .bak.20261109202117): hub-first pin is the default; M2_PATH_TO_LAW=0 = the pre-fold path
 CELL_ORDER = os.environ.get("M2_ORDER", "bot")              # bot (live) | unit
 BOT_CAPS_PATH = os.environ.get("M2_BOT_CAPS", "")
 CAP_FLOOR = int(os.environ.get("M2_CAP_FLOOR", "1000"))      # never cap a bot below this (p95 of every bot observed so far < 1000)
@@ -501,7 +510,7 @@ def _retrieve(queries: list[str], families: list[str], k: int = 6) -> list[dict]
 # S-m2-cite-leading-word (2026-10-24): the first party may run to 6 capitalised tokens ('Pennsylvania National Mutual Casualty
 # Insurance Co.'); the old {0,3} made the match start mid-name ('Mutual Casualty Insurance Co.'). Leading words the longer run
 # now swallows are removed by _trim_leading, not by shortening the run.
-_CASE = re.compile(r"\b([A-Z][A-Za-z'’.&-]+(?:\s+[A-Z][A-Za-z'’.&-]+){0,5})\s+v\.\s+([A-Z][A-Za-z'’.&-]+(?:\s+[A-Z][A-Za-z'’.&-]+){0,3})")
+_CASE = re.compile(r"\b([A-Z][A-Za-z'’.&-]+(?:,?\s+[A-Z][A-Za-z'’.&-]+){0,5})\s+v\.\s+([A-Z][A-Za-z'’.&-]+(?:,?\s+[A-Z][A-Za-z'’.&-]+){0,3})")   # retrieval-100 (11-09): `,?` — a comma inside a name no longer restarts the run ('PPG Industries, Inc.' lost 'PPG Industries')
 # CLASS FIX (S-m2-cure, C3a): keep the USC section LETTER suffix (and the `1681s-2` dash form) — `[\d.]+` cut
 # '15 U.S.C. § 1681e(b)' to '§ 1681', so the pin read usc_t15_s1681 (the short title) instead of usc_t15_s1681e.
 _STAT = re.compile(r"\b(\d{1,2}\s+(?:U\.S\.C\.|Pa\.C\.S\.(?:A\.)?|P\.S\.|C\.F\.R\.)\s*§+\s*\d+(?:\.\d+)*[a-zA-Z]?(?:[-–]\d+[a-zA-Z]?)?(?:\([a-zA-Z0-9]{1,3}\))*)")
@@ -516,12 +525,22 @@ def _trim_party(p: str) -> str:
     inside names ('Corp.', 'Inc.', 'Co.', 'U.S.') are kept: only a period followed by a capitalised ordinary word is a sentence end."""
     toks = p.split()
     for i, tok in enumerate(toks[:-1]):
-        if tok.endswith(".") and tok.rstrip(".") not in _NAME_ABBR and toks[i + 1][:1].isupper() and len(toks[i + 1]) > 2:
+        if tok.endswith(".") and tok.rstrip(".").lower() not in _NAME_ABBR_LC and toks[i + 1][:1].isupper() and len(toks[i + 1]) > 2:   # retrieval-100: case-insensitive ('ST. PAUL')
             return " ".join(toks[: i + 1]).rstrip(".")
     return p
 
 
-_NAME_ABBR = {"Corp", "Inc", "Co", "Ltd", "L.L.C", "LLC", "U.S", "Bros", "Ass'n", "Assn", "Dep't", "Dept", "Nat'l", "Int'l", "Mfg", "Ins", "Sav", "Bd", "Comm'n", "Pa", "St", "Mut", "Fed"}
+_NAME_ABBR = {"Corp", "Inc", "Co", "Cos", "Ltd", "L.L.C", "LLC", "U.S", "Bros", "Ass'n", "Assn", "Dep't", "Dept", "Nat'l", "Int'l", "Mfg", "Ins", "Sav", "Bd", "Comm'n", "Pa", "St", "Mut", "Fed",
+              "Const", "Indus", "Hosp", "Auth", "Serv", "Sys", "Grp", "Mem'l", "Ry", "Tr", "Univ", "Sec"}   # retrieval-100 (11-09): 'Pittsburgh Const. Co.' was cut at 'Const.'
+_NAME_ABBR_LC = {a.lower() for a in _NAME_ABBR}
+# caption roles are not party names: 'Angela Bruno, Appellants v. ERIE INSURANCE COMPANY, Appellee' → 'Angela Bruno v. ERIE INSURANCE COMPANY'
+_ROLE_WORDS = {"appellant", "appellants", "appellee", "appellees", "petitioner", "petitioners", "respondent", "respondents",
+               "plaintiff", "plaintiffs", "defendant", "defendants", "movant", "movants"}
+
+
+def _strip_roles(p: str) -> str:
+    toks = [t for t in p.replace(",", " ").split() if t.lower().rstrip(".") not in _ROLE_WORDS]
+    return " ".join(toks)
 
 # S-m2-cite-leading-word (2026-10-24): capitalised words that INTRODUCE a case name in running text and are never its first
 # party — citation signals ('See', 'Cf.', 'Accord', 'But see', 'E.g.'), prepositions/articles a sentence opens with ('Under',
@@ -551,7 +570,7 @@ def _trim_leading(p: str) -> str:
         return p
     cut = 0
     for i, tok in enumerate(toks[:-1]):                                  # (1) the last sentence boundary inside the run
-        if tok.endswith(".") and tok.rstrip(".") not in _NAME_ABBR and tok.rstrip(".").lower() not in _LEAD_WORDS \
+        if tok.endswith(".") and tok.rstrip(".").lower() not in _NAME_ABBR_LC and tok.rstrip(".").lower() not in _LEAD_WORDS \
                 and toks[i + 1][:1].isupper() and len(tok.rstrip(".")) > 1:
             cut = i + 1
     toks = toks[cut:]
@@ -563,12 +582,15 @@ def _trim_leading(p: str) -> str:
 def cites_in(text: str) -> list[str]:
     """Every authority the claim NAMES — case names, statutes, rules — so the bot sees what the draft relies on."""
     out = []
-    for m in _CASE.finditer(text): out.append(f"{_trim_leading(m.group(1))} v. {_trim_party(m.group(2))}")   # S-m2-cite-leading-word: both sides trimmed
+    for m in _CASE.finditer(text):                                     # S-m2-cite-leading-word: both sides trimmed
+        name = f"{_strip_roles(_trim_leading(m.group(1)))} v. {_strip_roles(_trim_party(m.group(2)))}".strip()
+        rm = _REPORTER.match(text[m.end():m.end() + 60].lstrip(" ,"))   # retrieval-100 (11-09): the reporter cite right after the name is the lookup KEY
+        out.append(f"{name}, {_WS.sub( ' ', rm.group(0)).strip()}" if rm else name)
     out += [m.group(1) for m in _STAT.finditer(text)] + [m.group(1) for m in _RULE.finditer(text)]
     out += [m.group(0) for m in _NJ.finditer(text)]
     seen, u = set(), []
     for c in out:
-        k = re.sub(r"\s+", " ", c).strip()
+        k = _WS.sub( " ", c).strip()
         if k.lower() not in seen: seen.add(k.lower()); u.append(k)
     return u[:12]
 
@@ -605,7 +627,7 @@ def _corpus_version() -> str:
 
 
 def pull_cites(text: str, per: int = 2) -> list[dict]:
-    return _cached("cites7tv", [cites_in(text), per, "holding", _pin_version()], lambda: _pull_cites_tv(text, per))
+    return _cached("cites7tv", [cites_in(text), per, "holding", _pin_version(), f"ptl{int(PATH_TO_LAW)}"], lambda: _pull_cites_tv(text, per))   # 11-09: the hub-first pin is part of the key (A/B arms must not share pins)
 
 
 # CLASS FIX 2026-10-13 (Mnemosyne m2 BACKLOG: "cite-label→chunk map hands bots wrong text — EPA as Mitchell, table-of-cases
@@ -863,7 +885,12 @@ def _exact_rule_or_reporter(con, c: str, text: str = "") -> list:
     """GUARDRAIL (2026-10-21, CA3 26-0000 run): federal rules and reporter-cited cases are read from THEIR OWN source key.
     Semantic top-k + party-slug pin missed Fed. R. Civ. P. 4/55 (sources frcp_rule_N), Rosenthal v. Walker, 111 U.S. 185
     (volume source USREPORTS-111_PDFA, no party in slug) and Cortez, 617 F.3d 688 (docvault_pull_f3d_617_688) and told
-    the bots 'NOT IN CORPUS' -> 261/288 false GAP cells. Class fix: rule number -> rule source; volume+page -> case source."""
+    the bots 'NOT IN CORPUS' -> 261/288 false GAP cells. Class fix: rule number -> rule source; volume+page -> case source.
+    FOLD 11-09: under M2_PATH_TO_LAW the hub index is consulted first (same helper as _exact_statute); case rows get holding_rank."""
+    if PATH_TO_LAW:
+        rows = _hub_pins(con, c)
+        if rows:
+            return rows
     m = _FEDRULE.search(c)
     if m:
         n = m.group(2)
@@ -900,7 +927,7 @@ def _exact_rule_or_reporter(con, c: str, text: str = "") -> list:
         vol, rep, page = m.group(1), re.sub(r"[\s.]", "", m.group(2)).lower(), m.group(3)
         own = _rows_for_keys(con, _keys_for_reporter(con, vol, rep, page, toks))
         if own:
-            return own
+            return _holding_first(own)
     vol, rep, page = ms[0].group(1), re.sub(r"[\s.]", "", ms[0].group(2)).lower(), ms[0].group(3)
     if rep == "us":
         if kind != "case" or not toks:
@@ -909,11 +936,35 @@ def _exact_rule_or_reporter(con, c: str, text: str = "") -> list:
             rows = con.execute("SELECT chunk_id, text, source FROM chunk_text WHERE source=? AND text LIKE ? LIMIT 60",
                                (src, f"%{toks[0]}%")).fetchall()
             if rows:
-                return rows
+                return _holding_first(rows)
         return []
     if rep.startswith("pa"):      # Pa. / Pa. Super. / Pa. Cmwlth.: no corpus key family carries the official PA reporters
         return []
-    return _src_range(con, f"docvault_pull_{rep}_{vol}_{page}")
+    return _holding_first(_src_range(con, f"docvault_pull_{rep}_{vol}_{page}"))
+
+
+def _hub_pins(con, c: str) -> list:
+    """FOLD 11-09: the one hub entry point. path_to_law.hub_rows_for_cite(cite) → (chunk_id, text, source) rows of the cited unit's
+    hub (text_chunks first), [] when the cite has no hub — then the existing own-source pins run byte-identically."""
+    try:
+        from pipeline.m2 import path_to_law as PTL
+        forum = next(iter(_RUN_FORUM)) if len(_RUN_FORUM) == 1 and "any" not in _RUN_FORUM else None
+        return PTL.hub_rows_for_cite(con, c, forum=forum)
+    except Exception as e:
+        print(f"[path_to_law] hub pin failed for {c!r}: {e!r} — own-source pins", file=sys.stderr, flush=True)
+        return []
+
+
+def _holding_first(rows: list) -> list:
+    """FOLD 11-09, gated: case-source rows re-ordered so a chunk carrying a holding marker ('we hold', 'affirmed.', …) precedes the
+    caption / procedural-history chunk (D2 GAP class (a): Hart, Wiernik, D'Ambrosio pinned to captions). Order only — never invents."""
+    if not PATH_TO_LAW or not rows:
+        return rows
+    try:
+        from pipeline.m2 import path_to_law as PTL
+        return PTL.holding_rank(rows)
+    except Exception:
+        return rows
 
 
 _T231_KEYS: list[str] = []
@@ -1020,7 +1071,7 @@ def _cite_subsections(c: str) -> list[str]:
     """Subsection markers after the section/rule number, in order: 'Pa.R.C.P. 240(j)(1)' -> ['j','1'];
     '15 U.S.C. § 1681e(b)' -> ['b']; '15 U.S.C. § 1681s-2(a)(1)(A)' -> ['a','1','A'] (t_1972ad60: letter+dash section
     form, uppercase subsection markers); 'Rule 12' -> []."""
-    m = re.search(r"\d+[a-zA-Z]?(?:[-–]\d+[a-zA-Z]?)?((?:\s*\([a-zA-Z0-9]{1,3}\))+)\s*$", c.strip()) or re.search(r"\d+[a-zA-Z]?(?:[-–]\d+[a-zA-Z]?)?((?:\s*\([a-zA-Z0-9]{1,3}\))+)")
+    m = re.search(r"\d+[a-zA-Z]?(?:[-–]\d+[a-zA-Z]?)?((?:\s*\([a-zA-Z0-9]{1,3}\))+)\s*$", c.strip()) or re.search(r"\d+[a-zA-Z]?(?:[-–]\d+[a-zA-Z]?)?((?:\s*\([a-zA-Z0-9]{1,3}\))+)", c)   # 11-09: 2nd search lacked its string → TypeError → _exact_statute swallowed it → [] for EVERY bare-section cite (42 Pa.C.S. § 8371, 73 P.S. § 201-2)
     return re.findall(r"\(([a-zA-Z0-9]{1,3})\)", m.group(1)) if m else []
 
 
@@ -1111,13 +1162,13 @@ def _exact_ps_alias(con, c: str, claim_text: str = "") -> list:
                     act_sec = sm.group(1)
     keys = [r[0] for r in con.execute("SELECT DISTINCT source FROM chunk_text WHERE source LIKE ?", (f"pa_{title}ps_%",))]
     if len(keys) > 1:                                                 # several enacted acts share a P.S. title: pick by the
-        norm = lambda s: re.sub(r"\s+", "", s or "")                   # act's OWN cite stamped on its chunks at ingest
+        norm = lambda s: _WS.sub( "", s or "")                   # act's OWN cite stamped on its chunks at ingest
         ids = [norm(x) for x in re.findall(r"(?:P\.L\.\s*\d+|No\.\s*\d+)", paren)]
         base = ps.split(".")[0]                                       # '1171.4' -> '1171' matches '§ 1171.1 et seq.'
         scored = []
         for k in keys:
             cites = norm(" ".join(r[0] or "" for r in con.execute("SELECT DISTINCT citations FROM chunk_text WHERE source=?", (k,))))
-            s = sum(1 for x in ids if x in cites) + (2 if re.search(rf"§+{re.escape(base)}\.", cites) else 0)
+            s = sum(1 for x in ids if x in cites) + (2 if re.search(rf"(?:§+\s*|\b){re.escape(re.split(r'[.-]', ps)[0])}[.-]", cites) else 0)   # 11-09: '201-2' → '201-' (utpcpl '73 P.S. 201-1 et seq.'), '1171.5' → '1171.' ; was '§201.' which never matched the dash form → every pa_73ps_* act searched
             scored.append((s, k))
         top = max(s for s, _ in scored)
         if top > 0:
@@ -1128,7 +1179,7 @@ def _exact_ps_alias(con, c: str, claim_text: str = "") -> list:
     if not rows and act_sec:
         pat = f"%Section {act_sec}.%" if "-" not in act_sec else f"%Section {act_sec}%"
         for k in keys:
-            rows += con.execute("SELECT chunk_id, text, source FROM chunk_text WHERE source=? AND (text LIKE ? OR text LIKE ?) LIMIT 40", (k, pat, f"%{act_sec} %")).fetchall()
+            rows += con.execute("SELECT chunk_id, text, source FROM chunk_text WHERE source=? AND (text LIKE ? OR text LIKE ?) LIMIT 40", (k, pat, f"%Section {act_sec} %")).fetchall()   # 11-09: was '%{act_sec} %' — '2 ' matched every chunk of the sibling act (FCEUA text served for 73 P.S. § 201-2)
         subs = re.findall(r"\(([ivxlc]+|\d+|[a-z])\)", c[m.end(2):])          # '(4)(xxi)' -> the chunk that carries the sub-clause first
         if subs and rows:
             tag = f"({subs[-1]})"
@@ -1166,7 +1217,7 @@ def _rule_region(t: str, tok: str) -> tuple[int, int, bool]:
     (order17 run7: 1033(a) resolved to the 1034/1032 chunk)."""
     if not tok:
         return 0, len(t), False
-    head = re.compile(rf"(?:^|\n|\.\s+|\)\s+)(?:(?:Rule|§|Sec\.?|Section)\s*)?{re.escape(tok)}\.\s+[A-Z]")
+    head = re.compile(rf"(?:^|\n|\.\s+|\)\s+)(?:(?:Rule|§|&#167;|Sec\.?|Section)\s*)?{re.escape(tok)}\.\s+[A-Z]")   # 11-09: pa_cs_* chunks print '&#167; 8371.'"
     m = head.search(t)
     if not m:
         return 0, len(t), False
@@ -1229,7 +1280,11 @@ def _exact_statute(c: str, claim_text: str, per: int, con=None) -> list[dict]:
             lock = threading.Lock()
         m = _USC.search(c); rows = []
         with lock:
-            if m:
+            if PATH_TO_LAW:                                          # FOLD 11-09: hub-first pin (unit hub → its own chunk ids); [] → unchanged path below
+                rows = _hub_pins(con, c)
+            if rows:
+                pass
+            elif m:
                 for slug in dict.fromkeys([f"usc_t{m.group(1)}_s{m.group(2)}", f"usc_t{m.group(1)}_s{m.group(2).replace('-', '–')}"]):
                     rows = rows or con.execute("SELECT chunk_id, text, source FROM chunk_text WHERE source=?", (slug,)).fetchall()
             elif _NJX.search(c):
@@ -1256,6 +1311,10 @@ def _exact_statute(c: str, claim_text: str, per: int, con=None) -> list[dict]:
             for s, strong in _subsection_anchors(t, subs, tok=tok):  # CLASS FIX 2026-10-24: the cited subsection's own
                 anchored.append((cid, t[s:s + 1400], src))           # window FIRST, found by its marker — not hoped for
                 anch_w.append(1.0 if strong else 0.5)                # heading-scoped anchor outranks a mid-rule chunk's
+            if not subs and tok:                                     # 11-09 marker precision: a BARE section cite ('42 Pa.C.S. § 8371')
+                lo, _hi, strong = _rule_region(t, tok)               # anchors on the section's OWN heading, else the first 1400-char
+                if strong:                                           # window of a multi-section chunk is served ('§ 8361 Corporate
+                    anchored.append((cid, t[max(0, lo - 40):max(0, lo - 40) + 1400], src)); anch_w.append(1.0)   # Directors (Repealed)' for § 8371)
             for i in range(0, max(len(t) - 200, 1), 1100):           # by embedding rank (order17 run7: 240(j)(1) windows
                 win.append((cid, t[i:i + 1400], src))                # came back as Rule 239.6 / 240(i) text, 85/102 GAP)
         rows = anchored + win
@@ -1334,7 +1393,7 @@ def verify_quote(quote: str) -> dict:
     """GUARDRAIL: the quoted words must exist in the corpus (FTS phrase). Returns {ok, source, chunk_id}.
     S-m2-cure: checks chunk_text_fts in-process first (read-only sqlite, no HTTP, no model) and only returns a chunk id
     that chunk_text holds (C3c); the corpus service is the fallback when the local db is unavailable."""
-    q = re.sub(r"\s+", " ", quote or "").strip().strip('"“”')
+    q = _WS.sub( " ", quote or "").strip().strip('"“”')
     if len(q) < 12:
         return {"ok": False, "why": "quote too short to verify"}
     phrase = " ".join(q.split()[:12])                        # first 12 words — enough to pin a chunk, robust to OCR tails
@@ -1380,9 +1439,34 @@ def verify_quote(quote: str) -> dict:
 REP_PENALTY = float(os.environ.get("M2_REP_PENALTY", "1.05"))   # LOOP GUARD: greedy @C8 degenerates into repeat loops
                                                                   # (author's sweep flags LOOP at C8; slice run had a 169 s UNPARSED cell)
 _LAST_USAGE: dict = {}
+PROMPT_BUDGET_CHARS = int(float(os.environ.get("M2_PROMPT_BUDGET_TOK", "6000")) * 3.4)   # whole-prompt cap in chars (~3.4 chars/tok legal English);
+                                                                                     # 6,000 tok (+ template) < the engine's 6,656 prefill budget → never chunked, never OOR; 8k probe measured 3.5 chars/tok
+DOCS_SHARE = float(os.environ.get("M2_DOCS_SHARE", "0.25"))                          # record-docs share of the prompt budget (adverse order ≈1k chars + pleading slice)
+_BUDGET_TRIMS: list = []                                                             # (bot, claim, axis excerpts dropped) — summarized at the end of a run
 CLAIM_BUDGET = int(os.environ.get("M2_CLAIM_BUDGET", "2500"))   # PREFILL GUARD: an adverse-brief section runs 3-6k chars; 4 such
                                                                   # prompts at once crashed the local-gpu (gdn_attention OUT_OF_RESOURCES)
                                                                   # and wedged the local-gpu on 2026-10-13. Same budget as the facts slice.
+
+
+# LANE SEMAPHORE (11-03): m2 crons + kanban workers + the room each start their own runner (6 workers default) with no
+# cross-process cap → 18+ requests on an engine built for 8; the w12 arm was in flight when the host bugchecked (0x154).
+# Counting semaphore across processes = N slot files + flock; a slot is held only for the HTTP call. M2_LANE_SLOTS=8 matches
+# --max-num-seqs 8 on prod; one lock dir per lane URL so the local-gpu lane has its own budget.
+import fcntl, hashlib
+_LANE_SLOTS = int(os.environ.get("M2_LANE_SLOTS", "8"))
+_LANE_LOCKDIR = os.path.join(os.environ.get("TMPDIR", "/tmp"), "beezle_lane_" + hashlib.sha1(LANE.encode()).hexdigest()[:8])
+
+class _LaneSlot:
+    def __enter__(self):
+        os.makedirs(_LANE_LOCKDIR, exist_ok=True); self.fh = None
+        while True:
+            for i in range(_LANE_SLOTS):
+                fh = open(os.path.join(_LANE_LOCKDIR, f"slot{i}"), "w")
+                try: fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB); self.fh = fh; return self
+                except OSError: fh.close()
+            time.sleep(0.25)
+    def __exit__(self, *a):
+        if self.fh: fcntl.flock(self.fh, fcntl.LOCK_UN); self.fh.close()
 
 
 def chat(system: str, user: str, max_tokens: int = MAX_TOKENS, timeout: int = 900) -> str:
@@ -1391,7 +1475,8 @@ def chat(system: str, user: str, max_tokens: int = MAX_TOKENS, timeout: int = 90
             "repetition_penalty": REP_PENALTY,
             "chat_template_kwargs": {"enable_thinking": False}, "response_format": {"type": "json_object"},
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}
-    raw = _post(f"{LANE}/chat/completions", body, timeout=timeout)
+    with _LaneSlot():
+        raw = _post(f"{LANE}/chat/completions", body, timeout=timeout)
     ch = raw["choices"][0]; msg = ch.get("message", {})
     u = raw.get("usage") or {}
     _LAST_USAGE[threading.get_ident()] = {"prompt_tokens": u.get("prompt_tokens"), "completion_tokens": u.get("completion_tokens"),
@@ -1433,10 +1518,55 @@ what is NOT IN CORPUS — never invent a cite, a quote, a docket number, a date 
 def fetch_cell_parts(bot: dict, claim: dict) -> tuple[list[dict], list[dict]]:
     """(pinned, axis) — the named authorities of the claim (shared by every bot of the unit) and the bot's own
     family/query retrieval. fetch_cell() is their concatenation, unchanged; both halves are the same cached calls.
-    S-m2-speed: the split lets build_prompt place the pinned half in the unit-shared head (M2_PREFIX_ORDER=1)."""
+    S-m2-speed: the split lets build_prompt place the pinned half in the unit-shared head (M2_PREFIX_ORDER=1).
+    S-m2-path-to-law: under M2_PATH_TO_LAW=1 the axis half goes hub-first (_axis_path_to_law); flag off = the live call, byte-identical."""
     fams = forum_families(bot.get("families") or [])                 # S-m2-forum-families: semantic families forum-filtered; pins never
     queries = [claim["title"], claim["text"][:300]] + [q.replace("{claim}", claim["title"]) for q in (bot.get("queries") or [])]
+    # FOLD 11-09 (user lock: ONE cite→chunk path): M2_PATH_TO_LAW no longer swaps the axis half. The hub index enters retrieval at
+    # the PIN rung only (_exact_statute / _exact_rule_or_reporter consult path_to_law.hub_rows_for_cite first); _axis_path_to_law retired.
     return pull_cites(claim["text"]), retrieve(queries, fams)        # named authorities (unfiltered), the axis's families (filtered)
+
+
+def _axis_path_to_law(bot: dict, claim: dict, queries: list[str], fams: list[str]) -> list[dict]:
+    """RETIRED 11-09 (fold): kept only for tests/probe_path_to_law.py; no live caller. Hub-first axis retrieval (S-m2-path-to-law). resolve(claim) → hub chunk ids (text first) → fetch by id → the live hit
+    shape (`_best_window` on the query terms, RECITAL flag, part from chunk_part.db) with mode='hub' and score 1.0 so a reader
+    can tell an exact-chunk excerpt from a semantic guess. Fewer than PTL_MIN resolved → the live hybrid call is appended
+    (mode 'mixed' when some hub chunks survived, 'hybrid' when none). Unresolved hubs → output/graph/unresolved_links.jsonl;
+    one log line per cell (mode, excerpts, prompt-token estimate, hubs, unresolved) → output/graph/path_to_law_cells.jsonl."""
+    from pipeline.m2 import path_to_law as PTL
+    forum = next(iter(_RUN_FORUM)) if len(_RUN_FORUM) == 1 and "any" not in _RUN_FORUM else None
+    cell = {"title": claim["title"], "text": claim["text"], "bot": bot["name"]}
+    try:
+        det = PTL.resolve_detail(cell, forum=forum)
+    except Exception as e:                                           # a broken index never costs the cell: fall through to hybrid
+        print(f"[path_to_law] resolve failed for {bot['name']}/{claim['id']}: {e!r} — hybrid", file=sys.stderr, flush=True)
+        det = {"hub_ids": [], "chunk_ids": [], "unresolved": [], "chunk_meta": {}}
+    qs = [q for q in queries[:MAX_Q] if isinstance(q, str) and q.strip()]
+    hits, seen = [], set()
+    if det["chunk_ids"]:
+        _, _, _, _, _, _con, pcon, _ = _tv()
+        for row in PTL.fetch_chunks(det["chunk_ids"][: PTL.EXCERPT_CAP * 3]):
+            if len(hits) >= PTL.EXCERPT_CAP:
+                break
+            if row["db_id"] in seen:
+                continue
+            seen.add(row["db_id"])
+            meta = det["chunk_meta"].get(row["chunk_id"], {})
+            t = _best_window(row["text"], qs, 1200)
+            hits.append({"chunk_id": row["db_id"], "source": row["source"], "part": _part_of(pcon, row["db_id"]) or "-",
+                         "score": 1.0, "text": t, "recital": bool(_RECITAL.search(t)), "mode": "hub",
+                         "hub": meta.get("hub"), "kind": meta.get("kind"), "node": meta.get("node")})
+    mode = "hub"
+    if len(hits) < PTL.MIN_RESOLVED:
+        mode = "mixed" if hits else "hybrid"
+        for h in retrieve(queries, fams):                           # the live hybrid list verbatim (an [{error}] marker passes through as it does today)
+            if h.get("chunk_id") and h["chunk_id"] in seen:
+                continue
+            seen.add(h.get("chunk_id")); hits.append(h)
+    ref = f"{bot['name']}/{claim['id']}"
+    PTL.append_unresolved(det["unresolved"], ref=ref, forum=forum)
+    PTL.log_cell(bot["name"], claim["id"], mode, hits, det["hub_ids"], det["unresolved"], {"index": det.get("index_source", "")})
+    return hits
 
 
 def fetch_cell(bot: dict, claim: dict) -> list[dict]:
@@ -1757,6 +1887,22 @@ def build_prompt(bot: dict, claim: dict, facts: str, pinned: list[dict], axis: l
     n_pin = sum(1 for h in ex if any(h is p for p in pinned))          # pinned survivors of the dedupe (identity, same objects)
     uni = f"\n\n## HIERARCHY (grade every support by this ladder)\n{HIERARCHY.read_text(encoding='utf-8')}\n\n{OUTPUT_SCHEMA}"
     claim_blk = f"=== CLAIM {claim['id']}: {claim['title']}\n{claim['text'][:CLAIM_BUDGET]}"
+    # PROMPT BUDGET (11-03, class-level prefill guard): record docs (10-24) + 25 excerpts pushed cells to 5.4k–13k tokens, past the
+    # engine's 6,656-token prefill budget → GDN OUT_OF_RESOURCES (the r1/r2 LANE_ERROR runs) and, chunked, 4.5 cells/min vs 12–14.
+    # Deterministic trim order: axis excerpts from the tail (pinned never cut) → record docs → never the claim/facts. Logged per cell.
+    fixed = len(bot["soul"]) + len(uni) + len(claim_blk) + 3000 + len(gctx or "") + 400
+    budget_chars = PROMPT_BUDGET_CHARS - fixed
+    ex_pin, ex_axis = ex[:n_pin], ex[n_pin:]
+    def _chars(hs): return sum(len(h.get("text") or "") + 120 for h in hs)
+    docs_cap = int(PROMPT_BUDGET_CHARS * DOCS_SHARE)                    # record docs may take at most this share; corpus excerpts are the grounding
+    if len(docs) > docs_cap: docs = docs[:docs_cap]
+    while ex_axis and _chars(ex_pin) + _chars(ex_axis) + len(docs) > budget_chars: ex_axis.pop()
+    docs_cut = 0
+    if docs and _chars(ex_pin) + _chars(ex_axis) + len(docs) > budget_chars:
+        keep = max(0, budget_chars - _chars(ex_pin) - _chars(ex_axis)); docs_cut = len(docs) - keep; docs = docs[:keep]
+    if len(ex_axis) < len(ex) - n_pin or docs_cut:
+        _BUDGET_TRIMS.append((bot.get("id") or bot.get("name"), claim.get("id"), len(ex) - n_pin - len(ex_axis)))
+    ex = ex_pin + ex_axis
     facts_blk = f"=== CASE FACTS (excerpt)\n{facts[:3000]}" + (f"\n\n{docs}" if docs else "")
     if not prefix_order:
         lines = _excerpt_lines(ex)
@@ -1884,8 +2030,10 @@ SECOND_PASS_STATUSES = ("GAP", "NOT_IN_CORPUS", "CONFLICT")
 
 
 def second_pass_enabled() -> bool:
-    """M2_SECOND_PASS=0 opts out; default ON (read per call so a run can be toggled without re-import)."""
-    return os.environ.get("M2_SECOND_PASS", "1") == "1"
+    """M2_SECOND_PASS=1 opts IN. Default OFF since 11-03: the bisect (same 72 cells, local-gpu seq8 w8) showed the re-ask fires on
+    54/72 cells (+16 s each) and doubles the model wall (591 s vs 295 s) for +2 GROUNDED / -6 verified cites — the pin-path
+    pull is deterministic, so the re-ask should run only when that pull actually returns the named cite (BACKLOG_system)."""
+    return os.environ.get("M2_SECOND_PASS", "0") == "1"
 
 
 def second_pass_cites(out: dict, claim_text: str, keys: tuple = ("gap", "finding", "proposition", "fix")) -> list[str]:
@@ -2066,7 +2214,7 @@ def coerce_posture(out: dict) -> tuple[dict, list[str]]:
 
 
 def _norm_words(s: str) -> str:
-    return re.sub(r"[^a-z0-9§ ]+", " ", re.sub(r"\s+", " ", (s or "").lower())).strip()
+    return re.sub(r"[^a-z0-9§ ]+", " ", _WS.sub( " ", (s or "").lower())).strip()
 
 
 def rule_verbatim_in_chunks(rule_verbatim: str, excerpts: list[dict]) -> dict:
@@ -2462,6 +2610,7 @@ def main(argv=None) -> int:
         print("[m2] learning: SKIPPED (M2_LEARN=0 — timing run; no learnings.jsonl/notes written, no relink)", flush=True)   # S-m2-relink-offrun
     mp = write_matrix(outdir, rows, bots, claims, posture=prow)
     wall = time.time() - t0; mt = sum(r.get("seconds", 0) for r in rows)
+    if _BUDGET_TRIMS: print(f"[m2] prompt budget: {len(_BUDGET_TRIMS)} cells trimmed (axis excerpts dropped total {sum(t[2] for t in _BUDGET_TRIMS)}; budget {PROMPT_BUDGET_CHARS} chars ≈ {PROMPT_BUDGET_CHARS//3.4:.0f} tok)", flush=True)
     print(f"[m2] done {len(rows)} cells in {wall:.0f}s wall ({len(rows)/max(wall,1)*60:.1f} cells/min; model-time sum {mt:.0f}s; "
           f"{sum(1 for r in rows for a in (r.get('authorities') or []) if a.get('verified'))} verified cites; "
           f"{sum(1 for r in rows if r.get('status') == 'RECORD_SUPPLIED')} RECORD_SUPPLIED (record doc called 'not in corpus' with its [doc] in the prompt — not corpus gaps)) → {mp}")

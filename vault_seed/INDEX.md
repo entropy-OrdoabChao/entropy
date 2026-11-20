@@ -12,12 +12,12 @@ Last update: 2026-05-14T22:07:10
 |---|---|---|---|---|:-:|:-:|
 | `{{CASE_SLUG}}` | `{{CASE_SLUG}}` | `cases/{{CASE_SLUG}}/` |  |  | Y | Y |
 | `{{CASE_ID}}` | `{{CASE_SLUG}}` | `cases/{{CASE_SLUG}}/` | {{USER_LAST}} VS EQUIFAX INFORMATION SERVICES, LLC ETAL | trial_court_pending_FRCP_54b_certification | Y | Y |
-| `{{CASE_ID}}` | `fed_amerisave` | `cases/fed_amerisave/` | {{USER_LAST}} VS AMERISAVE MORTGAGE CORPORATION ETAL | appellate_briefing_scheduled | Y | Y |
+| `{{CASE_ID}}` | `fed_example_lender` | `cases/fed_example_lender/` | {{USER_LAST}} VS EXAMPLE LENDER ETAL | appellate_briefing_scheduled | Y | Y |
 | `{{CASE_ID}}` | `fed_statefarm` | `cases/fed_statefarm/` | {{USER_LAST}} VS STATE FARM ETAL | merits_mandamus_pending | Y | Y |
 | `{{CASE_SLUG}}` | `{{CASE_SLUG}}` | `cases/{{CASE_SLUG}}/` |  |  | - | - |
 | `{{CASE_SLUG}}` | `{{CASE_SLUG}}` | `cases/{{CASE_SLUG}}/` |  |  | Y | - |
 | `{{CASE_SLUG}}` | `{{CASE_SLUG}}` | `cases/{{CASE_SLUG}}/` |  |  | Y | Y |
-| `{{CASE_ID}}` | `state_lippi` | `cases/state_lippi/` | {{USER_LAST}} VS {{OPPOSING_PARTY}} ETAL | judgment_by_default_active_motions_to_strike | Y | Y |
+| `{{CASE_ID}}` | `state_example_creditor` | `cases/state_example_creditor/` | {{USER_LAST}} VS {{OPPOSING_PARTY}} ETAL | judgment_by_default_active_motions_to_strike | Y | Y |
 | `{{CASE_SLUG}}` | `{{CASE_SLUG}}` | `cases/{{CASE_SLUG}}/` |  |  | Y | Y |
 
 ## Files in each case folder

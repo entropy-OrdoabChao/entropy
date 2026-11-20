@@ -48,23 +48,34 @@ def _corpus(query, n=1, timeout=180):
 
 
 def _courtlistener(case_name, cite=None, timeout=30):
-    q = urllib.parse.quote(f'"{case_name}"')
-    url = f"https://www.courtlistener.com/api/rest/v4/search/?q={q}&type=o"
+    """CL lane via pipeline/cl_client.py (item cl_client).
+
+    Was an UNAUTHENTICATED urlopen, which both burned the shared 5/min account quota
+    anonymously and 403/202'd on this account. cl_client supplies the token, takes a slot from
+    the ONE fcntl-locked on-disk bucket every Beezle process shares, honors Retry-After once,
+    caches 24 h and receipts the call. A 429 is TERMINAL -> {'error': 'cl_rate_limited'} and
+    verify_cite falls through to UNVERIFIED; it never retries and never blocks a room.
+    """
+    from pipeline import cl_client
+    params = {"q": f'"{case_name}"', "type": "o"}
     if cite:
-        url += "&citation=" + urllib.parse.quote(cite)
-    try:
-        req = urllib.request.Request(url, headers=UA)
-        d = json.loads(urllib.request.urlopen(req, timeout=timeout).read())
-        if d.get("count"):
-            r = d["results"][0]
-            return {"caseName": r.get("caseName"),
-                    "citation": r.get("citation"),
-                    "court": r.get("court"),
-                    "dateFiled": r.get("dateFiled"),
-                    "absolute_url": "https://www.courtlistener.com" + r.get("absolute_url", ""),
-                    "count": d["count"]}
-    except Exception as e:
-        return {"error": str(e)[:100]}
+        params["citation"] = cite
+    r = cl_client.get("/search/", params, caller="caselaw_verify._courtlistener",
+                      timeout=timeout)
+    if not r.get("ok"):
+        out = {"error": str(r.get("reason"))[:100]}
+        if r.get("retry_after") is not None:
+            out["retry_after"] = r["retry_after"]
+        return out
+    d = r.get("data") or {}
+    if d.get("count"):
+        res = d["results"][0]
+        return {"caseName": res.get("caseName"),
+                "citation": res.get("citation"),
+                "court": res.get("court"),
+                "dateFiled": res.get("dateFiled"),
+                "absolute_url": "https://www.courtlistener.com" + res.get("absolute_url", ""),
+                "count": d["count"]}
     return None
 
 

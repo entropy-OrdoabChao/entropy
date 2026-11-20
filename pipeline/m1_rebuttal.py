@@ -130,11 +130,24 @@ def voice_pass(md_text, llm_url="http://localhost:8000/v1", court=None, filing_t
             "element recitation quoting its authority. Output "
             "only the rewritten markdown.\n\n" + md_text)
         body = json.dumps({"model": _server_model(llm_url), "temperature": 0.4,
+                           # S-voice-no-leaked-reasoning (2026-11-16): the exl3 lane (qwen3 family) emits its reasoning as plain text
+                           # before the answer unless thinking is turned off; the 11-16 reply brief shipped 418 lines of "We need…
+                           # Let's produce final." ahead of the brief and verify_voice (invariants only) passed it.
+                           "chat_template_kwargs": {"enable_thinking": False},
                            "messages": [{"role": "user", "content": prompt}]}).encode()
         req = urllib.request.Request(llm_url.rstrip("/") + "/chat/completions",
                                      data=body, headers={"Content-Type": "application/json"})
         with urllib.request.urlopen(req, timeout=900) as r:
             out = json.loads(r.read())["choices"][0]["message"]["content"]
+        out = re.sub(r"(?s)<think>.*?</think>\s*", "", out)
+        # Deterministic guard (same defect, belt for the braces above): the rewrite must BEGIN where the input begins — at the
+        # input's first heading. Anything the model wrote before it is not the filing.
+        _h = re.search(r"(?m)^#{1,6}\s+\S.*$", md_text)
+        if _h:
+            _i = out.find(_h.group(0).strip())
+            if _i > 0:
+                print(f"  [voice] dropped {len(out[:_i].splitlines())} line(s) of model preamble before the first heading")
+                out = out[_i:]
         ok, diff = verify_voice(md_text, out)
         if ok:
             return out, True
@@ -145,12 +158,34 @@ def voice_pass(md_text, llm_url="http://localhost:8000/v1", court=None, filing_t
         return md_text, False
 
 
+def _same_heading(e, heading) -> bool:
+    """A bank entry carries the opposing heading it answers (`heading`, the room/matrix title). When the
+    brief's heading IS that title, the match is identity, not a word-pattern."""
+    eh = " ".join(str(e.get("heading") or "").lower().split())
+    hh = " ".join(str(heading or "").lower().split())
+    if not eh or not hh:
+        return False
+    k = min(len(eh), len(hh), 80)
+    return k >= 24 and eh[:k] == hh[:k]
+
+
 def classify(heading, bank):
     """Match an opposing heading to the strongest bank entry. Deterministic:
-    first MOOT match wins, then RECORD, then SETTLED; no match -> NOVEL."""
+    first MOOT match wins, then RECORD, then SETTLED; no match -> NOVEL.
+
+    HEADING_IDENTITY (2026-11-17): the word-pattern (`their|clause|order|proper`) is an OR of a few long
+    words, so sibling headings — 'Their ¶1 clause (i)' / 'Their ¶1 clause (ii)' — matched each other's
+    entries: heading 1 took a clause-(ii) RECORD body, heading 2 returned the same entry and was deduped
+    away; the room's clause-(ii) finding (6 GROUNDED cells) never reached the brief. When any entry was
+    written FOR this heading (identity on `heading`), only those entries compete; the pattern is the
+    fallback for headings no entry names."""
     h = heading.lower()
+    named = [e for e in bank if isinstance(e, dict) and _same_heading(e, heading)]
     matches = []
-    for e in bank:
+    for e in (named or bank):
+        if named:
+            matches.append(e)
+            continue
         pat = e.get("pattern", "")
         try:
             if pat and re.search(pat, h, re.I):
@@ -2526,7 +2561,15 @@ def assemble(matrix_path, bank_path, out_path, ana_path=None):
                                       "Record facts")
                 sp = s.get("pattern", "")
                 try:
-                    if sp and re.search(sp, h, re.I):
+                    # HEADING_IDENTITY: support for a heading some entry NAMES comes only from entries
+                    # naming the same heading — a sibling's SETTLED body spliced here is what made
+                    # argument 1 read as clause (i) under a clause (ii) title.
+                    _h_named = any(isinstance(_x, dict) and _same_heading(_x, h) for _x in bank)
+                    if _h_named:
+                        _hit = _same_heading(s, h) or s.get("source") in ("authority_fold", "lever_fold", "premise_fold")
+                    else:
+                        _hit = bool(sp and re.search(sp, h, re.I))
+                    if _hit:
                         _txt = _sanitize(s["text"].strip())
                         # AUTHORITY_ONCE_V1: state the black-letter rule in full the
                         # first time it appears in the brief; afterwards cite it short

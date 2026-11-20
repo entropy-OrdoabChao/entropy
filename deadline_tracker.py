@@ -74,6 +74,10 @@ RESPONSE_DEADLINES: dict[str, dict[str, tuple[int, str, str, str]]] = {
     },
     # Pennsylvania state rules
     "pa_state": {
+        # F2.4 (2026-11-10) Right-to-Know Law clocks [corpus:pa_65ps_rtkl_2008#073a709ba619e7ba / #d3451006b46c70d1 / #9939e38612258b4e]
+        "rtkl_response":            (5, "business", "65 P.S. 67.901", "Agency response to a Right-to-Know request (five business days from receipt by the open-records officer)"),
+        "rtkl_oor_appeal":          (15, "business", "65 P.S. 67.1101(a)", "Appeal to the Office of Open Records (15 business days of the response or deemed denial)"),
+        "rtkl_judicial_review":     (30, "calendar", "65 P.S. 67.1301-67.1302", "Petition for review of the OOR final determination (30 days of its mailing date)"),
         "answer_complaint":         (20, "calendar", "Pa.R.C.P. 1026(a)", "Answer to complaint"),
         "preliminary_objections":   (20, "calendar", "Pa.R.C.P. 1028(c)(2)", "Preliminary objections"),
         "answer_po":                (20, "calendar", "Pa.R.C.P. 1028(c)(2)", "Response to preliminary objections"),
@@ -91,6 +95,12 @@ RESPONSE_DEADLINES: dict[str, dict[str, tuple[int, str, str, str]]] = {
 STATUTE_OF_LIMITATIONS: dict[str, dict[str, tuple[int, str, str, str]]] = {
     "federal": {
         "foia":                 (20, "business", "5 U.S.C. 552(a)(6)(A)(i)", "FOIA agency response deadline"),
+        # F2.4 (2026-11-10) regulatory / administrative clocks the admin room's CLOCK cards run from a mail receipt
+        "fcra_reinvestigation": (30, "calendar", "15 U.S.C. 1681i(a)(1)(A)", "CRA reinvestigation of a consumer dispute (30-day period from receipt of the notice) [corpus:usc_t15_s1681i_c0]"),
+        "fcra_results_notice":  (5, "business", "15 U.S.C. 1681i(a)(6)(A)", "CRA written notice of reinvestigation results (5 business days after completion)"),
+        "fcra_furnisher_investigation": (30, "calendar", "15 U.S.C. 1681s-2(b)(2)", "Furnisher investigation on notice of dispute from the CRA (within the 1681i(a)(1) period)"),
+        "respa_qwr_ack":        (5, "business", "12 U.S.C. 2605(e)(1)(A)", "Servicer written acknowledgment of a qualified written request (5 business days)"),
+        "respa_qwr_response":   (30, "business", "12 U.S.C. 2605(e)(2)", "Servicer response to a qualified written request (30 business days)"),
         "foia_appeal":          (20, "business", "5 U.S.C. 552(a)(6)(A)(ii)", "FOIA administrative appeal"),
         "foia_lawsuit":         (730, "calendar", "5 U.S.C. 552(a)(4)(B)", "FOIA federal suit (no fixed SOL, but 6yr 28 USC 2401)"),
         "fcra":                 (730, "calendar", "15 U.S.C. 1681p", "FCRA claim (2 years from discovery)"),

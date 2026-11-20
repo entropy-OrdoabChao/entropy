@@ -78,7 +78,7 @@ AGENCY_DOMAINS = {
     "wellsfargo.com": {"name": "WellsFargo", "full": "Wells Fargo", "type": "bank", "statutes": ["12 USC 2605"]},
     "citi.com": {"name": "Citi", "full": "Citibank", "type": "bank", "statutes": ["12 USC 2605"]},
     "discover.com": {"name": "Discover", "full": "Discover Financial", "type": "bank", "statutes": ["15 USC 1691"]},
-    "amerisave.com": {"name": "Amerisave", "full": "Amerisave Mortgage Corporation", "type": "mortgage", "statutes": ["12 USC 2605"]},
+    "example_lender.com": {"name": "Example Lender", "full": "Example Lender", "type": "mortgage", "statutes": ["12 USC 2605"]},
     "statefarm.com": {"name": "StateFarm", "full": "State Farm Insurance", "type": "insurance", "statutes": ["42 PaCS 8371"]},
     # Insurance
     "allstate.com": {"name": "Allstate", "full": "Allstate Insurance", "type": "insurance", "statutes": ["42 PaCS 8371"]},
@@ -133,11 +133,43 @@ def _get_gmail_service():
 SELF_SENDERS = [x.strip().lower() for x in os.environ.get("BEEZLE_SELF_SENDERS", "filer.filer@planisware.com,you@example.com").split(",") if x.strip()]
 
 
+_COUNSEL_CACHE: Optional[dict] = None
+
+
+def counsel_senders() -> dict:
+    """F6b (2026-11-11): counsel-of-record e-mail addresses -> case slug, read from every case's CASE_FACTS.md / CASE_TIMELINE.json.
+    Class rule: an address the case record already names is a party's counsel; its mail (Answers, New Matter, discovery, service
+    confirmations) is the record of that case. No firm list — the record is the list."""
+    global _COUNSEL_CACHE
+    if _COUNSEL_CACHE is not None:
+        return _COUNSEL_CACHE
+    out = {}
+    cases = PROJECT_ROOT / "obsidian_sync" / "cases"
+    for cd in cases.iterdir() if cases.exists() else []:
+        blob = ""
+        for fn in ("CASE_FACTS.md", "CASE_TIMELINE.json"):
+            try:
+                blob += (cd / fn).read_text(errors="ignore")
+            except Exception:
+                pass
+        for addr in set(re.findall(r"[\w.+-]+@[\w-]+\.[\w.-]+", blob)):
+            a = addr.lower().rstrip(".")
+            if any(sf in a for sf in SELF_SENDERS) or any(d in a for d in AGENCY_DOMAINS) or a.endswith(("letterstream.com", "pacer.gov", "uscourts.gov", "courts.phila.gov")):
+                continue
+            out.setdefault(a, set()).add(cd.name)
+    _COUNSEL_CACHE = {a: sorted(v) for a, v in out.items()}
+    return _COUNSEL_CACHE
+
+
 def _detect_agency(email_from: str) -> Optional[dict]:
     """Match sender email to known agency domain."""
     email_lower = email_from.lower()
     if any(a in email_lower for a in SELF_SENDERS):
         return {"name": "SELF-SCAN", "full": "Self-forwarded scan (paper service)", "type": "scan", "statutes": [], "domain": "self", "sender": email_from}
+    for addr, slugs in counsel_senders().items():
+        if addr in email_lower:
+            return {"name": "RECORD-SENDER", "full": f"Sender named in the case record ({addr}) — cases {', '.join(slugs)}", "type": "counsel", "statutes": [],
+                    "domain": addr.split("@")[-1], "sender": email_from, "case_slugs": slugs}
     for domain, info in AGENCY_DOMAINS.items():
         if domain in email_lower:
             return {**info, "domain": domain, "sender": email_from}

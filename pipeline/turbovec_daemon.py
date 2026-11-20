@@ -8,11 +8,13 @@ in D state for 6 h).  Clients use pipeline/retrieval_client.py (torch-free; FTS-
 PROTOCOL  newline-delimited JSON, one request per line, one response line.  Unix socket (default
 /tmp/turbovec.sock, env TURBOVEC_SOCK) and/or TCP (env TURBOVEC_TCP=127.0.0.1:18031).
   {"op":"health"}
-  {"op":"semantic","query":"...", "k":6, "source_prefix":"usc_t15"|["a","b"]|null}
-  {"op":"fts_phrase","phrase":"...", "source_prefix":null, "limit":40}
+  {"op":"semantic","query":"...", "k":6, "source_prefix":"usc_t15"|["a","b"]|null, "include_orphans":0|1}
+  {"op":"fts_phrase","phrase":"...", "source_prefix":null, "limit":40, "include_orphans":0|1}
   {"op":"chunk","chunk_id":"..."}
 Responses: {"ok":true, ...payload} or {"ok":false,"error":"..."}; semantic/fts carry "mode" =
   embed | fts_fallback (daemon degraded or TURBOVEC_NO_EMBED=1).
+ORPHAN EXCLUSION (2026-11-10): hits whose chunk_text.source is NULL/'unknown' (family='orphan', ~231K keyless chunks)
+  are dropped from semantic/fts_phrase by default (F.is_orphan); include_orphans=1 restores them for audits.
 
 GPU/EMBED GUARD  the embedder runs in a worker thread; main thread waits EMBED_TIMEOUT_S (60).  On timeout the
 daemon marks itself DEGRADED (answers FTS-only, logs output/audit/turbovec_daemon.log) and never spawns nvidia-smi.
@@ -210,16 +212,18 @@ def _embed_search(queries: list[str], pool: int):
     return cand
 
 
-def semantic(query, k: int = 6, source_prefix=None) -> dict:
+def semantic(query, k: int = 6, source_prefix=None, include_orphans: bool = False) -> dict:
     queries = [q for q in (query if isinstance(query, list) else [query]) if isinstance(q, str) and q.strip()][:MAX_BATCH]
     if not queries:
         return {"error": "query required"}
     k = max(1, min(int(k or 6), MAX_K))
     if _STATE["mode"] != "embed":
-        r = F.fts_semantic_fallback(" ".join(queries), k, source_prefix)
+        r = F.fts_semantic_fallback(" ".join(queries), k, source_prefix, include_orphans=include_orphans)
         r["daemon_mode"] = _STATE["mode"]
         return r
     pool = k * (30 if source_prefix else 4)
+    if not include_orphans:
+        pool = F._widen(pool)                                        # orphan exclusion: keep the hit budget after the post-filter
     box = {}
 
     def work():
@@ -233,11 +237,11 @@ def semantic(query, k: int = 6, source_prefix=None) -> dict:
     th.start(); th.join(EMBED_TIMEOUT_S)
     if th.is_alive():
         degrade(f"embed call exceeded {EMBED_TIMEOUT_S:.0f}s for {queries[0][:60]!r}")
-        r = F.fts_semantic_fallback(" ".join(queries), k, source_prefix); r["daemon_mode"] = "degraded"; return r
+        r = F.fts_semantic_fallback(" ".join(queries), k, source_prefix, include_orphans=include_orphans); r["daemon_mode"] = "degraded"; return r
     _STATE["last_embed_ms"] = int((time.time() - t0) * 1000)
     if "err" in box:
         _STATE["errors"] += 1
-        r = F.fts_semantic_fallback(" ".join(queries), k, source_prefix); r["daemon_mode"] = "embed_error"; r["embed_error"] = box["err"]; return r
+        r = F.fts_semantic_fallback(" ".join(queries), k, source_prefix, include_orphans=include_orphans); r["daemon_mode"] = "embed_error"; r["embed_error"] = box["err"]; return r
     cand = sorted(box["cand"], key=lambda t: -t[0])
     qhits, seen_id, seen_txt, out = {}, set(), set(), []
     for s_, cid, qi in cand:
@@ -248,6 +252,8 @@ def semantic(query, k: int = 6, source_prefix=None) -> dict:
         seen_id.add(cid)
         c = F.chunk(cid, timeout_s=10)
         if c.get("error") or not c.get("text"):
+            continue
+        if not include_orphans and F.is_orphan(c.get("source")):     # orphan exclusion (spec: output/research/orphan_exclusion_spec.md)
             continue
         if not F._prefix_ok(c["source"], source_prefix):
             continue
@@ -320,9 +326,10 @@ def dispatch(req: dict) -> dict:
     if op == "health":
         return health()
     if op == "semantic":
-        return semantic(req.get("query"), req.get("k", 6), req.get("source_prefix"))
+        return semantic(req.get("query"), req.get("k", 6), req.get("source_prefix"), include_orphans=bool(req.get("include_orphans")))
     if op == "fts_phrase":
-        return F.fts_phrase(req.get("phrase", ""), req.get("source_prefix"), int(req.get("limit", 40)))
+        return F.fts_phrase(req.get("phrase", ""), req.get("source_prefix"), int(req.get("limit", 40)),
+                            include_orphans=bool(req.get("include_orphans")))
     if op == "chunk":
         return F.chunk(req.get("chunk_id", ""))
     if op == "embed":

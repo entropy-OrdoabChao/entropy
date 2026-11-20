@@ -27,6 +27,20 @@ packet_tail() {
   [ -f "$STUB" ] || { _plog "STOP: no exhibit manifest ($M/EXHIBITS.md or $M/${FTYPE}.md)"; return 1; }
   [ -f "$DRAFT" ] || { _plog "STOP: m1 draft .docx missing ($DRAFT) — m1 did not finish"; return 1; }
   _plog "manifest=$STUB draft=$DRAFT packet=$PDIR"
+  # S-packet-attachments (class, 2026-11-13): the FILING SPEC decides whether a packet carries exhibits. A pleading (reply to new
+  # matter, answer) attaches only writings it is BASED on (Pa.R.C.P. 1019(i)); the stub's NEW EVIDENCE BLOCK is built from timeline
+  # cites and is a motion/brief concept — for a spec with 'attachments: none' it produced a 26-page reply packet carrying the
+  # opponent's brief and a court order as Exhibits A/B. Spec key: attachments: none|manifest (default manifest = old behaviour).
+  local SPEC_Y="$(readlink -f "$ROOT/pipeline")/../templates/filing_specs/${FTYPE}.yaml"   # same resolution as m1_spec_assembler.SPEC_DIR (code root may be a symlink)
+  if [ -f "$SPEC_Y" ] && grep -qE '^attachments:[[:space:]]*none' "$SPEC_Y"; then
+    _plog "spec ${FTYPE}: attachments: none — pleading filed alone (1019(i)); exhibit fetch/build skipped"
+    mkdir -p "$PDIR"; rm -f "$PDIR"/[0-9][0-9]_EXHIBIT_* 2>/dev/null
+    export PACKET_SKIP_FETCH=1 PACKET_NO_EXHIBITS=1
+    # assemble_packet/efile_artifact read the manifest's NEW EVIDENCE BLOCK: hand them a copy with that block emptied (stub otherwise intact)
+    STUB_NOEX="$M/EXHIBITS_none.md"
+    awk 'BEGIN{skip=0} /^## NEW EVIDENCE BLOCK/{print; print ""; print "(none — attachments: none per filing spec; Pa.R.C.P. 1019(i))"; skip=1; next} /^## /{skip=0} skip==0{print}' "$STUB" > "$STUB_NOEX"
+    STUB="$STUB_NOEX"
+  fi
 
   cd "$ROOT" || return 1
   if [ "${PACKET_SKIP_FETCH:-0}" != "1" ]; then
@@ -36,9 +50,11 @@ packet_tail() {
   else
     _plog "fetch_exhibits skipped (PACKET_SKIP_FETCH=1)"
   fi
+  if [ "${PACKET_NO_EXHIBITS:-0}" != "1" ]; then
   timeout 600 env PYTHONPATH="$ROOT" "$PY" -m pipeline.packet.build_exhibits --root "$ROOT" --case "$CASE" --m "$M" --stub "$STUB" \
       2>&1 | grep -v '^INFO\|beezle-mcp' | tail -20 | tee -a "$L"
   [ "${PIPESTATUS[0]}" = "0" ] || { _plog "STOP: build_exhibits failed"; return 1; }
+  fi
   local -a AARGS=()      # forum labels (optional knobs; absent = assemble_packet defaults, byte-identical for the order chain)
   [ -n "${PACKET_MOTION_NAME:-}" ] && AARGS+=(--motion-name "$PACKET_MOTION_NAME")
   [ -n "${PACKET_MOTION_DESC:-}" ] && AARGS+=(--motion-desc "$PACKET_MOTION_DESC")
@@ -50,7 +66,11 @@ packet_tail() {
   [ "${PIPESTATUS[0]}" = "0" ] || { _plog "STOP: assemble_packet failed"; return 1; }
   # e-file artifact: chain_<name>/<stub>_FILING.pdf + EFILE_PART3.json — every page-3 value from data (registry judge,
   # units header, CASE_TIMELINE, filing-type deadline_days); never a literal (S-efile-part3-source).
-  timeout 300 env PYTHONPATH="$ROOT" "$PY" -m pipeline.packet.efile_artifact --root "$ROOT" --case "$CASE" --m "$M" --stub "$STUB" \
+  # efile_artifact --stub is the draft STEM (<stem>_DRAFT.md / <stem>_FILING.pdf), not the manifest path the three steps above take
+  # (passing the path produced chain_<m>/obsidian_sync/.../x_FILING.pdf -> pdfunite 'Could not open file', 2026-11-13). Stem = the
+  # *_DRAFT.md in $M (one per motion dir), else FTYPE.
+  local STEM; STEM=$(ls "$M"/*_DRAFT.md 2>/dev/null | head -1 | xargs -r basename | sed 's/_DRAFT\.md$//'); STEM="${STEM:-$FTYPE}"
+  timeout 300 env PYTHONPATH="$ROOT" "$PY" -m pipeline.packet.efile_artifact --root "$ROOT" --case "$CASE" --m "$M" --stub "$STEM" \
       --court "${COURT:-}" --ftype "${FTYPE:-}" 2>&1 | grep -v '^INFO\|beezle-mcp' | tail -6 | tee -a "$L"
   [ "${PIPESTATUS[0]}" = "0" ] || { _plog "STOP: efile_artifact failed"; return 1; }
   _plog "DONE -> $PDIR/99_PACKET_INDEX.md (NOT e-filed; cart/submit is the user's)"

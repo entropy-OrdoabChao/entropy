@@ -1,0 +1,26 @@
+name: actor_map
+group: admin
+unit: actor            # claim | term | cite | count | document | case | draft
+axis: "ADMIN 1 — ACTOR MAP: every agency/company in the matter → its regulator, statutory complaint channel, statutory records channel (escalation_ladder + corpus)."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - usc_15_1681
+  - usc_12_2605
+  - usc_12_5481
+  - usc_5_552
+  - usc_5_552a
+  - pa_65ps_67
+  - pa_40ps
+  - pa_73ps_201
+  - cfr_12_1024
+  - cfr_12_1002
+queries:
+  - "{claim} consumer reporting agency means"
+  - "{claim} furnisher of information"
+  - "{claim} servicer means"
+  - "{claim} agency means 5 U.S.C. 551"
+  - "complaint to the Bureau 12 U.S.C. 5493"
+  - "Right-to-Know Law agency record"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

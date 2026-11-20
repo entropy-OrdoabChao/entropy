@@ -84,7 +84,9 @@ def _v18e2_get_module_embedder():
     try:
         from sentence_transformers import SentenceTransformer
         log.stage("v18e2_embedder", f"Loading {EMBEDDING_MODEL} singleton (one-time)")
-        model = SentenceTransformer(EMBEDDING_MODEL)
+        # S-cpu-jobs-hide-cuda (2026-11-20): explicit device. torch here is cu130 and the local-gpu runs at 23.5/24.5 GB
+        # under the prod lane, so a default-device load lands on CUDA and OOMs the lane. CPU unless BEEZLE_EMBED_DEVICE says otherwise.
+        model = SentenceTransformer(EMBEDDING_MODEL, device=_os.environ.get("BEEZLE_EMBED_DEVICE", "cpu"))
         # GPU-PROBE HARDENING (2026-10-24): the former `torch.cuda.is_available()` check here did nothing (pass) but
         # opened /dev/dxg; with the WSL bridge wedged it hung the job in D state. Embedder stays on CPU; no CUDA probe.
         # Lane liveness, when needed, is HTTP: curl -s --max-time 3 localhost:8000/v1/models (local-gpu) / :8080 (local-gpu).

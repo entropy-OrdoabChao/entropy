@@ -39,7 +39,7 @@ _EXCLUDE_PATH_MARKERS = ("_dedup_quarantine", "/intake/", "\\intake\\", "_archiv
 
 def _norm_stub(name: str) -> str:
     """Normalize a stub / draft / consolidated-PDF filename to a comparable key.
-    'chain_99_m0_selected__00_OMNIBUS_motion_lippi_FILING.pdf' -> 'omnibus_motion_lippi'."""
+    'chain_99_m0_selected__00_OMNIBUS_motion_example_creditor_FILING.pdf' -> 'omnibus_motion_example_creditor'."""
     s = Path(str(name)).stem
     s = re.sub(r"_(FILING|DRAFT)$", "", s, flags=re.I)
     s = re.split(r"__", s)[-1]                       # drop chain/packet prefix before '__'
@@ -50,7 +50,7 @@ def _norm_stub(name: str) -> str:
 
 def _registry_tokens(case_slug: str) -> set:
     """Case-identity tokens for path matching: slug parts + docket digits + registry caption/party
-    words (e.g. 'lippi'). Data-driven from case_registry.json — no inline case data."""
+    words (e.g. 'example_creditor'). Data-driven from case_registry.json — no inline case data."""
     toks = {t for t in re.split(r"[_:\-]", case_slug.lower()) if len(t) >= 3}
     m = re.search(r"(\d{6,})", case_slug)
     if m:

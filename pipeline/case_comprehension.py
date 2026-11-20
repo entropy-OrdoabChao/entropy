@@ -73,17 +73,17 @@ EVIDENCE = [
     ("GNMA 2022-125 Final Data Statement (trust collateral)", ["GNMA-2022-125-@FDS.pdf.txt"]),
     ("GNMA 2022-125 Relay / loan-pool data", ["GNMA-2022-125-@RLY.pdf.txt"]),
     ("GNMA pool MA8149 disclosure",["MA8149MSF.pdf.txt"]),
-    ("1099-C cancellation of debt (AmeriSave)", ["amerisave 1099c.pdf.txt", "amerisave 22 1099C.pdf.txt", "amerisave 24 1099C.pdf.txt"]),
+    ("1099-C cancellation of debt (Example Lender)", ["example_lender 1099c.pdf.txt", "example_lender 22 1099C.pdf.txt", "example_lender 24 1099C.pdf.txt"]),
     ("IRS Wage & Income Transcript (1099-C + mortgage principal, IRS-sourced)",
      ["IRS Wage and Income Transcript 2022.pdf.txt", "IRS Wage and Income Transcript 2023.pdf.txt"]),
     ("IRS Account Transcript", ["IRS Account Transcript.pdf.txt"]),
     ("US Bank / trustee reply + note", ["us bank reply + promisory note.pdf.txt"]),
-    ("Planet Home Lending production (full re-OCR) + exhibits",
+    ("Example Mortgage Co production (full re-OCR) + exhibits",
      ["PHL reply-compressed.pdf.hq.txt", "Exhibit A.pdf.hq.txt"]),
     ("FHA Case 446-5514079-703 — HUD FOIA (endorsement/termination/claim/DSRS)",
      ["FOIA Request", "FHA Case 446-5514079"]),
-    ("AmeriSave monthly statement with detachable payment coupon",
-     ["Amerisave billing statement", "First Payment Letter"]),
+    ("Example Lender monthly statement with detachable payment coupon",
+     ["Example Lender billing statement", "First Payment Letter"]),
 ]
 
 # ---- the user's actual questions, recast as EVIDENCE-DRIVEN findings to test independently.
@@ -116,7 +116,7 @@ QUESTIONS = [
            "making the current claimant the 'person entitled to enforce' the note under UCC Article 3 "
            "(3-201, 3-203, 3-301)? Is an allonge or endorsement missing? Who, on this record, is the "
            "holder?",
-         evidence=["Promissory Note", "US Bank / trustee reply", "Planet Home Lending reply"],
+         evidence=["Promissory Note", "US Bank / trustee reply", "Example Mortgage Co reply"],
          law="person entitled to enforce note holder indorsement allonge transfer UCC 3-301 3-203 3-201 blank special"),
     dict(id="discharge-1099c",
          q="A 1099-C was filed. From the 1099-C evidence, what creditor, amount, identifiable-event code, "
@@ -129,10 +129,10 @@ QUESTIONS = [
          q="Assess the UCC 3-603 / 3-310 tender-and-discharge theory: do these documents show a valid "
            "tender of payment that was accepted or wrongfully refused so as to discharge the obligation, "
            "or does the law not support discharge on these facts? Apply the law as written.",
-         evidence=["US Bank / trustee reply", "Planet Home Lending reply"],
+         evidence=["US Bank / trustee reply", "Example Mortgage Co reply"],
          law="tender of payment discharge UCC 3-603 payment 3-310 effect of instrument refusal of tender"),
     dict(id="1099c-contradiction",
-         q="The IRS Wage & Income Transcript shows a Form 1099-C from AmeriSave: 'Date Canceled "
+         q="The IRS Wage & Income Transcript shows a Form 1099-C from Example Lender: 'Date Canceled "
            "06-22-2022, Amount Discharged $14,185.00, Debt Description MORTGAGE LOAN# 1481262085, "
            "Identifiable Event Code: Other Actual Discharge before Identifiable Event' — while the same "
            "loan was placed in REMIC Trust 2022-125 (settled 7/29/2022) and Planet later claimed "
@@ -141,20 +141,20 @@ QUESTIONS = [
            "creditor's own report that a discharge occurred; (b) whether a creditor can both treat debt "
            "as cancelled for tax purposes and enforce it; (c) FCRA accuracy of any contrary furnishing. "
            "Determine what the IRS-sourced evidence establishes.",
-         evidence=["IRS Wage & Income Transcript", "1099-C cancellation of debt (AmeriSave)", "GNMA 2022-125 Announcement", "Planet Home Lending reply"],
+         evidence=["IRS Wage & Income Transcript", "1099-C cancellation of debt (Example Lender)", "GNMA 2022-125 Announcement", "Example Mortgage Co reply"],
          law="1099-C cancellation of debt income 6050P creditor admission discharge cannot enforce inconsistent position FCRA accuracy furnisher"),
     dict(id="financial-flow",
          q="Do the NUMBERS reconcile? From the IRS transcript and loan/trust data, lay out the money "
-           "flow: original principal ($166,920), amounts the IRS shows cancelled by 1099-C (AmeriSave "
+           "flow: original principal ($166,920), amounts the IRS shows cancelled by 1099-C (Example Lender "
            "$14,185; ANGI $15,600; and any 2023/2024 entries), the payoff Planet claims ($158,114.78), "
            "and how the loan was monetized through securitization (Ginnie Mae pool -> REMIC trust -> "
            "certificate holders). Who provided value, who received the cancellation tax benefit, and is "
            "the same obligation being recovered more than once? State only what the figures support.",
-         evidence=["IRS Wage & Income Transcript", "Promissory Note", "GNMA 2022-125 Final Data Statement", "Planet Home Lending reply", "IRS Account Transcript"],
+         evidence=["IRS Wage & Income Transcript", "Promissory Note", "GNMA 2022-125 Final Data Statement", "Example Mortgage Co reply", "IRS Account Transcript"],
          law="securitization monetization 1099-C tax benefit double recovery payoff principal cancellation of indebtedness who provides value"),
     dict(id="true-creditor",
          q="On this record, who is entitled to receive the principal and interest payments — the servicer "
-           "(AmeriSave/DMI/Planet), the Ginnie Mae MBS pool, or the REMIC trust certificate holders? "
+           "(Example Lender/DMI/Planet), the Ginnie Mae MBS pool, or the REMIC trust certificate holders? "
            "Distinguish servicer vs. holder vs. investor. Where do the P&I cash flows actually go per the "
            "trust data?",
          evidence=["Notice of Servicing Transfer", "GNMA 2022-125 Final Data Statement", "GNMA pool MA8149", "Promissory Note"],
@@ -170,19 +170,19 @@ QUESTIONS = [
            "(c) More broadly, when do instruments, drafts, and the note itself function as collateral or "
            "as money/credit under the UCC + banking definitions? State what the definitions support and "
            "where the argument is strong vs. weak. Do not assert; test.",
-         evidence=["AmeriSave monthly statement", "Promissory Note", "Notice of Servicing Transfer"],
+         evidence=["Example Lender monthly statement", "Promissory Note", "Notice of Servicing Transfer"],
          law="coupon negotiable instrument definition UCC 3-104 draft payment order bearer on demand method of payment collateral money credit double payment 13 Pa.C.S. 3104"),
     dict(id="mail-handling",
-         q="Examine the Planet Home Lending production + exhibits for IMPROPER MAIL/NOTICE HANDLING: are "
+         q="Examine the Example Mortgage Co production + exhibits for IMPROPER MAIL/NOTICE HANDLING: are "
            "there documents or notices ADDRESSED TO THE BORROWER that were instead faxed/routed to or "
-           "between the servicers (AmeriSave/DMI/Planet), such that the borrower did not receive them "
+           "between the servicers (Example Lender/DMI/Planet), such that the borrower did not receive them "
            "until requested? Identify any fax-transmittal stamps, cover sheets, or routing showing "
            "borrower correspondence diverted. Then assess the law: (a) RESPA 12 U.S.C. 2605 + 12 C.F.R. "
            "1024 — which notices MUST be delivered to the borrower; (b) 18 U.S.C. 1702 obstruction of "
            "correspondence and 1708 — the high bar; (c) whether this is a documented delivery failure or "
            "just ordinary inter-servicer file transfer. If the specific fax pages are not legible in the "
            "evidence, say so and name what page/exhibit to pull. Do not assert; test.",
-         evidence=["Planet Home Lending production", "Notice of Servicing Transfer", "AmeriSave monthly statement"],
+         evidence=["Example Mortgage Co production", "Notice of Servicing Transfer", "Example Lender monthly statement"],
          law="RESPA notice to borrower servicing transfer 2605 delivery obstruction of correspondence 18 USC 1702 1708 mail addressed to another"),
     dict(id="monetization-hypothesis",
          q="Test the monetization thesis: how many times was value extracted from this ONE obligation? "
@@ -194,7 +194,7 @@ QUESTIONS = [
            "asset, sell, securitize) and what the corpus supports re: the Fed-window step. Conclude with "
            "the WINNABLE version (double/triple recovery from what IS documented) vs. the version that "
            "needs a document. Do not assert the Fed-window step unless evidence supports it.",
-         evidence=["IRS Wage & Income Transcript", "Promissory Note", "GNMA 2022-125 Final Data Statement", "Planet Home Lending reply"],
+         evidence=["IRS Wage & Income Transcript", "Promissory Note", "GNMA 2022-125 Final Data Statement", "Example Mortgage Co reply"],
          law="securitization sale of note for value fractional reserve money creation Federal Reserve discount window pledge collateral double recovery one obligation"),
     dict(id="fha-hud-termination",
          q="FHA / HUD link: this is an FHA-insured loan (Case 446-5514079-703, MIC/endorsement). The "
@@ -316,7 +316,9 @@ def _search_one(idx, ids, qv, con, k):
         if 0 <= p < len(ids):
             r = con.execute("SELECT text, source FROM chunk_text WHERE chunk_id=?", (ids[p],)).fetchone()
             if r and r[0]:
-                out.append({"source": r[1] or "?", "text": r[0][:650], "score": float(s)})
+                # chunk_id is the chunk_text PK — callers that need the WHOLE chunk re-read it by id (the 650-char cap is m0's
+                # prompt budget, not the corpus's content; a synthesized id from a truncated text produced false NOT-IN-CORPUS)
+                out.append({"chunk_id": ids[p], "source": r[1] or "?", "text": r[0][:650], "score": float(s)})
     return out
 
 

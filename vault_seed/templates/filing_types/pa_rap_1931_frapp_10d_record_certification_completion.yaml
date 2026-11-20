@@ -108,7 +108,7 @@ structure:
 
 case_applications:
   - case_id: "{{CASE_ID}}"
-    note: "Reyes-Pellegrino — notice_of_appeal + FRAP 31 briefing schedule already armed (notice_of_appeal_federal_3rd_circuit.yaml, frap_31_appellate_briefing_schedule.yaml); this filing arms the RECORD side of the same appeal: when the 3d Circuit receives an incomplete record, the deficiency is cured by FRAP 10(d) supplemental certification, not by penalizing the appellant."
+    note: "Example Party — notice_of_appeal + FRAP 31 briefing schedule already armed (notice_of_appeal_federal_3rd_circuit.yaml, frap_31_appellate_briefing_schedule.yaml); this filing arms the RECORD side of the same appeal: when the 3d Circuit receives an incomplete record, the deficiency is cured by FRAP 10(d) supplemental certification, not by penalizing the appellant."
   - case_id: "{{CASE_ID}}"
     note: "{{OPPOSING_PARTY}} — any Pa. Superior Court appeal from {{JUDGE}}'s unexplained one-liners (26032282 / 26023992 / 26034317, see pa_rap_1925a_opinion.yaml) rides on a certified record: the prothonotary's 1931(a)(1) 60-day transmission duty and the 1935(a) delinquency ladder are the reciprocal duties the court holds the appellant to at every other step."
 

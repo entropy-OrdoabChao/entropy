@@ -1,0 +1,28 @@
+name: formal_demand
+group: admin
+unit: actor            # claim | term | cite | count | document | case | draft
+axis: "ADMIN 3 — FORMAL DEMAND: the governing-statute demand — FCRA §1681i/§1681s-2, RESPA §2605(e) + Reg X 1024.35/.36, ECOA §1691(d) + Reg B 1002.9, PA UTPCPL 73 P.S. §201, PA Ins. Dept 40 P.S. — duty, trigger, clock, on-lapse liability."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - usc_15_1681i
+  - usc_15_1681s
+  - usc_15_1681n
+  - usc_15_1681o
+  - usc_12_2605
+  - cfr_12_1024
+  - usc_15_1691
+  - cfr_12_1002
+  - pa_73ps_201
+  - pa_40ps
+  - cfr_12_1022
+queries:
+  - "{claim} reasonable reinvestigation 30-day period"
+  - "{claim} duties of furnishers upon notice of dispute"
+  - "qualified written request acknowledge 5 days respond 30 days"
+  - "notice of error servicer shall"
+  - "statement of specific reasons adverse action 30 days"
+  - "unfair or deceptive acts or practices treble damages"
+  - "unfair insurance practices complaint Department"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

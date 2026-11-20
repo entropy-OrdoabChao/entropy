@@ -10,6 +10,7 @@ Run: cd <home> && env PYTHONPATH=$PWD /usr/bin/python3 -m pipeline.packet.assemb
 from pathlib import Path
 from core.entropy_paths import entropy_root as _eroot, package_root as _epkg, hermes_home as _ehermes
 import argparse
+import re
 import datetime as dt
 import shutil
 import sys
@@ -68,6 +69,10 @@ def main(argv=None) -> int:
     ap.add_argument("--caption", default=None, help="index caption line; default derived from the case registry")
     ap.add_argument("--todo", default=DEFAULT_TODO)
     a = ap.parse_args(argv)
+    # index order is the NN_ prefix: the main paper must sort first. A caller passing a bare name (PACKET_MOTION_NAME="Reply_to_New_Matter")
+    # produced a packet whose main pdf efile_artifact could not see (glob [0-9][0-9]_*.pdf) — class fix: prefix 00_ when absent.
+    if not re.match(r"^\d\d_", a.motion_name):
+        a.motion_name = "00_" + a.motion_name
 
     M = Path(a.m)
     if not a.caption: a.caption = derive_caption(M)

@@ -23,6 +23,27 @@ HOLDING_PARTS = {"majority", "unknown", None}
 _LOCAL = threading.local()
 _STOP = set("the a an of to in and or for on by with that this is are be as at from it its shall may any such".split())
 
+# ORPHAN EXCLUSION (2026-11-10, output/research/orphan_exclusion_spec.md): ~231K chunks have chunk_text.source NULL /
+# 'unknown' (Chroma-era ingest lost the key; family='orphan' in struct_index.db).  They are real text but uncitable, and
+# they matched phrases from SCOTUS original-jurisdiction / Special-Master briefs at up to 65 % of a hit list ("equitable
+# apportionment": 255 of 391 FTS rows).  ONE predicate, used by fts_phrase / fts_semantic_fallback here and by
+# turbovec_daemon.semantic(); a caller that wants the un-keyed text passes include_orphans=True (audit / comprehension).
+# Identical to struct_index_build.is_orphan_source.  The SQL twin below is the same set, applied in the per-hit PK lookup
+# (measured: same query plan 'SEARCH chunk_text USING PRIMARY KEY', 4.9–7.4 ms / 400 rows either way; the WHERE form
+# additionally skips shipping the ~2 KB text blob of every orphan row).
+ORPHAN_SOURCES = ("", "unknown", "?")
+_SQL_NOT_ORPHAN = " AND source IS NOT NULL AND source NOT IN ('', 'unknown', '?')"
+POOL_WIDEN = 1.05            # candidate-pool widening so the post-filter keeps the same hit budget (orphan share ~3.5 %)
+
+
+def is_orphan(source) -> bool:
+    """True for a chunk with no recoverable source key (NULL / '' / 'unknown' / the chunk() placeholder '?')."""
+    return source is None or source in ORPHAN_SOURCES
+
+
+def _widen(pool: int) -> int:
+    return int(pool * POOL_WIDEN) + 1
+
 
 def _con() -> sqlite3.Connection:
     con = getattr(_LOCAL, "con", None)
@@ -87,18 +108,23 @@ def chunk(chunk_id: str, timeout_s: float = 20.0) -> dict:
     return _bounded(q, timeout_s)
 
 
-def fts_phrase(phrase: str, source_prefix=None, limit: int = 40, timeout_s: float = 25.0, text_chars: int = 1200) -> dict:
-    """Exact FTS5 phrase hit list (porter-stemmed).  Returns {"hits":[{chunk_id, source, text, part}], "mode":"fts"}."""
+def fts_phrase(phrase: str, source_prefix=None, limit: int = 40, timeout_s: float = 25.0, text_chars: int = 1200,
+               include_orphans: bool = False) -> dict:
+    """Exact FTS5 phrase hit list (porter-stemmed).  Returns {"hits":[{chunk_id, source, text, part}], "mode":"fts"}.
+    Orphan rows (is_orphan) are dropped in the per-hit lookup unless include_orphans=True."""
     ph = re.sub(r'["\']', " ", phrase or "").strip()
     if len(ph.split()) < 2:
         return {"error": "phrase too short (need >= 2 words)", "hits": []}
     pool = max(limit, 200) if source_prefix else limit
+    if not include_orphans:
+        pool = _widen(pool)
+    hit_sql = "SELECT text, source FROM chunk_text WHERE chunk_id=?" + ("" if include_orphans else _SQL_NOT_ORPHAN)
 
     def q(con):
         rows = con.execute("SELECT source_id FROM chunk_text_fts WHERE chunk_text_fts MATCH ? LIMIT ?", (f'"{ph}"', pool)).fetchall()
         hits = []
         for (sid,) in rows:
-            r = con.execute("SELECT text, source FROM chunk_text WHERE chunk_id=?", (sid,)).fetchone()
+            r = con.execute(hit_sql, (sid,)).fetchone()
             if not r or not _prefix_ok(r[1], source_prefix):
                 continue
             hits.append({"chunk_id": sid, "source": r[1] or "?", "text": (r[0] or "")[:text_chars], "part": part_of(sid)})
@@ -108,13 +134,18 @@ def fts_phrase(phrase: str, source_prefix=None, limit: int = 40, timeout_s: floa
     return _bounded(q, timeout_s)
 
 
-def fts_semantic_fallback(query: str, k: int = 6, source_prefix=None, timeout_s: float = 25.0) -> dict:
+def fts_semantic_fallback(query: str, k: int = 6, source_prefix=None, timeout_s: float = 25.0,
+                          include_orphans: bool = False) -> dict:
     """FTS-only stand-in for semantic(): bm25-ranked AND of the query's content words, relaxing to the longest
-    half when AND is empty.  Same hit shape as semantic() with mode='fts_fallback' so callers never branch."""
+    half when AND is empty.  Same hit shape as semantic() with mode='fts_fallback' so callers never branch.
+    Orphan rows (is_orphan) are dropped in the per-hit lookup unless include_orphans=True."""
     words = [w for w in re.findall(r"[A-Za-z0-9§]{3,}", query or "") if w.lower() not in _STOP][:12]
     if not words:
         return {"error": "query has no searchable words", "hits": [], "mode": "fts_fallback"}
     pool = max(k * 10, 60) if source_prefix else k * 4
+    if not include_orphans:
+        pool = _widen(pool)
+    hit_sql = "SELECT text, source FROM chunk_text WHERE chunk_id=?" + ("" if include_orphans else _SQL_NOT_ORPHAN)
 
     def q(con):
         def run(ws):
@@ -126,7 +157,7 @@ def fts_semantic_fallback(query: str, k: int = 6, source_prefix=None, timeout_s:
             rows = run(words[: max(3, len(words) // 2)])
         hits, seen = [], set()
         for sid, sc in rows:
-            r = con.execute("SELECT text, source FROM chunk_text WHERE chunk_id=?", (sid,)).fetchone()
+            r = con.execute(hit_sql, (sid,)).fetchone()
             if not r or not r[0] or not _prefix_ok(r[1], source_prefix):
                 continue
             key = r[0][:80]

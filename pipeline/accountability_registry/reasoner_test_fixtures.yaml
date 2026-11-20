@@ -73,7 +73,7 @@ fixtures:
   - id: stage_b_force_placed_actual
     stage: B
     signal_subtype: "force_placed_insurance"
-    snippet: "Amerisave force-placed hazard insurance at $4,200/year while plaintiff's existing policy was active, and charged it to escrow without 45-day notice."
+    snippet: "Example Lender force-placed hazard insurance at $4,200/year while plaintiff's existing policy was active, and charged it to escrow without 45-day notice."
     expected_verdict: ["YES"]
     expected_citation_tokens: ["12 C.F.R. § 1024.37", "force-placed"]
     notes: "Classic Reg X violation pattern."

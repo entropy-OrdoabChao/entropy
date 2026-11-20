@@ -101,7 +101,10 @@ def _save_external_case(cite, data):
 
 # CL rate limit state - shared across calls
 _CL_LAST_CALL = [0.0]
-_CL_MIN_INTERVAL = 12.5  # seconds (5 req/min)
+_CL_MIN_INTERVAL = 12.5  # seconds (5 req/min) — SUPERSEDED by pipeline/cl_client.py (item cl_client).
+                         # Kept only so an old B37 reference does not NameError; the real pacing is
+                         # the cross-process on-disk bucket in cl_client (env CL_RPM). Do not re-add
+                         # a private sleep here: per-process spacing cannot hold a per-account quota.
 
 
 def _cache_path(key):
@@ -265,24 +268,14 @@ def lookup_courtlistener(reporter, volume, page):
         cached['from_cache'] = True
         return cached
 
-    # Enforce 5/min rate limit (12.5s between requests)
-    elapsed = time.time() - _CL_LAST_CALL[0]
-    if elapsed < _CL_MIN_INTERVAL:
-        wait = _CL_MIN_INTERVAL - elapsed
-        print(f'   [rate-limit] waiting {wait:.1f}s for CL...')
-        time.sleep(wait)
-    _CL_LAST_CALL[0] = time.time()
+    # item cl_client: pacing + the HTTP call now belong to pipeline/cl_client.py — ONE on-disk
+    # token bucket (fcntl-locked, output/audit/cl_bucket.json) shared by every Beezle process,
+    # because the 5/min quota is per ACCOUNT. The old _CL_LAST_CALL spacing below was
+    # per-process, so two processes (or a browser window on the same key) still hit 429.
+    # Retry-After is honored exactly once inside cl_client; a second 429 is TERMINAL here.
+    from pipeline import cl_client
 
     url = 'https://www.courtlistener.com/api/rest/v4/citation-lookup/'
-    body = urllib.parse.urlencode({'text': cite_str}).encode('utf-8')
-    headers = {
-        'User-Agent': USER_AGENT,
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
-    }
-    if _CL_TOKEN:
-        headers['Authorization'] = f'Token {_CL_TOKEN}'
-
     result = {
         'cite': cite_str,
         'kind': 'fed_lower',
@@ -291,29 +284,24 @@ def lookup_courtlistener(reporter, volume, page):
         'found': False,
     }
 
-    try:
-        req = urllib.request.Request(
-            url, data=body, headers=headers, method='POST')
-        with urllib.request.urlopen(req, timeout=25) as resp:
-            data = json.loads(resp.read().decode('utf-8'))
-    except urllib.error.HTTPError as e:
-        result['note'] = f'http_{e.code}'
-        # Capture diagnostic body for visibility
-        try:
-            err_body = e.read().decode('utf-8', errors='ignore')[:200]
-            if err_body:
-                result['note'] += f' body={err_body!r}'
-        except Exception:
-            pass
-        if e.code == 401:
+    r = cl_client.citation_lookup(cite_str, caller='cite_authority_check.lookup_courtlistener',
+                                  timeout=25)
+    if not r.get('ok'):
+        reason = r.get('reason') or 'error'
+        result['note'] = reason
+        if reason == 'cl_rate_limited':
+            result['note'] = f'cl_rate_limited retry_after={r.get("retry_after")}'
+        elif reason == 'http_401':
             result['note'] += '_check_token'
-        elif e.code == 429:
-            result['note'] += '_rate_limited_wait'
-        # B38: don't cache transient failures
+        elif reason == 'no_token':
+            result['note'] = 'no_token_NOT_CONFIGURED'
+        elif r.get('body'):
+            result['note'] += f' body={r["body"]!r}'
+        # never cache a transient failure
         return result
-    except Exception as e:
-        result['note'] = f'error: {type(e).__name__}: {e!s}'[:200]
-        return result
+    data = r.get('data')
+    if r.get('cache') == 'HIT':
+        result['from_cl_cache'] = True
 
     # Response is a list of per-citation lookups
     if isinstance(data, list) and data:

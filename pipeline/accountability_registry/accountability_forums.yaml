@@ -98,7 +98,7 @@ dimensions:
     context: ["state farm", "allstate", "progressive", "geico", "nationwide", "claim denial",
               "insurance bad faith", "policy claim"]
     # PARTY GATE: insurance fires only if an INSURER is actually a party/garnishee in THIS case
-    # (prevents cross-case bleed onto the mortgage/credit cases like AmeriSave/Experian-FCRA).
+    # (prevents cross-case bleed onto the mortgage/credit cases like Example Lender/Experian-FCRA).
     party_required: ["state farm", "allstate", "progressive", "geico", "nationwide", "insurance"]
     forums:
       - forum: "Pennsylvania Insurance Department — Bureau of Consumer Services"

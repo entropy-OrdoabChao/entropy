@@ -24,6 +24,7 @@ from core.entropy_paths import entropy_root as _eroot, package_root as _epkg, he
 
 import argparse
 import json
+import os
 import sys
 import traceback
 from dataclasses import asdict
@@ -405,6 +406,41 @@ def build_logic_chain(
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 _RETR_CTX = None
+# 11-13, item retriever_fts — the FTS SOURCE-KEY SWEEP floor.  Below this best-semantic score (or on ANY query that
+# carries a section cite) search_chunks runs fetch_bot's rung 3 before answering.  Measured defect: the query
+# "24 CFR 203.431 sale of insured mortgage to approved mortgagee" returned CFR-2024-title24 only as the 0.62
+# _auth_pull fallback (a trigger-keyword LIKE pull, section-blind) while § 203.431's own body sat in chunk_text_fts
+# under CFR-2024-title24-vol2.  The room's fetch_bot had the sweep; the chat, the crons and every non-room agent
+# stopped at semantic and then said "not in corpus" — an absence claim with nothing behind it.
+FTS_SWEEP_FLOOR = float(os.environ.get("SEARCH_FTS_FLOOR", "0.70"))
+
+
+def _fts_sweep(query: str, limit: int) -> dict:
+    """pipeline/m2/fetch_bot.fts_sweep — THE one sweep implementation (the room's own rung), never a second copy here.
+    Always returns a dict: {hits, families_swept, source_prefixes_swept, fts_used, sweep_complete, reason, cite, kind}.
+    An import/db failure degrades to fts_used=False (NOT SWEPT) — it never raises into the tool's answer."""
+    try:
+        had_cuda = "CUDA_VISIBLE_DEVICES" in os.environ          # fetch_bot setdefaults it to "" (torch-free by design);
+        from pipeline.m2 import fetch_bot as FB                   # don't leave that behind in the MCP process's env
+        if not had_cuda:
+            os.environ.pop("CUDA_VISIBLE_DEVICES", None)
+        return FB.fts_sweep(query, limit=limit)
+    except Exception as e:
+        return {"hits": [], "families_swept": [], "source_prefixes_swept": [], "fts_used": False,
+                "sweep_complete": False, "error": f"fts_sweep unavailable: {e}"}
+
+
+def _needs_sweep(query: str) -> tuple[bool, str]:
+    """A section cite in the query is decided by fetch_bot.classify (the registry's own parser), not by a second
+    regex here that would drift from it: kind != 'question' == 'this query names an authority'."""
+    try:
+        from pipeline.m2 import fetch_bot as FB
+        req = FB.classify(query)
+        if req["kind"] != "question":
+            return True, f"cite:{req['cite']}"
+    except Exception as e:
+        return False, f"classify unavailable: {e}"
+    return False, ""
 
 
 def _retr_ctx():
@@ -425,17 +461,76 @@ def _retr_ctx():
     return _RETR_CTX
 
 
+def _chunk_text(con, chunk_id: str) -> str:
+    try:
+        r = con.execute("SELECT text FROM chunk_text WHERE chunk_id=?", (chunk_id,)).fetchone()
+        return (r[0] or "") if r else ""
+    except Exception:
+        return ""
+
+
+def _phrase_hits(con, query: str, n: int) -> dict:
+    """exact FTS5 phrase matches (chunk_text_fts: text + source_id=chunk_id, porter unicode61). Phrases = every "quoted" run in
+    the query; with no quotes and ≥ 4 words, the whole query is one phrase. Returns real chunk ids + full text."""
+    import re as _re
+    phrases = [p.strip() for p in _re.findall(r'[“"]([^”"]{4,})[”"]', query) if p.strip()]
+    if not phrases:
+        words = _re.sub(r"[^\w\s§.-]", " ", query).split()
+        if len(words) >= 4: phrases = [" ".join(words)]
+    out, receipt = [], {"phrases": phrases, "fts_used": False}
+    if not phrases: return {"hits": [], **receipt}
+    try:
+        for ph in phrases:
+            q = '"' + ph.replace('"', " ") + '"'
+            rows = con.execute("SELECT source_id FROM chunk_text_fts WHERE chunk_text_fts MATCH ? LIMIT ?", (q, max(n, 3))).fetchall()
+            receipt["fts_used"] = True
+            for (cid,) in rows:
+                r = con.execute("SELECT text, source FROM chunk_text WHERE chunk_id=?", (cid,)).fetchone()
+                if r and r[0]:
+                    out.append({"chunk_id": cid, "source": r[1] or "?", "text": r[0], "score": 1.0, "match": "exact_phrase", "phrase": ph})
+        receipt["complete"] = True
+    except Exception as e:
+        receipt["error"] = f"phrase search unavailable: {e}"
+    return {"hits": out[: max(n, 3)], **receipt}
+
+
 @mcp.tool
-def search_chunks(query: str, n_results: int = 6, top_k: int = 0, k: int = 0, limit: int = 0) -> dict:
+def get_chunk(chunk_id: str, chars: int = 12000) -> dict:
+    """Read ONE corpus chunk in FULL by its chunk_id (the id search_chunks returns / the ground pack cites). Use it before any
+    NOT-IN-CORPUS verdict about words a search result preview did not show — the preview is not the chunk."""
+    try:
+        idx, ids, con, model = _retr_ctx()
+        r = con.execute("SELECT text, source, jurisdiction, citations FROM chunk_text WHERE chunk_id=?", (chunk_id,)).fetchone()
+        if not r: return {"chunk_id": chunk_id, "found": False}
+        return {"chunk_id": chunk_id, "found": True, "source": r[1], "jurisdiction": r[2], "citations": r[3],
+                "text_chars": len(r[0] or ""), "text": (r[0] or "")[: max(200, chars)]}
+    except Exception as e:
+        return {"chunk_id": chunk_id, "error": str(e)}
+
+
+@mcp.tool
+def search_chunks(query: str, n_results: int = 6, top_k: int = 0, k: int = 0, limit: int = 0, text_chars: int = 0) -> dict:
     """Search the FULL Beezle legal corpus (3M+ chunks) — semantic over the whole index + the recent
-    re-embed delta + authoritative statute/rule/instruction text (FTS). Grounds Hermes exactly like m0.
+    re-embed delta + authoritative statute/rule/instruction text (FTS), THEN an FTS SOURCE-KEY SWEEP
+    on the cite's own family shelves. Grounds Hermes exactly like m0 and like the m2 room's fetch bot.
 
     Args:
-        query: natural-language search query
+        query: natural-language search query, or a cite ("24 CFR 203.431", "13 Pa.C.S. § 3301", "Pa.R.C.P. 1028")
         n_results: number of results to return (default 6, max 50). top_k / k / limit are accepted aliases.
+        text_chars: chars of each chunk's FULL text to return (default 6000 = the whole chunk for nearly all sources).
+    Quoted phrases in the query ("paper affixed to the instrument") are ALSO run as exact FTS5 phrase matches and lead the
+    results (phrase_search receipt). Use get_chunk(chunk_id) to read any chunk in full.
 
-    Returns top-N chunks with text + source. Use for raw legal grounding: statutes, rules, cases,
-    treatises, regulations, IRS forms — anything ingested. Cite the sources; never invent.
+    Returns top-N chunks with text + source, plus the SWEEP RECEIPT:
+        families_swept        — the cite class's families the FTS source-key sweep actually ran over
+        source_prefixes_swept — the real source-key prefixes those families resolve to
+        fts_used              — the phrase sweep ran (false = semantic only)
+        sweep_complete        — a real cite AND an executed sweep over its whole family class
+
+    NOT IN CORPUS IS A LEGAL ANSWER ONLY WHEN `sweep_complete` IS TRUE — i.e. families_swept covers the
+    cite's class (user memory lock: "NOT-IN-CORPUS only after ALL families"). fts_used=false or
+    sweep_complete=false means NOT SWEPT, which is not an absence finding: re-ask with the cite itself,
+    or run `pipeline/m2/fetch_bot.py resolve '<cite>'`. Cite the sources; never invent.
     """
     n = max(1, min(top_k or k or limit or n_results, 50))  # aliases: agents pass top_k/k/limit and burned a full LLM round per rejected call
     try:
@@ -443,16 +538,53 @@ def search_chunks(query: str, n_results: int = 6, top_k: int = 0, k: int = 0, li
         idx, ids, con, model = _retr_ctx()
         hits = _retrieve(idx, ids, con, model, query, k=n)
         import hashlib
-        # chunk_id FIRST and stable (source + text hash): without it lanes cited result ordinals ("chunk 43-41") as ids
-        hits = [{"chunk_id": f"{h.get('source','?')}#{hashlib.sha1((h.get('text') or '').encode()).hexdigest()[:10]}", **h} for h in hits]
+        # chunk_id FIRST and stable: the REAL chunk_text PK when the retriever carries it (so [corpus:<id>] resolves and the
+        # whole chunk can be re-read); the legacy source+hash id only for hits that have none.
+        hits = [{**h, "chunk_id": h.get("chunk_id") or f"{h.get('source','?')}#{hashlib.sha1((h.get('text') or '').encode()).hexdigest()[:10]}"} for h in hits]
+        # S-full-text (po-16 2026-11-15): the retriever caps text at 650 chars for m0's prompt budget; the tool answer must carry
+        # the WHOLE chunk — a § 3204(a) sentence past the cap read as NOT IN CORPUS while it sat in the cited chunk itself.
+        _cap = max(650, int(os.environ.get("BEEZLE_MCP_CHUNK_CHARS", str(text_chars or 6000))))
+        for h in hits:
+            full = _chunk_text(con, h["chunk_id"])
+            if full: h["text"] = full[:_cap]; h["text_truncated"] = len(full) > _cap; h["text_chars"] = len(full)
+        # S-exact-phrase rung: every quoted phrase in the query (or the query itself when ≥ 4 words and no quotes) is run as an
+        # FTS5 PHRASE match over chunk_text_fts — words in that order, exactly. A phrase hit is proof of presence regardless of
+        # what the embedder ranked; zero phrase hits over the whole table is the one honest basis for "those words are not here".
+        phr = _phrase_hits(con, query, n)
+        if phr["hits"]:
+            seen = {h["chunk_id"] for h in hits}
+            hits = [h for h in phr["hits"] if h["chunk_id"] not in seen][: n] + hits
+        # --- second sweep (item retriever_fts): a cite in the query, or a weak semantic best, means the section's own
+        # text may be sitting in chunk_text_fts under a source key the embedder never ranked.  FTS hits carry the REAL
+        # chunk_text.chunk_id (better than the synthesized one) and lead, because they ARE the cited section.
+        cited, why = _needs_sweep(query)
+        best = max((float(h.get("score") or 0) for h in hits), default=0.0)
+        sweep = {"hits": [], "families_swept": [], "source_prefixes_swept": [], "fts_used": False, "sweep_complete": False}
+        if cited or best < FTS_SWEEP_FLOOR:
+            sweep = _fts_sweep(query, n)
+            sweep["reason"] = why or f"best_semantic_score={round(best, 3)} < floor {FTS_SWEEP_FLOOR}"
+            seen = {(h.get("source"), (h.get("text") or "")[:60]) for h in sweep.get("hits") or []}
+            hits = (sweep.get("hits") or []) + [h for h in hits if (h.get("source"), (h.get("text") or "")[:60]) not in seen]
+            hits = hits[:max(n, len(sweep.get("hits") or []))]
         return {"query": query, "n_results": len(hits), "result": hits,
-                "retrieval_mode": "full_corpus_hybrid",
+                "phrase_search": {k: v for k, v in phr.items() if k != "hits"} | {"n_hits": len(phr["hits"])},
+                "retrieval_mode": "full_corpus_hybrid+fts_source_key" if sweep.get("fts_used") else "full_corpus_hybrid",
+                "best_semantic_score": round(best, 3),
+                "families_swept": sweep.get("families_swept") or [],
+                "source_prefixes_swept": sweep.get("source_prefixes_swept") or [],
+                "fts_used": bool(sweep.get("fts_used")),
+                "sweep_complete": bool(sweep.get("sweep_complete")),
+                "sweep_reason": sweep.get("reason") or ("semantic above floor, no cite in query" if not cited else ""),
+                **({"sweep_error": sweep["error"]} if sweep.get("error") else {}),
+                "not_in_corpus_rule": "NOT IN CORPUS is legal only when sweep_complete=true (families_swept covers the cite class); "
+                                      "otherwise the class was NOT SWEPT — re-ask with the cite or run fetch_bot resolve",
                 "cite_as": "[corpus:<chunk_id>] — copy chunk_id verbatim; quote only words present in that chunk's text"}
     except Exception as e:
         try:
             from pipeline.retriever import retrieve
             return {"query": query, "n_results": n, "result": retrieve(query, final_k=n),
-                    "retrieval_mode": "fallback"}
+                    "retrieval_mode": "fallback", "fts_used": False, "families_swept": [], "sweep_complete": False,
+                    "not_in_corpus_rule": "fallback retrieval — NO sweep ran; an absence claim is not available from this answer"}
         except Exception as e2:
             return {"error": f"search_chunks failed: {e}; fallback: {e2}"}
 
@@ -1468,9 +1600,24 @@ def case_brief(case_id: str, section: str = "summary") -> str:
     ALWAYS call summary first. Then call other sections as needed for each filing section.
     """
     import json
+    import re as _re
     from pathlib import Path as P
     ROOT = P(str(_eroot()))
-    obs = ROOT / "obsidian_sync" / "cases" / "fed_26-cv-00123"
+    # S-no-hardcode (2026-11-14): this tool read ONE case's vault folder and ONE case's docket
+    # section no matter which case_id was asked for, so case_brief(<any case>) answered with
+    # fed_26-cv-00123's material. The folder, the docket section and the docket.txt now come
+    # from the case profile (cases_index + CASE_FACTS); an unregistered case says so.
+    try:
+        import sys as _sys
+        if str(BASE_PATH) not in _sys.path:
+            _sys.path.insert(0, str(BASE_PATH))
+        from pipeline.case_profile import profile as _case_profile
+        _prof = _case_profile(case_id)
+    except Exception as _e:
+        return f"case_brief: no case profile for {case_id!r} ({_e}) — register the case in cases_index/."
+    _slug = _prof.get("slug")
+    obs = P(_prof.get("case_dir")) if _prof.get("case_dir") else (
+        ROOT / "obsidian_sync" / "cases" / (_slug or case_id))
 
     if section == "summary":
         parts = []
@@ -1493,14 +1640,28 @@ def case_brief(case_id: str, section: str = "summary") -> str:
         return "\n".join(parts)
 
     elif section == "timeline":
-        da = ROOT / "obsidian_sync" / "cases" / "dockets" / "DOCKET_ANALYSIS_ALL_CASES.md"
-        if da.exists():
+        dockets = ROOT / "obsidian_sync" / "cases" / "dockets"
+        da = dockets / "DOCKET_ANALYSIS_ALL_CASES.md"
+        # the per-case section is found by MATCHING this case's docket aliases / caption head
+        # against the '## CASE <n>: <caption>' headings — never by a fixed 'CASE 1' slice.
+        keys = [str(k) for k in (list(_prof.get("docket_aliases") or []) +
+                                 [_prof.get("docket"), _prof.get("caption")]) if k]
+        if da.exists() and keys:
             txt = da.read_text(encoding="utf-8", errors="replace")
-            start = txt.find("CASE 1:")
-            end = txt.find("## CASE 2:")
-            if start > -1 and end > -1:
-                return txt[start:end][:4000]
-        dt = ROOT / "obsidian_sync" / "cases" / "dockets" / "2_26-cv-00123" / "docket.txt"
+            heads = list(_re.finditer(r"^#{1,4}\s*CASE\s+\d+\s*:\s*(.+)$", txt, _re.M))
+            for i, h in enumerate(heads):
+                head = h.group(1)
+                if any(k.lower() in head.lower() or head.lower() in k.lower() for k in keys):
+                    end = heads[i + 1].start() if i + 1 < len(heads) else len(txt)
+                    return txt[h.start():end][:4000]
+        # per-case docket.txt: the docket in its folder form (':' and '-' -> '_')
+        dkt = str(_prof.get("docket") or "")
+        cands = [dockets / _re.sub(r"[^A-Za-z0-9]+", "_", dkt) / "docket.txt"] if dkt else []
+        if dkt:
+            cands += sorted(dockets.glob("*" + _re.sub(r"\D", "", dkt)[-5:] + "*/docket.txt"))
+        if _slug:
+            cands.append(dockets / _slug / "docket.txt")
+        dt = next((c for c in cands if c.exists()), cands[0] if cands else dockets / "docket.txt")
         if dt.exists():
             return dt.read_text(encoding="utf-8", errors="replace")[:4000]
         return "No docket timeline found"

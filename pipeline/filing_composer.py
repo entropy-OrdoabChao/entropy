@@ -536,7 +536,7 @@ def build_context(case_id: str) -> dict:
         ctx["court"] = ctx["registry"].get("case_court", "")
 
     # ─── PRIORITY-1: CASE_GROUND_TRUTH.yaml overrides registry ─────────────
-    # The auto-generated registry corrupts captions ("FILER VS AMERISAVE ETAL").
+    # The auto-generated registry corrupts captions ("FILER VS EXAMPLE LENDER ETAL").
     # CASE_GROUND_TRUTH.yaml is human-curated and correct. Use it whenever present.
     try:
         import yaml
@@ -770,6 +770,18 @@ def build_context(case_id: str) -> dict:
         _pp = ""
     ctx["partiality_pattern"] = _pp
     ctx["partiality_detected"] = bool(_pp)
+
+    # Governing Text — Legal Evidence of the Law: deterministic gate (non-positive-law U.S.C. title /
+    # flagged Code-vs-enactment or reg-vs-statute divergence / PA count on a Purdon's cite). Sets
+    # governing_text_emit_federal / governing_text_emit_pa + gt_* placeholders; default = omit.
+    try:
+        from pipeline.governing_text_gate import apply_governing_text_gate
+        apply_governing_text_gate(ctx)
+    except Exception as _ge:
+        import logging as _lge
+        _lge.getLogger("composer").warning("governing_text gate failed: %s", _ge)
+        ctx.setdefault("governing_text_emit_federal", False)
+        ctx.setdefault("governing_text_emit_pa", False)
 
     # Jurisdiction-aware citations: hydrate ctx["j_<concept>"] with the PA-state or federal cite for this
     # case's court, so blocks that reference {{j_<concept>}} render the correct authority (all cases).

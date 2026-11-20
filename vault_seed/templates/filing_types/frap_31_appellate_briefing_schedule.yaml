@@ -61,7 +61,7 @@ structure:
 
 case_applications:
   - case_id: "{{CASE_ID}}"
-    caption: Reyes-Pellegrino / FCRA, Judge {{JUDGE}} (EDPA)
+    caption: Example Party / FCRA, Judge {{JUDGE}} (EDPA)
     context: >-
       3d Cir. appellate stage — no briefing schedule issued; a prior 3d Cir.
       appeal ({{CASE_ID}}) was dismissed for "failure to file brief" despite the

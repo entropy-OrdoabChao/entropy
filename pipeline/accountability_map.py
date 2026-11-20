@@ -57,7 +57,7 @@ ACTORS = [
            "does not act — the CFPB Ombudsman, the prudential regulator (OCC), and the private suit.",
          law="CFPB authority enforce UDAAP 5536 RESPA 2605 private right of action TILA 1640 FCRA 1681n FDCPA 1692k consumer complaint"),
     dict(id="servicer-bank",
-         q="The bank / servicer (AmeriSave / Dovenmuehle / Planet). Their mandatory DUTIES to the "
+         q="The bank / servicer (Example Lender / Example Servicer / Planet). Their mandatory DUTIES to the "
            "borrower and the consequence of breach: RESPA error-resolution + QWR (12 U.S.C. 2605(e)), "
            "FCRA furnisher accuracy + reinvestigation (15 U.S.C. 1681s-2(b)), TILA/FDCPA, and accurate "
            "tax reporting. State which are MANDATORY ('shall'), the liability for breach, and the "
@@ -280,7 +280,7 @@ def run(slug):
     # EXPOSURE_MAP-driven actors first (m0 decides from corpus routing).
     # The hardcoded ACTORS list is a fallback ONLY for legacy cases/ slugs
     # without a map — a claim CANDIDATE with an empty REFER/CRIMINAL lane
-    # gets NO actors (mapping the 11-actor AmeriSave-era default onto a
+    # gets NO actors (mapping the 11-actor Example Lender-era default onto a
     # consumer candidate is noise, not grounding).
     actors = actors_from_exposure(slug)
     if not actors:

@@ -192,15 +192,15 @@ def _defendant_name_matches(caption_name: str, affected_name: str) -> bool:
 
     Handles common variants between caption.defendants[].name and
     pending_motions[].defendants_affected[] / procedural_defects[].defendants_affected[]:
-      - Case differences ('Amerisave' vs 'AmeriSave')
-      - Corporate-suffix variants ('Planet Home Lending' vs 'Planet Home Lending, LLC')
+      - Case differences ('Example Lender' vs 'Example Lender')
+      - Corporate-suffix variants ('Example Mortgage Co' vs 'Example Mortgage Co')
       - Punctuation/whitespace differences
 
     Strategy:
       1. Lowercase + strip + collapse whitespace + strip common suffixes
       2. Exact match on normalized form → True
       3. Substring (either direction) on normalized form → True
-      4. First two name tokens (e.g. "amerisave mortgage") substring match → True
+      4. First two name tokens (e.g. "example lender") substring match → True
     """
     if not caption_name or not affected_name:
         return False
@@ -223,7 +223,7 @@ def _defendant_name_matches(caption_name: str, affected_name: str) -> bool:
         return True
     if a in b or b in a:
         return True
-    # Two-token prefix match: "amerisave mortgage" matches both forms
+    # Two-token prefix match: "example lender" matches both forms
     a_toks = a.split()
     b_toks = b.split()
     if len(a_toks) >= 2 and len(b_toks) >= 2:
@@ -541,7 +541,7 @@ def _build_chain_for_defendant(
     dname_canonical = defendant.get("name", "")
     for pm in pending_motions:
         affected = pm.get("defendants_affected") or []
-        # Fuzzy match: handles "Amerisave" vs "AmeriSave Mortgage Corporation" vs "AmeriSave Mortgage Corporation, LLC", etc.
+        # Fuzzy match: handles "Example Lender" vs "Example Lender" vs "Example Lender, LLC", etc.
         if any(_defendant_name_matches(dname_canonical, a) for a in affected):
             remedies.append({
                 "priority": pm.get("priority"),

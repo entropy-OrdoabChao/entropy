@@ -58,7 +58,7 @@ def _body(payload):
 
 def _local_entries(case_id) -> dict:
     """Parse the LOCAL docket sheet OCR in the case intake ('N  TITLE ... by FILER') — the obsidian
-    docket folder has the ECF #s + filer even when the NEFs are absent (e.g. AmeriSave)."""
+    docket folder has the ECF #s + filer even when the NEFs are absent (e.g. Example Lender)."""
     import glob
     slug = _slug(case_id)
     base = ROOT / "obsidian_sync" / "cases" / slug / "intake"

@@ -166,7 +166,7 @@ def collect_judicial_findings(case_id: str) -> List[Dict[str, Any]]:
         classify_doc_with_evidence = None
 
     # Filename-pattern fast-path: any of these strings in path → treat as judge order.
-    # This catches Amerisave/StateFarm dismissal orders that doc_role_classifier
+    # This catches Example Lender/StateFarm dismissal orders that doc_role_classifier
     # mis-tags as opposing_counsel, plus all the "ecf_NN.pdf" docket-order files.
     JUDGE_FILENAME_KEYWORDS = [
         # Generic judicial keywords
@@ -180,7 +180,7 @@ def collect_judicial_findings(case_id: str) -> List[Dict[str, Any]]:
         "ecf 16", "ecf 21", "ecf 37", "ecf 41", "ecf 54", "ecf 67",
         "ecf 98", "ecf 103", "ecf 112", "ecf 122", "ecf 126", "ecf 130",
         "ecf 141",
-        # 04767 (Amerisave/quiet title) — show_temp ecf 39/40, dkt 21-30, dkt_54
+        # 04767 (Example Lender/quiet title) — show_temp ecf 39/40, dkt 21-30, dkt_54
         "ecf 39", "ecf 40",
         "dkt 21", "dkt 22", "dkt 24", "dkt 25", "dkt 26", "dkt 27",
         "dkt 29", "dkt 30", "dkt 40", "dkt 41", "dkt_54", "dkt 54",

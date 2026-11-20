@@ -89,20 +89,28 @@ def health() -> dict:
     return r
 
 
-def semantic(query, k: int = 6, source_prefix=None) -> dict:
-    r = request({"op": "semantic", "query": query, "k": k, "source_prefix": source_prefix})
+def semantic(query, k: int = 6, source_prefix=None, include_orphans: bool = False) -> dict:
+    """include_orphans=True (audits only) keeps hits whose source is NULL/'unknown' (family='orphan'); default drops them."""
+    req = {"op": "semantic", "query": query, "k": k, "source_prefix": source_prefix}
+    if include_orphans:
+        req["include_orphans"] = 1
+    r = request(req)
     if r.get("down"):
-        fb = _fallback("fts_semantic_fallback", query if isinstance(query, str) else " ".join(query), k, source_prefix)
+        fb = _fallback("fts_semantic_fallback", query if isinstance(query, str) else " ".join(query), k, source_prefix,
+                       include_orphans=include_orphans)
         if fb is None:
             return r
         fb["mode"] = "client_fts"; fb["daemon_error"] = r.get("error"); return fb
     return r
 
 
-def fts_phrase(phrase: str, source_prefix=None, limit: int = 40) -> dict:
-    r = request({"op": "fts_phrase", "phrase": phrase, "source_prefix": source_prefix, "limit": limit})
+def fts_phrase(phrase: str, source_prefix=None, limit: int = 40, include_orphans: bool = False) -> dict:
+    req = {"op": "fts_phrase", "phrase": phrase, "source_prefix": source_prefix, "limit": limit}
+    if include_orphans:
+        req["include_orphans"] = 1
+    r = request(req)
     if r.get("down"):
-        fb = _fallback("fts_phrase", phrase, source_prefix, limit)
+        fb = _fallback("fts_phrase", phrase, source_prefix, limit, include_orphans=include_orphans)
         if fb is None:
             return r
         fb["mode"] = "client_fts"; fb["daemon_error"] = r.get("error"); return fb

@@ -45,6 +45,18 @@
    {
     "cite": "Phila. Civ. R. *210",
     "why": "briefs — every brief shall cite authority; a bare citation without the proposition may be disregarded"
+   },
+   {
+    "cite": "Pa.R.C.P. 1026",
+    "why": "time for filing; NOTICE TO PLEAD — no pleading need be filed unless the preceding pleading contains a notice to defend or is endorsed with a notice to plead (a)"
+   },
+   {
+    "cite": "Pa.R.C.P. 1361",
+    "why": "form of notice to plead; Official Note: a responsive pleading is not required unless a notice to plead has been endorsed on the prior pleading other than a complaint"
+   },
+   {
+    "cite": "Pa.R.C.P. 1030",
+    "why": "new matter — affirmative defenses must be pleaded under the heading New Matter; what is and is not new matter"
    }
   ],
   "sur_reply": [
@@ -379,6 +391,158 @@
     "why": "{\"table_markdown\": \"| Source | Verbatim operative words (shall / must / may / only upon) | chunk_id | What it means for this posture (PO order 2026-10-22, Counts II/III/V/VI out, I/IV live) |\\n|---|---|---|---|\\n| Pa.R.A",
     "source": "REASONS_DUTY_SWEEP_20261026.md"
    }
+  ],
+  "reply_to_new_matter": [
+   {
+    "cite": "Pa.R.C.P. 1017",
+    "why": "pleadings allowed: a reply if the answer contains new matter; a preliminary objection and a response thereto"
+   },
+   {
+    "cite": "Pa.R.C.P. 1026",
+    "why": "NOTICE TO PLEAD — no pleading need be filed unless the preceding pleading is endorsed with a notice to plead; twenty days after service when it is"
+   },
+   {
+    "cite": "Pa.R.C.P. 1361",
+    "why": "notice to plead form + Official Note (responsive pleading not required absent endorsement)"
+   },
+   {
+    "cite": "Pa.R.C.P. 1029",
+    "why": "(a) admit or deny each averment of fact, paragraph by paragraph; (b) averments of FACT not specifically denied are admitted, general denial = admission; (c) specific denial for want of knowledge; (d) averments to which no responsive pleading is required are deemed denied; conclusions of law need no response"
+   },
+   {
+    "cite": "Pa.R.C.P. 1030",
+    "why": "new matter — affirmative defenses; a recital of a prior court order is neither an affirmative defense nor a new material fact"
+   },
+   {
+    "cite": "Pa.R.C.P. 1024",
+    "why": "the reply is a pleading: it must be verified by the party (facts not of record); their unverified answer is the mirror defect"
+   },
+   {
+    "cite": "Pa.R.C.P. 1028(a)",
+    "why": "preliminary objections TO new matter: (2) failure to conform to law or rule of court (no verification), (3) insufficient specificity, (4) legal insufficiency — the alternative to a reply; filing POs postpones the reply (1028(d))"
+   },
+   {
+    "cite": "Pa.R.C.P. 1023.1",
+    "why": "signature certification: factual contentions have evidentiary support; not presented for an improper purpose — reaches recitals that recharacterize the complaint"
+   },
+   {
+    "cite": "Pa.R.C.P. 1019",
+    "why": "contents of pleadings; material facts in concise and summary form; writings relied on attached (i)"
+   },
+   {
+    "cite": "Pa.R.A.P. 341(b)",
+    "why": "a partial-dismissal order is interlocutory: replying to the live counts admits nothing about the dismissed ones and waives no appeal"
+   },
+   {
+    "cite": "Pa.R.A.P. 311(g)",
+    "why": "waiver by failure to appeal applies only to interlocutory orders appealable as of right under 311 — a PO dismissal of counts is not one"
+   },
+   {
+    "cite": "Phila. Civ. R. *205.2(b)",
+    "why": "Philadelphia filing format — control number on the face"
+   },
+   {
+    "cite": "Pa.R.C.P. 440",
+    "why": "service of the reply"
+   },
+   {
+    "cite": "41 Am Jur Pleading § 185",
+    "why": "DEPARTURE: the reply 'must so respond to the plea or answer as to support the complaint' — a reply that contains matter not pursuant to the complaint is a departure; the complaint stays the master instrument [corpus:amjur2d_1stPleading_volume_1stpleading#68ada76359]"
+   },
+   {
+    "cite": "41 Am Jur Pleading § 155",
+    "why": "NEW MATTER = matter 'such as cannot be proved under a denial of the plaintiff's allegations'; what is provable under a denial is not new matter and needs no reply [corpus:amjur2d_1stPleading_volume_1stpleading#c5df11e96b]"
+   },
+   {
+    "cite": "41 Am Jur Pleading (reply to new matter)",
+    "why": "failure to reply is an admission only 'where the statute or practice requires him to do so' and 'has no application where the matter set up in the answer is not new matter' [corpus:amjur2d_1stPleading_volume_1stpleading#e51eab100a]; recital of an order / legal conclusion is not new matter"
+   },
+   {
+    "cite": "52 Am Jur 2d Malicious Prosecution § 128",
+    "why": "matters provable under a denial 'have been held not to constitute new matter'; failure to reply 'not ... an admission' [corpus:amjur2d_52_malicious_prosecution#66832f5c51]"
+   }
+  ],
+  "preliminary_objections": [
+   {
+    "cite": "Pa.R.C.P. 1028",
+    "why": "preliminary objections — grounds, briefs, disposition (c)(2), amendment"
+   },
+   {
+    "cite": "Pa.R.C.P. 1029",
+    "why": "denials; averments not denied are admitted (b); general denial = admission"
+   },
+   {
+    "cite": "Pa.R.C.P. 1024",
+    "why": "verification of averments of fact not of record"
+   },
+   {
+    "cite": "Pa.R.C.P. 1019",
+    "why": "contents of pleadings; writings relied on must be attached (i)"
+   },
+   {
+    "cite": "Pa.R.C.P. 440",
+    "why": "service of legal papers other than original process"
+   },
+   {
+    "cite": "Pa.R.C.P. 126",
+    "why": "liberal construction; court may disregard procedural defects not affecting substantial rights"
+   },
+   {
+    "cite": "Pa.R.C.P. 1017",
+    "why": "the pleadings allowed; what is a pleading vs a brief"
+   },
+   {
+    "cite": "Phila. Civ. R. *1028(c)",
+    "why": "Philadelphia: filing and briefing of preliminary objections (response period, control numbers, reply)"
+   },
+   {
+    "cite": "Phila. Civ. R. *205.2(b)",
+    "why": "Philadelphia: filing legal papers — format, control number, cover sheet"
+   },
+   {
+    "cite": "Phila. Civ. R. *208.3(b)",
+    "why": "Philadelphia: motion practice — response period, reply, briefs"
+   },
+   {
+    "cite": "Phila. Civ. R. *210",
+    "why": "briefs — every brief shall cite authority; a bare citation without the proposition may be disregarded"
+   },
+   {
+    "cite": "Pa.R.C.P. 1026",
+    "why": "time for filing; NOTICE TO PLEAD — no pleading need be filed unless the preceding pleading contains a notice to defend or is endorsed with a notice to plead (a)"
+   },
+   {
+    "cite": "Pa.R.C.P. 1361",
+    "why": "form of notice to plead; Official Note: a responsive pleading is not required unless a notice to plead has been endorsed on the prior pleading other than a complaint"
+   },
+   {
+    "cite": "Pa.R.C.P. 1030",
+    "why": "new matter — affirmative defenses must be pleaded under the heading New Matter; what is and is not new matter"
+   },
+   {
+    "cite": "Pa.R.C.P. 1022",
+    "why": "one material allegation per paragraph; paragraphs numbered consecutively"
+   },
+   {
+    "cite": "Pa.R.C.P. 1018.1",
+    "why": "notice to defend / notice to plead — form and when required"
+   },
+   {
+    "cite": "Pa.R.C.P. 1147",
+    "why": "mortgage foreclosure complaint — what the plaintiff SHALL set forth: parties, mortgage, property, default, itemized statement of the amount due; (a)(2)/(a)(3) measure"
+   },
+   {
+    "cite": "Pa.R.C.P. 1141",
+    "why": "mortgage foreclosure — scope and definitions"
+   },
+   {
+    "cite": "Pa.R.C.P. 1018",
+    "why": "caption; notice to defend"
+   },
+   {
+    "cite": "Pa.R.C.P. 2002",
+    "why": "prosecution of actions by real parties in interest — (a)(5) capacity measure"
+   }
   ]
  },
  "FED_EDPA": {
@@ -461,6 +625,175 @@
     "cite": "Fed. R. App. P. 25",
     "why": "(d) proof of service: date, manner, names and addresses of persons served"
    }
+  ]
+ },
+ "PA_SUPER": {
+  "_default": [
+   {
+    "cite": "Pa.R.A.P. 121(a)",
+    "why": "(a) filing — papers filed with the prothonotary; filing by mail; when filing is complete"
+   },
+   {
+    "cite": "Pa.R.A.P. 105(a)",
+    "why": "(a) application — rules liberally applied; the appellate court may disregard requirements of any rule in a particular case"
+   },
+   {
+    "cite": "Pa.R.A.P. 107",
+    "why": "construction of the appellate rules — Pa.R.J.A. 104 to 115 govern"
+   },
+   {
+    "cite": "Pa.R.J.A. 108",
+    "why": "construction of rules — intention of the Supreme Court controls; give effect to all provisions"
+   },
+   {
+    "cite": "42 Pa.C.S. § 742",
+    "why": "Superior Court exclusive appellate jurisdiction of appeals from final orders of the courts of common pleas"
+   },
+   {
+    "cite": "42 Pa.C.S. § 706",
+    "why": "disposition of appeals — affirm, modify, vacate, set aside or reverse; remand; further proceedings"
+   }
+  ],
+  "appellate_brief_pa_super": [
+   {
+    "cite": "Pa.R.A.P. 2111(a)",
+    "why": "(a) brief of the appellant — required contents, separately entitled, in order"
+   },
+   {
+    "cite": "Pa.R.A.P. 2101",
+    "why": "conformance with requirements — briefs that do not conform may be suppressed; substantial defects, appeal quashed or dismissed"
+   },
+   {
+    "cite": "Pa.R.A.P. 311(a)(2)",
+    "why": "(a)(2) attachments — appeal as of right from an order confirming, modifying, dissolving, or refusing to dissolve an attachment"
+   },
+   {
+    "cite": "Pa.R.A.P. 313(b)",
+    "why": "(b) collateral order definition — separable, right too important to be denied review, claim irreparably lost"
+   },
+   {
+    "cite": "Pa.R.A.P. 1925(c)(2)",
+    "why": "(c) remand (2) — civil remand for filing nunc pro tunc of a Statement on good cause shown"
+   },
+   {
+    "cite": "42 Pa.C.S. § 5505",
+    "why": "modification of orders — within 30 days after entry if no appeal has been taken"
+   },
+   {
+    "cite": "Pa.R.A.P. 1931(a)(1)",
+    "why": "(a) time for transmission — record shall be transmitted to the appellate court within 60 days after the filing of the notice of appeal"
+   },
+   {
+    "cite": "Pa.R.A.P. 1931(b)",
+    "why": "(b) duty of trial court — the judge who entered the order shall comply with Pa.R.A.P. 1925 and cause the record to be transmitted"
+   },
+   {
+    "cite": "Pa.R.A.P. 1935",
+    "why": "delinquent transmission of record — appellate prothonotary shall give notice to the trial court judge within ten days"
+   },
+   {
+    "cite": "Pa.R.A.P. 1926(b)",
+    "why": "(b) omission from the record by error, breakdown in processes of the court, or accident — correction"
+   },
+   {
+    "cite": "Pa.R.A.P. 121(a)",
+    "why": "(a) filing — papers filed with the prothonotary; filing by mail; when filing is complete"
+   },
+   {
+    "cite": "Pa.R.A.P. 105(a)",
+    "why": "(a) application — rules liberally applied; the appellate court may disregard requirements of any rule in a particular case"
+   },
+   {
+    "cite": "Pa.R.A.P. 107",
+    "why": "construction of the appellate rules — Pa.R.J.A. 104 to 115 govern"
+   },
+   {
+    "cite": "Pa.R.J.A. 108",
+    "why": "construction of rules — intention of the Supreme Court controls; give effect to all provisions"
+   },
+   {
+    "cite": "42 Pa.C.S. § 742",
+    "why": "Superior Court exclusive appellate jurisdiction of appeals from final orders of the courts of common pleas"
+   },
+   {
+    "cite": "42 Pa.C.S. § 706",
+    "why": "disposition of appeals — affirm, modify, vacate, set aside or reverse; remand; further proceedings"
+   }
+  ],
+  "response_to_show_cause_order": [
+   {
+    "cite": "Pa.R.A.P. 311(a)(2)",
+    "why": "(a)(2) attachments — appeal as of right from an order confirming, modifying, dissolving, or refusing to dissolve an attachment"
+   },
+   {
+    "cite": "Pa.R.A.P. 313(b)",
+    "why": "(b) collateral order definition — separable, right too important to be denied review, claim irreparably lost"
+   },
+   {
+    "cite": "Pa.R.A.P. 1925(c)(2)",
+    "why": "(c) remand (2) — civil remand for filing nunc pro tunc of a Statement on good cause shown"
+   },
+   {
+    "cite": "42 Pa.C.S. § 5505",
+    "why": "modification of orders — within 30 days after entry if no appeal has been taken"
+   },
+   {
+    "cite": "Pa.R.A.P. 1931(a)(1)",
+    "why": "(a) time for transmission — record shall be transmitted to the appellate court within 60 days after the filing of the notice of appeal"
+   },
+   {
+    "cite": "Pa.R.A.P. 1931(b)",
+    "why": "(b) duty of trial court — the judge who entered the order shall comply with Pa.R.A.P. 1925 and cause the record to be transmitted"
+   },
+   {
+    "cite": "Pa.R.A.P. 1935",
+    "why": "delinquent transmission of record — appellate prothonotary shall give notice to the trial court judge within ten days"
+   },
+   {
+    "cite": "Pa.R.A.P. 1926(b)",
+    "why": "(b) omission from the record by error, breakdown in processes of the court, or accident — correction"
+   },
+   {
+    "cite": "Pa.R.A.P. 121(a)",
+    "why": "(a) filing — papers filed with the prothonotary; filing by mail; when filing is complete"
+   },
+   {
+    "cite": "Pa.R.A.P. 105(a)",
+    "why": "(a) application — rules liberally applied; the appellate court may disregard requirements of any rule in a particular case"
+   },
+   {
+    "cite": "Pa.R.A.P. 107",
+    "why": "construction of the appellate rules — Pa.R.J.A. 104 to 115 govern"
+   },
+   {
+    "cite": "Pa.R.J.A. 108",
+    "why": "construction of rules — intention of the Supreme Court controls; give effect to all provisions"
+   },
+   {
+    "cite": "42 Pa.C.S. § 742",
+    "why": "Superior Court exclusive appellate jurisdiction of appeals from final orders of the courts of common pleas"
+   },
+   {
+    "cite": "42 Pa.C.S. § 706",
+    "why": "disposition of appeals — affirm, modify, vacate, set aside or reverse; remand; further proceedings"
+   }
+  ]
+ },
+ "_rule_families": {
+  "_doc": "court -> FAMILIES.yaml rule families the DERIVED FORUM RULES engine searches (ground_pack --points path only)",
+  "PA_SUPER": [
+   "pa_rap",
+   "pa_rja",
+   "pa_rcp"
+  ],
+  "PA_CP_PHILA": [
+   "pa_rcp"
+  ],
+  "CA3": [
+   "frap"
+  ],
+  "FED_EDPA": [
+   "frcp"
   ]
  }
 }

@@ -8,7 +8,7 @@ related cases without disclosure (Pa.R.P.C. 3.3 candor violation territory).
 Typical scenario:
   - You have fed:2:26-cv-00789 (federal bad faith case, judge issued void order)
   - You filed mandamus challenging that order
-  - In phila_ccp:260100000 (Lippi state case), opposing counsel cites that
+  - In phila_ccp:260100000 (Example Creditor state case), opposing counsel cites that
     same federal order to support their motion to strike
   - They didn't disclose the mandamus to the state court
   - That's a candor violation + reliance on void authority
@@ -119,6 +119,26 @@ def load_registry() -> dict:
         return {}
 
 
+def _index_party_terms():
+    """Every adverse party's name as a search term (spaced + underscored), from cases_index via
+    pipeline.case_profile. S-no-hardcode (2026-11-14) replacement for a hand-typed party list."""
+    terms = []
+    try:
+        from pipeline.case_profile import filer_party_tags, iter_profiles
+        mine = filer_party_tags()
+        for pr in iter_profiles():
+            for n in (pr.get("adverse_names") or []):
+                t = re.sub(r"[^a-z0-9]+", "_", str(n).lower()).strip("_")
+                if not t or t in mine:
+                    continue
+                for form in (t.replace("_", " "), t):
+                    if form not in terms:
+                        terms.append(form)
+    except Exception:
+        pass
+    return terms
+
+
 def build_match_patterns(case_data: dict) -> list:
     """
     Build regex patterns that would match references to this case.
@@ -166,8 +186,14 @@ def build_match_patterns(case_data: dict) -> list:
         if len(parts) >= 2:
             first_def = parts[1].split()[0].strip(",").strip()
             if first_def and len(first_def) > 3 and first_def.lower() not in seen:
-                # Match patterns like "Filer v. State Farm" or "Filer v State Farm"
-                pat = r"filer\s+v\.?\s+" + re.escape(first_def)
+                # Match "<filer surname> v. <first defendant>" — the filer's surname comes from
+                # cases_index/filer_identity.json (S-no-hardcode 2026-11-14), never spelled here.
+                try:
+                    from pipeline.case_profile import filer_surname
+                    _fs = (filer_surname() or "").lower()
+                except Exception:
+                    _fs = ""
+                pat = ((re.escape(_fs) + r"\s+") if _fs else r"") + r"v\.?\s+" + re.escape(first_def)
                 patterns.append(pat)
                 seen.add(first_def.lower())
 
@@ -207,13 +233,13 @@ def find_opposing_filings(case_id: str, case_data: dict) -> list:
 
     # Look for opposing-party filings (they typically have "defendant", "opposition",
     # "motion to strike", "answer", "reply" in the filename)
+    # S-no-hardcode (2026-11-14): the party half of this list was eight hand-typed party names,
+    # so a newly added defendant's filings were never detected. The party terms are now every
+    # adverse party the indexes know (both spaced and underscored forms).
     opposing_keywords = [
         "defendant", "opposition", "opposing", "answer", "reply",
         "motion to dismiss", "motion to strike", "memorandum",
-        "lippi", "amerisave", "equifax", "state farm", "example trust co",
-        "planet home", "allstate", "progressive",
-        "state_farm",
-    ]
+    ] + _index_party_terms()
 
     found_files = []
     for ext in ["*.pdf", "*.docx", "*.txt", "*.md"]:

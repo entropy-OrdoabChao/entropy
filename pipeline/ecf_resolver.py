@@ -289,7 +289,11 @@ def tie_docket(case_id, verbose=False):
 
 if __name__ == '__main__':
     import sys
-    cid = sys.argv[1] if len(sys.argv) > 1 else 'fed:2:26-cv-00456'
+    # S-no-hardcode (2026-11-14): defaulting to ONE case silently resolved the WRONG docket's
+    # ECF numbers when the caller forgot the argument. The case is now required.
+    if len(sys.argv) < 2:
+        sys.exit("usage: python3 -m pipeline.ecf_resolver <case_id> [...]   (no default case)")
+    cid = sys.argv[1]
     if '--tie-docket' in sys.argv:
         added = tie_docket(cid, verbose=True)
         print(f"\ntie_docket {cid}: +{len(added)} ECF#(s) into CASE_TIMELINE.json")

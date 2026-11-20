@@ -160,7 +160,7 @@ CITATION_EXPANSION = {
     "FDCPA_COMMUNICATION":             ["15 USC 1692c", "12 CFR 1006.6"],
 
     # ========================================================================
-    # TILA â€” Truth in Lending (Amerisave/Equifax cases)
+    # TILA â€” Truth in Lending (Example Lender/Equifax cases)
     # ========================================================================
     "TILA":                            ["15 USC 1601", "15 USC 1640", "12 CFR 1026"],
     "TILA_DISCLOSURE":                 ["15 USC 1638", "12 CFR 1026.18"],
@@ -168,7 +168,7 @@ CITATION_EXPANSION = {
     "TILA_HOEPA":                      ["15 USC 1639", "12 CFR 1026.32"],
 
     # ========================================================================
-    # RESPA â€” mortgage servicing (Amerisave case â€” fed:2:26-cv-00456)
+    # RESPA â€” mortgage servicing (Example Lender case â€” fed:2:26-cv-00456)
     # ========================================================================
     "RESPA":                           ["12 USC 2601", "12 USC 2605", "12 USC 2607", "12 CFR 1024"],
     "RESPA_QWR":                       ["12 USC 2605(e)", "12 CFR 1024.36"],
@@ -192,7 +192,7 @@ CITATION_EXPANSION = {
     "GLBA_SAFEGUARDS":                 ["15 USC 6801", "16 CFR 314"],
 
     # ========================================================================
-    # PA UTPCPL + state consumer protection (Lippi case â€” phila_ccp:260100000)
+    # PA UTPCPL + state consumer protection (Example Creditor case â€” phila_ccp:260100000)
     # ========================================================================
     "PA_UTPCPL":                       ["73 PS 201-2", "73 PS 201-3", "73 PS 201-9.2"],
     "UTPCPL":                          ["73 PS 201-2", "73 PS 201-3", "73 PS 201-9.2"],
@@ -311,7 +311,7 @@ CITATION_EXPANSION = {
     "MAJOR_QUESTIONS":                 ["West Virginia v EPA", "Biden v Nebraska"],
 
     # ========================================================================
-    # Foreclosure / mortgage (Amerisave overlap)
+    # Foreclosure / mortgage (Example Lender overlap)
     # ========================================================================
     "FORECLOSURE_STANDING":            ["UCC 3-301", "UCC 3-309", "Carpenter v Longan"],
     "WET_INK_SIGNATURE":               ["UCC 3-104", "UCC 3-301"],
@@ -770,8 +770,8 @@ def _detect_context(facts: dict, statute: str = "") -> dict:
     case_id = facts.get("case_number") or facts.get("case_id") or ""
     case_domains = {
         "fed:2:26-cv-00123":  ("title_15", "FCRA Equifax case"),
-        "fed:2:26-cv-00456":  ("title_12", "RESPA Amerisave case"),
-        "phila_ccp:260100000":("title_42_pa_state", "PA state Lippi case"),
+        "fed:2:26-cv-00456":  ("title_12", "RESPA Example Lender case"),
+        "phila_ccp:260100000":("title_42_pa_state", "PA state Example Creditor case"),
         "fed:2:26-cv-00789":  ("title_42_pa_state", "PA insurance State Farm"),
     }
     if case_id in case_domains:
@@ -2343,8 +2343,8 @@ VAULT_CASES = VAULT_ROOT / "cases"
 
 CASE_SLUG_MAP = {
     "fed:2:26-cv-00123":   "fed_26-cv-00123",
-    "fed:2:26-cv-00456":   "fed_2-26-cv-00456_filer_v_amerisave",
-    "phila_ccp:260100000": "phila_ccp_260100000_filer_v_lippi",
+    "fed:2:26-cv-00456":   "fed_2-26-cv-00456_filer_v_example_lender",
+    "phila_ccp:260100000": "phila_ccp_260100000_filer_v_example_creditor",
     "fed:2:26-cv-00789":   "fed_2-26-cv-00789_filer_v_state_farm",
 }
 

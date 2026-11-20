@@ -1,0 +1,24 @@
+name: records_request
+group: admin
+unit: actor            # claim | term | cite | count | document | case | draft
+axis: "ADMIN 2 — RECORDS REQUEST: FOIA 5 U.S.C. §552 / Privacy Act §552a / PA RTKL 65 P.S. §67 / FCRA §1681g — statute, custodian, fee rule, response clock, on-lapse, mail mode; verbatim."
+lane: local-gpu              # production lane only (M2_LANE); local-gpu joins after local-gpu-alone is proven
+families:
+  - usc_5_552
+  - usc_5_552a
+  - pa_65ps_67
+  - usc_15_1681g
+  - usc_15_1681j
+  - cfr_12_1070
+  - cfr_24_15
+  - cfr_16_4
+queries:
+  - "{claim} reasonably describes such records"
+  - "twenty days excepting Saturdays Sundays legal public holidays"
+  - "{claim} access to his record"
+  - "five business days Right-to-Know"
+  - "{claim} clearly and accurately disclose all information in the consumer's file"
+  - "fee waiver public interest"
+cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
+verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
+handoff: skeptic            # every result is stamped before the case manager records it

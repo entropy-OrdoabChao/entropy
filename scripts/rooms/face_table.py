@@ -75,6 +75,32 @@ def build(adv_path, rec_path, out):
         rows.append(("party designation", f'filing labels opposing party "{m.group(0).strip()}"', f"{aname}:{lineno(A, m.start())}", "DEFECT if signer is sui juris (check record)"))
     # 7. verification / oath
     rows.append(("verification", "verification/affidavit present" if re.search(r"(?i)\bverif(ication|ied)\b|\baffidavit\b|\b18 Pa\.C\.S\. ?§ ?4904\b|\b28 U\.S\.C\. ?§ ?1746\b", A) else "NO verification/oath language in filing", aname, "OK" if re.search(r"(?i)\bverif(ication|ied)\b|\baffidavit\b", A) else "VERIFY required for this filing type?"))
+    # 7b. (2026-11-11) what the paper DEMANDS of us, on its face — the lane decides the rule's effect (notice-to-plead / notice-to-defend /
+    #     reply-required); rows are facts about the face, agnostic to court: a pleading that carries no notice cannot start a response clock.
+    # the paper's TITLE = the first heading line (all caps, standalone) in the caption block that names a paper type; the body
+    # may mention every kind ("Answer", "Order", "Complaint") so the body never decides.
+    heads = [l.strip() for l in A[:6000].splitlines() if l.strip() and l.strip() == l.strip().upper() and 4 <= len(l.strip()) <= 90]
+    title = next((h for h in heads if re.search(r"\b(COMPLAINT|ANSWER|NEW MATTER|COUNTERCLAIM|REPLY|ORDER|OPINION|BRIEF|MOTION|OBJECTIONS|PETITION|APPLICATION|RESPONSE|NOTICE)\b", h)
+                  and not re.search(r"COURT|DIVISION|COUNTY|TERM|CONTROL|CASE|DOCKET|NO\.", h)), "")
+    if re.fullmatch(r"NOTICE( TO DEFEND)?", title) or not title:        # a complaint opens with its Notice-to-Defend page: look past it for the title
+        title = next((h for h in heads if re.search(r"\bCOMPLAINT\b", h) and not re.search(r"\b(ANSWER|OBJECTIONS|TO THE)\b", h)), title)
+    kind = ("complaint" if re.search(r"\bCOMPLAINT\b", title) and not re.search(r"\b(ANSWER|OBJECTIONS|TO)\b", title) else
+            "pleading" if re.search(r"\b(ANSWER|NEW MATTER|COUNTERCLAIM|REPLY TO NEW MATTER)\b", title) else
+            "order" if re.search(r"\b(ORDER|OPINION)\b", title) else "brief/motion")
+    rows.append(("paper kind", f"face reads as: {kind} (title line: \"{title[:60] or 'none found'}\")", f"{aname}:1-60", "OK"))
+    ntp = re.search(r"(?i)notice to plead|hereby notified to (?:file|plead)|within twenty \(?20\)? days|within 20 days", A)
+    ntd = re.search(r"(?i)notice to defend|you have been sued in court|AVISO", A)
+    if kind == "complaint":
+        rows.append(("notice to defend", "notice to defend present" if ntd else "NO notice-to-defend language", f"{aname}:{lineno(A, ntd.start()) if ntd else '—'}", "OK" if ntd else "DEFECT (Rule 1018.1 — verify forum)"))
+    elif kind == "pleading":
+        rows.append(("notice to plead", "notice to plead present" if ntp else "NO notice-to-plead language anywhere in the paper", f"{aname}:{lineno(A, ntp.start()) if ntp else 'all pages'}",
+                     "VERIFY response clock runs" if ntp else "VERIFY: no response required? averments deemed denied? (Rule 1026(a)/1029(d)/1361 note — lane decides)"))
+        rows.append(("response posture", f"paper asks a response from us: {'YES (notice endorsed)' if ntp else 'NOT on its face'}; order recital pleaded as averment: {'YES' if re.search(r'(?i)by order of court|were dismissed|was dismissed|court sustained', A) else 'no'}",
+                     aname, "VERIFY what a reply admits / what silence admits (1029(b),(d))"))
+    exh_ref = sorted(set(re.findall(r"(?i)\bExhibit\s+\"?([A-Z]|\d{1,2})\b", A))); exh_tab = sorted(set(re.findall(r"(?m)^\s*EXHIBIT\s*\n?\s*([A-Z]|\d{1,2})\s*$", A)))
+    if exh_ref:
+        miss = [e for e in exh_ref if e not in exh_tab]
+        rows.append(("exhibits attached", f"referenced {exh_ref}; tab pages found {exh_tab or 'NONE'}; missing {miss or 'none'}", aname, "DEFECT (referenced but not attached)" if miss else "OK"))
     # 8. characterisations of the opposing filing (prima facie material from their own words)
     for m in re.finditer(r"(?i)[^.\n]*\b(artificial intelligence|AI-generated|non-responsive|frivolous|incomprehensible|sovereign|pseudo)[^.\n]*\.", A):
         rows.append(("their own words", m.group(0).strip()[:220], f"{aname}:{lineno(A, m.start())}", "QUOTE (prima facie)"))

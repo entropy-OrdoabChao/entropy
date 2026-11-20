@@ -1718,13 +1718,13 @@ def build_caption_block(data: ReplyBriefData) -> List[Tuple[str, str]]:
 
     defs = [p for p in data.parties if p != _ident.party_key()]
     PARTY_NAME_MAP = {
-        "lippi": "MIKE LIPPI",
+        "example_creditor": "EXAMPLE CREDITOR",
         "state_farm": "STATE FARM FIRE AND CASUALTY COMPANY",
         
         "equifax": "EQUIFAX INFORMATION SERVICES, LLC",
         "experian": "EXPERIAN INFORMATION SOLUTIONS, INC.",
         "transunion": "TRANS UNION LLC",
-        "amerisave": "AMERISAVE MORTGAGE CORPORATION",
+        "example_lender": "EXAMPLE LENDER",
         "allstate": "ALLSTATE INSURANCE COMPANY",
         "progressive": "PROGRESSIVE INSURANCE COMPANY",
         "avant": "AVANT, LLC",
@@ -3805,8 +3805,8 @@ def _format_defendant_list(defendants: list) -> str:
         "greensky":       "GreenSky",
         "state_farm":     "State Farm",
         
-        "lippi":          "Lippi",
-        "amerisave":      "Amerisave",
+        "example_creditor":          "Example Creditor",
+        "example_lender":      "Example Lender",
     }
     pretty = [PARTY_NAME_MAP.get(d, d.replace("_", " ").title()) for d in defendants]
     if not pretty:

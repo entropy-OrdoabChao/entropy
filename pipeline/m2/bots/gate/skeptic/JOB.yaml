@@ -10,3 +10,25 @@ queries:
 cite_rule: enacted P.L./Stat. over codification; flag codification_only when only USC/Pa.C.S. is in corpus
 verify: every authority quote must resolve by FTS phrase (runner guardrail) else NOT_IN_CORPUS
 handoff: skeptic            # every result is stamped before the case manager records it
+
+# S-skeptic-contradiction (class-level, every case): the gate's second duty is THEIR paper against THEIR paper.
+# Per unit, identify every statement of the opposing party in the record that is inconsistent with its own
+# pleading or with another of its own statements; quote BOTH verbatim with a [doc:] pointer on each; classify
+# the pleading side JUDICIAL ADMISSION (conclusive on the pleader) and the other EXTRAJUDICIAL STATEMENT
+# (evidential, impeaching); name the element it defeats and the procedural vehicle it opens IN THIS FORUM from
+# the pack, else VEHICLE: NOT IN CORPUS. Comprehension, not keywords: nothing is posted unless the two
+# statements cannot both be true of the same subject at the same time. See CHECK.md for the form, the
+# positive/negative pair and the corpus cites for the doctrine.
+emits:
+  - kind: contradiction
+    form: "CARD: skeptic | CONTRADICTION: <... > | ADMISSION: \"<verbatim>\" [doc:<path>] ; STATEMENT: \"<verbatim>\" [doc:<path>] | ELEMENT: <element> | SUSTAINED | PROPOSITION: <sentence> VEHICLE: <rule|NOT IN CORPUS>"
+    cell: "status RECORD, kind=contradiction, record_facts tagged source_kind=judicial_admission / opponent_writing (cards_to_cells)"
+    requires: "two distinct [doc:] pointers and both statements verbatim; one pointer = no cell"
+    feeds: "pipeline/corpus_coverage_audit.py leg L3 OPPONENT_WRITING"
+contradiction_families:
+  - doctrine                # Am Jur 2d Evidence / Pleading, Black's — judicial vs extrajudicial admission
+  - forum_rules             # the vehicle the inconsistency opens (preliminary objections, sanctions, affidavit)
+contradiction_queries:
+  - "judicial admission in a pleading conclusive on the pleader"
+  - "extrajudicial admission evidential not conclusive"
+  - "{forum} vehicle for an inconsistency on the face of the pleading"

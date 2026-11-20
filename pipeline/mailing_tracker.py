@@ -158,25 +158,48 @@ def _stem_tokens(name):
                             "the", "a", "of", "md"})
     return toks
 
-def _match_item(reg, tokens, job_id):
+_RECIP_NOISE = {"esq", "esquire", "llp", "llc", "pc", "pllc", "law", "group", "office",
+                "offices", "the", "of", "and", "honorable", "hon", "judge", "court", "inc",
+                "co", "attorney", "attorneys", "counsel", "mr", "ms", "dr", "jr", "sr"}
+
+def _recip_tokens(name):
+    """Identity tokens of a recipient name (titles/firm suffixes stripped)."""
+    if not name:
+        return set()
+    return {t for t in _stem_tokens(name) if t not in _RECIP_NOISE and len(t) > 1}
+
+def _match_item(reg, tokens, job_id, recipient=None):
     """Best existing item for a push marker.
 
     Exact: an item already carrying this exact letterstream_job_id (re-push).
-    Fuzzy: token-Jaccard >= 0.5 between the item's document name and the
-    marker's FILING tokens. Returns mail_id or None."""
+    Fuzzy: token-Jaccard > 0.5 between the item's document name and the
+    marker's FILING tokens, AND the item is still unmailed (no other job id —
+    a job id IS the physical mailing, so a linked item is never re-targeted),
+    AND, when both sides name a recipient, the recipients share a token.
+    Returns mail_id or None (None => the marker becomes its own item)."""
     for mid, it in reg["items"].items():
         if str(it.get("letterstream_job_id") or "") == str(job_id):
             return mid
+    rtoks = _recip_tokens(recipient)
     best, best_j = None, 0.0
     for mid, it in reg["items"].items():
+        other = str(it.get("letterstream_job_id") or "")
+        if other and other != str(job_id):
+            continue
         toks = _stem_tokens(it.get("document") or "")
         if not toks or not tokens:
             continue
+        if rtoks and it.get("recipients"):
+            itoks = set()
+            for r in it["recipients"]:
+                itoks |= _recip_tokens(r.get("name") if isinstance(r, dict) else r)
+            if itoks and not (itoks & rtoks):
+                continue
         union = len(toks | tokens)
         j = len(toks & tokens) / union if union else 0.0
         if j > best_j:
             best, best_j = mid, j
-    return best if best_j >= 0.5 else None
+    return best if best_j > 0.5 else None
 
 def _pm_record(dirpath):
     """Build the same marker record scan_pushed() yields for one directory."""
@@ -234,7 +257,7 @@ def _link_one(pm, reg, now, job_index):
         _refresh_marker(pm, job_index[jid], reg, now)
         return {"job": jid, "action": "present",
                 "mail_id": job_index[jid][0], "dir": pm["dir"]}
-    mid = _match_item(reg, _stem_tokens(pm["filing"]), jid)
+    mid = _match_item(reg, _stem_tokens(pm["filing"]), jid, pm.get("recipient"))
     if mid is not None:
         it = reg["items"][mid]
         it["letterstream_job_id"] = jid

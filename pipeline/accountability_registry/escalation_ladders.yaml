@@ -479,3 +479,70 @@ ladders:
         cite: "15 U.S.C. 1692k(d)"
         provenance: "corpus:1692k(d) one year"
         on_expiry: "FDCPA suit / time-barred if missed"
+
+  # ---- F2.3 (2026-11-10): keys the admin room's actor-map returned NOT IN LADDER for. Every statutory rung FTS-pinned to a chunk id. ----
+  pa_rtkl:
+    forum: "PA agency records — Right-to-Know Law, 65 P.S. 67.101 et seq. (Act 3 of 2008) -> OOR -> court"
+    levels:
+      - level: request
+        deadline_days: 5
+        working: true
+        cite: "65 P.S. 67.901 (five business days from receipt by the open-records officer)"
+        provenance: "corpus:pa_65ps_rtkl_2008#073a709ba619e7ba — \"The time for response shall not exceed five business days from the date the written request is received by the open-records officer for an agency.\""
+        on_expiry: "deemed denied (67.901); appeal ripe"
+      - level: agency_extension
+        deadline_days: 30
+        working: false
+        cite: "65 P.S. 67.902(b)(2) (notice of 30-day extension; longer = deemed denied unless agreed in writing)"
+        provenance: "corpus:pa_65ps_rtkl_2008#eda76f9b05e64c28 — \"If the date that a response is expected to be provided is in excess of 30 days, following the five business days allowed for in section 901, the request for access shall be deemed denied unless the requester has agreed in writing to an extension\""
+        on_expiry: "deemed denied — appeal to OOR"
+      - level: oor_appeal
+        deadline_days: 15
+        working: true
+        cite: "65 P.S. 67.1101(a) (appeal within 15 business days of the response or deemed denial); 67.1310 Office of Open Records"
+        provenance: "corpus:pa_65ps_rtkl_2008#d3451006b46c70d1 — \"within 15 business days of the mailing date of the agency's response or within 15 business days of a deemed denial\"; corpus:pa_65ps_rtkl_2008#0b68f0f8c29c41c6"
+        on_expiry: "appeal right lost if missed; OOR final determination due within 30 days (67.1101(b), corpus:pa_65ps_rtkl_2008#9dec43d71a757e18)"
+      - level: judicial_review
+        deadline_days: 30
+        working: false
+        cite: "65 P.S. 67.1301 (Commonwealth/legislative/judicial agency -> Commonwealth Court) / 67.1302 (local agency -> court of common pleas), within 30 days of the final determination's mailing date"
+        provenance: "corpus:pa_65ps_rtkl_2008#9939e38612258b4e — \"Within 30 days of the mailing date of the final determination of the appeals officer ... may file a petition for review\"; corpus:pa_65ps_rtkl_2008#638394fc07684d51"
+        on_expiry: "petition for review time-barred"
+
+  cfpb:
+    forum: "Consumer Financial Protection Bureau — complaint channel + records (FOIA, 12 C.F.R. part 1070)"
+    levels:
+      - level: consumer_complaint
+        deadline_days: 15
+        working: false
+        cite: "12 U.S.C. 5493(b)(3) (consumer response unit; centralized collection of, monitoring of, and response to consumer complaints)"
+        provenance: "corpus:usc_t12_s5493#usc_t12_s5493_c1 — \"facilitate the centralized collection of, monitoring of, and response to consumer complaints regarding consumer financial products or services\"; company-response window official:consumerfinance.gov/complaint/process (15 cal / 60 final)"
+        on_expiry: "company response logged; dispute the response; proceed to statutory private right (fcra_dispute / mortgage_servicing ladder)"
+      - level: foia_request
+        deadline_days: 20
+        working: true
+        cite: "12 C.F.R. 1070.16 (twenty business days to determine whether to grant or deny); 5 U.S.C. 552(a)(6)(A)(i)"
+        provenance: "corpus:CFR-2024-title12-vol9#169565eafddc252189cb14f309a35e53 — \"Ordinarily, the CFPB shall have twenty (20) business days from when a request is received by the CFPB to determine whether to grant or deny a request for records.\""
+        on_expiry: "constructive denial — administrative appeal / deemed exhausted (5 U.S.C. 552(a)(6)(C)(i), see foia ladder)"
+      - level: foia_appeal
+        deadline_days: 20
+        working: true
+        cite: "12 C.F.R. 1070.21 (appeal of initial determination; decision within twenty business days of receipt of the appeal)"
+        provenance: "corpus:ECFR-title12_1#0badee54df8469890e8bec0476c94c77 — \"shall notify the requester of this decision in writing within twenty (20) business days after the date of receipt of the appeal\"; the requester's appeal-filing window (90 days) NEEDS_GROUNDING — candidate corpus:2018-19384#6bdc0b5930205d627fd58683544e18e0 (FR notice), not yet read verbatim"
+        on_expiry: "appeal deemed denied — judicial review ripe (foia ladder: 5 U.S.C. 552(a)(4)(B))"
+
+  ftc:
+    forum: "Federal Trade Commission — complaint (15 U.S.C. 45) + records (16 C.F.R. 4.11 FOIA)"
+    levels:
+      - level: complaint
+        deadline_days: null
+        working: false
+        cite: "15 U.S.C. 45(a) (unfair or deceptive acts or practices); 15 U.S.C. 1681s(a) (FTC FCRA enforcement) — complaint is a report, no statutory response clock"
+        provenance: "corpus:usc_t15_s45#usc_t15_s45_c0; NO STATUTORY CLOCK IN CORPUS for a response to a consumer report"
+        on_expiry: "none — informational; private right stays with the governing statute (fcra_dispute / debt_collection ladders)"
+      - level: foia_request
+        deadline_days: 20
+        working: true
+        cite: "16 C.F.R. 4.11(a) (FOIA Request Office; initial requests); 5 U.S.C. 552(a)(6)(A)(i)"
+        provenance: "corpus:cfr_16_part_4#20fac2cbff55f4892d111421f9b94d97 — \"Freedom of Information Act — (1) Initial requests — (i) Form and contents; time of receipt.\"; clock corpus:usc_t5_s552#usc_t5_s552_c2"
+        on_expiry: "constructive denial — administrative appeal / 5 U.S.C. 552(a)(4)(B) (foia ladder)"

@@ -28,7 +28,7 @@ description: >-
   (f) Court enters judgment against garnishee up to value of garnished assets.
 
   This is the PRIMARY enforcement vehicle in the {{OPPOSING_PARTY}} matter ({{CASE_ID}})
-  where default judgment was entered $200,000 against {{OPPOSING_PARTY}}/{{OPPOSING_PARTY}}/MGGT and
+  where default judgment was entered $200,000 against {{OPPOSING_PARTY}}/{{OPPOSING_PARTY}}/EXAMPLE CO and
   garnishee State Farm (and Example Trust Co as custodian-garnishee) have failed
   to respond to direct claim/garnishee interrogatories.
 
@@ -65,7 +65,7 @@ structure:
 
 case_applications:
   - case_id: "{{CASE_ID}}"
-    caption: "{{USER_LAST}} v. {{OPPOSING_PARTY}}, {{OPPOSING_PARTY}}, MGGT Group LLC"
+    caption: "{{USER_LAST}} v. {{OPPOSING_PARTY}}, {{OPPOSING_PARTY}}, EXAMPLE CO Group LLC"
     judgment_amount: 200000.00
     judgment_date: 2025-11-07
     garnishees:
